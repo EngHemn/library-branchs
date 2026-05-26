@@ -375,12 +375,14 @@ The domain layer is the core of the project.
 Allowed inside `domain`:
 
 - Entities
+- Schemas
 - Use cases
 - Repository contracts
 - Business rules
 - Validators
 - Domain services
 - Shared result types
+- Shared business types
 
 The domain layer must not import:
 
@@ -399,11 +401,33 @@ Good structure:
 ```txt
 domain/
   entities/
+  schemas/
   repositories/
   usecases/
   validators/
   result/
 ```
+
+## Schema and Type Rules
+
+Shared schemas and shared business types must be placed in the domain layer.
+
+Correct locations:
+
+```txt
+domain/entities/
+domain/schemas/
+domain/validators/
+```
+
+Rules:
+
+- Entity types must be placed in `domain/entities`.
+- Reusable schema types must be placed in `domain/schemas`.
+- Business validation rules must be placed in `domain/validators`.
+- Do not create schema folders inside `presentation`.
+- Do not create shared type folders inside `presentation`.
+- Do not define business schema types inside `app`, `presentation`, or `data`.
 
 ## Entity Rules
 
@@ -519,6 +543,35 @@ export class GetBooksUseCase {
 
   execute() {
     return this.bookRepository.getBooks();
+  }
+}
+```
+
+Auth can use one use case class when the auth actions belong to the same flow.
+All auth functions should stay in that one class and call the repository
+interface.
+
+Example:
+
+```tsx
+import { LoginCredentials } from "@/domain/entities/LoginCredentials";
+import { User } from "@/domain/entities/User";
+import { AuthRepository } from "@/domain/repositories/AuthRepository";
+import { Result } from "@/domain/result/Result";
+
+export class AuthUseCase {
+  constructor(private readonly authRepository: AuthRepository) {}
+
+  login(credentials: LoginCredentials): Promise<Result<User>> {
+    return this.authRepository.login(credentials);
+  }
+
+  logout(): Promise<Result<null>> {
+    return this.authRepository.logout();
+  }
+
+  getCurrentUser(): Promise<Result<User | null>> {
+    return this.authRepository.getCurrentUser();
   }
 }
 ```
