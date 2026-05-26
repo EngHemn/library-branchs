@@ -1,0 +1,68 @@
+import type { Translator } from "@/domain/entities/translator/Translator"
+
+export const fakeTranslators: Translator[] = [
+  {
+    id: "TR-001",
+    name: "John Purcell",
+    language: "English",
+    totalBooks: 6,
+    status: "active",
+    branchId: "BR-001",
+  },
+  {
+    id: "TR-002",
+    name: "Thomas Cleary",
+    language: "English",
+    totalBooks: 14,
+    status: "active",
+    branchId: "BR-001",
+  },
+  {
+    id: "TR-003",
+    name: "Gregory Rabassa",
+    language: "English",
+    totalBooks: 9,
+    status: "inactive",
+    branchId: "BR-002",
+  },
+  {
+    id: "TR-004",
+    name: "Alan R. Clarke",
+    language: "English",
+    totalBooks: 4,
+    status: "active",
+    branchId: "BR-004",
+  },
+  {
+    id: "TR-005",
+    name: "Philip Gabriel",
+    language: "English",
+    totalBooks: 11,
+    status: "active",
+    branchId: "BR-007",
+  },
+  {
+    id: "TR-006",
+    name: "Richard Pevear",
+    language: "English",
+    totalBooks: 18,
+    status: "active",
+    branchId: "BR-009",
+  },
+  {
+    id: "TR-007",
+    name: "Larissa Volokhonsky",
+    language: "English",
+    totalBooks: 18,
+    status: "active",
+    branchId: "BR-009",
+  },
+  {
+    id: "TR-008",
+    name: "Edith Grossman",
+    language: "English",
+    totalBooks: 7,
+    status: "active",
+    branchId: "BR-004",
+  },
+]
