@@ -1,0 +1,158 @@
+"use client"
+
+import { EyeIcon, PencilIcon, Trash2Icon } from "lucide-react"
+
+import { Badge } from "@/components/ui/badge"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import {
+  DataTable,
+  type DataTableColumn,
+} from "@/components/ui/data-table"
+import type { Translator } from "@/domain/entities/translator/Translator"
+import { TranslatorActionButton } from "@/presentation/components/translators/TranslatorActionButton"
+
+type TranslatorsTableProps = {
+  translators: Translator[]
+  onView: (translator: Translator) => void
+  onEdit: (translator: Translator) => void
+  onDelete: (translator: Translator) => void
+}
+
+type TranslatorColumnKey =
+  | "id"
+  | "name"
+  | "language"
+  | "totalBooks"
+  | "status"
+  | "actions"
+
+const statusLabels = {
+  active: "active",
+  inactive: "inactive",
+}
+
+export function TranslatorsTable({
+  translators,
+  onView,
+  onEdit,
+  onDelete,
+}: TranslatorsTableProps) {
+  const columns: DataTableColumn<Translator, TranslatorColumnKey>[] = [
+    {
+      key: "id",
+      header: "ID",
+      sortable: true,
+      sortValue: (translator) => translator.id,
+      cell: (translator) => (
+        <span className="font-mono text-xs text-muted-foreground">
+          {translator.id}
+        </span>
+      ),
+    },
+    {
+      key: "name",
+      header: "Name",
+      sortable: true,
+      sortValue: (translator) => translator.name,
+      cell: (translator) => (
+        <span className="font-semibold">{translator.name}</span>
+      ),
+    },
+    {
+      key: "language",
+      header: "Language",
+      sortable: true,
+      sortValue: (translator) => translator.language,
+      cell: (translator) => translator.language,
+    },
+    {
+      key: "totalBooks",
+      header: "Books Count",
+      sortable: true,
+      sortValue: (translator) => translator.totalBooks,
+      cell: (translator) => (
+        <Badge
+          variant="secondary"
+          className="bg-violet-100 text-violet-700 dark:bg-violet-950 dark:text-violet-300"
+        >
+          Translated {translator.totalBooks}
+        </Badge>
+      ),
+    },
+    {
+      key: "status",
+      header: "Status",
+      sortable: true,
+      sortValue: (translator) => statusLabels[translator.status],
+      cell: (translator) => (
+        <Badge
+          variant="outline"
+          className={
+            translator.status === "active"
+              ? "border-green-200 bg-green-50 text-green-700 dark:border-green-900 dark:bg-green-950 dark:text-green-300"
+              : "border-muted bg-muted text-muted-foreground"
+          }
+        >
+          {statusLabels[translator.status]}
+        </Badge>
+      ),
+    },
+    {
+      key: "actions",
+      header: "Actions",
+      headerClassName: "text-right",
+      className: "text-right",
+      cell: (translator) => (
+        <div className="flex justify-end gap-1">
+          <TranslatorActionButton
+            icon={EyeIcon}
+            label="View"
+            variant="outline"
+            onClick={() => onView(translator)}
+          />
+          <TranslatorActionButton
+            icon={PencilIcon}
+            label="Edit"
+            variant="outline"
+            onClick={() => onEdit(translator)}
+          />
+          <TranslatorActionButton
+            icon={Trash2Icon}
+            label="Delete"
+            variant="destructive"
+            onClick={() => onDelete(translator)}
+          />
+        </div>
+      ),
+    },
+  ]
+
+  return (
+    <Card className="rounded-lg">
+      <CardHeader>
+        <CardTitle>All Translators</CardTitle>
+        <CardDescription>
+          {translators.length.toLocaleString()} translator records
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <DataTable
+          data={translators}
+          columns={columns}
+          getRowId={(translator) => translator.id}
+          emptyTitle="No translators found"
+          emptyDescription="Try changing or clearing the active filters."
+          initialSort={{ key: "name", direction: "asc" }}
+          initialPageSize={10}
+          tableClassName="min-w-[800px]"
+        />
+      </CardContent>
+    </Card>
+  )
+}
