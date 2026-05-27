@@ -70,7 +70,7 @@ export function EditBookingScreen({
   const { state, form } = viewModel
 
   const goBack = () => {
-    router.push("/dashboard/bookings")
+    router.back()
   }
 
   return (

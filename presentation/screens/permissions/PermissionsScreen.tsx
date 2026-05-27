@@ -148,6 +148,8 @@ export function PermissionsScreen({
                 searchQuery={state.searchQuery}
                 onSearchChange={viewModel.setSearchQuery}
                 onSelectStaff={viewModel.selectStaff}
+                addStaffHref="/dashboard/staff/create"
+                addStaffLabel="Add Staff"
               />
 
               <div className="flex flex-col gap-4">

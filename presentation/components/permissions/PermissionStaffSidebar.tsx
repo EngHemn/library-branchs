@@ -1,7 +1,9 @@
 "use client"
 
-import { SearchIcon } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { PlusIcon, SearchIcon } from "lucide-react"
 
+import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import type { PermissionStaffMember } from "@/domain/entities/permission/Permission"
@@ -25,6 +27,8 @@ type PermissionStaffSidebarProps = {
   searchQuery: string
   onSearchChange: (query: string) => void
   onSelectStaff: (staffId: string) => void
+  addStaffHref: string
+  addStaffLabel: string
 }
 
 export function PermissionStaffSidebar({
@@ -33,7 +37,13 @@ export function PermissionStaffSidebar({
   searchQuery,
   onSearchChange,
   onSelectStaff,
+  addStaffHref,
+  addStaffLabel,
 }: PermissionStaffSidebarProps) {
+  const router = useRouter()
+  const hasSearchQuery = searchQuery.trim().length > 0
+  const showEmptyState = staff.length === 0
+
   return (
     <div className="flex h-full w-full flex-col rounded-lg border bg-card">
       <div className="border-b p-4">
@@ -68,11 +78,25 @@ export function PermissionStaffSidebar({
               </p>
             </button>
           ))}
-          {staff.length === 0 && (
-            <p className="px-3 py-6 text-center text-sm text-muted-foreground">
-              No staff members found.
-            </p>
-          )}
+          {showEmptyState ? (
+            <div className="flex flex-col items-center gap-3 px-3 py-6">
+              <p className="text-center text-sm text-muted-foreground">
+                {hasSearchQuery
+                  ? "No staff members match your search."
+                  : "No staff members yet."}
+              </p>
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                className="w-full py-3.5"
+                onClick={() => router.push(addStaffHref)}
+              >
+                <PlusIcon className="mr-2 size-4" />
+                {addStaffLabel}
+              </Button>
+            </div>
+          ) : null}
         </div>
       </ScrollArea>
     </div>

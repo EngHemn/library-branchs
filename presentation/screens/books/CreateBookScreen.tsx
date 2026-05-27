@@ -160,9 +160,6 @@ export function CreateBookScreen({
                   languages={state.languages}
                   disabled={state.isSaving || state.isSaved}
                   onSubmit={viewModel.save}
-                  onAddAuthor={viewModel.addAuthor}
-                  onAddTranslator={viewModel.addTranslator}
-                  onAddCategory={viewModel.addCategory}
                   onAddLanguage={viewModel.addLanguage}
                 >
                   <Separator />

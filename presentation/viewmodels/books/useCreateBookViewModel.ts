@@ -29,9 +29,6 @@ type CreateBookViewModel = {
   state: CreateBookViewModelState
   form: ReturnType<typeof useForm<BookFormValues>>
   save: (values: BookFormValues) => Promise<void>
-  addAuthor: (name: string) => void
-  addTranslator: (name: string) => void
-  addCategory: (name: string) => void
   addLanguage: (name: string) => void
 }
 
@@ -103,18 +100,6 @@ export function useCreateBookViewModel(
     }
   }, [getBooksUseCase])
 
-  const addAuthor = useCallback((name: string) => {
-    setAuthors((prev) => (prev.includes(name) ? prev : [...prev, name]))
-  }, [])
-
-  const addTranslator = useCallback((name: string) => {
-    setTranslators((prev) => (prev.includes(name) ? prev : [...prev, name]))
-  }, [])
-
-  const addCategory = useCallback((name: string) => {
-    setCategories((prev) => (prev.includes(name) ? prev : [...prev, name]))
-  }, [])
-
   const addLanguage = useCallback((name: string) => {
     setLanguages((prev) => (prev.includes(name) ? prev : [...prev, name]))
   }, [])
@@ -159,5 +144,5 @@ export function useCreateBookViewModel(
     [authors, categories, error, languages, status, translators]
   )
 
-  return { state, form, save, addAuthor, addTranslator, addCategory, addLanguage }
+  return { state, form, save, addLanguage }
 }

@@ -1,7 +1,7 @@
 "use client"
 
 import { useMemo, useState } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { ArrowLeftIcon, CalendarIcon, PlusIcon } from "lucide-react"
 import { format } from "date-fns"
 
@@ -37,6 +37,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { Textarea } from "@/components/ui/textarea"
+import { Input } from "@/components/ui/input"
 import { fakeBooks } from "@/data/fake/fakeBooks"
 import { fakeBranches } from "@/data/fake/fakeBranches"
 import { fakeMembers } from "@/data/fake/fakeMembers"
@@ -86,6 +87,17 @@ function toBranchOptions(): BookingComboboxOption[] {
   }))
 }
 
+function createInitialBookingForm(defaultBookId: string): BookingFormState {
+  if (!defaultBookId) return INITIAL_BOOKING_FORM
+
+  const book = fakeBooks.find((item) => item.id === defaultBookId)
+  return {
+    ...INITIAL_BOOKING_FORM,
+    bookId: defaultBookId,
+    branchId: book?.branchId ?? "",
+  }
+}
+
 function toMemberOptions(branchId: string): BookingComboboxOption[] {
   const members = branchId
     ? fakeMembers.filter((member) => member.branchId === branchId)
@@ -102,8 +114,19 @@ function toMemberOptions(branchId: string): BookingComboboxOption[] {
 
 export function CreateBookingScreen() {
   const router = useRouter()
-  const [bookingForm, setBookingForm] =
-    useState<BookingFormState>(INITIAL_BOOKING_FORM)
+  const searchParams = useSearchParams()
+  const defaultBookId = searchParams.get("bookId") ?? ""
+  const returnTo = searchParams.get("returnTo") ?? "/dashboard/bookings"
+  const isBookLocked = Boolean(defaultBookId)
+
+  const [bookingForm, setBookingForm] = useState<BookingFormState>(() =>
+    createInitialBookingForm(defaultBookId)
+  )
+
+  const lockedBookTitle = useMemo(() => {
+    if (!isBookLocked) return ""
+    return fakeBooks.find((book) => book.id === defaultBookId)?.title ?? ""
+  }, [defaultBookId, isBookLocked])
 
   const bookOptions = useMemo(() => toBookOptions(), [])
   const branchOptions = useMemo(() => toBranchOptions(), [])
@@ -112,11 +135,19 @@ export function CreateBookingScreen() {
     [bookingForm.branchId]
   )
 
+  const isFormValid =
+    Boolean(bookingForm.bookId) &&
+    Boolean(bookingForm.branchId) &&
+    Boolean(bookingForm.memberId) &&
+    Boolean(bookingForm.bookingType) &&
+    Boolean(bookingForm.dueDate)
+
   const goBack = () => {
-    router.push("/dashboard/bookings")
+    router.push(returnTo)
   }
 
   const handleSave = () => {
+    if (!isFormValid) return
     goBack()
   }
 
@@ -176,17 +207,25 @@ export function CreateBookingScreen() {
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
                     <Label htmlFor="booking-book">Book *</Label>
-                    <BookingSearchCombobox
-                      id="booking-book"
-                      options={bookOptions}
-                      value={bookingForm.bookId}
-                      onValueChange={(bookId) =>
-                        setBookingForm((previous) => ({ ...previous, bookId }))
-                      }
-                      placeholder="Search book..."
-                      createHref={CREATE_BOOK_HREF}
-                      addLabel="Add book"
-                    />
+                    {isBookLocked ? (
+                      <Input
+                        id="booking-book"
+                        value={lockedBookTitle}
+                        disabled
+                      />
+                    ) : (
+                      <BookingSearchCombobox
+                        id="booking-book"
+                        options={bookOptions}
+                        value={bookingForm.bookId}
+                        onValueChange={(bookId) =>
+                          setBookingForm((previous) => ({ ...previous, bookId }))
+                        }
+                        placeholder="Search book..."
+                        createHref={CREATE_BOOK_HREF}
+                        addLabel="Add book"
+                      />
+                    )}
                   </div>
 
                   <div className="space-y-2">
@@ -341,7 +380,11 @@ export function CreateBookingScreen() {
                   <Button type="button" variant="outline" onClick={goBack}>
                     Cancel
                   </Button>
-                  <Button type="button" onClick={handleSave}>
+                  <Button
+                    type="button"
+                    onClick={handleSave}
+                    disabled={!isFormValid}
+                  >
                     <PlusIcon />
                     Create Booking
                   </Button>

@@ -1,6 +1,5 @@
 "use client"
 
-import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { ArrowLeftIcon, RefreshCwIcon } from "lucide-react"
 
@@ -34,8 +33,12 @@ import { BookDetailHeader } from "@/presentation/components/books/BookDetailHead
 import { BookingHistoryTable } from "@/presentation/components/books/BookingHistoryTable"
 import { BookProfileCard } from "@/presentation/components/books/BookProfileCard"
 import { BookSummaryCards } from "@/presentation/components/books/BookSummaryCards"
-import { CreateBookingDialog } from "@/presentation/components/books/CreateBookingDialog"
 import { useBookDetailViewModel } from "@/presentation/viewmodels/books/useBookDetailViewModel"
+
+function getCreateBookingHref(bookId: string, returnTo: string) {
+  const params = new URLSearchParams({ bookId, returnTo })
+  return `/dashboard/bookings/create?${params.toString()}`
+}
 
 type ViewBookScreenProps = {
   bookId: string
@@ -86,8 +89,6 @@ export function ViewBookScreen({
   const router = useRouter()
   const viewModel = useBookDetailViewModel(bookId, getBooksUseCase)
   const { state } = viewModel
-
-  const [isBookingDialogOpen, setIsBookingDialogOpen] = useState(false)
 
   const goBack = () => {
     router.push("/dashboard/books")
@@ -175,7 +176,14 @@ export function ViewBookScreen({
               <BookDetailHeader
                 book={state.bookDetail}
                 onBack={goBack}
-                onCreateBooking={() => setIsBookingDialogOpen(true)}
+                onCreateBooking={() => {
+                  router.push(
+                    getCreateBookingHref(
+                      bookId,
+                      `/dashboard/books/${bookId}`
+                    )
+                  )
+                }}
                 onEdit={() => router.push(`/dashboard/books/${bookId}/edit`)}
               />
             </section>
@@ -202,13 +210,6 @@ export function ViewBookScreen({
           </main>
         ) : null}
       </SidebarInset>
-
-      <CreateBookingDialog
-        open={isBookingDialogOpen}
-        onOpenChange={setIsBookingDialogOpen}
-        bookTitle={state.bookDetail?.title ?? ""}
-        branchStocks={state.bookDetail?.branchStocks ?? []}
-      />
     </SidebarProvider>
   )
 }

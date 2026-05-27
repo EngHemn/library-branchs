@@ -42,7 +42,7 @@ export function CreateAuthorScreen({
   const { state, form } = viewModel
 
   const goBack = () => {
-    router.push("/dashboard/authors")
+    router.back()
   }
 
   return (
