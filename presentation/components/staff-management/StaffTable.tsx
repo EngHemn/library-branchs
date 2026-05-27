@@ -1,6 +1,7 @@
 "use client"
 
 import {
+  ChevronDownIcon,
   EyeIcon,
   PencilIcon,
   PowerIcon,
@@ -9,6 +10,13 @@ import {
 } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import {
   Card,
   CardContent,
@@ -34,7 +42,6 @@ type StaffTableProps = {
 type StaffColumnKey =
   | "staffId"
   | "staffName"
-  | "email"
   | "phone"
   | "role"
   | "branch"
@@ -85,19 +92,34 @@ function StaffPermissionBadges({
     return <span className="text-muted-foreground">None</span>
   }
 
+  if (permissions.length === 1) {
+    return (
+      <Badge variant="outline" className="text-xs">
+        {permissionLabels[permissions[0]]}
+      </Badge>
+    )
+  }
+
   return (
-    <div className="flex flex-wrap gap-1">
-      {permissions.slice(0, 3).map((perm) => (
-        <Badge key={perm} variant="outline" className="text-xs">
-          {permissionLabels[perm]}
-        </Badge>
-      ))}
-      {permissions.length > 3 ? (
-        <Badge variant="outline" className="text-xs">
-          +{permissions.length - 3}
-        </Badge>
-      ) : null}
-    </div>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="outline"
+          size="sm"
+          className="h-6 gap-1 px-2 text-xs font-normal"
+        >
+          {permissions.length} permissions
+          <ChevronDownIcon className="size-3" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start">
+        {permissions.map((perm) => (
+          <DropdownMenuItem key={perm} disabled className="text-xs">
+            {permissionLabels[perm]}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }
 
@@ -128,13 +150,6 @@ export function StaffTable({
       cell: (member) => (
         <span className="font-medium">{member.staffName}</span>
       ),
-    },
-    {
-      key: "email",
-      header: "EMAIL",
-      sortable: true,
-      sortValue: (member) => member.email,
-      cell: (member) => member.email,
     },
     {
       key: "phone",
