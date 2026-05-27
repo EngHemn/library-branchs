@@ -74,7 +74,7 @@ export function useEditBookViewModel(
   const originalBookRef = useRef<{ branchId: string; price: number; stock: number; shelfHint: string } | null>(null)
 
   const form = useForm<BookFormValues>({
-    resolver: zodResolver(bookFormSchema),
+    resolver: zodResolver(bookFormSchema as never),
     defaultValues: {
       title: "",
       language: "",
