@@ -125,10 +125,13 @@ export function BooksTable({
             <BookActionButton
               icon={EyeIcon}
               label="View Book"
+
+              variant="outline"
               onClick={() => onView(book)}
             />
             <BookActionButton
               icon={CalendarIcon}
+              variant="outline"
               label="Book / Reserve"
               onClick={() => onBooking(book)}
             />
@@ -137,6 +140,7 @@ export function BooksTable({
             <BookActionButton
               icon={PencilIcon}
               label="Edit Book"
+              variant="outline"
               onClick={() => onEdit(book)}
             />
             <BookActionButton

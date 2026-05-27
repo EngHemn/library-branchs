@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import type { UseFormReturn } from "react-hook-form"
 import { PlusIcon } from "lucide-react"
 
@@ -23,6 +23,14 @@ import {
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import type { BookFormValues } from "@/domain/schemas/bookFormSchema"
+import {
+  BookingSearchCombobox,
+  type BookingComboboxOption,
+} from "@/presentation/components/bookings/BookingSearchCombobox"
+
+const CREATE_AUTHOR_HREF = "/dashboard/authors/create"
+const CREATE_TRANSLATOR_HREF = "/dashboard/translators/create"
+const CREATE_CATEGORY_HREF = "/dashboard/categories?create=true"
 
 type BookFormFieldsProps = {
   form: UseFormReturn<BookFormValues>
@@ -32,11 +40,15 @@ type BookFormFieldsProps = {
   languages: string[]
   disabled: boolean
   onSubmit: (values: BookFormValues) => void
-  onAddAuthor: (name: string) => void
-  onAddTranslator: (name: string) => void
-  onAddCategory: (name: string) => void
   onAddLanguage: (name: string) => void
   children: React.ReactNode
+}
+
+function toComboboxOptions(items: string[]): BookingComboboxOption[] {
+  return items.map((item) => ({
+    value: item,
+    label: item,
+  }))
 }
 
 type SearchableComboboxProps = {
@@ -134,12 +146,19 @@ export function BookFormFields({
   languages,
   disabled,
   onSubmit,
-  onAddAuthor,
-  onAddTranslator,
-  onAddCategory,
   onAddLanguage,
   children,
 }: BookFormFieldsProps) {
+  const authorOptions = useMemo(() => toComboboxOptions(authors), [authors])
+  const translatorOptions = useMemo(
+    () => toComboboxOptions(translators),
+    [translators]
+  )
+  const categoryOptions = useMemo(
+    () => toComboboxOptions(categories),
+    [categories]
+  )
+
   return (
     <Form {...form}>
       <form
@@ -189,13 +208,14 @@ export function BookFormFields({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Author</FormLabel>
-                <SearchableCombobox
-                  options={authors}
+                <BookingSearchCombobox
+                  options={authorOptions}
                   value={field.value}
-                  onChange={field.onChange}
-                  onAdd={onAddAuthor}
-                  placeholder="Search or add author"
+                  onValueChange={field.onChange}
+                  placeholder="Search author..."
                   disabled={disabled}
+                  createHref={CREATE_AUTHOR_HREF}
+                  addLabel="Add author"
                 />
                 <FormMessage />
               </FormItem>
@@ -208,13 +228,14 @@ export function BookFormFields({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Translator</FormLabel>
-                <SearchableCombobox
-                  options={translators}
+                <BookingSearchCombobox
+                  options={translatorOptions}
                   value={field.value ?? ""}
-                  onChange={field.onChange}
-                  onAdd={onAddTranslator}
-                  placeholder="Search or add translator (optional)"
+                  onValueChange={field.onChange}
+                  placeholder="Search translator..."
                   disabled={disabled}
+                  createHref={CREATE_TRANSLATOR_HREF}
+                  addLabel="Add translator"
                 />
                 <FormMessage />
               </FormItem>
@@ -246,13 +267,14 @@ export function BookFormFields({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Category</FormLabel>
-                <SearchableCombobox
-                  options={categories}
+                <BookingSearchCombobox
+                  options={categoryOptions}
                   value={field.value}
-                  onChange={field.onChange}
-                  onAdd={onAddCategory}
-                  placeholder="Search or add category"
+                  onValueChange={field.onChange}
+                  placeholder="Search category..."
                   disabled={disabled}
+                  createHref={CREATE_CATEGORY_HREF}
+                  addLabel="Add category"
                 />
                 <FormMessage />
               </FormItem>

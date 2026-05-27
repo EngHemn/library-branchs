@@ -203,9 +203,6 @@ export function EditBookScreen({
                   languages={state.languages}
                   disabled={state.isSaving || state.isSaved}
                   onSubmit={viewModel.save}
-                  onAddAuthor={viewModel.addAuthor}
-                  onAddTranslator={viewModel.addTranslator}
-                  onAddCategory={viewModel.addCategory}
                   onAddLanguage={viewModel.addLanguage}
                 >
                   <Separator />
@@ -214,7 +211,7 @@ export function EditBookScreen({
                     <Button
                       type="button"
                       variant="outline"
-                      onClick={goBack}
+                      onClick={() => router.back()}
                       disabled={state.isSaving}
                     >
                       Cancel

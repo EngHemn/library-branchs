@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useMemo, useState } from "react"
 import { CalendarIcon } from "lucide-react"
 import { format } from "date-fns"
 
@@ -13,7 +13,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {
   Popover,
@@ -28,19 +27,32 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
+import { fakeBooks } from "@/data/fake/fakeBooks"
+import { fakeBranches } from "@/data/fake/fakeBranches"
+import { fakeMembers } from "@/data/fake/fakeMembers"
 import { cn } from "@/lib/utils"
-import type { BranchStock } from "@/domain/entities/book/BookDetail"
+import {
+  BookingSearchCombobox,
+  type BookingComboboxOption,
+} from "@/presentation/components/bookings/BookingSearchCombobox"
+
+type CreateBookingDialogProps = {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+}
 
 type BookingFormState = {
+  bookId: string
   branchId: string
   memberId: string
-  bookingType: string
+  bookingType: "inside" | "outside" | ""
   dueDate: Date | undefined
-  status: string
+  status: "reserved" | "borrowed" | "returned" | "overdue" | "cancelled" | ""
   notes: string
 }
 
 const INITIAL_BOOKING_FORM: BookingFormState = {
+  bookId: "",
   branchId: "",
   memberId: "",
   bookingType: "",
@@ -49,31 +61,53 @@ const INITIAL_BOOKING_FORM: BookingFormState = {
   notes: "",
 }
 
-const MOCK_MEMBERS: Record<
-  string,
-  { id: string; name: string; code: string }[]
-> = {}
+const CREATE_BOOK_HREF = "/dashboard/books/create"
+const CREATE_BRANCH_HREF = "/dashboard/branches/create"
+const CREATE_MEMBER_HREF = "/dashboard/members/create"
 
-type CreateBookingDialogProps = {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  bookTitle: string
-  branchStocks: BranchStock[]
+function toBookOptions(): BookingComboboxOption[] {
+  return fakeBooks.map((book) => ({
+    value: book.id,
+    label: book.title,
+    searchText: [book.isbn, book.author, book.category].filter(Boolean).join(" "),
+  }))
+}
+
+function toBranchOptions(): BookingComboboxOption[] {
+  return fakeBranches.map((branch) => ({
+    value: branch.id,
+    label: branch.branchName,
+    searchText: [branch.email, branch.address].filter(Boolean).join(" "),
+  }))
+}
+
+function toMemberOptions(branchId: string): BookingComboboxOption[] {
+  const members = branchId
+    ? fakeMembers.filter((member) => member.branchId === branchId)
+    : fakeMembers
+
+  return members.map((member) => ({
+    value: member.id,
+    label: member.memberName,
+    searchText: [member.memberId, member.membershipNumber, member.email]
+      .filter(Boolean)
+      .join(" "),
+  }))
 }
 
 export function CreateBookingDialog({
   open,
   onOpenChange,
-  bookTitle,
-  branchStocks,
 }: CreateBookingDialogProps) {
   const [bookingForm, setBookingForm] =
     useState<BookingFormState>(INITIAL_BOOKING_FORM)
 
-  const membersForBranch = useMemo(() => {
-    if (!bookingForm.branchId) return []
-    return MOCK_MEMBERS[bookingForm.branchId] ?? []
-  }, [bookingForm.branchId])
+  const bookOptions = useMemo(() => toBookOptions(), [])
+  const branchOptions = useMemo(() => toBranchOptions(), [])
+  const memberOptions = useMemo(
+    () => toMemberOptions(bookingForm.branchId),
+    [bookingForm.branchId]
+  )
 
   const handleOpenChange = (isOpen: boolean) => {
     if (!isOpen) {
@@ -84,6 +118,10 @@ export function CreateBookingDialog({
 
   const handleClose = () => {
     handleOpenChange(false)
+  }
+
+  const handleNavigateToCreate = () => {
+    handleClose()
   }
 
   return (
@@ -97,32 +135,40 @@ export function CreateBookingDialog({
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="booking-book">Book *</Label>
-              <Input id="booking-book" value={bookTitle} disabled />
+              <BookingSearchCombobox
+                key={`booking-book-${open}`}
+                id="booking-book"
+                options={bookOptions}
+                value={bookingForm.bookId}
+                onValueChange={(bookId) =>
+                  setBookingForm((previous) => ({ ...previous, bookId }))
+                }
+                placeholder="Search book..."
+                createHref={CREATE_BOOK_HREF}
+                addLabel="Add book"
+                onNavigateToCreate={handleNavigateToCreate}
+              />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="booking-branch">Branch *</Label>
-              <Select
+              <BookingSearchCombobox
+                key={`booking-branch-${open}`}
+                id="booking-branch"
+                options={branchOptions}
                 value={bookingForm.branchId}
-                onValueChange={(value) => {
-                  setBookingForm((prev) => ({
-                    ...prev,
-                    branchId: value,
+                onValueChange={(branchId) =>
+                  setBookingForm((previous) => ({
+                    ...previous,
+                    branchId,
                     memberId: "",
                   }))
-                }}
-              >
-                <SelectTrigger id="booking-branch" className="w-full">
-                  <SelectValue placeholder="Select branch" />
-                </SelectTrigger>
-                <SelectContent>
-                  {branchStocks.map((branch) => (
-                    <SelectItem key={branch.branchId} value={branch.branchId}>
-                      {branch.branchName}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                }
+                placeholder="Search branch..."
+                createHref={CREATE_BRANCH_HREF}
+                addLabel="Add branch"
+                onNavigateToCreate={handleNavigateToCreate}
+              />
               <p className="text-xs text-muted-foreground">
                 Choose the branch where this booking happens.
               </p>
@@ -132,24 +178,20 @@ export function CreateBookingDialog({
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="booking-member">Member *</Label>
-              <Select
+              <BookingSearchCombobox
+                key={`booking-member-${bookingForm.branchId}-${open}`}
+                id="booking-member"
+                options={memberOptions}
                 value={bookingForm.memberId}
-                onValueChange={(value) =>
-                  setBookingForm((prev) => ({ ...prev, memberId: value }))
+                onValueChange={(memberId) =>
+                  setBookingForm((previous) => ({ ...previous, memberId }))
                 }
+                placeholder="Search member..."
                 disabled={!bookingForm.branchId}
-              >
-                <SelectTrigger id="booking-member" className="w-full">
-                  <SelectValue placeholder="Select member" />
-                </SelectTrigger>
-                <SelectContent>
-                  {membersForBranch.map((member) => (
-                    <SelectItem key={member.id} value={member.id}>
-                      {member.name} ({member.code})
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                createHref={CREATE_MEMBER_HREF}
+                addLabel="Add member"
+                onNavigateToCreate={handleNavigateToCreate}
+              />
               <p className="text-xs text-muted-foreground">
                 Only members linked to the selected branch are available.
               </p>
@@ -159,21 +201,19 @@ export function CreateBookingDialog({
               <Label htmlFor="booking-type">Booking Type *</Label>
               <Select
                 value={bookingForm.bookingType}
-                onValueChange={(value) =>
-                  setBookingForm((prev) => ({ ...prev, bookingType: value }))
+                onValueChange={(value: "inside" | "outside") =>
+                  setBookingForm((previous) => ({
+                    ...previous,
+                    bookingType: value,
+                  }))
                 }
               >
                 <SelectTrigger id="booking-type" className="w-full">
                   <SelectValue placeholder="Select type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="outside-borrow">
-                    Outside - borrowed from store
-                  </SelectItem>
-                  <SelectItem value="inside-read">
-                    Inside - reading in branch
-                  </SelectItem>
-                  <SelectItem value="reserve">Reserve</SelectItem>
+                  <SelectItem value="outside">Outside</SelectItem>
+                  <SelectItem value="inside">Inside</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -202,7 +242,10 @@ export function CreateBookingDialog({
                     mode="single"
                     selected={bookingForm.dueDate}
                     onSelect={(date) =>
-                      setBookingForm((prev) => ({ ...prev, dueDate: date }))
+                      setBookingForm((previous) => ({
+                        ...previous,
+                        dueDate: date,
+                      }))
                     }
                   />
                 </PopoverContent>
@@ -213,15 +256,26 @@ export function CreateBookingDialog({
               <Label htmlFor="booking-status">Status</Label>
               <Select
                 value={bookingForm.status}
-                onValueChange={(value) =>
-                  setBookingForm((prev) => ({ ...prev, status: value }))
+                onValueChange={(
+                  value:
+                    | "reserved"
+                    | "borrowed"
+                    | "returned"
+                    | "overdue"
+                    | "cancelled"
+                ) =>
+                  setBookingForm((previous) => ({
+                    ...previous,
+                    status: value,
+                  }))
                 }
               >
                 <SelectTrigger id="booking-status" className="w-full">
                   <SelectValue placeholder="Select status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="reserved">Reserved</SelectItem>
+                  <SelectItem value="borrowed">Borrowed</SelectItem>
                   <SelectItem value="returned">Returned</SelectItem>
                   <SelectItem value="overdue">Overdue</SelectItem>
                   <SelectItem value="cancelled">Cancelled</SelectItem>
@@ -236,8 +290,11 @@ export function CreateBookingDialog({
               id="booking-notes"
               placeholder="Add any notes about this booking..."
               value={bookingForm.notes}
-              onChange={(e) =>
-                setBookingForm((prev) => ({ ...prev, notes: e.target.value }))
+              onChange={(event) =>
+                setBookingForm((previous) => ({
+                  ...previous,
+                  notes: event.target.value,
+                }))
               }
               rows={3}
             />

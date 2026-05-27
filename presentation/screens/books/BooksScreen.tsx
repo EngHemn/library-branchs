@@ -42,8 +42,12 @@ import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { GetBooksUseCase } from "@/domain/usecases/books/GetBooksUseCase"
 import { BooksFilters } from "@/presentation/components/books/BooksFilters"
 import { BooksTable } from "@/presentation/components/books/BooksTable"
-import { CreateBookingDialog } from "@/presentation/components/books/CreateBookingDialog"
 import { useBooksViewModel } from "@/presentation/viewmodels/books/useBooksViewModel"
+
+function getCreateBookingHref(bookId: string, returnTo: string) {
+  const params = new URLSearchParams({ bookId, returnTo })
+  return `/dashboard/bookings/create?${params.toString()}`
+}
 
 type BooksScreenProps = {
   authUseCase: AuthUseCase
@@ -79,7 +83,6 @@ export function BooksScreen({
 
   const user = state.user
 
-  const [bookingBook, setBookingBook] = useState<Book | null>(null)
   const [deleteBook, setDeleteBook] = useState<Book | null>(null)
 
   const handleConfirmDelete = () => {
@@ -187,7 +190,11 @@ export function BooksScreen({
                 onView={(book) => {
                   router.push(`/dashboard/books/${book.id}`)
                 }}
-                onBooking={(book) => setBookingBook(book)}
+                onBooking={(book) => {
+                  router.push(
+                    getCreateBookingHref(book.id, "/dashboard/books")
+                  )
+                }}
                 onEdit={(book) => {
                   router.push(`/dashboard/books/${book.id}/edit`)
                 }}
@@ -240,31 +247,6 @@ export function BooksScreen({
           </DialogContent>
         </Dialog>
       </SidebarInset>
-
-      <CreateBookingDialog
-        open={bookingBook !== null}
-        onOpenChange={(isOpen) => {
-          if (!isOpen) setBookingBook(null)
-        }}
-        bookTitle={bookingBook?.title ?? ""}
-        branchStocks={
-          bookingBook
-            ? [
-                {
-                  branchId: bookingBook.branchId,
-                  branchName: bookingBook.firstAddedBranch,
-                  available: bookingBook.available,
-                  reserved: 0,
-                  borrowed: 0,
-                  event: 0,
-                  sold: 0,
-                  damaged: 0,
-                  lost: 0,
-                },
-              ]
-            : []
-        }
-      />
     </SidebarProvider>
   )
 }

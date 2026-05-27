@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { GitMergeIcon, PlusIcon, RefreshCwIcon } from "lucide-react"
 
 import { AppSidebar } from "@/components/app-sidebar"
@@ -70,9 +71,23 @@ function LoadingCategoriesScreen() {
 export function CategoriesScreen({
   getCategoriesUseCase,
 }: CategoriesScreenProps) {
+  const router = useRouter()
+  const searchParams = useSearchParams()
   const viewModel = useCategoriesViewModel(getCategoriesUseCase)
   const { state } = viewModel
   const [deleteCategory, setDeleteCategory] = useState<Category | null>(null)
+  const hasOpenedCreateFromQuery = useRef(false)
+
+  const shouldOpenCreateDialog = searchParams.get("create") === "true"
+
+  useEffect(() => {
+    if (!state.isReady || !shouldOpenCreateDialog) return
+    if (hasOpenedCreateFromQuery.current) return
+
+    hasOpenedCreateFromQuery.current = true
+    viewModel.openCreateDialog()
+    router.replace("/dashboard/categories", { scroll: false })
+  }, [router, shouldOpenCreateDialog, state.isReady, viewModel])
 
   const handleConfirmDelete = () => {
     if (!deleteCategory) return

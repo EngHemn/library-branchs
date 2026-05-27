@@ -42,7 +42,7 @@ export function CreateTranslatorScreen({
   const { state, form } = viewModel
 
   const goBack = () => {
-    router.push("/dashboard/translators")
+    router.back()
   }
 
   return (
