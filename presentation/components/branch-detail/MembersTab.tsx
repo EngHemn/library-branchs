@@ -34,7 +34,7 @@ type MembersTabProps = {
 type MemberColumnKey =
   | "memberName"
   | "registerBranch"
-  | "branchesUsed"
+  | "allBranchesUsed"
   | "email"
   | "phone"
   | "activeBookings"
@@ -83,11 +83,11 @@ export function MembersTab({
       ),
     },
     {
-      key: "branchesUsed",
+      key: "allBranchesUsed",
       header: "Branches Used",
       sortable: true,
-      sortValue: (m) => m.branchesUsed,
-      cell: (m) => m.branchesUsed.toLocaleString(),
+      sortValue: (m) => m.allBranchesUsed.length,
+      cell: (m) => m.allBranchesUsed.length.toLocaleString(),
     },
     {
       key: "email",
