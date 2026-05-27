@@ -63,7 +63,7 @@ export function useCreateBookViewModel(
   const [error, setError] = useState<string | null>(null)
 
   const form = useForm<BookFormValues>({
-    resolver: zodResolver(bookFormSchema),
+    resolver: zodResolver(bookFormSchema as never),
     defaultValues: {
       title: "",
       language: "",

@@ -96,7 +96,7 @@ function SearchableCombobox({
         {filteredOptions.length > 0 ? (
           <ComboboxList>
             {filteredOptions.map((item) => (
-              <ComboboxItem key={item} value={item} label={item}>
+              <ComboboxItem key={item} value={item}>
                 {item}
               </ComboboxItem>
             ))}
