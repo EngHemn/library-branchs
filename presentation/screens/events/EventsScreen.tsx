@@ -2,15 +2,6 @@
 
 import { PlusIcon, RefreshCwIcon } from "lucide-react"
 
-import { AppSidebar } from "@/components/app-sidebar"
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -19,12 +10,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar"
 import { Skeleton } from "@/components/ui/skeleton"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import type { GetEventsUseCase } from "@/domain/usecases/events/GetEventsUseCase"
@@ -34,6 +19,7 @@ import { EventSummaryCards } from "@/presentation/components/events/EventSummary
 import { EventsFilters } from "@/presentation/components/events/EventsFilters"
 import { EventBranchBooksSheet } from "@/presentation/components/events/EventBranchBooksSheet"
 import { EventsTable } from "@/presentation/components/events/EventsTable"
+import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
 import { useEventsViewModel } from "@/presentation/viewmodels/events/useEventsViewModel"
 
 type EventsScreenProps = {
@@ -65,51 +51,37 @@ export function EventsScreen({ getEventsUseCase }: EventsScreenProps) {
   const summaryLoading =
     state.summaryStatus === "idle" || state.summaryStatus === "loading"
 
-  return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-          <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
-            <Separator
-              orientation="vertical"
-              className="mr-2 data-vertical:h-4 data-vertical:self-auto"
-            />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="/dashboard">Workspace</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Event Management</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-          </div>
-        </header>
+  useDashboardBreadcrumbs([
+    { label: "Workspace", href: "/dashboard" },
+    { label: "Event Management" },
+  ])
 
-        {state.isLoading ? (
-          <LoadingEventsScreen />
-        ) : state.eventsStatus === "error" ? (
-          <div className="flex flex-1 flex-col gap-4 p-4 pt-0 md:p-6 md:pt-0">
-            <Card className="mt-4 rounded-lg border-destructive/40">
-              <CardHeader>
-                <CardTitle>Unable to load events</CardTitle>
-                <CardDescription>
-                  {state.eventsError ?? "Something went wrong. Please try again."}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button type="button" onClick={() => void viewModel.reload()}>
-                  <RefreshCwIcon />
-                  Retry
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        ) : (
+  if (state.isLoading) {
+    return <LoadingEventsScreen />
+  }
+
+  if (state.eventsStatus === "error") {
+    return (
+      <div className="flex flex-1 flex-col gap-4 p-4 pt-0 md:p-6 md:pt-0">
+        <Card className="mt-4 rounded-lg border-destructive/40">
+          <CardHeader>
+            <CardTitle>Unable to load events</CardTitle>
+            <CardDescription>
+              {state.eventsError ?? "Something went wrong. Please try again."}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button type="button" onClick={() => void viewModel.reload()}>
+              <RefreshCwIcon />
+              Retry
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  return (
           <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
             <div className="flex flex-col gap-4 pt-4 sm:flex-row sm:items-start sm:justify-between">
               <div className="space-y-1">
@@ -227,9 +199,6 @@ export function EventsScreen({ getEventsUseCase }: EventsScreenProps) {
               onTranslatorFilterChange={viewModel.setBranchBooksTranslatorFilter}
               onResetFilters={viewModel.resetBranchBooksFilters}
             />
-          </div>
-        )}
-      </SidebarInset>
-    </SidebarProvider>
+      </div>
   )
 }

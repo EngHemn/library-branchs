@@ -3,15 +3,6 @@
 import { useRouter } from "next/navigation"
 import { ArrowLeftIcon, Loader2Icon, SaveIcon } from "lucide-react"
 
-import { AppSidebar } from "@/components/app-sidebar"
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -30,14 +21,10 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar"
 import { Skeleton } from "@/components/ui/skeleton"
 import type { BranchManagementUseCase } from "@/domain/usecases/branch/BranchManagementUseCase"
 import { LocationPicker } from "@/presentation/components/branch-management/LocationPicker"
+import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
 import { useEditBranchViewModel } from "@/presentation/viewmodels/branch-management/useEditBranchViewModel"
 
 type EditBranchScreenProps = {
@@ -70,49 +57,21 @@ function LoadingState() {
   )
 }
 
-export function EditBranchScreen({
-  branchId,
-  branchManagementUseCase,
-}: EditBranchScreenProps) {
+export function EditBranchScreen({ branchId, branchManagementUseCase }: EditBranchScreenProps) {
   const router = useRouter()
   const viewModel = useEditBranchViewModel(branchId, branchManagementUseCase)
   const { state } = viewModel
 
-  const goBack = () => {
-    router.push("/dashboard/branches")
-  }
+  useDashboardBreadcrumbs([
+    { label: "Workspace", href: "/dashboard" },
+    { label: "Branch Management", href: "/dashboard/branches" },
+    { label: "Edit Branch" },
+  ])
+
+  const goBack = () => router.push("/dashboard/branches")
 
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-      <header className="flex h-16 shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-        <div className="flex items-center gap-2 px-4">
-          <SidebarTrigger className="-ml-1" />
-          <Separator
-            orientation="vertical"
-            className="mr-2 data-vertical:h-4 data-vertical:self-auto"
-          />
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem className="hidden md:block">
-                <BreadcrumbLink href="/dashboard">Workspace</BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator className="hidden md:block" />
-              <BreadcrumbItem className="hidden md:block">
-                <BreadcrumbLink href="/dashboard/branches">
-                  Branch Management
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator className="hidden md:block" />
-              <BreadcrumbItem>
-                <BreadcrumbPage>Edit Branch</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
-        </div>
-      </header>
-
+    <>
       {state.isLoading ? <LoadingState /> : null}
 
       {state.isNotFound ? (
@@ -121,8 +80,7 @@ export function EditBranchScreen({
             <CardHeader>
               <CardTitle>Branch not found</CardTitle>
               <CardDescription>
-                The branch you are looking for does not exist or has been
-                removed.
+                The branch you are looking for does not exist or has been removed.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -156,14 +114,10 @@ export function EditBranchScreen({
         <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
           <section className="flex items-center justify-between pt-4">
             <div>
-              <h1 className="text-2xl font-semibold tracking-normal">
-                Edit Branch
-              </h1>
+              <h1 className="text-2xl font-semibold tracking-normal">Edit Branch</h1>
               <p className="mt-1 text-sm text-muted-foreground">
                 Update the details for{" "}
-                <span className="font-medium text-foreground">
-                  {state.branch.branchName}
-                </span>
+                <span className="font-medium text-foreground">{state.branch.branchName}</span>
               </p>
             </div>
             <Button variant="outline" onClick={goBack}>
@@ -188,9 +142,7 @@ export function EditBranchScreen({
           {state.error && !state.isError ? (
             <Card className="rounded-lg border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950">
               <CardContent className="py-3">
-                <p className="text-sm font-medium text-red-800 dark:text-red-200">
-                  {state.error}
-                </p>
+                <p className="text-sm font-medium text-red-800 dark:text-red-200">{state.error}</p>
               </CardContent>
             </Card>
           ) : null}
@@ -199,9 +151,7 @@ export function EditBranchScreen({
             <CardHeader>
               <CardTitle>Branch Details</CardTitle>
               <CardDescription>
-                {state.branch.type === "main"
-                  ? "Main branch information"
-                  : "Sub branch information"}
+                {state.branch.type === "main" ? "Main branch information" : "Sub branch information"}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -218,15 +168,11 @@ export function EditBranchScreen({
                     <Input
                       id="branchName"
                       value={state.form.branchName}
-                      onChange={(e) =>
-                        viewModel.setField("branchName", e.target.value)
-                      }
+                      onChange={(e) => viewModel.setField("branchName", e.target.value)}
                       disabled={state.isSaving}
                     />
                     {state.fieldErrors.branchName ? (
-                      <p className="text-sm text-destructive">
-                        {state.fieldErrors.branchName}
-                      </p>
+                      <p className="text-sm text-destructive">{state.fieldErrors.branchName}</p>
                     ) : null}
                   </div>
 
@@ -236,15 +182,11 @@ export function EditBranchScreen({
                       id="email"
                       type="email"
                       value={state.form.email}
-                      onChange={(e) =>
-                        viewModel.setField("email", e.target.value)
-                      }
+                      onChange={(e) => viewModel.setField("email", e.target.value)}
                       disabled={state.isSaving}
                     />
                     {state.fieldErrors.email ? (
-                      <p className="text-sm text-destructive">
-                        {state.fieldErrors.email}
-                      </p>
+                      <p className="text-sm text-destructive">{state.fieldErrors.email}</p>
                     ) : null}
                   </div>
 
@@ -253,15 +195,11 @@ export function EditBranchScreen({
                     <Input
                       id="adminName"
                       value={state.form.adminName}
-                      onChange={(e) =>
-                        viewModel.setField("adminName", e.target.value)
-                      }
+                      onChange={(e) => viewModel.setField("adminName", e.target.value)}
                       disabled={state.isSaving}
                     />
                     {state.fieldErrors.adminName ? (
-                      <p className="text-sm text-destructive">
-                        {state.fieldErrors.adminName}
-                      </p>
+                      <p className="text-sm text-destructive">{state.fieldErrors.adminName}</p>
                     ) : null}
                   </div>
 
@@ -270,15 +208,11 @@ export function EditBranchScreen({
                     <Input
                       id="phone"
                       value={state.form.phone}
-                      onChange={(e) =>
-                        viewModel.setField("phone", e.target.value)
-                      }
+                      onChange={(e) => viewModel.setField("phone", e.target.value)}
                       disabled={state.isSaving}
                     />
                     {state.fieldErrors.phone ? (
-                      <p className="text-sm text-destructive">
-                        {state.fieldErrors.phone}
-                      </p>
+                      <p className="text-sm text-destructive">{state.fieldErrors.phone}</p>
                     ) : null}
                   </div>
 
@@ -287,15 +221,11 @@ export function EditBranchScreen({
                     <Input
                       id="address"
                       value={state.form.address}
-                      onChange={(e) =>
-                        viewModel.setField("address", e.target.value)
-                      }
+                      onChange={(e) => viewModel.setField("address", e.target.value)}
                       disabled={state.isSaving}
                     />
                     {state.fieldErrors.address ? (
-                      <p className="text-sm text-destructive">
-                        {state.fieldErrors.address}
-                      </p>
+                      <p className="text-sm text-destructive">{state.fieldErrors.address}</p>
                     ) : null}
                   </div>
 
@@ -304,12 +234,7 @@ export function EditBranchScreen({
                       <Label htmlFor="parentBranch">Parent Branch</Label>
                       <Select
                         value={state.form.parentBranch ?? ""}
-                        onValueChange={(value) =>
-                          viewModel.setField(
-                            "parentBranch",
-                            value || null
-                          )
-                        }
+                        onValueChange={(value) => viewModel.setField("parentBranch", value || null)}
                         disabled={state.isSaving}
                       >
                         <SelectTrigger id="parentBranch">
@@ -324,9 +249,7 @@ export function EditBranchScreen({
                         </SelectContent>
                       </Select>
                       {state.fieldErrors.parentBranch ? (
-                        <p className="text-sm text-destructive">
-                          {state.fieldErrors.parentBranch}
-                        </p>
+                        <p className="text-sm text-destructive">{state.fieldErrors.parentBranch}</p>
                       ) : null}
                     </div>
                   ) : null}
@@ -344,20 +267,11 @@ export function EditBranchScreen({
                 <Separator />
 
                 <div className="flex justify-end gap-3">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={goBack}
-                    disabled={state.isSaving}
-                  >
+                  <Button type="button" variant="outline" onClick={goBack} disabled={state.isSaving}>
                     Cancel
                   </Button>
                   <Button type="submit" disabled={state.isSaving}>
-                    {state.isSaving ? (
-                      <Loader2Icon className="animate-spin" />
-                    ) : (
-                      <SaveIcon />
-                    )}
+                    {state.isSaving ? <Loader2Icon className="animate-spin" /> : <SaveIcon />}
                     {state.isSaving ? "Saving..." : "Save Changes"}
                   </Button>
                 </div>
@@ -366,7 +280,6 @@ export function EditBranchScreen({
           </Card>
         </div>
       ) : null}
-      </SidebarInset>
-    </SidebarProvider>
+    </>
   )
 }

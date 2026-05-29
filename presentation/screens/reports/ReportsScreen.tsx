@@ -14,15 +14,6 @@ import {
   UsersIcon,
 } from "lucide-react"
 
-import { AppSidebar } from "@/components/app-sidebar"
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -31,12 +22,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type {
@@ -51,6 +36,7 @@ import { ReportDataTable } from "@/presentation/components/reports/ReportDataTab
 import { ReportRechart } from "@/presentation/components/reports/ReportRechart"
 import { ReportsFilters } from "@/presentation/components/reports/ReportsFilters"
 import { ReportsSummaryCards } from "@/presentation/components/reports/ReportsSummaryCards"
+import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
 import { useReportsViewModel } from "@/presentation/viewmodels/reports/useReportsViewModel"
 
 type ReportsScreenProps = {
@@ -87,7 +73,6 @@ function tablesForTab(tables: ReportTable[], category: ReportCategory): ReportTa
   if (category !== "overview") {
     return []
   }
-
   return tables.filter((table) => table.category === "overview")
 }
 
@@ -118,156 +103,137 @@ export function ReportsScreen({ getReportsUseCase }: ReportsScreenProps) {
   const { state } = viewModel
   const reports = state.isReady ? state.reports : null
 
+  useDashboardBreadcrumbs([
+    { label: "Workspace", href: "/dashboard" },
+    { label: "Reports" },
+  ])
+
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-          <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
-            <Separator
-              orientation="vertical"
-              className="mr-2 data-vertical:h-4 data-vertical:self-auto"
-            />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="/dashboard">Workspace</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Reports</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-          </div>
-        </header>
+    <>
+      {state.isLoading ? <LoadingReportsScreen /> : null}
 
-        {state.isLoading ? <LoadingReportsScreen /> : null}
-
-        {state.error ? (
-          <div className="flex flex-1 items-center justify-center p-4">
-            <Card className="w-full max-w-md rounded-lg">
-              <CardHeader>
-                <CardTitle>Reports unavailable</CardTitle>
-                <CardDescription>{state.error}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button onClick={viewModel.reload}>
-                  <RefreshCwIcon />
-                  Retry
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        ) : null}
-
-        {reports ? (
-          <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
-            <section className="flex flex-col gap-3 pt-4 md:flex-row md:items-center md:justify-between">
-              <div>
-                <h1 className="text-2xl font-semibold tracking-normal">
-                  Reports & Analytics
-                </h1>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  Recharts dashboards with branch and date filters across all
-                  library modules.
-                </p>
-              </div>
-              <Button variant="outline" size="sm" onClick={viewModel.reload}>
+      {state.error ? (
+        <div className="flex flex-1 items-center justify-center p-4">
+          <Card className="w-full max-w-md rounded-lg">
+            <CardHeader>
+              <CardTitle>Reports unavailable</CardTitle>
+              <CardDescription>{state.error}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button onClick={viewModel.reload}>
                 <RefreshCwIcon />
-                Refresh
+                Retry
               </Button>
-            </section>
+            </CardContent>
+          </Card>
+        </div>
+      ) : null}
 
-            <Card className="rounded-lg">
-              <CardContent className="pt-6">
-                <ReportsFilters
-                  period={state.period}
-                  onPeriodChange={viewModel.setPeriod}
-                  branchId={state.branchId}
-                  onBranchChange={viewModel.setBranchId}
-                  branches={state.branches}
-                  dateFrom={state.dateFrom}
-                  dateTo={state.dateTo}
-                  onDateFromChange={viewModel.setDateFrom}
-                  onDateToChange={viewModel.setDateTo}
-                  periodLabel={reports.periodLabel}
-                  branchName={reports.branchName}
-                  generatedAt={reports.generatedAt}
-                />
-              </CardContent>
-            </Card>
+      {reports ? (
+        <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
+          <section className="flex flex-col gap-3 pt-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <h1 className="text-2xl font-semibold tracking-normal">
+                Reports & Analytics
+              </h1>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Recharts dashboards with branch and date filters across all
+                library modules.
+              </p>
+            </div>
+            <Button variant="outline" size="sm" onClick={viewModel.reload}>
+              <RefreshCwIcon />
+              Refresh
+            </Button>
+          </section>
 
-            <Tabs
-              value={state.category}
-              onValueChange={(value) =>
-                viewModel.setCategory(value as ReportCategory)
-              }
-            >
-              <div className="overflow-x-auto pb-1">
-                <TabsList variant="line" className="w-max min-w-full justify-start">
-                  {reportTabs.map((tab) => (
-                    <TabsTrigger key={tab.value} value={tab.value}>
-                      <tab.icon className="size-4" />
-                      {tab.label}
-                    </TabsTrigger>
-                  ))}
-                </TabsList>
-              </div>
+          <Card className="rounded-lg">
+            <CardContent className="pt-6">
+              <ReportsFilters
+                period={state.period}
+                onPeriodChange={viewModel.setPeriod}
+                branchId={state.branchId}
+                onBranchChange={viewModel.setBranchId}
+                branches={state.branches}
+                dateFrom={state.dateFrom}
+                dateTo={state.dateTo}
+                onDateFromChange={viewModel.setDateFrom}
+                onDateToChange={viewModel.setDateTo}
+                periodLabel={reports.periodLabel}
+                branchName={reports.branchName}
+                generatedAt={reports.generatedAt}
+              />
+            </CardContent>
+          </Card>
 
-              {reportTabs.map((tab) => {
-                const tabCharts = chartsForTab(reports.charts, tab.value)
-                const tabKpis = kpisForTab(reports.kpis, tab.value)
-                const tabTables = tablesForTab(reports.tables, tab.value)
+          <Tabs
+            value={state.category}
+            onValueChange={(value) =>
+              viewModel.setCategory(value as ReportCategory)
+            }
+          >
+            <div className="overflow-x-auto pb-1">
+              <TabsList variant="line" className="w-max min-w-full justify-start">
+                {reportTabs.map((tab) => (
+                  <TabsTrigger key={tab.value} value={tab.value}>
+                    <tab.icon className="size-4" />
+                    {tab.label}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </div>
 
-                return (
-                  <TabsContent
-                    key={tab.value}
-                    value={tab.value}
-                    className="mt-4 space-y-5"
-                  >
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <BookMarkedIcon className="size-4" />
-                      <span>
-                        {tabCharts.length} charts · {reports.branchName} ·{" "}
-                        {state.dateFrom} → {state.dateTo}
-                      </span>
+            {reportTabs.map((tab) => {
+              const tabCharts = chartsForTab(reports.charts, tab.value)
+              const tabKpis = kpisForTab(reports.kpis, tab.value)
+              const tabTables = tablesForTab(reports.tables, tab.value)
+
+              return (
+                <TabsContent
+                  key={tab.value}
+                  value={tab.value}
+                  className="mt-4 space-y-5"
+                >
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <BookMarkedIcon className="size-4" />
+                    <span>
+                      {tabCharts.length} charts · {reports.branchName} ·{" "}
+                      {state.dateFrom} → {state.dateTo}
+                    </span>
+                  </div>
+
+                  <ReportsSummaryCards kpis={tabKpis} />
+
+                  {tabCharts.length > 0 ? (
+                    <div className="grid gap-4 md:grid-cols-2">
+                      {tabCharts.map((chart) => (
+                        <ReportRechart key={chart.id} chart={chart} />
+                      ))}
                     </div>
+                  ) : (
+                    <Card className="rounded-lg">
+                      <CardHeader>
+                        <CardTitle>No charts for this tab</CardTitle>
+                        <CardDescription>
+                          Adjust branch or date filters and refresh.
+                        </CardDescription>
+                      </CardHeader>
+                    </Card>
+                  )}
 
-                    <ReportsSummaryCards kpis={tabKpis} />
-
-                    {tabCharts.length > 0 ? (
-                      <div className="grid gap-4 md:grid-cols-2">
-                        {tabCharts.map((chart) => (
-                          <ReportRechart key={chart.id} chart={chart} />
-                        ))}
-                      </div>
-                    ) : (
-                      <Card className="rounded-lg">
-                        <CardHeader>
-                          <CardTitle>No charts for this tab</CardTitle>
-                          <CardDescription>
-                            Adjust branch or date filters and refresh.
-                          </CardDescription>
-                        </CardHeader>
-                      </Card>
-                    )}
-
-                    {tabTables.length > 0 ? (
-                      <div className="space-y-4">
-                        {tabTables.map((table) => (
-                          <ReportDataTable key={table.id} table={table} />
-                        ))}
-                      </div>
-                    ) : null}
-                  </TabsContent>
-                )
-              })}
-            </Tabs>
-          </div>
-        ) : null}
-      </SidebarInset>
-    </SidebarProvider>
+                  {tabTables.length > 0 ? (
+                    <div className="space-y-4">
+                      {tabTables.map((table) => (
+                        <ReportDataTable key={table.id} table={table} />
+                      ))}
+                    </div>
+                  ) : null}
+                </TabsContent>
+              )
+            })}
+          </Tabs>
+        </div>
+      ) : null}
+    </>
   )
 }
