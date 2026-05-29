@@ -4,15 +4,6 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { PlusIcon, RefreshCwIcon } from "lucide-react"
 
-import { AppSidebar } from "@/components/app-sidebar"
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -29,18 +20,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Separator } from "@/components/ui/separator"
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar"
 import { Skeleton } from "@/components/ui/skeleton"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import type { Author } from "@/domain/entities/author/Author"
 import type { GetAuthorsUseCase } from "@/domain/usecases/authors/GetAuthorsUseCase"
 import { AuthorsFilters } from "@/presentation/components/authors/AuthorsFilters"
 import { AuthorsTable } from "@/presentation/components/authors/AuthorsTable"
+import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
 import { useAuthorsViewModel } from "@/presentation/viewmodels/authors/useAuthorsViewModel"
 
 type AuthorsScreenProps = {
@@ -66,6 +52,11 @@ export function AuthorsScreen({ getAuthorsUseCase }: AuthorsScreenProps) {
   const { state } = viewModel
   const [deleteAuthor, setDeleteAuthor] = useState<Author | null>(null)
 
+  useDashboardBreadcrumbs([
+    { label: "Workspace", href: "/dashboard" },
+    { label: "Authors" },
+  ])
+
   const handleConfirmDelete = () => {
     if (!deleteAuthor) return
     void (async () => {
@@ -75,51 +66,28 @@ export function AuthorsScreen({ getAuthorsUseCase }: AuthorsScreenProps) {
   }
 
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-          <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
-            <Separator
-              orientation="vertical"
-              className="mr-2 data-vertical:h-4 data-vertical:self-auto"
-            />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="/dashboard">Workspace</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Authors</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-          </div>
-        </header>
+    <>
+      {state.isLoading ? <LoadingAuthorsScreen /> : null}
 
-        {state.isLoading ? <LoadingAuthorsScreen /> : null}
+      {state.error ? (
+        <div className="flex flex-1 items-center justify-center p-4">
+          <Card className="w-full max-w-md rounded-lg">
+            <CardHeader>
+              <CardTitle>Authors unavailable</CardTitle>
+              <CardDescription>{state.error}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button onClick={() => void viewModel.reload()}>
+                <RefreshCwIcon />
+                Retry
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      ) : null}
 
-        {state.error ? (
-          <div className="flex flex-1 items-center justify-center p-4">
-            <Card className="w-full max-w-md rounded-lg">
-              <CardHeader>
-                <CardTitle>Authors unavailable</CardTitle>
-                <CardDescription>{state.error}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button onClick={() => void viewModel.reload()}>
-                  <RefreshCwIcon />
-                  Retry
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        ) : null}
-
-        {state.isReady ? (
-          <TooltipProvider>
+      {state.isReady ? (
+        <TooltipProvider>
           <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
             <section className="flex flex-col gap-3 pt-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
@@ -143,47 +111,42 @@ export function AuthorsScreen({ getAuthorsUseCase }: AuthorsScreenProps) {
 
             <AuthorsTable
               authors={state.filteredAuthors}
-              onView={(author) => {
-                router.push(`/dashboard/authors/${author.id}`)
-              }}
-              onEdit={(author) => {
-                router.push(`/dashboard/authors/${author.id}/edit`)
-              }}
+              onView={(author) => router.push(`/dashboard/authors/${author.id}`)}
+              onEdit={(author) => router.push(`/dashboard/authors/${author.id}/edit`)}
               onDelete={(author) => setDeleteAuthor(author)}
             />
           </div>
-          </TooltipProvider>
-        ) : null}
+        </TooltipProvider>
+      ) : null}
 
-        <Dialog
-          open={deleteAuthor !== null}
-          onOpenChange={(isOpen) => {
-            if (!isOpen) setDeleteAuthor(null)
-          }}
-        >
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Delete Author</DialogTitle>
-              <DialogDescription>
-                Are you sure you want to delete &ldquo;{deleteAuthor?.name}
-                &rdquo;? This action cannot be undone.
-              </DialogDescription>
-            </DialogHeader>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setDeleteAuthor(null)}>
-                Cancel
-              </Button>
-              <Button
-                variant="destructive"
-                onClick={handleConfirmDelete}
-                disabled={state.isDeleting}
-              >
-                Delete
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </SidebarInset>
-    </SidebarProvider>
+      <Dialog
+        open={deleteAuthor !== null}
+        onOpenChange={(isOpen) => {
+          if (!isOpen) setDeleteAuthor(null)
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Author</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete &ldquo;{deleteAuthor?.name}
+              &rdquo;? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteAuthor(null)}>
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleConfirmDelete}
+              disabled={state.isDeleting}
+            >
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }
