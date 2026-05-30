@@ -1,8 +1,10 @@
 "use client"
 
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useMutation, useQuery } from "@tanstack/react-query"
+
 import {
   createStockFormSchema,
   type CreateStockFormValues,
@@ -32,17 +34,17 @@ type CreateStockViewModel = {
 
 function toUniqueBooks(rows: StockRow[]): { id: string; name: string }[] {
   const map = new Map<string, string>()
-  rows.forEach((row) => {
+  for (const row of rows) {
     if (!map.has(row.bookId)) map.set(row.bookId, row.bookTitle)
-  })
+  }
   return Array.from(map.entries()).map(([id, name]) => ({ id, name }))
 }
 
 function toUniqueBranches(rows: StockRow[]): { id: string; name: string }[] {
   const map = new Map<string, string>()
-  rows.forEach((row) => {
+  for (const row of rows) {
     if (!map.has(row.branchId)) map.set(row.branchId, row.branchName)
-  })
+  }
   return Array.from(map.entries()).map(([id, name]) => ({ id, name }))
 }
 
@@ -51,23 +53,22 @@ function toSubBranches(
   branchId: string
 ): { id: string; name: string }[] {
   const map = new Map<string, string>()
-  rows.forEach((row) => {
+  for (const row of rows) {
     if (row.branchId === branchId && row.subBranchId && row.subBranchName) {
       map.set(row.subBranchId, row.subBranchName)
     }
-  })
+  }
   return Array.from(map.entries()).map(([id, name]) => ({ id, name }))
 }
 
 export function useCreateStockViewModel(
   stockUseCase: StockUseCase
 ): CreateStockViewModel {
-  const [status, setStatus] = useState<CreateStockStatus>("idle")
+  const [isSaved, setIsSaved] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [rows, setRows] = useState<StockRow[]>([])
 
   const form = useForm<CreateStockFormValues>({
-    resolver: zodResolver(createStockFormSchema as never),
+    resolver: zodResolver(createStockFormSchema),
     defaultValues: {
       bookId: "",
       branchId: "",
@@ -79,35 +80,17 @@ export function useCreateStockViewModel(
 
   const selectedBranchId = form.watch("branchId")
 
-  useEffect(() => {
-    let cancelled = false
-
-    async function loadRows() {
-      setStatus("loading")
+  const stockRowsQuery = useQuery({
+    queryKey: ["stock-rows"],
+    queryFn: async () => {
       const result = await stockUseCase.getStockRows()
-      if (cancelled) return
+      if (!result.success) throw new Error(result.error)
+      return result.data
+    },
+  })
 
-      if (!result.success) {
-        setStatus("error")
-        setError(result.error)
-        return
-      }
-
-      setRows(result.data)
-      setStatus("ready")
-    }
-
-    void loadRows()
-    return () => {
-      cancelled = true
-    }
-  }, [stockUseCase])
-
-  const save = useCallback(
-    async (values: CreateStockFormValues) => {
-      setStatus("saving")
-      setError(null)
-
+  const saveMutation = useMutation({
+    mutationFn: async (values: CreateStockFormValues) => {
       const result = await stockUseCase.createStock({
         bookId: values.bookId,
         branchId: values.branchId,
@@ -115,43 +98,45 @@ export function useCreateStockViewModel(
         initialStock: values.initialStock,
         minStock: values.minStock,
       })
-
-      if (!result.success) {
-        setStatus("ready")
-        setError(result.error)
-        return
-      }
-
-      setStatus("saved")
+      if (!result.success) throw new Error(result.error)
+      return result.data
     },
-    [stockUseCase]
-  )
-
-  const books = useMemo(() => toUniqueBooks(rows), [rows])
-  const branches = useMemo(() => toUniqueBranches(rows), [rows])
-  const subBranches = useMemo(
-    () => toSubBranches(rows, selectedBranchId ?? ""),
-    [rows, selectedBranchId]
-  )
+    onSuccess: () => setIsSaved(true),
+    onError: (err: Error) => setError(err.message),
+  })
 
   useEffect(() => {
     form.setValue("subBranchId", "none")
   }, [selectedBranchId, form])
 
-  const state = useMemo<CreateStockState>(
-    () => ({
-      status,
-      error,
-      books,
-      branches,
-      subBranches,
-      isLoading: status === "idle" || status === "loading",
-      isReady: status === "ready",
-      isSaving: status === "saving",
-      isSaved: status === "saved",
-    }),
-    [status, error, books, branches, subBranches]
-  )
+  async function save(values: CreateStockFormValues): Promise<void> {
+    setError(null)
+    await saveMutation.mutateAsync(values).catch(() => undefined)
+  }
+
+  const rows = stockRowsQuery.data ?? []
+  const isLoading = stockRowsQuery.isPending
+  const isSaving = saveMutation.isPending
+
+  const status: CreateStockStatus = isSaved
+    ? "saved"
+    : isSaving
+      ? "saving"
+      : isLoading
+        ? "loading"
+        : "ready"
+
+  const state: CreateStockState = {
+    status,
+    error,
+    books: toUniqueBooks(rows),
+    branches: toUniqueBranches(rows),
+    subBranches: toSubBranches(rows, selectedBranchId ?? ""),
+    isLoading,
+    isReady: status === "ready",
+    isSaving,
+    isSaved,
+  }
 
   return { state, form, save }
 }

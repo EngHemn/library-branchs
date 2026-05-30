@@ -1,8 +1,8 @@
 "use client"
 
-import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useMutation } from "@tanstack/react-query"
 
 import {
   translatorFormSchema,
@@ -29,11 +29,8 @@ type CreateTranslatorViewModel = {
 export function useCreateTranslatorViewModel(
   getTranslatorsUseCase: GetTranslatorsUseCase
 ): CreateTranslatorViewModel {
-  const [status, setStatus] = useState<CreateTranslatorStatus>("ready")
-  const [error, setError] = useState<string | null>(null)
-
   const form = useForm<TranslatorFormInput, unknown, TranslatorFormValues>({
-    resolver: zodResolver(translatorFormSchema as never),
+    resolver: zodResolver(translatorFormSchema),
     defaultValues: {
       name: "",
       language: "",
@@ -42,23 +39,34 @@ export function useCreateTranslatorViewModel(
     },
   })
 
+  const {
+    mutateAsync,
+    isPending: isSaving,
+    isSuccess: isSaved,
+    error: mutationError,
+  } = useMutation({
+    mutationFn: async (values: TranslatorFormValues) => {
+      const result = await getTranslatorsUseCase.createTranslator(values)
+      if (!result.success) throw new Error(result.error)
+      return result.data
+    },
+  })
+
   async function save(values: TranslatorFormValues): Promise<void> {
-    setStatus("saving")
-    setError(null)
-    const result = await getTranslatorsUseCase.createTranslator(values)
-    if (!result.success) {
-      setStatus("ready")
-      setError(result.error)
-      return
+    try {
+      await mutateAsync(values)
+    } catch {
+      // error captured in mutationError state
     }
-    setStatus("saved")
   }
+
+  const status: CreateTranslatorStatus = isSaved ? "saved" : isSaving ? "saving" : "ready"
 
   const state: CreateTranslatorViewModelState = {
     status,
-    error,
-    isSaving: status === "saving",
-    isSaved: status === "saved",
+    error: mutationError?.message ?? null,
+    isSaving,
+    isSaved,
   }
 
   return { state, form, save }

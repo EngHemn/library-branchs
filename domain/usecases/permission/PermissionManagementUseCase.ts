@@ -1,7 +1,9 @@
 import type {
+  CreatePermissionRoleInput,
   PermissionCode,
   PermissionConfig,
-  PermissionStaffMember,
+  PermissionRole,
+  UpdatePermissionRoleInput,
 } from "@/domain/entities/permission/Permission"
 import type { PermissionRepository } from "@/domain/repositories/PermissionRepository"
 import type { Result } from "@/domain/result/Result"
@@ -9,18 +11,33 @@ import type { Result } from "@/domain/result/Result"
 export class PermissionManagementUseCase {
   constructor(private readonly permissionRepository: PermissionRepository) {}
 
-  getPermissionStaff(): Promise<Result<PermissionStaffMember[]>> {
-    return this.permissionRepository.getPermissionStaff()
+  getPermissionRoles(): Promise<Result<PermissionRole[]>> {
+    return this.permissionRepository.getPermissionRoles()
   }
 
   getPermissionConfig(): Promise<Result<PermissionConfig>> {
     return this.permissionRepository.getPermissionConfig()
   }
 
-  savePermissions(
-    staffId: string,
+  createRole(input: CreatePermissionRoleInput): Promise<Result<PermissionRole>> {
+    return this.permissionRepository.createRole(input)
+  }
+
+  updateRole(
+    roleId: string,
+    input: UpdatePermissionRoleInput
+  ): Promise<Result<PermissionRole>> {
+    return this.permissionRepository.updateRole(roleId, input)
+  }
+
+  deleteRole(roleId: string): Promise<Result<null>> {
+    return this.permissionRepository.deleteRole(roleId)
+  }
+
+  saveRolePermissions(
+    roleId: string,
     permissions: PermissionCode[]
-  ): Promise<Result<PermissionStaffMember>> {
-    return this.permissionRepository.savePermissions(staffId, permissions)
+  ): Promise<Result<PermissionRole>> {
+    return this.permissionRepository.saveRolePermissions(roleId, permissions)
   }
 }

@@ -8,6 +8,7 @@ export type CreateStaffInput = {
   branch: string
   email: string
   phone: string
+  password: string
 }
 
 export type UpdateStaffInput = {
@@ -17,6 +18,7 @@ export type UpdateStaffInput = {
   branch: string
   email: string
   phone: string
+  password?: string
 }
 
 export interface StaffManagementRepository {

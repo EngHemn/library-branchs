@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useQuery } from "@tanstack/react-query"
 
 import type { BookDetail } from "@/domain/entities/book/BookDetail"
 import type { GetBooksUseCase } from "@/domain/usecases/books/GetBooksUseCase"
@@ -26,60 +26,43 @@ export function useBookDetailViewModel(
   bookId: string,
   getBooksUseCase: GetBooksUseCase
 ): BookDetailViewModel {
-  const [status, setStatus] = useState<BookDetailStatus>("idle")
-  const [bookDetail, setBookDetail] = useState<BookDetail | null>(null)
-  const [error, setError] = useState<string | null>(null)
+  const bookDetailQuery = useQuery({
+    queryKey: ["books", bookId],
+    queryFn: async () => {
+      const result = await getBooksUseCase.getBookById(bookId)
+      if (!result.success) throw new Error(result.error)
+      return result.data
+    },
+  })
 
-  const load = useCallback(async (): Promise<void> => {
-    setStatus("loading")
-    setError(null)
-
-    const result = await getBooksUseCase.getBookById(bookId)
-
-    if (!result.success) {
-      setStatus("error")
-      setError(result.error)
-      return
-    }
-
-    if (!result.data) {
-      setStatus("not-found")
-      return
-    }
-
-    setBookDetail(result.data)
-    setStatus("loaded")
-  }, [bookId, getBooksUseCase])
-
-  useEffect(() => {
-    const timeoutId = window.setTimeout(() => {
-      void load()
-    }, 0)
-
-    return () => {
-      window.clearTimeout(timeoutId)
-    }
-  }, [load])
-
-  const reload = useCallback((): void => {
-    void load()
-  }, [load])
-
-  const state = useMemo<BookDetailViewModelState>(
-    () => ({
-      status,
-      bookDetail,
-      error: status === "error" ? error : null,
-      isLoading: status === "idle" || status === "loading",
-      isLoaded: status === "loaded",
-      isNotFound: status === "not-found",
-      isError: status === "error",
-    }),
-    [bookDetail, error, status]
-  )
-
-  return {
-    state,
-    reload,
+  function reload(): void {
+    void bookDetailQuery.refetch()
   }
+
+  const isLoading = bookDetailQuery.isPending
+  const isError = bookDetailQuery.isError
+  const isNotFound = bookDetailQuery.isSuccess && bookDetailQuery.data === null
+  const isLoaded = bookDetailQuery.isSuccess && bookDetailQuery.data !== null
+
+  const status: BookDetailStatus = isLoading
+    ? "loading"
+    : isError
+      ? "error"
+      : isNotFound
+        ? "not-found"
+        : isLoaded
+          ? "loaded"
+          : "idle"
+
+  const state: BookDetailViewModelState = {
+    status,
+    bookDetail: bookDetailQuery.data ?? null,
+    error: isError ? (bookDetailQuery.error?.message ?? null) : null,
+    isLoading,
+    isLoaded,
+    isNotFound,
+    isError,
+  }
+
+  return { state, reload }
 }

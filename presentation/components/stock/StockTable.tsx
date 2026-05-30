@@ -1,63 +1,47 @@
 "use client"
 
 import {
-  type ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  type SortingState,
-  useReactTable,
-  type VisibilityState,
-} from "@tanstack/react-table"
-import {
-  ArrowRightLeft,
   BookOpenIcon,
-  ChevronDown,
-  ChevronUp,
-  ChevronsUpDown,
-  HistoryIcon,
-  MinusIcon,
-  MoreHorizontal,
+  ChevronDownIcon,
+  ChevronRightIcon,
   PackageIcon,
-  PencilIcon,
-  PlusIcon,
 } from "lucide-react"
-import { useMemo, useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-import { Skeleton } from "@/components/ui/skeleton"
+
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { StockStatusBadge } from "./StockStatusBadge"
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import {
+  DataTable,
+  type DataTableColumn,
+} from "@/components/ui/data-table"
+import { Skeleton } from "@/components/ui/skeleton"
+import { TooltipProvider } from "@/components/ui/tooltip"
 import type { StockRow } from "@/domain/entities/stock/Stock"
+import { BranchLink } from "@/presentation/components/branch-management/BranchLink"
+import { BookLink } from "@/presentation/components/shared/DashboardEntityLink"
+import {
+  StockRowActionsMenu,
+  StockSubBranchesPanel,
+} from "@/presentation/components/stock/StockSubBranchesPanel"
+import { StockStatusBadge } from "@/presentation/components/stock/StockStatusBadge"
+import {
+  getParentStockRow,
+  groupStockRows,
+  hasSubBranches,
+  type StockTableGroup,
+} from "@/presentation/components/stock/stockTableGrouping"
 
 type StockTableProps = {
   rows: StockRow[]
   isLoading: boolean
+  expandedGroupIds: string[]
+  onToggleGroupExpanded: (groupId: string) => void
   onAddStock: (row: StockRow) => void
   onReduceStock: (row: StockRow) => void
   onTransfer: (row: StockRow) => void
@@ -65,11 +49,18 @@ type StockTableProps = {
   onEditStock: (row: StockRow) => void
 }
 
-function SortIcon({ direction }: { direction: "asc" | "desc" | false }) {
-  if (direction === "asc") return <ChevronUp className="ml-1 h-3.5 w-3.5" />
-  if (direction === "desc") return <ChevronDown className="ml-1 h-3.5 w-3.5" />
-  return <ChevronsUpDown className="ml-1 h-3.5 w-3.5 opacity-40" />
-}
+type StockColumnKey =
+  | "expand"
+  | "book"
+  | "category"
+  | "branch"
+  | "subBranch"
+  | "currentStock"
+  | "reservedStock"
+  | "availableStock"
+  | "minStock"
+  | "status"
+  | "actions"
 
 function StockTableSkeleton() {
   return (
@@ -81,38 +72,83 @@ function StockTableSkeleton() {
   )
 }
 
+function SubBranchCell({ group }: { group: StockTableGroup }) {
+  if (!hasSubBranches(group)) {
+    return <span className="text-sm text-muted-foreground">—</span>
+  }
+
+  return (
+    <Badge variant="secondary">
+      {group.subBranchRows.length} sub-branch
+      {group.subBranchRows.length === 1 ? "" : "es"}
+    </Badge>
+  )
+}
+
 export function StockTable({
   rows,
   isLoading,
+  expandedGroupIds,
+  onToggleGroupExpanded,
   onAddStock,
   onReduceStock,
   onTransfer,
   onViewHistory,
   onEditStock,
 }: StockTableProps) {
-  const [sorting, setSorting] = useState<SortingState>([])
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const groups = groupStockRows(rows)
 
-  const columns = useMemo<ColumnDef<StockRow>[]>(
-    () => [
-      {
-        accessorKey: "bookTitle",
-        header: ({ column }) => (
-          <button
-            className="flex items-center gap-1 text-xs font-medium hover:text-foreground"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+  const columns: DataTableColumn<StockTableGroup, StockColumnKey>[] = [
+    {
+      key: "expand",
+      header: "",
+      className: "w-10",
+      headerClassName: "w-10",
+      cell: (group) => {
+        const expandable = hasSubBranches(group)
+        const isExpanded = expandedGroupIds.includes(group.id)
+
+        if (!expandable) {
+          return <span className="inline-block w-8" aria-hidden />
+        }
+
+        return (
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            onClick={() => onToggleGroupExpanded(group.id)}
+            aria-label={
+              isExpanded
+                ? `Hide sub branches for ${group.bookTitle} at ${group.branchName}`
+                : `Show sub branches for ${group.bookTitle} at ${group.branchName}`
+            }
+            aria-expanded={isExpanded}
           >
-            Book
-            <SortIcon direction={column.getIsSorted()} />
-          </button>
-        ),
-        cell: ({ row }) => (
+            {isExpanded ? (
+              <ChevronDownIcon className="size-4" />
+            ) : (
+              <ChevronRightIcon className="size-4" />
+            )}
+          </Button>
+        )
+      },
+    },
+    {
+      key: "book",
+      header: "Book",
+      sortable: true,
+      sortValue: (group) => group.bookTitle,
+      cell: (group) => {
+        const display = getParentStockRow(group)
+
+        return (
           <div className="flex items-center gap-3">
             <div className="flex h-9 w-7 shrink-0 items-center justify-center rounded-md bg-muted">
-              {row.original.bookCoverUrl ? (
+              {display.bookCoverUrl ? (
                 <img
-                  src={row.original.bookCoverUrl}
-                  alt={row.original.bookTitle}
+                  src={display.bookCoverUrl}
+                  alt={display.bookTitle}
                   className="h-full w-full rounded-md object-cover"
                 />
               ) : (
@@ -120,144 +156,116 @@ export function StockTable({
               )}
             </div>
             <div className="min-w-0">
-              <p className="max-w-[160px] truncate text-sm font-medium text-slate-900">
-                {row.original.bookTitle}
-              </p>
-              <p className="text-xs text-slate-400">{row.original.isbn}</p>
+              <BookLink
+                bookId={group.bookId}
+                title={group.bookTitle}
+                className="block max-w-[160px] truncate text-sm"
+              />
+              <p className="text-xs text-muted-foreground">{group.isbn}</p>
             </div>
           </div>
-        ),
+        )
       },
-      {
-        accessorKey: "category",
-        header: "Category",
-        cell: ({ row }) => (
-          <Badge variant="secondary" className="text-xs">
-            {row.original.category}
-          </Badge>
-        ),
-      },
-      {
-        accessorKey: "branchName",
-        header: "Main Branch",
-        cell: ({ row }) => (
-          <span className="text-sm">{row.original.branchName}</span>
-        ),
-      },
-      {
-        accessorKey: "subBranchName",
-        header: "Sub Branch",
-        cell: ({ row }) =>
-          row.original.subBranchName ? (
-            <span className="text-sm">{row.original.subBranchName}</span>
-          ) : (
-            <span className="text-sm text-muted-foreground">—</span>
-          ),
-      },
-      {
-        accessorKey: "currentStock",
-        header: ({ column }) => (
-          <button
-            className="flex items-center gap-1 text-xs font-medium hover:text-foreground"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Current
-            <SortIcon direction={column.getIsSorted()} />
-          </button>
-        ),
-        cell: ({ row }) => (
-          <span className="font-semibold">{row.original.currentStock}</span>
-        ),
-      },
-      {
-        accessorKey: "reservedStock",
-        header: "Reserved",
-        cell: ({ row }) => (
-          <span className="text-sm">{row.original.reservedStock}</span>
-        ),
-      },
-      {
-        accessorKey: "availableStock",
-        header: ({ column }) => (
-          <button
-            className="flex items-center gap-1 text-xs font-medium hover:text-foreground"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Available
-            <SortIcon direction={column.getIsSorted()} />
-          </button>
-        ),
-        cell: ({ row }) => (
-          <span className="font-bold">{row.original.availableStock}</span>
-        ),
-      },
-      {
-        accessorKey: "minStock",
-        header: "Min Alert",
-        cell: ({ row }) => (
-          <span className="text-sm">{row.original.minStock}</span>
-        ),
-      },
-      {
-        accessorKey: "status",
-        header: "Status",
-        cell: ({ row }) => <StockStatusBadge status={row.original.status} />,
-      },
-      {
-        id: "actions",
-        header: "Actions",
-        cell: ({ row }) => (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-              <DropdownMenuLabel>Stock Actions</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => onAddStock(row.original)}>
-                <PlusIcon className="mr-2 h-4 w-4 text-emerald-600" />
-                Add Stock
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onReduceStock(row.original)}>
-                <MinusIcon className="mr-2 h-4 w-4 text-orange-500" />
-                Reduce Stock
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => onTransfer(row.original)}>
-                <ArrowRightLeft className="mr-2 h-4 w-4 text-blue-600" />
-                Transfer
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => onViewHistory(row.original)}>
-                <HistoryIcon className="mr-2 h-4 w-4 text-muted-foreground" />
-                View History
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onEditStock(row.original)}>
-                <PencilIcon className="mr-2 h-4 w-4 text-muted-foreground" />
-                Edit Stock
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        ),
-      },
-    ],
-    [onAddStock, onReduceStock, onTransfer, onViewHistory, onEditStock]
-  )
+    },
+    {
+      key: "category",
+      header: "Category",
+      sortable: true,
+      sortValue: (group) => group.category,
+      cell: (group) => (
+        <Badge variant="secondary" className="text-xs">
+          {group.category}
+        </Badge>
+      ),
+    },
+    {
+      key: "branch",
+      header: "Main Branch",
+      sortable: true,
+      sortValue: (group) => group.branchName,
+      cell: (group) => (
+        <BranchLink
+          branchId={group.branchId}
+          branchName={group.branchName}
+          className="block max-w-[160px] truncate text-sm"
+        />
+      ),
+    },
+    {
+      key: "subBranch",
+      header: "Sub Branch",
+      cell: (group) => <SubBranchCell group={group} />,
+    },
+    {
+      key: "currentStock",
+      header: "Current",
+      sortable: true,
+      sortValue: (group) => getParentStockRow(group).currentStock,
+      headerClassName: "text-right",
+      className: "text-right tabular-nums font-semibold",
+      cell: (group) => getParentStockRow(group).currentStock.toLocaleString(),
+    },
+    {
+      key: "reservedStock",
+      header: "Reserved",
+      sortable: true,
+      sortValue: (group) => getParentStockRow(group).reservedStock,
+      headerClassName: "text-right",
+      className: "text-right tabular-nums",
+      cell: (group) => getParentStockRow(group).reservedStock.toLocaleString(),
+    },
+    {
+      key: "availableStock",
+      header: "Available",
+      sortable: true,
+      sortValue: (group) => getParentStockRow(group).availableStock,
+      headerClassName: "text-right",
+      className: "text-right tabular-nums font-bold",
+      cell: (group) => getParentStockRow(group).availableStock.toLocaleString(),
+    },
+    {
+      key: "minStock",
+      header: "Min Alert",
+      sortable: true,
+      sortValue: (group) => getParentStockRow(group).minStock,
+      headerClassName: "text-right",
+      className: "text-right tabular-nums",
+      cell: (group) => getParentStockRow(group).minStock.toLocaleString(),
+    },
+    {
+      key: "status",
+      header: "Status",
+      sortable: true,
+      sortValue: (group) => getParentStockRow(group).status,
+      cell: (group) => (
+        <StockStatusBadge status={getParentStockRow(group).status} />
+      ),
+    },
+    {
+      key: "actions",
+      header: "Actions",
+      headerClassName: "text-right",
+      className: "text-right",
+      cell: (group) => {
+        const actionRow = group.mainRow ?? group.subBranchRows[0]
 
-  const table = useReactTable({
-    data: rows,
-    columns,
-    state: { sorting, columnVisibility },
-    onSortingChange: setSorting,
-    onColumnVisibilityChange: setColumnVisibility,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    initialState: { pagination: { pageSize: 10 } },
-  })
+        if (!actionRow) {
+          return null
+        }
+
+        return (
+          <StockRowActionsMenu
+            row={actionRow}
+            onAddStock={onAddStock}
+            onReduceStock={onReduceStock}
+            onTransfer={onTransfer}
+            onViewHistory={onViewHistory}
+            onEditStock={onEditStock}
+          />
+        )
+      },
+    },
+  ]
 
   if (isLoading) {
     return (
@@ -284,92 +292,45 @@ export function StockTable({
   }
 
   return (
-    <Card className="rounded-lg overflow-hidden">
-      <div className="overflow-auto">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableHead
-                    key={header.id}
-                    className="whitespace-nowrap"
-                  >
-                    {flexRender(
-                      header.column.columnDef.header,
-                      header.getContext()
-                    )}
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows.map((row) => (
-              <TableRow key={row.id}>
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-
-      <div className="flex items-center justify-between border-t px-4 py-3">
-        <p className="text-sm text-muted-foreground">
-          Showing{" "}
-          {table.getState().pagination.pageIndex *
-            table.getState().pagination.pageSize +
-            1}
-          –
-          {Math.min(
-            (table.getState().pagination.pageIndex + 1) *
-              table.getState().pagination.pageSize,
-            table.getFilteredRowModel().rows.length
-          )}{" "}
-          of {table.getFilteredRowModel().rows.length} records
-        </p>
-        <div className="flex items-center gap-2">
-          <Select
-            value={String(table.getState().pagination.pageSize)}
-            onValueChange={(v) => table.setPageSize(Number(v))}
-          >
-            <SelectTrigger className="h-8 w-[70px] text-xs">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {[10, 20, 50].map((size) => (
-                <SelectItem key={size} value={String(size)}>
-                  {size}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <span className="text-sm text-muted-foreground">
-            {table.getState().pagination.pageIndex + 1} /{" "}
-            {table.getPageCount()}
-          </span>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
-        </div>
-      </div>
-    </Card>
+    <TooltipProvider>
+      <Card className="rounded-lg">
+        <CardHeader>
+          <CardTitle>Inventory</CardTitle>
+          <CardDescription>
+            {groups.length.toLocaleString()} location
+            {groups.length === 1 ? "" : "s"} — expand rows with sub-branches to
+            manage stock per sub branch
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <DataTable
+            data={groups}
+            columns={columns}
+            getRowId={(group) => group.id}
+            emptyTitle="No inventory found"
+            emptyDescription="Try adjusting the filters or add new stock."
+            initialSort={{ key: "book", direction: "asc" }}
+            initialPageSize={10}
+            pageSizeOptions={[10, 20, 50]}
+            tableClassName="min-w-[1040px]"
+            isRowExpanded={(group) =>
+              hasSubBranches(group) && expandedGroupIds.includes(group.id)
+            }
+            renderExpandedRow={(group) => (
+              <StockSubBranchesPanel
+                bookTitle={group.bookTitle}
+                branchName={group.branchName}
+                subBranchRows={group.subBranchRows}
+                onAddStock={onAddStock}
+                onReduceStock={onReduceStock}
+                onTransfer={onTransfer}
+                onViewHistory={onViewHistory}
+                onEditStock={onEditStock}
+              />
+            )}
+          />
+        </CardContent>
+      </Card>
+    </TooltipProvider>
   )
 }

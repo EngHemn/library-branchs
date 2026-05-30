@@ -1,8 +1,9 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useForm, type UseFormReturn } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 import type { Category } from "@/domain/entities/category/Category"
 import {
@@ -55,11 +56,15 @@ type CategoriesViewModel = {
   reload: () => Promise<void>
 }
 
+type SaveCategoryInput = {
+  values: CategoryFormValues
+  mode: CategoryFormMode
+  categoryId: string | null
+}
+
 export function useCategoriesViewModel(
   getCategoriesUseCase: GetCategoriesUseCase
 ): CategoriesViewModel {
-  const [status, setStatus] = useState<CategoriesStatus>("idle")
-  const [categories, setCategories] = useState<Category[]>([])
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">(
     "all"
@@ -68,16 +73,15 @@ export function useCategoriesViewModel(
   const [editingCategoryId, setEditingCategoryId] = useState<string | null>(
     null
   )
-  const [error, setError] = useState<string | null>(null)
   const [formError, setFormError] = useState<string | null>(null)
-  const [isSaving, setIsSaving] = useState(false)
-  const [isDeleting, setIsDeleting] = useState(false)
+  const [operationError, setOperationError] = useState<string | null>(null)
   const [isConcatOpen, setIsConcatOpen] = useState(false)
-  const [isConcating, setIsConcating] = useState(false)
   const [concatError, setConcatError] = useState<string | null>(null)
 
+  const queryClient = useQueryClient()
+
   const form = useForm<CategoryFormValues>({
-    resolver: zodResolver(categoryFormSchema as never),
+    resolver: zodResolver(categoryFormSchema),
     defaultValues: {
       name: "",
       description: "",
@@ -85,7 +89,7 @@ export function useCategoriesViewModel(
   })
 
   const concatForm = useForm<ConcatCategoryFormValues>({
-    resolver: zodResolver(concatCategoryFormSchema as never),
+    resolver: zodResolver(concatCategoryFormSchema),
     defaultValues: {
       sourceCategoryIds: [],
       name: "",
@@ -94,20 +98,78 @@ export function useCategoriesViewModel(
     },
   })
 
-  async function loadCategories(): Promise<void> {
-    await Promise.resolve()
-    setStatus("loading")
-    setError(null)
-    const result = await getCategoriesUseCase.getCategories()
-    if (!result.success) {
-      setCategories([])
-      setStatus("error")
-      setError(result.error)
-      return
-    }
-    setCategories(result.data)
-    setStatus("ready")
-  }
+  const categoriesQuery = useQuery({
+    queryKey: ["categories"],
+    queryFn: async () => {
+      const result = await getCategoriesUseCase.getCategories()
+      if (!result.success) throw new Error(result.error)
+      return result.data
+    },
+  })
+
+  const saveMutation = useMutation({
+    mutationFn: async ({ values, mode, categoryId }: SaveCategoryInput) => {
+      const result =
+        mode === "edit" && categoryId
+          ? await getCategoriesUseCase.updateCategory({
+              id: categoryId,
+              ...values,
+            })
+          : await getCategoriesUseCase.createCategory(values)
+      if (!result.success) throw new Error(result.error)
+      return result.data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["categories"] })
+      closeFormDialog()
+    },
+    onError: (err: Error) => setFormError(err.message),
+  })
+
+  const deleteMutation = useMutation({
+    mutationFn: async (categoryId: string) => {
+      const result = await getCategoriesUseCase.deleteCategory(categoryId)
+      if (!result.success) throw new Error(result.error)
+      return result.data
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["categories"] }),
+    onError: (err: Error) => setOperationError(err.message),
+  })
+
+  const concatMutation = useMutation({
+    mutationFn: async (values: ConcatCategoryFormValues) => {
+      const result = await getCategoriesUseCase.concatCategories(values)
+      if (!result.success) throw new Error(result.error)
+      return result.data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["categories"] })
+      closeConcatDialog()
+    },
+    onError: (err: Error) => setConcatError(err.message),
+  })
+
+  const categories = categoriesQuery.data ?? []
+
+  const status: CategoriesStatus = categoriesQuery.isSuccess
+    ? "ready"
+    : categoriesQuery.isError
+      ? "error"
+      : "loading"
+
+  const filteredCategories = categories.filter((category) => {
+    const normalizedSearch = searchQuery.trim().toLowerCase()
+    const matchesSearch =
+      normalizedSearch.length === 0 ||
+      category.name.toLowerCase().includes(normalizedSearch) ||
+      category.description.toLowerCase().includes(normalizedSearch) ||
+      category.id.toLowerCase().includes(normalizedSearch)
+
+    const matchesStatus =
+      statusFilter === "all" ? true : category.status === statusFilter
+
+    return matchesSearch && matchesStatus
+  })
 
   function openCreateDialog(): void {
     setFormMode("create")
@@ -156,77 +218,37 @@ export function useCategoriesViewModel(
   }
 
   async function saveCategory(values: CategoryFormValues): Promise<void> {
-    setIsSaving(true)
     setFormError(null)
-
-    const result =
-      formMode === "edit" && editingCategoryId
-        ? await getCategoriesUseCase.updateCategory({
-            id: editingCategoryId,
-            ...values,
-          })
-        : await getCategoriesUseCase.createCategory(values)
-
-    if (!result.success) {
-      setIsSaving(false)
-      setFormError(result.error)
-      return
+    try {
+      await saveMutation.mutateAsync({ values, mode: formMode, categoryId: editingCategoryId })
+    } catch {
+      // error handled in onError callback
     }
-
-    closeFormDialog()
-    await loadCategories()
-    setIsSaving(false)
   }
 
   async function concatCategories(
     values: ConcatCategoryFormValues
   ): Promise<void> {
-    setIsConcating(true)
     setConcatError(null)
-
-    const result = await getCategoriesUseCase.concatCategories(values)
-    if (!result.success) {
-      setIsConcating(false)
-      setConcatError(result.error)
-      return
+    try {
+      await concatMutation.mutateAsync(values)
+    } catch {
+      // error handled in onError callback
     }
-
-    closeConcatDialog()
-    await loadCategories()
-    setIsConcating(false)
   }
 
   async function deleteCategory(categoryId: string): Promise<void> {
-    setIsDeleting(true)
-    setError(null)
-    const result = await getCategoriesUseCase.deleteCategory(categoryId)
-    if (!result.success) {
-      setIsDeleting(false)
-      setError(result.error)
-      return
+    setOperationError(null)
+    try {
+      await deleteMutation.mutateAsync(categoryId)
+    } catch {
+      // error handled in onError callback
     }
-
-    await loadCategories()
-    setIsDeleting(false)
   }
 
-  useEffect(() => {
-    void loadCategories()
-  }, [getCategoriesUseCase])
-
-  const filteredCategories = categories.filter((category) => {
-    const normalizedSearch = searchQuery.trim().toLowerCase()
-    const matchesSearch =
-      normalizedSearch.length === 0 ||
-      category.name.toLowerCase().includes(normalizedSearch) ||
-      category.description.toLowerCase().includes(normalizedSearch) ||
-      category.id.toLowerCase().includes(normalizedSearch)
-
-    const matchesStatus =
-      statusFilter === "all" ? true : category.status === statusFilter
-
-    return matchesSearch && matchesStatus
-  })
+  async function reload(): Promise<void> {
+    await categoriesQuery.refetch()
+  }
 
   const state: CategoriesViewModelState = {
     status,
@@ -236,15 +258,15 @@ export function useCategoriesViewModel(
     statusFilter,
     formMode,
     editingCategoryId,
-    error,
+    error: operationError ?? categoriesQuery.error?.message ?? null,
     formError,
-    isLoading: status === "idle" || status === "loading",
+    isLoading: status === "loading",
     isReady: status === "ready",
-    isSaving,
-    isDeleting,
+    isSaving: saveMutation.isPending,
+    isDeleting: deleteMutation.isPending,
     isFormOpen: formMode !== null,
     isConcatOpen,
-    isConcating,
+    isConcating: concatMutation.isPending,
     concatError,
   }
 
@@ -262,6 +284,6 @@ export function useCategoriesViewModel(
     saveCategory,
     concatCategories,
     deleteCategory,
-    reload: loadCategories,
+    reload,
   }
 }

@@ -1,34 +1,37 @@
 "use client"
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 
-import type {
-  PermissionCode,
-  PermissionConfig,
-  PermissionStaffMember,
-} from "@/domain/entities/permission/Permission"
+import type { PermissionCode, PermissionConfig, PermissionRole } from "@/domain/entities/permission/Permission"
 import type { User } from "@/domain/entities/User"
 import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { PermissionManagementUseCase } from "@/domain/usecases/permission/PermissionManagementUseCase"
+import { usePermissionsData } from "./usePermissionsData"
+import { usePermissionsRoleDialog, type RoleDialogMode, type RoleFormState } from "./usePermissionsRoleDialog"
+import { usePermissionsDeleteDialog } from "./usePermissionsDeleteDialog"
 
-type PermissionsPageStatus =
-  | "idle"
-  | "loading"
-  | "success"
-  | "unauthenticated"
-  | "error"
+type PermissionsPageStatus = "idle" | "loading" | "success" | "unauthenticated" | "error"
 
 type PermissionsViewModelState = {
   status: PermissionsPageStatus
   user: User | null
-  staff: PermissionStaffMember[]
-  filteredStaff: PermissionStaffMember[]
+  roles: PermissionRole[]
+  filteredRoles: PermissionRole[]
   config: PermissionConfig | null
-  selectedStaffId: string | null
-  selectedStaff: PermissionStaffMember | null
+  selectedRoleId: string | null
+  selectedRole: PermissionRole | null
   draftPermissions: PermissionCode[]
   searchQuery: string
   isSaving: boolean
+  isSavingRole: boolean
+  isDeletingRole: boolean
+  roleDialogMode: RoleDialogMode | null
+  roleForm: RoleFormState
+  roleFormNameError: string | null
+  roleFormError: string | null
+  deleteRoleDialog: { roleId: string; roleName: string; isSystem: boolean } | null
+  deleteRoleError: string | null
   error: string | null
   isLoading: boolean
   isReady: boolean
@@ -42,260 +45,227 @@ type PermissionsViewModel = {
   state: PermissionsViewModelState
   reload: () => Promise<void>
   logout: () => Promise<void>
-  selectStaff: (staffId: string) => void
+  selectRole: (roleId: string) => void
   setSearchQuery: (query: string) => void
   togglePermission: (permission: PermissionCode) => void
   selectAllInCategory: (categoryName: string) => void
   deselectAllInCategory: (categoryName: string) => void
   resetPermissions: () => void
   savePermissions: () => Promise<void>
+  openCreateRoleDialog: () => void
+  openEditRoleDialog: () => void
+  closeRoleDialog: () => void
+  setRoleFormName: (name: string) => void
+  setRoleFormDescription: (description: string) => void
+  submitRoleForm: () => Promise<void>
+  openDeleteRoleDialog: () => void
+  closeDeleteRoleDialog: () => void
+  confirmDeleteRole: () => Promise<void>
 }
 
 export function usePermissionsViewModel(
   authUseCase: AuthUseCase,
   permissionManagementUseCase: PermissionManagementUseCase
 ): PermissionsViewModel {
-  const [status, setStatus] = useState<PermissionsPageStatus>("idle")
-  const [user, setUser] = useState<User | null>(null)
-  const [staff, setStaff] = useState<PermissionStaffMember[]>([])
-  const [config, setConfig] = useState<PermissionConfig | null>(null)
-  const [selectedStaffId, setSelectedStaffId] = useState<string | null>(null)
+  const queryClient = useQueryClient()
+  const { data, isPending, isFetching, isError, error, refetch } = usePermissionsData(
+    authUseCase,
+    permissionManagementUseCase
+  )
+
+  const roles = data?.roles ?? []
+  const config = data?.config ?? null
+  const user = data?.user ?? null
+
+  const [selectedRoleId, setSelectedRoleId] = useState<string | null>(null)
   const [draftPermissions, setDraftPermissions] = useState<PermissionCode[]>([])
   const [searchQuery, setSearchQuery] = useState("")
-  const [isSaving, setIsSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-
-  const initialSelectionDone = useRef(false)
-
-  const reload = useCallback(async (): Promise<void> => {
-    setStatus("loading")
-    setError(null)
-
-    const currentUserResult = await authUseCase.getCurrentUser()
-
-    if (!currentUserResult.success) {
-      setStatus("error")
-      setUser(null)
-      setError(currentUserResult.error)
-      return
-    }
-
-    if (!currentUserResult.data) {
-      setStatus("unauthenticated")
-      setUser(null)
-      return
-    }
-
-    const [staffResult, configResult] = await Promise.all([
-      permissionManagementUseCase.getPermissionStaff(),
-      permissionManagementUseCase.getPermissionConfig(),
-    ])
-
-    if (!staffResult.success) {
-      setStatus("error")
-      setError(staffResult.error)
-      return
-    }
-
-    if (!configResult.success) {
-      setStatus("error")
-      setError(configResult.error)
-      return
-    }
-
-    setUser(currentUserResult.data)
-    setStaff(staffResult.data)
-    setConfig(configResult.data)
-
-    if (staffResult.data.length > 0 && !initialSelectionDone.current) {
-      initialSelectionDone.current = true
-      const firstStaff = staffResult.data[0]
-      setSelectedStaffId(firstStaff.id)
-      setDraftPermissions([...firstStaff.assignedPermissions])
-    }
-
-    setStatus("success")
-  }, [authUseCase, permissionManagementUseCase])
-
-  const logout = useCallback(async (): Promise<void> => {
-    setStatus("loading")
-
-    const result = await authUseCase.logout()
-
-    if (!result.success) {
-      setStatus("error")
-      setError(result.error)
-      return
-    }
-
-    setUser(null)
-    setStatus("unauthenticated")
-  }, [authUseCase])
+  const hasInitialized = useRef(false)
 
   useEffect(() => {
-    const timeoutId = window.setTimeout(() => {
-      void reload()
-    }, 0)
-
-    return () => {
-      window.clearTimeout(timeoutId)
+    if (roles.length > 0 && !hasInitialized.current) {
+      hasInitialized.current = true
+      setSelectedRoleId(roles[0].id)
+      setDraftPermissions([...roles[0].assignedPermissions])
     }
-  }, [reload])
+  }, [roles])
 
-  const selectStaff = useCallback(
-    (staffId: string): void => {
-      const member = staff.find((s) => s.id === staffId)
-      if (member) {
-        setSelectedStaffId(staffId)
-        setDraftPermissions([...member.assignedPermissions])
+  const effectiveSelectedRoleId =
+    selectedRoleId && roles.some((r) => r.id === selectedRoleId)
+      ? selectedRoleId
+      : (roles[0]?.id ?? null)
+
+  const selectedRole = roles.find((r) => r.id === effectiveSelectedRoleId) ?? null
+
+  const filteredRoles = (() => {
+    const normalized = searchQuery.trim().toLowerCase()
+    if (!normalized) return roles
+    return roles.filter(
+      (r) =>
+        r.name.toLowerCase().includes(normalized) ||
+        r.description.toLowerCase().includes(normalized)
+    )
+  })()
+
+  const roleDialog = usePermissionsRoleDialog({
+    selectedRoleId: effectiveSelectedRoleId,
+    selectedRole,
+    permissionManagementUseCase,
+    onRoleCreated: (newRole) => {
+      setSelectedRoleId(newRole.id)
+      setDraftPermissions([...newRole.assignedPermissions])
+    },
+  })
+
+  const deleteDialog = usePermissionsDeleteDialog({
+    selectedRoleId: effectiveSelectedRoleId,
+    selectedRole,
+    roles,
+    permissionManagementUseCase,
+    onRoleDeleted: (_, nextRoles) => {
+      if (nextRoles.length > 0) {
+        setSelectedRoleId(nextRoles[0].id)
+        setDraftPermissions([...nextRoles[0].assignedPermissions])
+      } else {
+        setSelectedRoleId(null)
+        setDraftPermissions([])
       }
     },
-    [staff]
-  )
+  })
 
-  const filteredStaff = useMemo(() => {
-    const normalizedQuery = searchQuery.trim().toLowerCase()
-    if (!normalizedQuery) return staff
+  const { mutateAsync: logoutAsync } = useMutation({
+    mutationFn: async () => {
+      const result = await authUseCase.logout()
+      if (!result.success) throw new Error(result.error)
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["permissions"] }),
+  })
 
-    return staff.filter(
-      (member) =>
-        member.name.toLowerCase().includes(normalizedQuery) ||
-        member.role.toLowerCase().includes(normalizedQuery) ||
-        member.branch.toLowerCase().includes(normalizedQuery)
-    )
-  }, [staff, searchQuery])
-
-  const selectedStaff = useMemo(
-    () => staff.find((s) => s.id === selectedStaffId) ?? null,
-    [staff, selectedStaffId]
-  )
-
-  const togglePermission = useCallback(
-    (permission: PermissionCode): void => {
-      setDraftPermissions((current) =>
-        current.includes(permission)
-          ? current.filter((p) => p !== permission)
-          : [...current, permission]
+  const { mutate: savePerms, isPending: isSaving } = useMutation({
+    mutationFn: async () => {
+      if (!effectiveSelectedRoleId) throw new Error("No role selected")
+      const result = await permissionManagementUseCase.saveRolePermissions(
+        effectiveSelectedRoleId,
+        draftPermissions
       )
+      if (!result.success) throw new Error(result.error)
+      return result.data
     },
-    []
-  )
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["permissions"] }),
+  })
 
-  const selectAllInCategory = useCallback(
-    (categoryName: string): void => {
-      if (!config) return
+  const status: PermissionsPageStatus = (() => {
+    if (isPending || isFetching) return "loading"
+    if (isError) return "error"
+    if (!data) return "idle"
+    if (!data.user) return "unauthenticated"
+    return "success"
+  })()
 
-      const category = config.categories.find((c) => c.name === categoryName)
-      if (!category) return
-
-      setDraftPermissions((current) => {
-        const withoutCategory = current.filter(
-          (p) => !category.permissions.includes(p)
-        )
-        return [...withoutCategory, ...category.permissions]
-      })
-    },
-    [config]
-  )
-
-  const deselectAllInCategory = useCallback(
-    (categoryName: string): void => {
-      if (!config) return
-
-      const category = config.categories.find((c) => c.name === categoryName)
-      if (!category) return
-
-      setDraftPermissions((current) =>
-        current.filter((p) => !category.permissions.includes(p))
-      )
-    },
-    [config]
-  )
-
-  const resetPermissions = useCallback((): void => {
-    if (selectedStaff) {
-      setDraftPermissions([...selectedStaff.assignedPermissions])
+  function selectRole(roleId: string): void {
+    const role = roles.find((r) => r.id === roleId)
+    if (role) {
+      setSelectedRoleId(roleId)
+      setDraftPermissions([...role.assignedPermissions])
     }
-  }, [selectedStaff])
+  }
 
-  const savePermissions = useCallback(async (): Promise<void> => {
-    if (!selectedStaffId) return
-
-    setIsSaving(true)
-
-    const result = await permissionManagementUseCase.savePermissions(
-      selectedStaffId,
-      draftPermissions
+  function togglePermission(permission: PermissionCode): void {
+    setDraftPermissions((current) =>
+      current.includes(permission)
+        ? current.filter((p) => p !== permission)
+        : [...current, permission]
     )
+  }
 
-    setIsSaving(false)
+  function selectAllInCategory(categoryName: string): void {
+    if (!config) return
+    const category = config.categories.find((c) => c.name === categoryName)
+    if (!category) return
+    setDraftPermissions((current) => {
+      const withoutCategory = current.filter((p) => !category.permissions.includes(p))
+      return [...withoutCategory, ...category.permissions]
+    })
+  }
 
-    if (!result.success) {
-      setError(result.error)
-      return
-    }
+  function deselectAllInCategory(categoryName: string): void {
+    if (!config) return
+    const category = config.categories.find((c) => c.name === categoryName)
+    if (!category) return
+    setDraftPermissions((current) => current.filter((p) => !category.permissions.includes(p)))
+  }
 
-    setStaff((current) =>
-      current.map((s) => (s.id === result.data.id ? result.data : s))
-    )
-  }, [selectedStaffId, draftPermissions, permissionManagementUseCase])
+  function resetPermissions(): void {
+    if (selectedRole) setDraftPermissions([...selectedRole.assignedPermissions])
+  }
 
-  const isDirty = useMemo(() => {
-    if (!selectedStaff) return false
+  async function savePermissions(): Promise<void> {
+    savePerms()
+  }
 
-    const original = [...selectedStaff.assignedPermissions].sort()
+  async function reload(): Promise<void> {
+    await refetch()
+  }
+
+  async function logout(): Promise<void> {
+    await logoutAsync()
+  }
+
+  const isDirty = (() => {
+    if (!selectedRole) return false
+    const original = [...selectedRole.assignedPermissions].sort()
     const draft = [...draftPermissions].sort()
-
     if (original.length !== draft.length) return true
     return original.some((p, i) => p !== draft[i])
-  }, [selectedStaff, draftPermissions])
+  })()
 
-  const state = useMemo<PermissionsViewModelState>(
-    () => ({
-      status,
-      user,
-      staff,
-      filteredStaff,
-      config,
-      selectedStaffId,
-      selectedStaff,
-      draftPermissions,
-      searchQuery,
-      isSaving,
-      error: status === "error" ? error : null,
-      isLoading: status === "idle" || status === "loading",
-      isReady: status === "success",
-      isUnauthenticated: status === "unauthenticated",
-      isDirty,
-      selectedCount: draftPermissions.length,
-      totalCount: config?.totalPermissions ?? 0,
-    }),
-    [
-      status,
-      user,
-      staff,
-      filteredStaff,
-      config,
-      selectedStaffId,
-      selectedStaff,
-      draftPermissions,
-      searchQuery,
-      isSaving,
-      error,
-      isDirty,
-    ]
-  )
+  const state: PermissionsViewModelState = {
+    status,
+    user,
+    roles,
+    filteredRoles,
+    config,
+    selectedRoleId: effectiveSelectedRoleId,
+    selectedRole,
+    draftPermissions,
+    searchQuery,
+    isSaving,
+    isSavingRole: roleDialog.isSavingRole,
+    isDeletingRole: deleteDialog.isDeletingRole,
+    roleDialogMode: roleDialog.roleDialogMode,
+    roleForm: roleDialog.roleForm,
+    roleFormNameError: roleDialog.roleFormNameError,
+    roleFormError: roleDialog.roleFormError,
+    deleteRoleDialog: deleteDialog.deleteRoleDialog,
+    deleteRoleError: deleteDialog.deleteRoleError,
+    error: isError ? error?.message ?? null : null,
+    isLoading: isPending || isFetching,
+    isReady: status === "success",
+    isUnauthenticated: status === "unauthenticated",
+    isDirty,
+    selectedCount: draftPermissions.length,
+    totalCount: config?.totalPermissions ?? 0,
+  }
 
   return {
     state,
     reload,
     logout,
-    selectStaff,
+    selectRole,
     setSearchQuery,
     togglePermission,
     selectAllInCategory,
     deselectAllInCategory,
     resetPermissions,
     savePermissions,
+    openCreateRoleDialog: roleDialog.openCreateRoleDialog,
+    openEditRoleDialog: roleDialog.openEditRoleDialog,
+    closeRoleDialog: roleDialog.closeRoleDialog,
+    setRoleFormName: roleDialog.setRoleFormName,
+    setRoleFormDescription: roleDialog.setRoleFormDescription,
+    submitRoleForm: roleDialog.submitRoleForm,
+    openDeleteRoleDialog: deleteDialog.openDeleteRoleDialog,
+    closeDeleteRoleDialog: deleteDialog.closeDeleteRoleDialog,
+    confirmDeleteRole: deleteDialog.confirmDeleteRole,
   }
 }

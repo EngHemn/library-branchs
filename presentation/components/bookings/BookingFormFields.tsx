@@ -1,6 +1,5 @@
 "use client"
 
-import { useMemo } from "react"
 import type { UseFormReturn } from "react-hook-form"
 import { format, parseISO } from "date-fns"
 import { CalendarIcon } from "lucide-react"
@@ -61,17 +60,11 @@ export function BookingFormFields({
 }: BookingFormFieldsProps) {
   const branchId = form.watch("branchId")
 
-  const memberOptionsForBranch = useMemo((): BookingComboboxOption[] => {
-    if (!branchId) return []
-
-    return memberFormOptions
-      .filter((member) => member.branchId === branchId)
-      .map((member) => ({
-        value: member.value,
-        label: member.label,
-        searchText: member.searchText,
-      }))
-  }, [branchId, memberFormOptions])
+  const memberOptionsForBranch: BookingComboboxOption[] = branchId
+    ? memberFormOptions
+        .filter((member) => member.branchId === branchId)
+        .map((member) => ({ value: member.value, label: member.label, searchText: member.searchText }))
+    : []
 
   return (
     <Form {...form}>

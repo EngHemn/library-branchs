@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import {
   Building2Icon,
   ChevronDownIcon,
@@ -29,10 +30,12 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import type { Member, MemberStatus } from "@/domain/entities/member/Member"
+import { BranchLink } from "@/presentation/components/branch-management/BranchLink"
 import { MemberActionButton } from "@/presentation/components/members/MemberActionButton"
 
 type MembersTableProps = {
   members: Member[]
+  branchNameToId?: Record<string, string>
   onView: (member: Member) => void
   onEdit: (member: Member) => void
   onDelete: (member: Member) => void
@@ -73,20 +76,58 @@ function MemberStatusBadge({ status }: { status: MemberStatus }) {
 const branchBadgeClassName =
   "bg-sky-100 text-sky-700 hover:bg-sky-100 dark:bg-sky-950 dark:text-sky-300 dark:hover:bg-sky-950"
 
-function MemberBranchesUsedDropdown({ branches }: { branches: string[] }) {
+function BranchUsedBadge({
+  branchName,
+  branchId,
+}: {
+  branchName: string
+  branchId?: string
+}) {
+  const content = (
+    <>
+      <Building2Icon className="size-3 shrink-0" />
+      <span className="truncate">{branchName}</span>
+    </>
+  )
+
+  if (branchId) {
+    return (
+      <Link
+        href={`/dashboard/branches/${branchId}`}
+        className={`inline-flex h-7 max-w-[200px] items-center gap-1.5 rounded-md px-2.5 text-xs font-medium transition-colors hover:opacity-80 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none ${branchBadgeClassName}`}
+      >
+        {content}
+      </Link>
+    )
+  }
+
+  return (
+    <Badge
+      variant="secondary"
+      className={`max-w-[200px] truncate font-normal ${branchBadgeClassName}`}
+    >
+      {content}
+    </Badge>
+  )
+}
+
+function MemberBranchesUsedDropdown({
+  branches,
+  branchNameToId,
+}: {
+  branches: string[]
+  branchNameToId?: Record<string, string>
+}) {
   if (branches.length === 0) {
     return <span className="text-sm text-muted-foreground">None</span>
   }
 
   if (branches.length === 1) {
     return (
-      <Badge
-        variant="secondary"
-        className={`max-w-[200px] truncate font-normal ${branchBadgeClassName}`}
-      >
-        <Building2Icon className="size-3 shrink-0" />
-        <span className="truncate">{branches[0]}</span>
-      </Badge>
+      <BranchUsedBadge
+        branchName={branches[0]}
+        branchId={branchNameToId?.[branches[0]]}
+      />
     )
   }
 
@@ -110,17 +151,34 @@ function MemberBranchesUsedDropdown({ branches }: { branches: string[] }) {
           </PopoverDescription>
         </PopoverHeader>
         <ul className="max-h-48 overflow-y-auto p-1.5">
-          {branches.map((branch) => (
-            <li
-              key={branch}
-              className="flex items-start gap-2 rounded-md px-2 py-2 text-sm transition-colors hover:bg-muted/60"
-            >
-              <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-md bg-sky-100 text-sky-600 dark:bg-sky-950 dark:text-sky-400">
-                <Building2Icon className="size-3.5" />
-              </span>
-              <span className="min-w-0 leading-snug font-medium">{branch}</span>
-            </li>
-          ))}
+          {branches.map((branch) => {
+            const branchId = branchNameToId?.[branch]
+
+            return (
+              <li key={branch}>
+                {branchId ? (
+                  <Link
+                    href={`/dashboard/branches/${branchId}`}
+                    className="flex items-start gap-2 rounded-md px-2 py-2 text-sm transition-colors hover:bg-muted/60"
+                  >
+                    <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-md bg-sky-100 text-sky-600 dark:bg-sky-950 dark:text-sky-400">
+                      <Building2Icon className="size-3.5" />
+                    </span>
+                    <span className="min-w-0 leading-snug font-medium text-primary">
+                      {branch}
+                    </span>
+                  </Link>
+                ) : (
+                  <div className="flex items-start gap-2 rounded-md px-2 py-2 text-sm">
+                    <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-md bg-sky-100 text-sky-600 dark:bg-sky-950 dark:text-sky-400">
+                      <Building2Icon className="size-3.5" />
+                    </span>
+                    <span className="min-w-0 leading-snug font-medium">{branch}</span>
+                  </div>
+                )}
+              </li>
+            )
+          })}
         </ul>
       </PopoverContent>
     </Popover>
@@ -129,6 +187,7 @@ function MemberBranchesUsedDropdown({ branches }: { branches: string[] }) {
 
 export function MembersTable({
   members,
+  branchNameToId,
   onView,
   onEdit,
   onDelete,
@@ -149,9 +208,11 @@ export function MembersTable({
       sortable: true,
       sortValue: (member) => member.registerBranch,
       cell: (member) => (
-        <span className="block max-w-[180px] truncate">
-          {member.registerBranch}
-        </span>
+        <BranchLink
+          branchId={member.branchId}
+          branchName={member.registerBranch}
+          className="block max-w-[180px] truncate font-medium text-primary underline-offset-4 hover:underline"
+        />
       ),
     },
     {
@@ -160,7 +221,10 @@ export function MembersTable({
       sortable: true,
       sortValue: (member) => member.allBranchesUsed.length,
       cell: (member) => (
-        <MemberBranchesUsedDropdown branches={member.allBranchesUsed} />
+        <MemberBranchesUsedDropdown
+          branches={member.allBranchesUsed}
+          branchNameToId={branchNameToId}
+        />
       ),
     },
     {

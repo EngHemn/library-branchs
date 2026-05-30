@@ -12,11 +12,8 @@ import {
 
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import type {
-  StaffMember,
-  StaffPermission,
-  StaffRole,
-} from "@/domain/entities/staff/StaffMember"
+import { getPermissionRoleLabel } from "@/domain/entities/permission/Permission"
+import type { StaffMember } from "@/domain/entities/staff/StaffMember"
 
 type StaffDetailsTabProps = {
   staffMember: StaffMember
@@ -25,25 +22,9 @@ type StaffDetailsTabProps = {
   translatorCount: number
 }
 
-const roleLabels: Record<StaffRole, string> = {
-  manager: "Manager",
-  librarian: "Librarian",
-  assistant: "Assistant",
-  clerk: "Clerk",
-  security: "Security",
-}
-
 const statusLabels = {
   active: "Active",
   inactive: "Inactive",
-}
-
-const permissionLabels: Record<StaffPermission, string> = {
-  read: "Read",
-  write: "Write",
-  delete: "Delete",
-  manage_staff: "Manage Staff",
-  manage_books: "Manage Books",
 }
 
 function StatCard({
@@ -104,6 +85,8 @@ export function StaffDetailsTab({
   authorCount,
   translatorCount,
 }: StaffDetailsTabProps) {
+  const roleLabel = getPermissionRoleLabel(staffMember.role)
+
   return (
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -140,10 +123,10 @@ export function StaffDetailsTab({
               <div className="mt-1 flex items-center gap-2">
                 <Badge
                   variant={
-                    staffMember.role === "manager" ? "default" : "secondary"
+                    staffMember.role === "branch_admin" ? "default" : "secondary"
                   }
                 >
-                  {roleLabels[staffMember.role]}
+                  {roleLabel}
                 </Badge>
                 <Badge
                   variant={
@@ -170,18 +153,10 @@ export function StaffDetailsTab({
             <InfoRow icon={Building2Icon} label="Branch">
               {staffMember.branch}
             </InfoRow>
-            <InfoRow icon={ShieldCheckIcon} label="Permissions">
-              <div className="flex flex-wrap gap-1">
-                {staffMember.permissions.length === 0 ? (
-                  <span className="text-muted-foreground">None</span>
-                ) : (
-                  staffMember.permissions.map((perm) => (
-                    <Badge key={perm} variant="outline" className="text-xs">
-                      {permissionLabels[perm]}
-                    </Badge>
-                  ))
-                )}
-              </div>
+            <InfoRow icon={ShieldCheckIcon} label="Access">
+              <span className="text-muted-foreground">
+                Permissions inherited from the {roleLabel} role. Configure role permissions on the Permissions page.
+              </span>
             </InfoRow>
           </div>
         </CardContent>

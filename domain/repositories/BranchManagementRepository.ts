@@ -16,6 +16,7 @@ export type CreateBranchInput = {
   phone: string
   latitude: number | null
   longitude: number | null
+  password: string
 }
 
 export type UpdateBranchInput = {
@@ -27,12 +28,25 @@ export type UpdateBranchInput = {
   phone: string
   latitude: number | null
   longitude: number | null
+  password?: string
+}
+
+export type ReplyToBranchRequestInput = {
+  message: string
+  sentBy: string
+}
+
+export type ApproveBranchRequestInput = {
+  password: string
 }
 
 export interface BranchManagementRepository {
   getBranches(): Promise<Result<Branch[]>>
   getBranchById(branchId: string): Promise<Result<Branch | null>>
   getMainBranchRequests(): Promise<Result<MainBranchRequest[]>>
+  getMainBranchRequestById(
+    requestId: string
+  ): Promise<Result<MainBranchRequest | null>>
   getSubBranchRequests(): Promise<Result<SubBranchRequest[]>>
   createBranch(input: CreateBranchInput): Promise<Result<Branch>>
   updateBranch(
@@ -41,8 +55,30 @@ export interface BranchManagementRepository {
   ): Promise<Result<Branch>>
   deleteBranch(branchId: string): Promise<Result<null>>
   toggleBranchStatus(branchId: string): Promise<Result<Branch>>
-  approveMainBranchRequest(requestId: string): Promise<Result<null>>
-  rejectMainBranchRequest(requestId: string): Promise<Result<null>>
-  approveSubBranchRequest(requestId: string): Promise<Result<null>>
-  rejectSubBranchRequest(requestId: string): Promise<Result<null>>
+  approveMainBranchRequest(
+    requestId: string,
+    input: ApproveBranchRequestInput
+  ): Promise<Result<Branch>>
+  rejectMainBranchRequest(
+    requestId: string,
+    input?: ReplyToBranchRequestInput
+  ): Promise<Result<null>>
+  approveSubBranchRequest(
+    requestId: string,
+    input: ApproveBranchRequestInput
+  ): Promise<Result<Branch>>
+  rejectSubBranchRequest(
+    requestId: string,
+    input?: ReplyToBranchRequestInput
+  ): Promise<Result<null>>
+  dismissMainBranchRequest(requestId: string): Promise<Result<null>>
+  dismissSubBranchRequest(requestId: string): Promise<Result<null>>
+  replyToMainBranchRequest(
+    requestId: string,
+    input: ReplyToBranchRequestInput
+  ): Promise<Result<MainBranchRequest>>
+  replyToSubBranchRequest(
+    requestId: string,
+    input: ReplyToBranchRequestInput
+  ): Promise<Result<SubBranchRequest>>
 }

@@ -253,7 +253,7 @@ function buildTables(query: ReportsQuery): ReportTable[] {
   ]
 }
 
-export function getReportBranchOptions() {
+export function getReportBranchOptions(): { id: string; name: string }[] {
   const activeBranches = fakeBranches
     .filter((branch) => branch.status === "active")
     .slice(0, 12)

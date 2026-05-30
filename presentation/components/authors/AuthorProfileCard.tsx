@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import type { AuthorDetail } from "@/domain/entities/author/AuthorDetail"
+import { BranchLink } from "@/presentation/components/branch-management/BranchLink"
 
 type AuthorProfileCardProps = {
   author: AuthorDetail
@@ -67,6 +68,11 @@ export function AuthorProfileCard({ author }: AuthorProfileCardProps) {
                     >
                       {row.value}
                     </Badge>
+                  ) : row.label === "Branch Added" ? (
+                    <BranchLink
+                      branchId={author.branchId}
+                      branchName={author.branchName}
+                    />
                   ) : (
                     row.value
                   )}

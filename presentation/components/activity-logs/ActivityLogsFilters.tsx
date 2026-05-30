@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useMemo, useState } from "react"
+import { useState } from "react"
 import { SearchIcon } from "lucide-react"
 
 import {
@@ -40,7 +40,7 @@ type ActivityLogsFiltersProps = {
   staffOptions: ActivityLogStaffOption[]
 }
 
-const actionOptions: FilterOption[] = [
+const ACTION_OPTIONS: FilterOption[] = [
   { value: "create", label: "Create" },
   { value: "update", label: "Update" },
   { value: "delete", label: "Delete" },
@@ -76,60 +76,34 @@ function FilterOptionCombobox({
 }: FilterOptionComboboxProps) {
   const [inputValue, setInputValue] = useState("")
 
-  const allOptions = useMemo(
-    () => [{ value: "all", label: allLabel }, ...options],
-    [allLabel, options]
-  )
-
-  const optionMap = useMemo(() => {
-    const map = new Map<string, FilterOption>()
-    for (const option of allOptions) {
-      map.set(option.value, option)
-    }
-    return map
-  }, [allOptions])
-
+  const allOptions = [{ value: "all", label: allLabel }, ...options]
+  const optionMap = new Map(allOptions.map((o) => [o.value, o]))
   const selectedOption = optionMap.get(value)
 
-  const filteredOptions = useMemo(() => {
-    const normalizedQuery = inputValue.trim().toLowerCase()
-    if (!normalizedQuery) {
-      return allOptions
+  const normalizedQuery = inputValue.trim().toLowerCase()
+  const filteredOptions = normalizedQuery
+    ? allOptions.filter((o) => o.label.toLowerCase().includes(normalizedQuery))
+    : allOptions
+
+  function itemToStringLabel(itemValue: string): string {
+    return optionMap.get(itemValue)?.label ?? itemValue
+  }
+
+  function handleValueChange(nextValue: string | null): void {
+    onValueChange(nextValue ?? "all")
+  }
+
+  function handleInputValueChange(nextInput: string, eventDetails?: { reason?: string }): void {
+    setInputValue(nextInput)
+    if (
+      eventDetails?.reason === "input-change" &&
+      value !== "all" &&
+      selectedOption &&
+      nextInput.trim().toLowerCase() !== selectedOption.label.trim().toLowerCase()
+    ) {
+      onValueChange("all")
     }
-
-    return allOptions.filter((option) =>
-      option.label.toLowerCase().includes(normalizedQuery)
-    )
-  }, [allOptions, inputValue])
-
-  const itemToStringLabel = useCallback(
-    (itemValue: string) => optionMap.get(itemValue)?.label ?? itemValue,
-    [optionMap]
-  )
-
-  const handleValueChange = useCallback(
-    (nextValue: string | null) => {
-      onValueChange(nextValue ?? "all")
-    },
-    [onValueChange]
-  )
-
-  const handleInputValueChange = useCallback(
-    (nextInput: string, eventDetails?: { reason?: string }) => {
-      setInputValue(nextInput)
-
-      if (
-        eventDetails?.reason === "input-change" &&
-        value !== "all" &&
-        selectedOption &&
-        nextInput.trim().toLowerCase() !==
-          selectedOption.label.trim().toLowerCase()
-      ) {
-        onValueChange("all")
-      }
-    },
-    [onValueChange, selectedOption, value]
-  )
+  }
 
   return (
     <div className="w-full">
@@ -176,23 +150,8 @@ export function ActivityLogsFilters({
   branchOptions,
   staffOptions,
 }: ActivityLogsFiltersProps) {
-  const branchFilterOptions = useMemo(
-    () =>
-      branchOptions.map((branch) => ({
-        value: branch.id,
-        label: branch.name,
-      })),
-    [branchOptions]
-  )
-
-  const staffFilterOptions = useMemo(
-    () =>
-      staffOptions.map((staff) => ({
-        value: staff.id,
-        label: staff.name,
-      })),
-    [staffOptions]
-  )
+  const branchFilterOptions = branchOptions.map((b) => ({ value: b.id, label: b.name }))
+  const staffFilterOptions = staffOptions.map((s) => ({ value: s.id, label: s.name }))
 
   return (
     <div className="flex flex-col gap-4">
@@ -215,21 +174,17 @@ export function ActivityLogsFilters({
           id="activity-action-filter"
           label="Action"
           value={actionFilter}
-          onValueChange={(value) =>
-            onActionFilterChange(value as ActivityActionFilter)
-          }
+          onValueChange={onActionFilterChange}
           placeholder="Search actions..."
           allLabel="All actions"
-          options={actionOptions}
+          options={ACTION_OPTIONS}
         />
 
         <FilterOptionCombobox
           id="activity-branch-filter"
           label="Branch"
           value={branchFilter}
-          onValueChange={(value) =>
-            onBranchFilterChange(value as ActivityBranchFilter)
-          }
+          onValueChange={onBranchFilterChange}
           placeholder="Search branches..."
           allLabel="All branches"
           options={branchFilterOptions}
@@ -239,9 +194,7 @@ export function ActivityLogsFilters({
           id="activity-staff-filter"
           label="Staff"
           value={staffFilter}
-          onValueChange={(value) =>
-            onStaffFilterChange(value as ActivityStaffFilter)
-          }
+          onValueChange={onStaffFilterChange}
           placeholder="Search staff..."
           allLabel="All staff"
           options={staffFilterOptions}

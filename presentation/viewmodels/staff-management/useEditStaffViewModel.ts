@@ -1,6 +1,7 @@
 "use client"
 
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useEffect, useState } from "react"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 import type { Branch } from "@/domain/entities/branch/Branch"
 import type { StaffMember, StaffRole } from "@/domain/entities/staff/StaffMember"
@@ -12,6 +13,7 @@ import {
   getEditStaffFieldErrors,
   validateEditStaffForm,
 } from "@/domain/validators/staff/validateEditStaffForm"
+import { generatePassword } from "@/lib/generatePassword"
 
 type EditStaffStatus =
   | "idle"
@@ -28,6 +30,7 @@ type EditStaffFormState = {
   branchId: string
   email: string
   phone: string
+  password: string
 }
 
 type EditStaffViewModelState = {
@@ -48,6 +51,7 @@ type EditStaffViewModelState = {
 type EditStaffViewModel = {
   state: EditStaffViewModelState
   setField: (field: keyof EditStaffFormState, value: string) => void
+  autoGeneratePassword: () => void
   save: () => Promise<void>
 }
 
@@ -57,6 +61,7 @@ const emptyForm: EditStaffFormState = {
   branchId: "",
   email: "",
   phone: "",
+  password: "",
 }
 
 const emptyFieldErrors: EditStaffFormErrors = {
@@ -65,6 +70,7 @@ const emptyFieldErrors: EditStaffFormErrors = {
   branch: null,
   email: null,
   phone: null,
+  password: null,
 }
 
 function staffToFormState(member: StaffMember): EditStaffFormState {
@@ -74,7 +80,12 @@ function staffToFormState(member: StaffMember): EditStaffFormState {
     branchId: member.branchId,
     email: member.email,
     phone: member.phone,
+    password: "",
   }
+}
+
+function toStaffRole(role: StaffRole | ""): StaffRole {
+  return role !== "" ? role : "staff"
 }
 
 function formToUpdateInput(
@@ -82,14 +93,14 @@ function formToUpdateInput(
   branches: Branch[]
 ): UpdateStaffInput {
   const branch = branches.find((b) => b.id === form.branchId)
-
   return {
     staffName: form.staffName,
-    role: (form.role || "assistant") as StaffRole,
+    role: toStaffRole(form.role),
     branchId: form.branchId,
     branch: branch?.branchName ?? "",
     email: form.email,
     phone: form.phone,
+    password: form.password || undefined,
   }
 }
 
@@ -98,137 +109,127 @@ export function useEditStaffViewModel(
   staffManagementUseCase: StaffManagementUseCase,
   branchManagementUseCase: BranchManagementUseCase
 ): EditStaffViewModel {
-  const [status, setStatus] = useState<EditStaffStatus>("idle")
-  const [staffMember, setStaffMember] = useState<StaffMember | null>(null)
+  const queryClient = useQueryClient()
   const [form, setForm] = useState<EditStaffFormState>(emptyForm)
-  const [branches, setBranches] = useState<Branch[]>([])
-  const [error, setError] = useState<string | null>(null)
   const [showFieldErrors, setShowFieldErrors] = useState(false)
+  const [isSaved, setIsSaved] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const staffQuery = useQuery({
+    queryKey: ["staff", staffId],
+    queryFn: async () => {
+      const result = await staffManagementUseCase.getStaffById(staffId)
+      if (!result.success) throw new Error(result.error)
+      return result.data ?? null
+    },
+  })
+
+  const branchesQuery = useQuery({
+    queryKey: ["branches"],
+    queryFn: async () => {
+      const result = await branchManagementUseCase.getBranches()
+      if (!result.success) throw new Error(result.error)
+      return result.data.filter((b) => b.status === "active")
+    },
+  })
 
   useEffect(() => {
-    let cancelled = false
-
-    async function loadStaff(): Promise<void> {
-      setStatus("loading")
-      setError(null)
-
-      const [staffResult, branchesResult] = await Promise.all([
-        staffManagementUseCase.getStaffById(staffId),
-        branchManagementUseCase.getBranches(),
-      ])
-
-      if (cancelled) {
-        return
-      }
-
-      if (!staffResult.success) {
-        setStatus("error")
-        setError(staffResult.error)
-        return
-      }
-
-      if (!staffResult.data) {
-        setStatus("not-found")
-        return
-      }
-
-      if (branchesResult.success) {
-        setBranches(
-          branchesResult.data.filter((branch) => branch.status === "active")
-        )
-      }
-
-      setStaffMember(staffResult.data)
-      setForm(staffToFormState(staffResult.data))
-      setStatus("loaded")
+    if (staffQuery.data) {
+      setForm(staffToFormState(staffQuery.data))
     }
+  }, [staffQuery.data])
 
-    void loadStaff()
-
-    return () => {
-      cancelled = true
-    }
-  }, [staffId, staffManagementUseCase, branchManagementUseCase])
-
-  const fieldErrors = useMemo<EditStaffFormErrors>(() => {
-    if (!staffMember) {
-      return emptyFieldErrors
-    }
-
-    if (!form.role) {
-      return {
-        ...emptyFieldErrors,
-        role: showFieldErrors ? "Role is required" : null,
-      }
-    }
-
-    return getEditStaffFieldErrors(formToUpdateInput(form, branches))
-  }, [branches, form, showFieldErrors, staffMember])
-
-  const setField = useCallback(
-    (field: keyof EditStaffFormState, value: string): void => {
-      setForm((current) => ({ ...current, [field]: value }))
+  const saveMutation = useMutation({
+    mutationFn: async (input: { id: string; data: UpdateStaffInput }) => {
+      const result = await staffManagementUseCase.updateStaff(
+        input.id,
+        input.data
+      )
+      if (!result.success) throw new Error(result.error)
+      return result.data
     },
-    []
-  )
+    onSuccess: () => {
+      setIsSaved(true)
+      void queryClient.invalidateQueries({ queryKey: ["staff", staffId] })
+    },
+    onError: (err: Error) => setError(err.message),
+  })
 
-  const save = useCallback(async (): Promise<void> => {
-    if (!staffMember) {
-      return
-    }
+  function setField(field: keyof EditStaffFormState, value: string): void {
+    setForm((current) => ({ ...current, [field]: value }))
+  }
+
+  function autoGeneratePassword(): void {
+    setForm((current) => ({ ...current, password: generatePassword() }))
+  }
+
+  async function save(): Promise<void> {
+    if (!staffQuery.data) return
 
     setShowFieldErrors(true)
 
-    if (!form.role) {
-      return
-    }
+    if (!form.role) return
 
+    const branches = branchesQuery.data ?? []
     const input = formToUpdateInput(form, branches)
     const validationResult = validateEditStaffForm(input)
 
-    if (!validationResult.success) {
-      return
-    }
+    if (!validationResult.success) return
 
-    setStatus("saving")
     setError(null)
-
-    const result = await staffManagementUseCase.updateStaff(
-      staffMember.id,
-      validationResult.data
-    )
-
-    if (!result.success) {
-      setStatus("loaded")
-      setError(result.error)
-      return
-    }
-
-    setStaffMember(result.data)
-    setStatus("saved")
-  }, [branches, form, staffManagementUseCase, staffMember])
-
-  const state = useMemo<EditStaffViewModelState>(
-    () => ({
-      status,
-      staffMember,
-      form,
-      fieldErrors: showFieldErrors ? fieldErrors : emptyFieldErrors,
-      branches,
-      error,
-      isLoading: status === "idle" || status === "loading",
-      isLoaded: status === "loaded",
-      isSaving: status === "saving",
-      isSaved: status === "saved",
-      isNotFound: status === "not-found",
-      isError: status === "error",
-    }),
-    [branches, error, fieldErrors, form, showFieldErrors, staffMember, status]
-  )
-
-  return {
-    state,
-    setField,
-    save,
+    await saveMutation
+      .mutateAsync({ id: staffQuery.data.id, data: validationResult.data })
+      .catch(() => undefined)
   }
+
+  const staffMember = staffQuery.data ?? null
+  const branches = branchesQuery.data ?? []
+  const isLoading =
+    staffQuery.isPending || (staffQuery.isSuccess && branchesQuery.isPending)
+  const isSaving = saveMutation.isPending
+  const isNotFound = staffQuery.isSuccess && staffQuery.data === null
+  const isError = staffQuery.isError
+
+  const fieldErrors: EditStaffFormErrors = !staffMember
+    ? emptyFieldErrors
+    : !form.role
+      ? {
+          ...emptyFieldErrors,
+          role: showFieldErrors ? "Role is required" : null,
+        }
+      : getEditStaffFieldErrors(formToUpdateInput(form, branches))
+
+  let status: EditStaffStatus
+  if (isSaved) {
+    status = "saved"
+  } else if (isSaving) {
+    status = "saving"
+  } else if (isError) {
+    status = "error"
+  } else if (isNotFound) {
+    status = "not-found"
+  } else if (isLoading) {
+    status = "loading"
+  } else if (staffMember !== null) {
+    status = "loaded"
+  } else {
+    status = "idle"
+  }
+
+  const state: EditStaffViewModelState = {
+    status,
+    staffMember,
+    form,
+    fieldErrors: showFieldErrors ? fieldErrors : emptyFieldErrors,
+    branches,
+    error,
+    isLoading,
+    isLoaded: status === "loaded",
+    isSaving,
+    isSaved,
+    isNotFound,
+    isError,
+  }
+
+  return { state, setField, autoGeneratePassword, save }
 }

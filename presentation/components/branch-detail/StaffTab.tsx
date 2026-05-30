@@ -17,6 +17,10 @@ import {
 } from "@/components/ui/data-table"
 import { Input } from "@/components/ui/input"
 import type { BranchPermissions } from "@/domain/entities/permission/BranchPermissions"
+import {
+  getPermissionRoleLabel,
+  type PermissionStaffRole,
+} from "@/domain/entities/permission/Permission"
 import type { StaffMember, StaffRole } from "@/domain/entities/staff/StaffMember"
 import { BranchActionButton } from "@/presentation/components/branch-management/BranchActionButton"
 
@@ -43,20 +47,14 @@ type StaffColumnKey =
 
 const statusLabels = { active: "Active", inactive: "Inactive" }
 
-const roleLabels: Record<StaffRole, string> = {
-  librarian: "Librarian",
-  manager: "Manager",
-  assistant: "Assistant",
-  clerk: "Clerk",
-  security: "Security",
+const roleVariants: Record<PermissionStaffRole, "default" | "secondary" | "outline"> = {
+  branch_admin: "default",
+  sub_branch_admin: "secondary",
+  staff: "outline",
 }
 
-const roleVariants: Record<StaffRole, "default" | "secondary" | "outline"> = {
-  manager: "default",
-  librarian: "secondary",
-  assistant: "outline",
-  clerk: "outline",
-  security: "secondary",
+function getRoleVariant(role: StaffRole): "default" | "secondary" | "outline" {
+  return roleVariants[role as PermissionStaffRole] ?? "outline"
 }
 
 export function StaffTab({
@@ -86,10 +84,10 @@ export function StaffTab({
       key: "role",
       header: "Role",
       sortable: true,
-      sortValue: (s) => roleLabels[s.role],
+      sortValue: (s) => getPermissionRoleLabel(s.role),
       cell: (s) => (
-        <Badge variant={roleVariants[s.role]}>
-          {roleLabels[s.role]}
+        <Badge variant={getRoleVariant(s.role)}>
+          {getPermissionRoleLabel(s.role)}
         </Badge>
       ),
     },

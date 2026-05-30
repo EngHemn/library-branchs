@@ -1,8 +1,9 @@
 "use client"
 
-import { useCallback, useEffect, useMemo, useState } from "react"
-import { useForm } from "react-hook-form"
+import { useEffect } from "react"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
 
 import type { Booking } from "@/domain/entities/booking/Booking"
 import type { BookingFormOption } from "@/domain/entities/booking/BookingFormOptions"
@@ -44,6 +45,15 @@ type EditBookingViewModel = {
   reload: () => void
 }
 
+type EditBookingQueryData = {
+  booking: Booking
+  options: {
+    books: BookingFormOption[]
+    branches: BookingFormOption[]
+    members: BookingFormOption[]
+  }
+} | null
+
 function toComboboxOptions(options: BookingFormOption[]): BookingComboboxOption[] {
   return options.map((option) => ({
     value: option.value,
@@ -56,18 +66,10 @@ export function useEditBookingViewModel(
   bookingId: string,
   bookingManagementUseCase: BookingManagementUseCase
 ): EditBookingViewModel {
-  const [status, setStatus] = useState<EditBookingStatus>("idle")
-  const [booking, setBooking] = useState<Booking | null>(null)
-  const [bookOptions, setBookOptions] = useState<BookingComboboxOption[]>([])
-  const [branchOptions, setBranchOptions] = useState<BookingComboboxOption[]>([])
-  const [memberFormOptions, setMemberFormOptions] = useState<BookingFormOption[]>(
-    []
-  )
-  const [error, setError] = useState<string | null>(null)
-  const [reloadToken, setReloadToken] = useState(0)
+  const queryClient = useQueryClient()
 
   const form = useForm<BookingFormValues>({
-    resolver: zodResolver(bookingFormSchema as never),
+    resolver: zodResolver(bookingFormSchema),
     defaultValues: {
       bookId: "",
       branchId: "",
@@ -79,71 +81,49 @@ export function useEditBookingViewModel(
     },
   })
 
-  const reload = useCallback(() => {
-    setReloadToken((value) => value + 1)
-  }, [])
-
-  useEffect(() => {
-    let cancelled = false
-
-    async function loadData(): Promise<void> {
-      setStatus("loading")
-      setError(null)
-
+  const editDataQuery = useQuery<EditBookingQueryData>({
+    queryKey: ["booking-edit-data", bookingId],
+    queryFn: async () => {
       const [bookingResult, optionsResult] = await Promise.all([
         bookingManagementUseCase.getBookingById(bookingId),
         bookingManagementUseCase.getBookingFormOptions(),
       ])
 
-      if (cancelled) return
-
       if (!bookingResult.success) {
         if (bookingResult.error === "Booking not found") {
-          setStatus("not-found")
-          return
+          return null
         }
-
-        setStatus("error")
-        setError(bookingResult.error)
-        return
+        throw new Error(bookingResult.error)
       }
 
       if (!optionsResult.success) {
-        setStatus("error")
-        setError(optionsResult.error)
-        return
+        throw new Error(optionsResult.error)
       }
 
-      setBooking(bookingResult.data)
-      setBookOptions(toComboboxOptions(optionsResult.data.books))
-      setBranchOptions(toComboboxOptions(optionsResult.data.branches))
-      setMemberFormOptions(optionsResult.data.members)
+      return {
+        booking: bookingResult.data,
+        options: optionsResult.data,
+      }
+    },
+  })
 
+  useEffect(() => {
+    if (editDataQuery.data) {
+      const { booking } = editDataQuery.data
       form.reset({
-        bookId: bookingResult.data.bookId,
-        branchId: bookingResult.data.branchId,
-        memberId: bookingResult.data.memberId,
-        bookingType: bookingResult.data.type,
-        dueDate: bookingResult.data.dueDate,
-        status: bookingResult.data.status,
+        bookId: booking.bookId,
+        branchId: booking.branchId,
+        memberId: booking.memberId,
+        bookingType: booking.type,
+        dueDate: booking.dueDate,
+        status: booking.status,
         notes: "",
       })
-
-      setStatus("ready")
     }
+  }, [editDataQuery.data, form])
 
-    void loadData()
-
-    return () => {
-      cancelled = true
-    }
-  }, [bookingId, bookingManagementUseCase, form, reloadToken])
-
-  const save = useCallback(
-    async (values: BookingFormValues): Promise<void> => {
-      setStatus("saving")
-      setError(null)
-
+  const saveMutation = useMutation({
+    mutationFn: async (values: BookingFormValues) => {
       const result = await bookingManagementUseCase.updateBooking({
         id: bookingId,
         bookId: values.bookId,
@@ -153,43 +133,65 @@ export function useEditBookingViewModel(
         dueDate: values.dueDate,
         status: values.status,
       })
-
-      if (!result.success) {
-        setStatus("ready")
-        setError(result.error)
-        return
-      }
-
-      setBooking(result.data)
-      setStatus("saved")
+      if (!result.success) throw new Error(result.error)
+      return result.data
     },
-    [bookingId, bookingManagementUseCase]
-  )
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["bookings"] })
+      queryClient.invalidateQueries({ queryKey: ["booking-edit-data", bookingId] })
+    },
+  })
 
-  const state = useMemo<EditBookingViewModelState>(
-    () => ({
-      status,
-      booking,
-      bookOptions,
-      branchOptions,
-      memberFormOptions,
-      error,
-      isLoading: status === "idle" || status === "loading",
-      isReady: status === "ready",
-      isNotFound: status === "not-found",
-      isError: status === "error",
-      isSaving: status === "saving",
-      isSaved: status === "saved",
-    }),
-    [
-      bookOptions,
-      booking,
-      branchOptions,
-      error,
-      memberFormOptions,
-      status,
-    ]
-  )
+  const isNotFound = editDataQuery.isSuccess && editDataQuery.data === null
+
+  const status: EditBookingStatus = editDataQuery.isPending
+    ? "loading"
+    : editDataQuery.isError
+      ? "error"
+      : isNotFound
+        ? "not-found"
+        : saveMutation.isPending
+          ? "saving"
+          : saveMutation.isSuccess
+            ? "saved"
+            : "ready"
+
+  const error = editDataQuery.isError
+    ? editDataQuery.error instanceof Error
+      ? editDataQuery.error.message
+      : String(editDataQuery.error)
+    : saveMutation.isError
+      ? saveMutation.error instanceof Error
+        ? saveMutation.error.message
+        : String(saveMutation.error)
+      : null
+
+  async function save(values: BookingFormValues): Promise<void> {
+    await saveMutation.mutateAsync(values)
+  }
+
+  function reload(): void {
+    void editDataQuery.refetch()
+  }
+
+  const state: EditBookingViewModelState = {
+    status,
+    booking: editDataQuery.data?.booking ?? null,
+    bookOptions: editDataQuery.data
+      ? toComboboxOptions(editDataQuery.data.options.books)
+      : [],
+    branchOptions: editDataQuery.data
+      ? toComboboxOptions(editDataQuery.data.options.branches)
+      : [],
+    memberFormOptions: editDataQuery.data?.options.members ?? [],
+    error,
+    isLoading: status === "loading",
+    isReady: status === "ready",
+    isNotFound: status === "not-found",
+    isError: status === "error",
+    isSaving: status === "saving",
+    isSaved: status === "saved",
+  }
 
   return { state, form, save, reload }
 }

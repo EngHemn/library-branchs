@@ -17,7 +17,9 @@ export type BookingType = "borrow" | "reserve"
 
 export type BookingRecord = {
   bookingId: string
+  memberId?: string
   memberName: string
+  branchId?: string
   branchName: string
   type: BookingType
   date: string

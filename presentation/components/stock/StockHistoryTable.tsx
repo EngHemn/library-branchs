@@ -20,7 +20,7 @@ import {
   SearchIcon,
   XIcon,
 } from "lucide-react"
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -57,6 +57,11 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Separator } from "@/components/ui/separator"
 import { MovementBadge } from "./MovementBadge"
 import type { StockMovement, MovementType } from "@/domain/entities/stock/StockMovement"
+import { BranchLink } from "@/presentation/components/branch-management/BranchLink"
+import {
+  BookLink,
+  StaffLink,
+} from "@/presentation/components/shared/DashboardEntityLink"
 
 const MOVEMENT_TYPES: { value: MovementType; label: string }[] = [
   { value: "stock_added", label: "Stock Added" },
@@ -67,6 +72,11 @@ const MOVEMENT_TYPES: { value: MovementType; label: string }[] = [
   { value: "damage", label: "Damage" },
   { value: "manual_adjustment", label: "Manual Adjustment" },
 ]
+
+const MOVEMENT_TYPE_VALUES = new Set<string>(MOVEMENT_TYPES.map((t) => t.value))
+function isMovementType(value: string): value is MovementType {
+  return MOVEMENT_TYPE_VALUES.has(value)
+}
 
 function SortIcon({ direction }: { direction: "asc" | "desc" | false }) {
   if (direction === "asc") return <ChevronUp className="ml-1 h-3.5 w-3.5" />
@@ -237,8 +247,7 @@ export function StockHistoryTable({
     setIsNoteDialogOpen(true)
   }
 
-  const columns = useMemo<ColumnDef<StockMovement>[]>(
-    () => [
+  const columns: ColumnDef<StockMovement>[] = [
       {
         accessorKey: "movementType",
         header: "Type",
@@ -256,15 +265,23 @@ export function StockHistoryTable({
           </button>
         ),
         cell: ({ row }) => (
-          <span className="text-sm font-medium">{row.original.bookTitle}</span>
+          <BookLink
+            bookId={row.original.bookId}
+            title={row.original.bookTitle}
+            className="block max-w-[160px] truncate text-sm"
+          />
         ),
       },
       {
         accessorKey: "fromBranchName",
         header: "From Branch",
         cell: ({ row }) =>
-          row.original.fromBranchName ? (
-            <span className="text-sm">{row.original.fromBranchName}</span>
+          row.original.fromBranchId && row.original.fromBranchName ? (
+            <BranchLink
+              branchId={row.original.fromBranchId}
+              branchName={row.original.fromBranchName}
+              className="block max-w-[160px] truncate text-sm"
+            />
           ) : (
             <span className="text-sm text-muted-foreground">—</span>
           ),
@@ -273,8 +290,12 @@ export function StockHistoryTable({
         accessorKey: "toBranchName",
         header: "To Branch",
         cell: ({ row }) =>
-          row.original.toBranchName ? (
-            <span className="text-sm">{row.original.toBranchName}</span>
+          row.original.toBranchId && row.original.toBranchName ? (
+            <BranchLink
+              branchId={row.original.toBranchId}
+              branchName={row.original.toBranchName}
+              className="block max-w-[160px] truncate text-sm"
+            />
           ) : (
             <span className="text-sm text-muted-foreground">—</span>
           ),
@@ -312,7 +333,11 @@ export function StockHistoryTable({
         accessorKey: "userName",
         header: "User",
         cell: ({ row }) => (
-          <span className="text-sm">{row.original.userName}</span>
+          <StaffLink
+            staffId={row.original.userId}
+            name={row.original.userName}
+            className="text-sm"
+          />
         ),
       },
       {
@@ -362,9 +387,7 @@ export function StockHistoryTable({
           </Button>
         ),
       },
-    ],
-    []
-  )
+  ]
 
   const table = useReactTable({
     data: movements,
@@ -464,7 +487,7 @@ export function StockHistoryTable({
                   value={draftTypeFilter ?? "all"}
                   onValueChange={(value) =>
                     setDraftTypeFilter(
-                      value === "all" ? null : (value as MovementType)
+                      isMovementType(value) ? value : null
                     )
                   }
                 >

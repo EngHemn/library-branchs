@@ -16,6 +16,8 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import type { BookingRecord, BookingStatus } from "@/domain/entities/book/BookDetail"
+import { BranchLink } from "@/presentation/components/branch-management/BranchLink"
+import { MemberLink } from "@/presentation/components/shared/DashboardEntityLink"
 
 type BookingHistoryTableProps = {
   bookings: BookingRecord[]
@@ -73,9 +75,25 @@ export function BookingHistoryTable({ bookings }: BookingHistoryTableProps) {
                       {booking.bookingId}
                     </TableCell>
                     <TableCell className="font-medium">
-                      {booking.memberName}
+                      {booking.memberId ? (
+                        <MemberLink
+                          memberId={booking.memberId}
+                          name={booking.memberName}
+                        />
+                      ) : (
+                        booking.memberName
+                      )}
                     </TableCell>
-                    <TableCell>{booking.branchName}</TableCell>
+                    <TableCell>
+                      {booking.branchId ? (
+                        <BranchLink
+                          branchId={booking.branchId}
+                          branchName={booking.branchName}
+                        />
+                      ) : (
+                        booking.branchName
+                      )}
+                    </TableCell>
                     <TableCell>
                       {typeLabels[booking.type] ?? booking.type}
                     </TableCell>

@@ -10,17 +10,38 @@ export type PermissionStaffRole =
   | "sub_branch_admin"
   | "staff"
 
-export type PermissionStaffMember = {
+export const PERMISSION_ROLE_LABELS: Record<PermissionStaffRole, string> = {
+  branch_admin: "Branch Admin",
+  sub_branch_admin: "Sub-Branch Admin",
+  staff: "Staff",
+}
+
+export type PermissionRole = {
   id: string
   name: string
-  email: string
-  role: PermissionStaffRole
-  branch: string
+  description: string
   assignedPermissions: PermissionCode[]
-  isRoleLocked: boolean
+  isSystem: boolean
+}
+
+export type CreatePermissionRoleInput = {
+  name: string
+  description: string
+}
+
+export type UpdatePermissionRoleInput = {
+  name: string
+  description: string
 }
 
 export type PermissionConfig = {
   categories: PermissionCategory[]
   totalPermissions: number
+}
+
+export function getPermissionRoleLabel(roleId: string): string {
+  return (
+    PERMISSION_ROLE_LABELS[roleId as PermissionStaffRole] ??
+    roleId.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase())
+  )
 }

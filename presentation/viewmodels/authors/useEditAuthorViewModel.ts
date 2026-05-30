@@ -1,8 +1,9 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 import {
   authorFormSchema,
@@ -43,11 +44,10 @@ export function useEditAuthorViewModel(
   authorId: string,
   getAuthorsUseCase: GetAuthorsUseCase
 ): EditAuthorViewModel {
-  const [status, setStatus] = useState<EditAuthorStatus>("idle")
-  const [error, setError] = useState<string | null>(null)
+  const queryClient = useQueryClient()
 
   const form = useForm<AuthorFormInput, unknown, AuthorFormValues>({
-    resolver: zodResolver(authorFormSchema as never),
+    resolver: zodResolver(authorFormSchema),
     defaultValues: {
       name: "",
       nationality: "",
@@ -57,67 +57,66 @@ export function useEditAuthorViewModel(
     },
   })
 
-  useEffect(() => {
-    let cancelled = false
-
-    async function loadAuthor(): Promise<void> {
-      setStatus("loading")
-      setError(null)
+  const { data, status: queryStatus, error: queryError } = useQuery({
+    queryKey: ["authors", authorId],
+    queryFn: async () => {
       const result = await getAuthorsUseCase.getAuthorById(authorId)
-      if (cancelled) return
+      if (!result.success) throw new Error(result.error)
+      return result.data ?? null
+    },
+  })
 
-      if (!result.success) {
-        setStatus("error")
-        setError(result.error)
-        return
-      }
-
-      if (!result.data) {
-        setStatus("not-found")
-        return
-      }
-
+  useEffect(() => {
+    if (data) {
       form.reset({
-        name: result.data.name,
-        nationality: result.data.nationality,
-        dateOfBirth: result.data.dateOfBirth,
-        status: result.data.status,
-        biography: result.data.biography,
+        name: data.name,
+        nationality: data.nationality,
+        dateOfBirth: data.dateOfBirth,
+        status: data.status,
+        biography: data.biography,
       })
-      setStatus("ready")
     }
+  }, [data, form])
 
-    void loadAuthor()
-
-    return () => {
-      cancelled = true
-    }
-  }, [authorId, getAuthorsUseCase, form])
+  const {
+    mutateAsync,
+    isPending: isSaving,
+    isSuccess: isSaved,
+    error: mutationError,
+  } = useMutation({
+    mutationFn: async (values: AuthorFormValues) => {
+      const result = await getAuthorsUseCase.updateAuthor({ id: authorId, ...values })
+      if (!result.success) throw new Error(result.error)
+      return result.data
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["authors", authorId] }),
+  })
 
   async function save(values: AuthorFormValues): Promise<void> {
-    setStatus("saving")
-    setError(null)
-    const result = await getAuthorsUseCase.updateAuthor({
-      id: authorId,
-      ...values,
-    })
-    if (!result.success) {
-      setStatus("ready")
-      setError(result.error)
-      return
+    try {
+      await mutateAsync(values)
+    } catch {
+      // error captured in mutationError state
     }
-    setStatus("saved")
   }
+
+  const status: EditAuthorStatus =
+    isSaved ? "saved" :
+    isSaving ? "saving" :
+    queryStatus === "error" ? "error" :
+    queryStatus === "pending" ? "loading" :
+    data === null ? "not-found" :
+    "ready"
 
   const state: EditAuthorViewModelState = {
     status,
-    error,
-    isLoading: status === "idle" || status === "loading",
+    error: mutationError?.message ?? queryError?.message ?? null,
+    isLoading: status === "loading",
     isReady: status === "ready",
     isNotFound: status === "not-found",
     isError: status === "error",
-    isSaving: status === "saving",
-    isSaved: status === "saved",
+    isSaving,
+    isSaved,
   }
 
   return { state, form, save }

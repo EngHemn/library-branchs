@@ -1,6 +1,6 @@
 "use client"
 
-import { CheckIcon, MessageSquareTextIcon, XIcon } from "lucide-react"
+import { CheckIcon, MapPinIcon, MessageSquareReplyIcon, MessageSquareTextIcon, XIcon } from "lucide-react"
 
 import {
   Card,
@@ -15,12 +15,15 @@ import {
 } from "@/components/ui/data-table"
 import type { MainBranchRequest } from "@/domain/entities/branch/Branch"
 import { BranchActionButton } from "@/presentation/components/branch-management/BranchActionButton"
+import { BranchRequestExpandedDetails } from "@/presentation/components/branch-management/BranchRequestExpandedDetails"
 
 type MainBranchRequestsTableProps = {
   requests: MainBranchRequest[]
   expandedRequestIds: string[]
   onApprove: (request: MainBranchRequest) => void
   onReject: (request: MainBranchRequest) => void
+  onReply: (request: MainBranchRequest) => void
+  onViewLocation: (request: MainBranchRequest) => void
   onToggleNote: (request: MainBranchRequest) => void
 }
 
@@ -59,22 +62,13 @@ function BranchAdminCell({
   )
 }
 
-function RequestNote({ note }: { note: string }) {
-  return (
-    <div className="rounded-lg border bg-background p-3">
-      <div className="text-xs font-medium tracking-normal text-muted-foreground uppercase">
-        Note
-      </div>
-      <p className="mt-1 text-sm leading-6">{note || "No note submitted."}</p>
-    </div>
-  )
-}
-
 export function MainBranchRequestsTable({
   requests,
   expandedRequestIds,
   onApprove,
   onReject,
+  onReply,
+  onViewLocation,
   onToggleNote,
 }: MainBranchRequestsTableProps) {
   const columns: DataTableColumn<
@@ -139,10 +133,20 @@ export function MainBranchRequestsTable({
               onClick={() => onApprove(request)}
             />
             <BranchActionButton
+              icon={MapPinIcon}
+              label="Location"
+              onClick={() => onViewLocation(request)}
+            />
+            <BranchActionButton
               icon={XIcon}
               label="Reject"
               variant="destructive"
               onClick={() => onReject(request)}
+            />
+            <BranchActionButton
+              icon={MessageSquareReplyIcon}
+              label="Reply"
+              onClick={() => onReply(request)}
             />
             <BranchActionButton
               icon={MessageSquareTextIcon}
@@ -174,7 +178,12 @@ export function MainBranchRequestsTable({
           initialPageSize={5}
           tableClassName="min-w-[920px]"
           isRowExpanded={(request) => expandedRequestIds.includes(request.id)}
-          renderExpandedRow={(request) => <RequestNote note={request.note} />}
+          renderExpandedRow={(request) => (
+            <BranchRequestExpandedDetails
+              note={request.note}
+              replies={request.replies}
+            />
+          )}
         />
       </CardContent>
     </Card>

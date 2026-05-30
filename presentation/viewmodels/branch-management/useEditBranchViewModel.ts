@@ -1,6 +1,7 @@
 "use client"
 
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useEffect, useState } from "react"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 import type { Branch } from "@/domain/entities/branch/Branch"
 import type { UpdateBranchInput } from "@/domain/repositories/BranchManagementRepository"
@@ -10,6 +11,7 @@ import {
   getFieldErrors,
   validateBranchForm,
 } from "@/domain/validators/branch/validateBranchForm"
+import { generatePassword } from "@/lib/generatePassword"
 
 type EditBranchStatus =
   | "idle"
@@ -29,6 +31,7 @@ type EditBranchFormState = {
   phone: string
   latitude: number | null
   longitude: number | null
+  password: string
 }
 
 type EditBranchViewModelState = {
@@ -51,6 +54,7 @@ type EditBranchViewModel = {
   state: EditBranchViewModelState
   setField: (field: keyof EditBranchFormState, value: string | number | null) => void
   setLocation: (latitude: number | null, longitude: number | null) => void
+  autoGeneratePassword: () => void
   save: () => Promise<void>
 }
 
@@ -63,6 +67,7 @@ const emptyForm: EditBranchFormState = {
   phone: "",
   latitude: null,
   longitude: null,
+  password: "",
 }
 
 const emptyFieldErrors: BranchFormErrors = {
@@ -72,6 +77,7 @@ const emptyFieldErrors: BranchFormErrors = {
   address: null,
   phone: null,
   parentBranch: null,
+  password: null,
 }
 
 function branchToFormState(branch: Branch): EditBranchFormState {
@@ -84,6 +90,7 @@ function branchToFormState(branch: Branch): EditBranchFormState {
     phone: branch.phone,
     latitude: branch.latitude,
     longitude: branch.longitude,
+    password: "",
   }
 }
 
@@ -97,6 +104,7 @@ function formToUpdateInput(form: EditBranchFormState): UpdateBranchInput {
     phone: form.phone,
     latitude: form.latitude,
     longitude: form.longitude,
+    password: form.password || undefined,
   }
 }
 
@@ -104,152 +112,114 @@ export function useEditBranchViewModel(
   branchId: string,
   branchManagementUseCase: BranchManagementUseCase
 ): EditBranchViewModel {
-  const [status, setStatus] = useState<EditBranchStatus>("idle")
-  const [branch, setBranch] = useState<Branch | null>(null)
+  const queryClient = useQueryClient()
   const [form, setForm] = useState<EditBranchFormState>(emptyForm)
-  const [mainBranches, setMainBranches] = useState<Branch[]>([])
-  const [error, setError] = useState<string | null>(null)
   const [showFieldErrors, setShowFieldErrors] = useState(false)
+  const [isSaved, setIsSaved] = useState(false)
 
-  useEffect(() => {
-    let cancelled = false
-
-    async function loadBranch(): Promise<void> {
-      setStatus("loading")
-      setError(null)
-
+  const { data, isPending, isError, error } = useQuery({
+    queryKey: ["editBranchData", branchId],
+    queryFn: async () => {
       const [branchResult, branchesResult] = await Promise.all([
         branchManagementUseCase.getBranchById(branchId),
         branchManagementUseCase.getBranches(),
       ])
 
-      if (cancelled) {
-        return
-      }
+      if (!branchResult.success) throw new Error(branchResult.error)
+      if (!branchResult.data) return null
 
-      if (!branchResult.success) {
-        setStatus("error")
-        setError(branchResult.error)
-        return
-      }
+      const branch = branchResult.data
+      const mainBranches = branchesResult.success
+        ? branchesResult.data.filter((b) => b.type === "main" && b.id !== branchId)
+        : []
 
-      if (!branchResult.data) {
-        setStatus("not-found")
-        return
-      }
-
-      if (branchesResult.success) {
-        setMainBranches(
-          branchesResult.data.filter(
-            (item) => item.type === "main" && item.id !== branchId
-          )
-        )
-      }
-
-      setBranch(branchResult.data)
-      setForm(branchToFormState(branchResult.data))
-      setStatus("loaded")
-    }
-
-    void loadBranch()
-
-    return () => {
-      cancelled = true
-    }
-  }, [branchId, branchManagementUseCase])
-
-  const fieldErrors = useMemo<BranchFormErrors>(() => {
-    if (!branch) {
-      return emptyFieldErrors
-    }
-
-    return getFieldErrors(formToUpdateInput(form), branch.type)
-  }, [branch, form])
-
-  const setField = useCallback(
-    (field: keyof EditBranchFormState, value: string | number | null): void => {
-      setForm((currentForm) => ({
-        ...currentForm,
-        [field]: value,
-      }))
+      return { branch, mainBranches }
     },
-    []
-  )
+  })
 
-  const setLocation = useCallback(
-    (latitude: number | null, longitude: number | null): void => {
-      setForm((currentForm) => ({
-        ...currentForm,
-        latitude,
-        longitude,
-      }))
-    },
-    []
-  )
-
-  const save = useCallback(async (): Promise<void> => {
-    if (!branch) {
-      return
+  useEffect(() => {
+    if (data?.branch) {
+      setForm(branchToFormState(data.branch))
     }
+  }, [data?.branch])
+
+  const saveMutation = useMutation({
+    mutationFn: async (vars: { branchId: string; input: UpdateBranchInput }) => {
+      const result = await branchManagementUseCase.updateBranch(vars.branchId, vars.input)
+      if (!result.success) throw new Error(result.error)
+      return result.data
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["editBranchData", branchId] })
+      setIsSaved(true)
+    },
+  })
+
+  function setField(field: keyof EditBranchFormState, value: string | number | null): void {
+    setForm((currentForm) => ({ ...currentForm, [field]: value }))
+  }
+
+  function setLocation(latitude: number | null, longitude: number | null): void {
+    setForm((currentForm) => ({ ...currentForm, latitude, longitude }))
+  }
+
+  function autoGeneratePassword(): void {
+    setForm((currentForm) => ({ ...currentForm, password: generatePassword() }))
+  }
+
+  async function save(): Promise<void> {
+    if (!data?.branch) return
 
     setShowFieldErrors(true)
 
     const input = formToUpdateInput(form)
-    const validationResult = validateBranchForm(input, branch.type)
+    const validationResult = validateBranchForm(input, data.branch.type)
+    if (!validationResult.success) return
 
-    if (!validationResult.success) {
-      return
-    }
+    saveMutation.mutate({ branchId: data.branch.id, input: validationResult.data })
+  }
 
-    setStatus("saving")
-    setError(null)
+  const fieldErrors: BranchFormErrors = data?.branch
+    ? getFieldErrors(formToUpdateInput(form), data.branch.type)
+    : emptyFieldErrors
 
-    const result = await branchManagementUseCase.updateBranch(
-      branch.id,
-      validationResult.data
-    )
+  const status: EditBranchStatus = isPending
+    ? "loading"
+    : isError
+    ? "error"
+    : data === null
+    ? "not-found"
+    : isSaved
+    ? "saved"
+    : saveMutation.isPending
+    ? "saving"
+    : "loaded"
 
-    if (!result.success) {
-      setStatus("loaded")
-      setError(result.error)
-      return
-    }
-
-    setBranch(result.data)
-    setStatus("saved")
-  }, [branch, branchManagementUseCase, form])
-
-  const state = useMemo<EditBranchViewModelState>(
-    () => ({
-      status,
-      branch,
-      form,
-      fieldErrors: showFieldErrors ? fieldErrors : emptyFieldErrors,
-      mainBranches,
-      error,
-      showFieldErrors,
-      isLoading: status === "idle" || status === "loading",
-      isLoaded: status === "loaded",
-      isSaving: status === "saving",
-      isSaved: status === "saved",
-      isNotFound: status === "not-found",
-      isError: status === "error",
-    }),
-    [
-      branch,
-      error,
-      fieldErrors,
-      form,
-      mainBranches,
-      showFieldErrors,
-      status,
-    ]
-  )
+  const state: EditBranchViewModelState = {
+    status,
+    branch: data?.branch ?? null,
+    form,
+    fieldErrors: showFieldErrors ? fieldErrors : emptyFieldErrors,
+    mainBranches: data?.mainBranches ?? [],
+    error: isError
+      ? (error instanceof Error ? error.message : "Unknown error")
+      : saveMutation.isError
+      ? (saveMutation.error instanceof Error ? saveMutation.error.message : "Unknown error")
+      : null,
+    showFieldErrors,
+    isLoading: status === "loading",
+    isLoaded: status === "loaded",
+    isSaving: status === "saving",
+    isSaved: status === "saved",
+    isNotFound: status === "not-found",
+    isError: status === "error",
+  }
 
   return {
     state,
     setField,
     setLocation,
+    autoGeneratePassword,
     save,
   }
 }

@@ -56,7 +56,7 @@ export function ViewTranslatorScreen({ translatorId, getTranslatorsUseCase }: Vi
     { label: state.translator?.name ?? "Translator Details" },
   ])
 
-  const goBack = () => router.push("/dashboard/translators")
+  const goBack = () => router.back()
 
   return (
     <>

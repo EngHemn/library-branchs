@@ -79,7 +79,7 @@ export function ViewBookScreen({ bookId, getBooksUseCase }: ViewBookScreenProps)
     { label: state.bookDetail?.title ?? "Book Details" },
   ])
 
-  const goBack = () => router.push("/dashboard/books")
+  const goBack = () => router.back()
 
   return (
     <>

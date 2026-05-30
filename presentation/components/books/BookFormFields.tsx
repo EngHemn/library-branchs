@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useState } from "react"
 import type { UseFormReturn } from "react-hook-form"
 import { PlusIcon } from "lucide-react"
 
@@ -91,7 +91,7 @@ function SearchableCombobox({
     <Combobox
       value={value || null}
       onValueChange={(val) => {
-        onChange((val as string) ?? "")
+        onChange(val ?? "")
       }}
       onInputValueChange={(val) => {
         setInputValue(val)
@@ -149,15 +149,9 @@ export function BookFormFields({
   onAddLanguage,
   children,
 }: BookFormFieldsProps) {
-  const authorOptions = useMemo(() => toComboboxOptions(authors), [authors])
-  const translatorOptions = useMemo(
-    () => toComboboxOptions(translators),
-    [translators]
-  )
-  const categoryOptions = useMemo(
-    () => toComboboxOptions(categories),
-    [categories]
-  )
+  const authorOptions = toComboboxOptions(authors)
+  const translatorOptions = toComboboxOptions(translators)
+  const categoryOptions = toComboboxOptions(categories)
 
   return (
     <Form {...form}>

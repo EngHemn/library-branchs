@@ -1,5 +1,6 @@
 "use client"
 
+import { useRouter } from "next/navigation"
 import { PlusIcon, RefreshCwIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -12,9 +13,8 @@ import {
 } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { TooltipProvider } from "@/components/ui/tooltip"
+import { dashboardPaths } from "@/lib/dashboardPaths"
 import type { GetEventsUseCase } from "@/domain/usecases/events/GetEventsUseCase"
-import { EventFormDialog } from "@/presentation/components/events/EventFormDialog"
-import { EventViewDialog } from "@/presentation/components/events/EventViewDialog"
 import { EventSummaryCards } from "@/presentation/components/events/EventSummaryCards"
 import { EventsFilters } from "@/presentation/components/events/EventsFilters"
 import { EventBranchBooksSheet } from "@/presentation/components/events/EventBranchBooksSheet"
@@ -45,6 +45,7 @@ function LoadingEventsScreen() {
 }
 
 export function EventsScreen({ getEventsUseCase }: EventsScreenProps) {
+  const router = useRouter()
   const viewModel = useEventsViewModel(getEventsUseCase)
   const { state } = viewModel
 
@@ -81,124 +82,97 @@ export function EventsScreen({ getEventsUseCase }: EventsScreenProps) {
     )
   }
 
+  const branchBooksSelection = state.branchBooksSelection
+
   return (
-          <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
-            <div className="flex flex-col gap-4 pt-4 sm:flex-row sm:items-start sm:justify-between">
-              <div className="space-y-1">
-                <h1 className="text-2xl font-semibold tracking-tight">
-                  Event Management
-                </h1>
-                <p className="text-sm text-muted-foreground">
-                  One event can run at a single branch or across many branches.
-                  Use the table to review each event; expand rows when multiple
-                  branches participate.
-                </p>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => void viewModel.reload()}
-                >
-                  <RefreshCwIcon />
-                  Refresh
-                </Button>
-                <Button
-                  type="button"
-                  size="sm"
-                  onClick={viewModel.openCreateDialog}
-                >
-                  <PlusIcon />
-                  Add Event
-                </Button>
-              </div>
-            </div>
-
-            <EventSummaryCards
-              summary={state.summary}
-              isLoading={summaryLoading}
-            />
-
-            <Card className="rounded-lg">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base">Filters</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <EventsFilters
-                  searchQuery={state.searchQuery}
-                  onSearchQueryChange={viewModel.setSearchQuery}
-                  statusFilter={state.statusFilter}
-                  onStatusFilterChange={viewModel.setStatusFilter}
-                />
-              </CardContent>
-            </Card>
-
-            <TooltipProvider>
-              <EventsTable
-                events={state.filteredEvents}
-                expandedEventIds={state.expandedEventIds}
-                onToggleExpanded={viewModel.toggleEventExpanded}
-                onViewBranchBooks={viewModel.openBranchBooks}
-                onView={viewModel.openViewDialog}
-                onEdit={viewModel.openEditDialog}
-              />
-            </TooltipProvider>
-
-            <EventViewDialog
-              event={state.viewingEvent}
-              open={state.isViewDialogOpen}
-              onOpenChange={(open) => {
-                if (!open) {
-                  viewModel.closeViewDialog()
-                }
-              }}
-              onEdit={viewModel.openEditDialog}
-            />
-
-            <EventFormDialog
-              open={state.isFormOpen}
-              mode={state.formMode === "edit" ? "edit" : "create"}
-              form={viewModel.form}
-              branchOptions={state.branchOptions}
-              isSaving={state.isSaving}
-              error={state.formError}
-              onOpenChange={(open) => {
-                if (!open) {
-                  viewModel.closeFormDialog()
-                }
-              }}
-              onSubmit={(values) => void viewModel.saveEvent(values)}
-            />
-
-            <EventBranchBooksSheet
-              isOpen={state.isBranchBooksSheetOpen}
-              eventName={state.branchBooksSelection?.eventName ?? ""}
-              branchName={state.branchBooksSelection?.branchName ?? ""}
-              books={state.filteredBranchBooks}
-              booksStatus={state.branchBooksStatus}
-              booksError={state.branchBooksError}
-              searchQuery={state.branchBooksSearchQuery}
-              languageFilter={state.branchBooksLanguageFilter}
-              categoryFilter={state.branchBooksCategoryFilter}
-              authorFilter={state.branchBooksAuthorFilter}
-              translatorFilter={state.branchBooksTranslatorFilter}
-              languages={state.branchBooksLanguages}
-              categories={state.branchBooksCategories}
-              authors={state.branchBooksAuthors}
-              translators={state.branchBooksTranslators}
-              onOpenChange={(open) => {
-                if (!open) {
-                  viewModel.closeBranchBooks()
-                }
-              }}
-              onSearchQueryChange={viewModel.setBranchBooksSearchQuery}
-              onLanguageFilterChange={viewModel.setBranchBooksLanguageFilter}
-              onCategoryFilterChange={viewModel.setBranchBooksCategoryFilter}
-              onAuthorFilterChange={viewModel.setBranchBooksAuthorFilter}
-              onTranslatorFilterChange={viewModel.setBranchBooksTranslatorFilter}
-              onResetFilters={viewModel.resetBranchBooksFilters}
-            />
+    <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
+      <div className="flex flex-col gap-4 pt-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="space-y-1">
+          <h1 className="text-2xl font-semibold tracking-tight">
+            Event Management
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            One event can run at a single branch or across many branches.
+            Use the table to review each event; expand rows when multiple
+            branches participate.
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => void viewModel.reload()}
+          >
+            <RefreshCwIcon />
+            Refresh
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            onClick={() => router.push(dashboardPaths.events.create)}
+          >
+            <PlusIcon />
+            Add Event
+          </Button>
+        </div>
       </div>
+
+      <EventSummaryCards summary={state.summary} isLoading={summaryLoading} />
+
+      <Card className="rounded-lg">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base">Filters</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <EventsFilters
+            searchQuery={state.searchQuery}
+            onSearchQueryChange={viewModel.setSearchQuery}
+            statusFilter={state.statusFilter}
+            onStatusFilterChange={viewModel.setStatusFilter}
+          />
+        </CardContent>
+      </Card>
+
+      <TooltipProvider>
+        <EventsTable
+          events={state.filteredEvents}
+          expandedEventIds={state.expandedEventIds}
+          onToggleExpanded={viewModel.toggleEventExpanded}
+          onViewBranchBooks={viewModel.openBranchBooks}
+          onView={(event) => router.push(dashboardPaths.events.detail(event.id))}
+          onEdit={(event) => router.push(dashboardPaths.events.edit(event.id))}
+        />
+      </TooltipProvider>
+
+      {branchBooksSelection ? (
+        <EventBranchBooksSheet
+          isOpen={state.isBranchBooksSheetOpen}
+          eventId={branchBooksSelection.eventId}
+          eventName={branchBooksSelection.eventName}
+          branchId={branchBooksSelection.branchId}
+          branchName={branchBooksSelection.branchName}
+          books={state.filteredBranchBooks}
+          booksStatus={state.branchBooksStatus}
+          booksError={state.branchBooksError}
+          searchQuery={state.branchBooksSearchQuery}
+          languageFilter={state.branchBooksLanguageFilter}
+          categoryFilter={state.branchBooksCategoryFilter}
+          authorFilter={state.branchBooksAuthorFilter}
+          translatorFilter={state.branchBooksTranslatorFilter}
+          languages={state.branchBooksLanguages}
+          categories={state.branchBooksCategories}
+          authors={state.branchBooksAuthors}
+          translators={state.branchBooksTranslators}
+          onOpenChange={viewModel.setBranchBooksSheetOpen}
+          onSearchQueryChange={viewModel.setBranchBooksSearchQuery}
+          onLanguageFilterChange={viewModel.setBranchBooksLanguageFilter}
+          onCategoryFilterChange={viewModel.setBranchBooksCategoryFilter}
+          onAuthorFilterChange={viewModel.setBranchBooksAuthorFilter}
+          onTranslatorFilterChange={viewModel.setBranchBooksTranslatorFilter}
+          onResetFilters={viewModel.resetBranchBooksFilters}
+        />
+      ) : null}
+    </div>
   )
 }

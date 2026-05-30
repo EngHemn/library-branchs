@@ -8,6 +8,7 @@ export type BranchFormErrors = {
   address: string | null
   phone: string | null
   parentBranch: string | null
+  password: string | null
 }
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -56,6 +57,10 @@ export function validateBranchForm(
       branchType === "sub" && !input.parentBranch
         ? "Parent branch is required for sub branches"
         : null,
+    password:
+      input.password !== undefined && input.password.trim().length > 0 && input.password.trim().length < 6
+        ? "Password must be at least 6 characters"
+        : null,
   }
 
   const hasErrors = Object.values(errors).some(
@@ -84,6 +89,7 @@ export function validateBranchForm(
       phone: input.phone.trim(),
       latitude: input.latitude,
       longitude: input.longitude,
+      password: input.password,
     },
   }
 }
@@ -107,6 +113,10 @@ export function getFieldErrors(
     parentBranch:
       branchType === "sub" && !input.parentBranch
         ? "Parent branch is required for sub branches"
+        : null,
+    password:
+      input.password !== undefined && input.password.trim().length > 0 && input.password.trim().length < 6
+        ? "Password must be at least 6 characters"
         : null,
   }
 }

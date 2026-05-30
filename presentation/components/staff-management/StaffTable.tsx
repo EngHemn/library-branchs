@@ -1,7 +1,6 @@
 "use client"
 
 import {
-  ChevronDownIcon,
   EyeIcon,
   PencilIcon,
   PowerIcon,
@@ -10,13 +9,6 @@ import {
 } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import {
   Card,
   CardContent,
@@ -28,7 +20,9 @@ import {
   DataTable,
   type DataTableColumn,
 } from "@/components/ui/data-table"
-import type { StaffMember, StaffPermission } from "@/domain/entities/staff/StaffMember"
+import { getPermissionRoleLabel } from "@/domain/entities/permission/Permission"
+import type { StaffMember, StaffRole } from "@/domain/entities/staff/StaffMember"
+import { BranchLink } from "@/presentation/components/branch-management/BranchLink"
 import { StaffActionButton } from "@/presentation/components/staff-management/StaffActionButton"
 
 type StaffTableProps = {
@@ -45,34 +39,17 @@ type StaffColumnKey =
   | "phone"
   | "role"
   | "branch"
-  | "permissions"
   | "status"
   | "actions"
-
-const roleLabels: Record<string, string> = {
-  manager: "Manager",
-  librarian: "Librarian",
-  assistant: "Assistant",
-  clerk: "Clerk",
-  security: "Security",
-}
 
 const statusLabels: Record<string, string> = {
   active: "Active",
   inactive: "Inactive",
 }
 
-const permissionLabels: Record<StaffPermission, string> = {
-  read: "Read",
-  write: "Write",
-  delete: "Delete",
-  manage_staff: "Staff",
-  manage_books: "Books",
-}
-
-function StaffRoleBadge({ role }: { role: string }) {
-  const variant = role === "manager" ? "default" : "secondary"
-  return <Badge variant={variant}>{roleLabels[role] ?? role}</Badge>
+function StaffRoleBadge({ role }: { role: StaffRole }) {
+  const variant = role === "branch_admin" ? "default" : "secondary"
+  return <Badge variant={variant}>{getPermissionRoleLabel(role)}</Badge>
 }
 
 function StaffStatusBadge({ status }: { status: string }) {
@@ -80,46 +57,6 @@ function StaffStatusBadge({ status }: { status: string }) {
     <Badge variant={status === "active" ? "default" : "outline"}>
       {statusLabels[status] ?? status}
     </Badge>
-  )
-}
-
-function StaffPermissionBadges({
-  permissions,
-}: {
-  permissions: StaffPermission[]
-}) {
-  if (permissions.length === 0) {
-    return <span className="text-muted-foreground">None</span>
-  }
-
-  if (permissions.length === 1) {
-    return (
-      <Badge variant="outline" className="text-xs">
-        {permissionLabels[permissions[0]]}
-      </Badge>
-    )
-  }
-
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="outline"
-          size="sm"
-          className="h-6 gap-1 px-2 text-xs font-normal"
-        >
-          {permissions.length} permissions
-          <ChevronDownIcon className="size-3" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="start">
-        {permissions.map((perm) => (
-          <DropdownMenuItem key={perm} disabled className="text-xs">
-            {permissionLabels[perm]}
-          </DropdownMenuItem>
-        ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
   )
 }
 
@@ -160,7 +97,7 @@ export function StaffTable({
       key: "role",
       header: "ROLE",
       sortable: true,
-      sortValue: (member) => roleLabels[member.role] ?? member.role,
+      sortValue: (member) => getPermissionRoleLabel(member.role),
       cell: (member) => <StaffRoleBadge role={member.role} />,
     },
     {
@@ -168,13 +105,12 @@ export function StaffTable({
       header: "BRANCH",
       sortable: true,
       sortValue: (member) => member.branch,
-      cell: (member) => member.branch,
-    },
-    {
-      key: "permissions",
-      header: "PERMISSIONS",
       cell: (member) => (
-        <StaffPermissionBadges permissions={member.permissions} />
+        <BranchLink
+          branchId={member.branchId}
+          branchName={member.branch}
+          className="block max-w-[180px] truncate font-medium text-primary underline-offset-4 hover:underline"
+        />
       ),
     },
     {
@@ -229,7 +165,7 @@ export function StaffTable({
       <CardHeader>
         <CardTitle>Staff Members</CardTitle>
         <CardDescription>
-          {staff.length.toLocaleString()} staff records
+          {staff.length.toLocaleString()} staff records. Permissions are inherited from each member&apos;s role.
         </CardDescription>
       </CardHeader>
       <CardContent>

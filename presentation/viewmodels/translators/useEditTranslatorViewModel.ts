@@ -1,8 +1,9 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 import {
   translatorFormSchema,
@@ -43,11 +44,10 @@ export function useEditTranslatorViewModel(
   translatorId: string,
   getTranslatorsUseCase: GetTranslatorsUseCase
 ): EditTranslatorViewModel {
-  const [status, setStatus] = useState<EditTranslatorStatus>("idle")
-  const [error, setError] = useState<string | null>(null)
+  const queryClient = useQueryClient()
 
   const form = useForm<TranslatorFormInput, unknown, TranslatorFormValues>({
-    resolver: zodResolver(translatorFormSchema as never),
+    resolver: zodResolver(translatorFormSchema),
     defaultValues: {
       name: "",
       language: "",
@@ -56,66 +56,65 @@ export function useEditTranslatorViewModel(
     },
   })
 
-  useEffect(() => {
-    let cancelled = false
-
-    async function loadTranslator(): Promise<void> {
-      setStatus("loading")
-      setError(null)
+  const { data, status: queryStatus, error: queryError } = useQuery({
+    queryKey: ["translators", translatorId],
+    queryFn: async () => {
       const result = await getTranslatorsUseCase.getTranslatorById(translatorId)
-      if (cancelled) return
+      if (!result.success) throw new Error(result.error)
+      return result.data ?? null
+    },
+  })
 
-      if (!result.success) {
-        setStatus("error")
-        setError(result.error)
-        return
-      }
-
-      if (!result.data) {
-        setStatus("not-found")
-        return
-      }
-
+  useEffect(() => {
+    if (data) {
       form.reset({
-        name: result.data.name,
-        language: result.data.language,
-        status: result.data.status,
-        biography: result.data.biography,
+        name: data.name,
+        language: data.language,
+        status: data.status,
+        biography: data.biography,
       })
-      setStatus("ready")
     }
+  }, [data, form])
 
-    void loadTranslator()
-
-    return () => {
-      cancelled = true
-    }
-  }, [translatorId, getTranslatorsUseCase, form])
+  const {
+    mutateAsync,
+    isPending: isSaving,
+    isSuccess: isSaved,
+    error: mutationError,
+  } = useMutation({
+    mutationFn: async (values: TranslatorFormValues) => {
+      const result = await getTranslatorsUseCase.updateTranslator({ id: translatorId, ...values })
+      if (!result.success) throw new Error(result.error)
+      return result.data
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["translators", translatorId] }),
+  })
 
   async function save(values: TranslatorFormValues): Promise<void> {
-    setStatus("saving")
-    setError(null)
-    const result = await getTranslatorsUseCase.updateTranslator({
-      id: translatorId,
-      ...values,
-    })
-    if (!result.success) {
-      setStatus("ready")
-      setError(result.error)
-      return
+    try {
+      await mutateAsync(values)
+    } catch {
+      // error captured in mutationError state
     }
-    setStatus("saved")
   }
+
+  const status: EditTranslatorStatus =
+    isSaved ? "saved" :
+    isSaving ? "saving" :
+    queryStatus === "error" ? "error" :
+    queryStatus === "pending" ? "loading" :
+    data === null ? "not-found" :
+    "ready"
 
   const state: EditTranslatorViewModelState = {
     status,
-    error,
-    isLoading: status === "idle" || status === "loading",
+    error: mutationError?.message ?? queryError?.message ?? null,
+    isLoading: status === "loading",
     isReady: status === "ready",
     isNotFound: status === "not-found",
     isError: status === "error",
-    isSaving: status === "saving",
-    isSaved: status === "saved",
+    isSaving,
+    isSaved,
   }
 
   return { state, form, save }

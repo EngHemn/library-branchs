@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useQuery } from "@tanstack/react-query"
 
 import type { AuthorDetail } from "@/domain/entities/author/AuthorDetail"
 import type { GetAuthorsUseCase } from "@/domain/usecases/authors/GetAuthorsUseCase"
@@ -31,43 +31,34 @@ export function useAuthorDetailViewModel(
   authorId: string,
   getAuthorsUseCase: GetAuthorsUseCase
 ): AuthorDetailViewModel {
-  const [status, setStatus] = useState<AuthorDetailStatus>("idle")
-  const [author, setAuthor] = useState<AuthorDetail | null>(null)
-  const [error, setError] = useState<string | null>(null)
+  const { data, status: queryStatus, error: queryError, refetch } = useQuery({
+    queryKey: ["authors", authorId],
+    queryFn: async () => {
+      const result = await getAuthorsUseCase.getAuthorById(authorId)
+      if (!result.success) throw new Error(result.error)
+      return result.data ?? null
+    },
+  })
 
-  async function loadAuthor(): Promise<void> {
-    await Promise.resolve()
-    setStatus("loading")
-    setError(null)
-    const result = await getAuthorsUseCase.getAuthorById(authorId)
-    if (!result.success) {
-      setAuthor(null)
-      setStatus("error")
-      setError(result.error)
-      return
-    }
-    if (!result.data) {
-      setAuthor(null)
-      setStatus("not-found")
-      return
-    }
-    setAuthor(result.data)
-    setStatus("loaded")
+  async function reload(): Promise<void> {
+    await refetch()
   }
 
-  useEffect(() => {
-    void loadAuthor()
-  }, [authorId, getAuthorsUseCase])
+  const status: AuthorDetailStatus =
+    queryStatus === "error" ? "error" :
+    queryStatus === "pending" ? "loading" :
+    data === null ? "not-found" :
+    "loaded"
 
   const state: AuthorDetailViewModelState = {
     status,
-    author,
-    error,
-    isLoading: status === "idle" || status === "loading",
+    author: data ?? null,
+    error: queryError?.message ?? null,
+    isLoading: status === "loading",
     isLoaded: status === "loaded",
     isNotFound: status === "not-found",
     isError: status === "error",
   }
 
-  return { state, reload: loadAuthor }
+  return { state, reload }
 }

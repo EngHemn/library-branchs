@@ -15,6 +15,10 @@ export class GetEventsUseCase {
     return this.eventRepository.getEvents()
   }
 
+  getEventById(id: string): Promise<Result<LibraryEvent | null>> {
+    return this.eventRepository.getEventById(id)
+  }
+
   getEventSummary(): Promise<Result<EventSummary>> {
     return this.eventRepository.getEventSummary()
   }

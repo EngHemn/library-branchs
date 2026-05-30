@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useMutation } from "@tanstack/react-query"
 
 import {
   authorFormSchema,
@@ -16,6 +17,7 @@ type CreateAuthorStatus = "ready" | "saving" | "saved"
 type CreateAuthorViewModelState = {
   status: CreateAuthorStatus
   error: string | null
+  savedAuthorId: string | null
   isSaving: boolean
   isSaved: boolean
 }
@@ -29,11 +31,10 @@ type CreateAuthorViewModel = {
 export function useCreateAuthorViewModel(
   getAuthorsUseCase: GetAuthorsUseCase
 ): CreateAuthorViewModel {
-  const [status, setStatus] = useState<CreateAuthorStatus>("ready")
-  const [error, setError] = useState<string | null>(null)
+  const [savedAuthorId, setSavedAuthorId] = useState<string | null>(null)
 
   const form = useForm<AuthorFormInput, unknown, AuthorFormValues>({
-    resolver: zodResolver(authorFormSchema as never),
+    resolver: zodResolver(authorFormSchema),
     defaultValues: {
       name: "",
       nationality: "",
@@ -43,23 +44,38 @@ export function useCreateAuthorViewModel(
     },
   })
 
+  const {
+    mutateAsync,
+    isPending: isSaving,
+    isSuccess: isSaved,
+    error: mutationError,
+  } = useMutation({
+    mutationFn: async (values: AuthorFormValues) => {
+      const result = await getAuthorsUseCase.createAuthor(values)
+      if (!result.success) throw new Error(result.error)
+      return result.data
+    },
+    onSuccess: (data) => {
+      setSavedAuthorId(data.id)
+    },
+  })
+
   async function save(values: AuthorFormValues): Promise<void> {
-    setStatus("saving")
-    setError(null)
-    const result = await getAuthorsUseCase.createAuthor(values)
-    if (!result.success) {
-      setStatus("ready")
-      setError(result.error)
-      return
+    try {
+      await mutateAsync(values)
+    } catch {
+      // error captured in mutationError state
     }
-    setStatus("saved")
   }
+
+  const status: CreateAuthorStatus = isSaved ? "saved" : isSaving ? "saving" : "ready"
 
   const state: CreateAuthorViewModelState = {
     status,
-    error,
-    isSaving: status === "saving",
-    isSaved: status === "saved",
+    error: mutationError?.message ?? null,
+    savedAuthorId,
+    isSaving,
+    isSaved,
   }
 
   return { state, form, save }

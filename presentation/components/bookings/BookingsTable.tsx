@@ -1,10 +1,14 @@
 "use client"
 
 import {
+  BookLink,
+  MemberLink,
+} from "@/presentation/components/shared/DashboardEntityLink"
+import { BranchLink } from "@/presentation/components/branch-management/BranchLink"
+import {
   CalendarPlusIcon,
   CornerDownLeftIcon,
   PencilIcon,
-  Settings2Icon,
   Trash2Icon,
   XIcon,
 } from "lucide-react"
@@ -127,7 +131,7 @@ function BookingActionsMenu({
           aria-label="Booking actions"
           disabled={isActionPending}
         >
-          <IoSettingsOutline  />
+          <IoSettingsOutline className="size-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-40 gap-4">
@@ -208,11 +212,24 @@ export function BookingsTable({
                 {bookings.map((booking) => (
                   <TableRow key={booking.id}>
                     <TableCell className="max-w-[180px] truncate font-medium">
-                      {booking.bookTitle}
+                      <BookLink
+                        bookId={booking.bookId}
+                        title={booking.bookTitle}
+                        className="block truncate"
+                      />
                     </TableCell>
-                    <TableCell>{booking.memberName}</TableCell>
+                    <TableCell>
+                      <MemberLink
+                        memberId={booking.memberId}
+                        name={booking.memberName}
+                      />
+                    </TableCell>
                     <TableCell className="max-w-[160px] truncate">
-                      {booking.branchName}
+                      <BranchLink
+                        branchId={booking.branchId}
+                        branchName={booking.branchName}
+                        className="block truncate"
+                      />
                     </TableCell>
                     <TableCell>
                       <BookingTypeBadge type={booking.type} />

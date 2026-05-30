@@ -15,6 +15,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import type { BranchStock } from "@/domain/entities/book/BookDetail"
+import { BranchLink } from "@/presentation/components/branch-management/BranchLink"
 
 type BookBranchesTableProps = {
   branchStocks: BranchStock[]
@@ -50,7 +51,10 @@ export function BookBranchesTable({ branchStocks }: BookBranchesTableProps) {
                 {branchStocks.map((stock) => (
                   <TableRow key={stock.branchId}>
                     <TableCell className="font-medium">
-                      {stock.branchName}
+                      <BranchLink
+                        branchId={stock.branchId}
+                        branchName={stock.branchName}
+                      />
                     </TableCell>
                     <TableCell>{stock.available}</TableCell>
                     <TableCell>{stock.reserved}</TableCell>

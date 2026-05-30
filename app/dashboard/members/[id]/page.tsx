@@ -2,8 +2,11 @@
 
 import { use } from "react"
 
+import { BranchManagementFakeDataSource } from "@/data/datasources/BranchManagementFakeDataSource"
 import { MemberManagementFakeDataSource } from "@/data/datasources/MemberManagementFakeDataSource"
+import { BranchManagementRepositoryImpl } from "@/data/repositories/BranchManagementRepositoryImpl"
 import { MemberManagementRepositoryImpl } from "@/data/repositories/MemberManagementRepositoryImpl"
+import { BranchManagementUseCase } from "@/domain/usecases/branch/BranchManagementUseCase"
 import { MemberManagementUseCase } from "@/domain/usecases/members/MemberManagementUseCase"
 import { ViewMemberScreen } from "@/presentation/screens/members/ViewMemberScreen"
 
@@ -21,6 +24,14 @@ const memberManagementUseCase = new MemberManagementUseCase(
   memberManagementRepository
 )
 
+const branchManagementFakeDataSource = new BranchManagementFakeDataSource()
+const branchManagementRepository = new BranchManagementRepositoryImpl(
+  branchManagementFakeDataSource
+)
+const branchManagementUseCase = new BranchManagementUseCase(
+  branchManagementRepository
+)
+
 export default function ViewMemberPage({ params }: ViewMemberPageProps) {
   const { id } = use(params)
 
@@ -28,6 +39,7 @@ export default function ViewMemberPage({ params }: ViewMemberPageProps) {
     <ViewMemberScreen
       memberId={id}
       memberManagementUseCase={memberManagementUseCase}
+      branchManagementUseCase={branchManagementUseCase}
     />
   )
 }

@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import type { TranslatorDetail } from "@/domain/entities/translator/TranslatorDetail"
+import { BranchLink } from "@/presentation/components/branch-management/BranchLink"
 
 type TranslatorProfileCardProps = {
   translator: TranslatorDetail
@@ -66,6 +67,11 @@ export function TranslatorProfileCard({ translator }: TranslatorProfileCardProps
                     >
                       {row.value}
                     </Badge>
+                  ) : row.label === "Branch Added" ? (
+                    <BranchLink
+                      branchId={translator.branchId}
+                      branchName={translator.branchName}
+                    />
                   ) : (
                     row.value
                   )}

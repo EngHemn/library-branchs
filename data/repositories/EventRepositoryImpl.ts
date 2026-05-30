@@ -16,6 +16,10 @@ export class EventRepositoryImpl implements EventRepository {
     return this.dataSource.getEvents()
   }
 
+  getEventById(id: string): Promise<Result<LibraryEvent | null>> {
+    return this.dataSource.getEventById(id)
+  }
+
   getEventSummary(): Promise<Result<EventSummary>> {
     return this.dataSource.getEventSummary()
   }

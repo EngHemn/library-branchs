@@ -1,5 +1,6 @@
 "use client"
 
+import { useRouter } from "next/navigation"
 import {
   BookIcon,
   CalendarIcon,
@@ -21,7 +22,33 @@ import {
   type DataTableColumn,
 } from "@/components/ui/data-table"
 import type { Book } from "@/domain/entities/book/Book"
+import { getAuthorViewHref } from "@/lib/authorLink"
+import { getTranslatorViewHref } from "@/lib/translatorLink"
 import { BookActionButton } from "@/presentation/components/books/BookActionButton"
+
+function PersonNameButton({
+  name,
+  href,
+  onNavigate,
+}: {
+  name: string
+  href: string | null
+  onNavigate: (href: string) => void
+}) {
+  if (!href) {
+    return <span className="font-medium">{name}</span>
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={() => onNavigate(href)}
+      className="font-medium text-primary underline-offset-4 hover:underline"
+    >
+      {name}
+    </button>
+  )
+}
 
 type BooksTableProps = {
   books: Book[]
@@ -47,6 +74,12 @@ export function BooksTable({
   onEdit,
   onDelete,
 }: BooksTableProps) {
+  const router = useRouter()
+
+  const navigateTo = (href: string) => {
+    router.push(href)
+  }
+
   const columns: DataTableColumn<Book, BookColumnKey>[] = [
     {
       key: "cover",
@@ -77,21 +110,26 @@ export function BooksTable({
       sortable: true,
       sortValue: (book) => book.author,
       cell: (book) => (
-        <div className="flex flex-col">
-          <span className="font-medium">{book.author}</span>
-        </div>
+        <PersonNameButton
+          name={book.author}
+          href={getAuthorViewHref(book.author)}
+          onNavigate={navigateTo}
+        />
       ),
     },
     {
       key: "translator",
       header: "Translator",
-      cell: (book) => (
-        <div className="flex flex-col">
-          <span className={book.translator ? "font-medium" : "text-muted-foreground" + "text-xs text-center"}>
-            {book.translator ?? "—"}
-          </span>
-        </div>
-      ),
+      cell: (book) =>
+        book.translator ? (
+          <PersonNameButton
+            name={book.translator}
+            href={getTranslatorViewHref(book.translator)}
+            onNavigate={navigateTo}
+          />
+        ) : (
+          <span className="text-muted-foreground">—</span>
+        ),
     },
     {
       key: "category",

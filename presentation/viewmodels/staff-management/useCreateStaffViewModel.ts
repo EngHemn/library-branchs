@@ -1,6 +1,7 @@
 "use client"
 
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useState } from "react"
+import { useMutation, useQuery } from "@tanstack/react-query"
 
 import type { Branch } from "@/domain/entities/branch/Branch"
 import type { StaffRole } from "@/domain/entities/staff/StaffMember"
@@ -12,6 +13,7 @@ import {
   getCreateStaffFieldErrors,
   validateCreateStaffForm,
 } from "@/domain/validators/staff/validateCreateStaffForm"
+import { generatePassword } from "@/lib/generatePassword"
 
 type CreateStaffStatus =
   | "idle"
@@ -27,6 +29,7 @@ type CreateStaffFormState = {
   branchId: string
   email: string
   phone: string
+  password: string
 }
 
 type CreateStaffViewModelState = {
@@ -44,6 +47,7 @@ type CreateStaffViewModelState = {
 type CreateStaffViewModel = {
   state: CreateStaffViewModelState
   setField: (field: keyof CreateStaffFormState, value: string) => void
+  autoGeneratePassword: () => void
   save: () => Promise<void>
 }
 
@@ -53,6 +57,7 @@ const emptyForm: CreateStaffFormState = {
   branchId: "",
   email: "",
   phone: "",
+  password: "",
 }
 
 const emptyFieldErrors: CreateStaffFormErrors = {
@@ -61,6 +66,11 @@ const emptyFieldErrors: CreateStaffFormErrors = {
   branch: null,
   email: null,
   phone: null,
+  password: null,
+}
+
+function toStaffRole(role: StaffRole | ""): StaffRole {
+  return role !== "" ? role : "staff"
 }
 
 function formToCreateInput(
@@ -68,14 +78,14 @@ function formToCreateInput(
   branches: Branch[]
 ): CreateStaffInput {
   const branch = branches.find((b) => b.id === form.branchId)
-
   return {
     staffName: form.staffName,
-    role: (form.role || "assistant") as StaffRole,
+    role: toStaffRole(form.role),
     branchId: form.branchId,
     branch: branch?.branchName ?? "",
     email: form.email,
     phone: form.phone,
+    password: form.password,
   }
 }
 
@@ -83,104 +93,84 @@ export function useCreateStaffViewModel(
   staffManagementUseCase: StaffManagementUseCase,
   branchManagementUseCase: BranchManagementUseCase
 ): CreateStaffViewModel {
-  const [status, setStatus] = useState<CreateStaffStatus>("idle")
   const [form, setForm] = useState<CreateStaffFormState>(emptyForm)
-  const [branches, setBranches] = useState<Branch[]>([])
-  const [error, setError] = useState<string | null>(null)
   const [showFieldErrors, setShowFieldErrors] = useState(false)
+  const [isSaved, setIsSaved] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    let cancelled = false
-
-    async function loadBranches(): Promise<void> {
-      setStatus("loading")
-
+  const branchesQuery = useQuery({
+    queryKey: ["branches"],
+    queryFn: async () => {
       const result = await branchManagementUseCase.getBranches()
-
-      if (cancelled) {
-        return
-      }
-
-      if (result.success) {
-        setBranches(result.data.filter((branch) => branch.status === "active"))
-      }
-
-      setStatus("ready")
-    }
-
-    void loadBranches()
-
-    return () => {
-      cancelled = true
-    }
-  }, [branchManagementUseCase])
-
-  const fieldErrors = useMemo<CreateStaffFormErrors>(() => {
-    if (!form.role) {
-      return {
-        ...emptyFieldErrors,
-        role: showFieldErrors ? "Role is required" : null,
-      }
-    }
-
-    return getCreateStaffFieldErrors(formToCreateInput(form, branches))
-  }, [form, showFieldErrors, branches])
-
-  const setField = useCallback(
-    (field: keyof CreateStaffFormState, value: string): void => {
-      setForm((current) => ({ ...current, [field]: value }))
+      if (!result.success) throw new Error(result.error)
+      return result.data.filter((b) => b.status === "active")
     },
-    []
-  )
+  })
 
-  const save = useCallback(async (): Promise<void> => {
+  const saveMutation = useMutation({
+    mutationFn: async (input: CreateStaffInput) => {
+      const result = await staffManagementUseCase.createStaff(input)
+      if (!result.success) throw new Error(result.error)
+      return result.data
+    },
+    onSuccess: () => setIsSaved(true),
+    onError: (err: Error) => setError(err.message),
+  })
+
+  function setField(field: keyof CreateStaffFormState, value: string): void {
+    setForm((current) => ({ ...current, [field]: value }))
+  }
+
+  function autoGeneratePassword(): void {
+    setForm((current) => ({ ...current, password: generatePassword() }))
+  }
+
+  async function save(): Promise<void> {
     setShowFieldErrors(true)
 
-    if (!form.role) {
-      return
-    }
+    if (!form.role) return
 
+    const branches = branchesQuery.data ?? []
     const input = formToCreateInput(form, branches)
     const validationResult = validateCreateStaffForm(input)
 
-    if (!validationResult.success) {
-      return
-    }
+    if (!validationResult.success) return
 
-    setStatus("saving")
     setError(null)
-
-    const result = await staffManagementUseCase.createStaff(
-      validationResult.data
-    )
-
-    if (!result.success) {
-      setStatus("ready")
-      setError(result.error)
-      return
-    }
-
-    setStatus("saved")
-  }, [branches, form, staffManagementUseCase])
-
-  const state = useMemo<CreateStaffViewModelState>(
-    () => ({
-      status,
-      form,
-      fieldErrors: showFieldErrors ? fieldErrors : emptyFieldErrors,
-      branches,
-      error,
-      isLoading: status === "idle" || status === "loading",
-      isReady: status === "ready",
-      isSaving: status === "saving",
-      isSaved: status === "saved",
-    }),
-    [branches, error, fieldErrors, form, showFieldErrors, status]
-  )
-
-  return {
-    state,
-    setField,
-    save,
+    await saveMutation.mutateAsync(validationResult.data).catch(() => undefined)
   }
+
+  const branches = branchesQuery.data ?? []
+
+  const fieldErrors: CreateStaffFormErrors = !form.role
+    ? {
+        ...emptyFieldErrors,
+        role: showFieldErrors ? "Role is required" : null,
+      }
+    : getCreateStaffFieldErrors(formToCreateInput(form, branches))
+
+  const isLoading = branchesQuery.isPending
+  const isSaving = saveMutation.isPending
+
+  const status: CreateStaffStatus = isSaved
+    ? "saved"
+    : isSaving
+      ? "saving"
+      : isLoading
+        ? "loading"
+        : "ready"
+
+  const state: CreateStaffViewModelState = {
+    status,
+    form,
+    fieldErrors: showFieldErrors ? fieldErrors : emptyFieldErrors,
+    branches,
+    error,
+    isLoading,
+    isReady: status === "ready",
+    isSaving,
+    isSaved,
+  }
+
+  return { state, setField, autoGeneratePassword, save }
 }

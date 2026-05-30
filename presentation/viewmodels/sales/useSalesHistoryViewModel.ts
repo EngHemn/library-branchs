@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useQuery } from "@tanstack/react-query"
 
 import type { Sale } from "@/domain/entities/sales/Sale"
 import type { SalesUseCase } from "@/domain/usecases/sales/SalesUseCase"
@@ -21,40 +21,32 @@ export type SalesHistoryViewModel = {
 export function useSalesHistoryViewModel(
   salesUseCase: SalesUseCase
 ): SalesHistoryViewModel {
-  const [status, setStatus] = useState<SalesHistoryStatus>("idle")
-  const [sales, setSales] = useState<Sale[]>([])
-  const [error, setError] = useState<string | null>(null)
+  const salesHistoryQuery = useQuery({
+    queryKey: ["sales-history"],
+    queryFn: async () => {
+      const result = await salesUseCase.getSalesHistory()
+      if (!result.success) throw new Error(result.error)
+      return result.data
+    },
+  })
 
-  const loadSalesHistory = useCallback(async (): Promise<void> => {
-    setStatus("loading")
-    setError(null)
-
-    const result = await salesUseCase.getSalesHistory()
-    if (!result.success) {
-      setStatus("error")
-      setError(result.error)
-      return
-    }
-
-    setSales(result.data)
-    setStatus("success")
-  }, [salesUseCase])
-
-  useEffect(() => {
-    void loadSalesHistory()
-  }, [loadSalesHistory])
-
-  const state = useMemo<SalesHistoryState>(
-    () => ({
-      status,
-      sales,
-      error,
-    }),
-    [status, sales, error]
-  )
-
-  return {
-    state,
-    reload: loadSalesHistory,
+  async function reload(): Promise<void> {
+    await salesHistoryQuery.refetch()
   }
+
+  const status: SalesHistoryStatus = salesHistoryQuery.isPending
+    ? "loading"
+    : salesHistoryQuery.isError
+      ? "error"
+      : salesHistoryQuery.isSuccess
+        ? "success"
+        : "idle"
+
+  const state: SalesHistoryState = {
+    status,
+    sales: salesHistoryQuery.data ?? [],
+    error: salesHistoryQuery.error?.message ?? null,
+  }
+
+  return { state, reload }
 }

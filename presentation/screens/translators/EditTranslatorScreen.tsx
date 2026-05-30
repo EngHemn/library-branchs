@@ -75,7 +75,7 @@ export function EditTranslatorScreen({ translatorId, getTranslatorsUseCase }: Ed
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button variant="outline" onClick={() => router.push("/dashboard/translators")}>
+              <Button variant="outline" onClick={() => router.back()}>
                 <ArrowLeftIcon />
                 Back to translators
               </Button>
@@ -92,7 +92,7 @@ export function EditTranslatorScreen({ translatorId, getTranslatorsUseCase }: Ed
               <CardDescription>{state.error}</CardDescription>
             </CardHeader>
             <CardContent className="flex gap-3">
-              <Button variant="outline" onClick={() => router.push("/dashboard/translators")}>
+              <Button variant="outline" onClick={() => router.back()}>
                 <ArrowLeftIcon />
                 Back to translators
               </Button>

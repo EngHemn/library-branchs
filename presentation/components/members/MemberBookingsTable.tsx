@@ -20,6 +20,8 @@ import type {
   MemberBookingStatus,
   MemberBookingType,
 } from "@/domain/entities/member/MemberDetail"
+import { BranchLink } from "@/presentation/components/branch-management/BranchLink"
+import { BookLink } from "@/presentation/components/shared/DashboardEntityLink"
 
 type MemberBookingsTableProps = {
   title: string
@@ -95,9 +97,25 @@ export function MemberBookingsTable({
                       {booking.bookingId}
                     </TableCell>
                     <TableCell className="font-medium">
-                      {booking.bookTitle}
+                      {booking.bookId ? (
+                        <BookLink
+                          bookId={booking.bookId}
+                          title={booking.bookTitle}
+                        />
+                      ) : (
+                        booking.bookTitle
+                      )}
                     </TableCell>
-                    <TableCell>{booking.branchName}</TableCell>
+                    <TableCell>
+                      {booking.branchId ? (
+                        <BranchLink
+                          branchId={booking.branchId}
+                          branchName={booking.branchName}
+                        />
+                      ) : (
+                        booking.branchName
+                      )}
+                    </TableCell>
                     <TableCell>{typeLabels[booking.type]}</TableCell>
                     <TableCell>{booking.borrowedDate}</TableCell>
                     <TableCell>{booking.dueDate}</TableCell>

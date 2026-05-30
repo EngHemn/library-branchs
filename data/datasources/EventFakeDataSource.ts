@@ -100,6 +100,24 @@ export class EventFakeDataSource {
     }
   }
 
+  async getEventById(id: string): Promise<Result<LibraryEvent | null>> {
+    await delay(300)
+
+    const event = this.events.find((item) => item.id === id)
+
+    if (!event) {
+      return { success: true, data: null }
+    }
+
+    return {
+      success: true,
+      data: {
+        ...event,
+        branches: event.branches.map((branch) => ({ ...branch })),
+      },
+    }
+  }
+
   async getEventSummary(): Promise<Result<EventSummary>> {
     await delay(200)
     return {

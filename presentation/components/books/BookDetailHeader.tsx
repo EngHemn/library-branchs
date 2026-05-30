@@ -9,6 +9,7 @@ import {
 
 import { Button } from "@/components/ui/button"
 import type { BookDetail } from "@/domain/entities/book/BookDetail"
+import Image from "next/image"
 
 type BookDetailHeaderProps = {
   book: BookDetail
@@ -27,7 +28,9 @@ export function BookDetailHeader({
     <header className="flex flex-col gap-4 sm:flex-row sm:items-start">
       <div className="flex size-20 shrink-0 items-center justify-center rounded-lg bg-muted sm:size-24">
         {book.coverUrl ? (
-          <img
+          <Image
+            width={100}
+            height={100}
             src={book.coverUrl}
             alt={book.title}
             className="size-full rounded-lg object-cover"

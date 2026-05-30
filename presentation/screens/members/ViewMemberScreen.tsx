@@ -22,14 +22,17 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import type { MemberManagementUseCase } from "@/domain/usecases/members/MemberManagementUseCase"
+import type { BranchManagementUseCase } from "@/domain/usecases/branch/BranchManagementUseCase"
 import { MemberBookingsTable } from "@/presentation/components/members/MemberBookingsTable"
 import { MemberDetailsTab } from "@/presentation/components/members/MemberDetailsTab"
+import { useBranchNameLookup } from "@/presentation/hooks/useBranchNameLookup"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
 import { useViewMemberViewModel } from "@/presentation/viewmodels/members/useViewMemberViewModel"
 
 type ViewMemberScreenProps = {
   memberId: string
   memberManagementUseCase: MemberManagementUseCase
+  branchManagementUseCase: BranchManagementUseCase
 }
 
 function LoadingState() {
@@ -58,9 +61,14 @@ function LoadingState() {
   )
 }
 
-export function ViewMemberScreen({ memberId, memberManagementUseCase }: ViewMemberScreenProps) {
+export function ViewMemberScreen({
+  memberId,
+  memberManagementUseCase,
+  branchManagementUseCase,
+}: ViewMemberScreenProps) {
   const router = useRouter()
   const viewModel = useViewMemberViewModel(memberId, memberManagementUseCase)
+  const branchNameToId = useBranchNameLookup(branchManagementUseCase)
   const { state } = viewModel
 
   useDashboardBreadcrumbs([
@@ -69,7 +77,7 @@ export function ViewMemberScreen({ memberId, memberManagementUseCase }: ViewMemb
     { label: state.member?.memberName ?? "Member Details" },
   ])
 
-  const goBack = () => router.push("/dashboard/members")
+  const goBack = () => router.back()
 
   return (
     <>
@@ -161,7 +169,10 @@ export function ViewMemberScreen({ memberId, memberManagementUseCase }: ViewMemb
               </TabsList>
 
               <TabsContent value="details">
-                <MemberDetailsTab member={state.member} />
+                <MemberDetailsTab
+                  member={state.member}
+                  branchNameToId={branchNameToId}
+                />
               </TabsContent>
 
               <TabsContent value="active-bookings">

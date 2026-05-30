@@ -1,6 +1,7 @@
 "use client"
 
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useState } from "react"
+import { useQuery } from "@tanstack/react-query"
 
 import type { Author } from "@/domain/entities/author/Author"
 import type { Book } from "@/domain/entities/book/Book"
@@ -19,6 +20,8 @@ type ViewStaffViewModelState = {
   books: Book[]
   authors: Author[]
   translators: Translator[]
+  branchAuthors: Author[]
+  branchTranslators: Translator[]
   activeTab: ViewStaffTabKey
   searchQuery: string
   error: string | null
@@ -39,12 +42,8 @@ function filterBySearch<T>(
   query: string,
   getSearchableText: (item: T) => string
 ): T[] {
-  if (!query.trim()) {
-    return items
-  }
-
+  if (!query.trim()) return items
   const lowerQuery = query.toLowerCase().trim()
-
   return items.filter((item) =>
     getSearchableText(item).toLowerCase().includes(lowerQuery)
   )
@@ -55,122 +54,94 @@ export function useViewStaffViewModel(
   staffManagementUseCase: StaffManagementUseCase,
   branchDetailUseCase: BranchDetailUseCase
 ): ViewStaffViewModel {
-  const [status, setStatus] = useState<ViewStaffStatus>("idle")
-  const [staffMember, setStaffMember] = useState<StaffMember | null>(null)
-  const [books, setBooks] = useState<Book[]>([])
-  const [authors, setAuthors] = useState<Author[]>([])
-  const [translators, setTranslators] = useState<Translator[]>([])
-  const [activeTab, setActiveTab] = useState<ViewStaffTabKey>("details")
+  const [activeTab, setActiveTabState] = useState<ViewStaffTabKey>("details")
   const [searchQuery, setSearchQuery] = useState("")
-  const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    let cancelled = false
+  const staffQuery = useQuery({
+    queryKey: ["staff", staffId],
+    queryFn: async () => {
+      const result = await staffManagementUseCase.getStaffById(staffId)
+      if (!result.success) throw new Error(result.error)
+      return result.data ?? null
+    },
+  })
 
-    async function loadStaffDetail(): Promise<void> {
-      setStatus("loading")
-      setError(null)
+  const branchId = staffQuery.data?.branchId
 
-      const staffResult = await staffManagementUseCase.getStaffById(staffId)
-
-      if (cancelled) return
-
-      if (!staffResult.success) {
-        setStatus("error")
-        setError(staffResult.error)
-        return
+  const branchDataQuery = useQuery({
+    queryKey: ["branch-detail", branchId],
+    queryFn: async () => {
+      const [booksResult, authorsResult, translatorsResult] = await Promise.all(
+        [
+          branchDetailUseCase.getBooks(branchId!),
+          branchDetailUseCase.getAuthors(branchId!),
+          branchDetailUseCase.getTranslators(branchId!),
+        ]
+      )
+      return {
+        books: booksResult.success ? booksResult.data : [],
+        authors: authorsResult.success ? authorsResult.data : [],
+        translators: translatorsResult.success ? translatorsResult.data : [],
       }
+    },
+    enabled: !!branchId,
+  })
 
-      if (!staffResult.data) {
-        setStatus("not-found")
-        return
-      }
-
-      const member = staffResult.data
-      setStaffMember(member)
-
-      const [booksResult, authorsResult, translatorsResult] =
-        await Promise.all([
-          branchDetailUseCase.getBooks(member.branchId),
-          branchDetailUseCase.getAuthors(member.branchId),
-          branchDetailUseCase.getTranslators(member.branchId),
-        ])
-
-      if (cancelled) return
-
-      if (booksResult.success) setBooks(booksResult.data)
-      if (authorsResult.success) setAuthors(authorsResult.data)
-      if (translatorsResult.success) setTranslators(translatorsResult.data)
-
-      setStatus("loaded")
-    }
-
-    void loadStaffDetail()
-
-    return () => {
-      cancelled = true
-    }
-  }, [staffId, staffManagementUseCase, branchDetailUseCase])
-
-  const handleSetActiveTab = useCallback((tab: ViewStaffTabKey): void => {
-    setActiveTab(tab)
+  function setActiveTab(tab: ViewStaffTabKey): void {
+    setActiveTabState(tab)
     setSearchQuery("")
-  }, [])
-
-  const filteredBooks = useMemo(
-    () =>
-      filterBySearch(books, searchQuery, (b) =>
-        [b.title, b.category, b.author, b.translator ?? "", b.isbn].join(" ")
-      ),
-    [books, searchQuery]
-  )
-
-  const filteredAuthors = useMemo(
-    () =>
-      filterBySearch(authors, searchQuery, (a) =>
-        [a.name, a.nationality].join(" ")
-      ),
-    [authors, searchQuery]
-  )
-
-  const filteredTranslators = useMemo(
-    () =>
-      filterBySearch(translators, searchQuery, (t) =>
-        [t.name, t.language].join(" ")
-      ),
-    [translators, searchQuery]
-  )
-
-  const state = useMemo<ViewStaffViewModelState>(
-    () => ({
-      status,
-      staffMember,
-      books: filteredBooks,
-      authors: filteredAuthors,
-      translators: filteredTranslators,
-      activeTab,
-      searchQuery,
-      error,
-      isLoading: status === "idle" || status === "loading",
-      isLoaded: status === "loaded",
-      isNotFound: status === "not-found",
-      isError: status === "error",
-    }),
-    [
-      activeTab,
-      error,
-      filteredAuthors,
-      filteredBooks,
-      filteredTranslators,
-      searchQuery,
-      staffMember,
-      status,
-    ]
-  )
-
-  return {
-    state,
-    setActiveTab: handleSetActiveTab,
-    setSearchQuery,
   }
+
+  const branchAuthors = branchDataQuery.data?.authors ?? []
+  const branchTranslators = branchDataQuery.data?.translators ?? []
+  const allBooks = branchDataQuery.data?.books ?? []
+
+  const filteredBooks = filterBySearch(allBooks, searchQuery, (b) =>
+    [b.title, b.category, b.author, b.translator ?? "", b.isbn].join(" ")
+  )
+  const filteredAuthors = filterBySearch(branchAuthors, searchQuery, (a) =>
+    [a.name, a.nationality].join(" ")
+  )
+  const filteredTranslators = filterBySearch(
+    branchTranslators,
+    searchQuery,
+    (t) => [t.name, t.language].join(" ")
+  )
+
+  const isLoadingStaff = staffQuery.isPending
+  const isLoadingBranch = !!branchId && branchDataQuery.isPending
+  const isNotFound = staffQuery.isSuccess && staffQuery.data === null
+  const isError = staffQuery.isError
+
+  let status: ViewStaffStatus
+  if (isError) {
+    status = "error"
+  } else if (isNotFound) {
+    status = "not-found"
+  } else if (isLoadingStaff || isLoadingBranch) {
+    status = "loading"
+  } else if (staffQuery.isSuccess && staffQuery.data !== null) {
+    status = "loaded"
+  } else {
+    status = "idle"
+  }
+
+  const state: ViewStaffViewModelState = {
+    status,
+    staffMember: staffQuery.data ?? null,
+    books: filteredBooks,
+    authors: filteredAuthors,
+    translators: filteredTranslators,
+    branchAuthors,
+    branchTranslators,
+    activeTab,
+    searchQuery,
+    error: staffQuery.error?.message ?? null,
+    isLoading: status === "loading" || status === "idle",
+    isLoaded: status === "loaded",
+    isNotFound,
+    isError,
+  }
+
+  return { state, setActiveTab, setSearchQuery }
 }

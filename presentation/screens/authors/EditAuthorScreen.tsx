@@ -75,7 +75,7 @@ export function EditAuthorScreen({ authorId, getAuthorsUseCase }: EditAuthorScre
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button variant="outline" onClick={() => router.push("/dashboard/authors")}>
+              <Button variant="outline" onClick={() => router.back()}>
                 <ArrowLeftIcon />
                 Back to authors
               </Button>
@@ -92,7 +92,7 @@ export function EditAuthorScreen({ authorId, getAuthorsUseCase }: EditAuthorScre
               <CardDescription>{state.error}</CardDescription>
             </CardHeader>
             <CardContent className="flex gap-3">
-              <Button variant="outline" onClick={() => router.push("/dashboard/authors")}>
+              <Button variant="outline" onClick={() => router.back()}>
                 <ArrowLeftIcon />
                 Back to authors
               </Button>

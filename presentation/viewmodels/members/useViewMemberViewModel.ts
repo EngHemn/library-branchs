@@ -1,6 +1,7 @@
 "use client"
 
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useState } from "react"
+import { useQuery } from "@tanstack/react-query"
 
 import type { MemberDetail } from "@/domain/entities/member/MemberDetail"
 import type { MemberManagementUseCase } from "@/domain/usecases/members/MemberManagementUseCase"
@@ -33,61 +34,47 @@ export function useViewMemberViewModel(
   memberId: string,
   memberManagementUseCase: MemberManagementUseCase
 ): ViewMemberViewModel {
-  const [status, setStatus] = useState<ViewMemberStatus>("idle")
-  const [member, setMember] = useState<MemberDetail | null>(null)
   const [activeTab, setActiveTab] = useState<ViewMemberTabKey>("details")
-  const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    let cancelled = false
-
-    async function loadMemberDetail(): Promise<void> {
-      setStatus("loading")
-      setError(null)
-
+  const memberQuery = useQuery({
+    queryKey: ["member", memberId],
+    queryFn: async () => {
       const result = await memberManagementUseCase.getMemberById(memberId)
+      if (!result.success) throw new Error(result.error)
+      return result.data ?? null
+    },
+  })
 
-      if (cancelled) return
+  const status: ViewMemberStatus = memberQuery.isPending
+    ? "loading"
+    : memberQuery.isError
+      ? "error"
+      : memberQuery.isSuccess && !memberQuery.data
+        ? "not-found"
+        : memberQuery.isSuccess && !!memberQuery.data
+          ? "loaded"
+          : "idle"
 
-      if (!result.success) {
-        setStatus("error")
-        setError(result.error)
-        return
-      }
+  const error = memberQuery.isError
+    ? memberQuery.error instanceof Error
+      ? memberQuery.error.message
+      : String(memberQuery.error)
+    : null
 
-      if (!result.data) {
-        setStatus("not-found")
-        return
-      }
+  const state: ViewMemberViewModelState = {
+    status,
+    member: memberQuery.data ?? null,
+    activeTab,
+    error,
+    isLoading: memberQuery.isPending,
+    isLoaded: memberQuery.isSuccess && !!memberQuery.data,
+    isNotFound: memberQuery.isSuccess && !memberQuery.data,
+    isError: memberQuery.isError,
+  }
 
-      setMember(result.data)
-      setStatus("loaded")
-    }
-
-    void loadMemberDetail()
-
-    return () => {
-      cancelled = true
-    }
-  }, [memberId, memberManagementUseCase])
-
-  const handleSetActiveTab = useCallback((tab: ViewMemberTabKey): void => {
+  function handleSetActiveTab(tab: ViewMemberTabKey): void {
     setActiveTab(tab)
-  }, [])
-
-  const state = useMemo<ViewMemberViewModelState>(
-    () => ({
-      status,
-      member,
-      activeTab,
-      error,
-      isLoading: status === "idle" || status === "loading",
-      isLoaded: status === "loaded",
-      isNotFound: status === "not-found",
-      isError: status === "error",
-    }),
-    [activeTab, error, member, status]
-  )
+  }
 
   return {
     state,

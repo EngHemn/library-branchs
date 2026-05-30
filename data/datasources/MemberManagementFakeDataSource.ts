@@ -1,8 +1,11 @@
 import { memberDetailExtras } from "@/data/fake/fakeMemberDetails"
+import { fakeBooks } from "@/data/fake/fakeBooks"
+import { fakeBranches } from "@/data/fake/fakeBranches"
 import { fakeMembers } from "@/data/fake/fakeMembers"
 import type { Member } from "@/domain/entities/member/Member"
 import type {
   MemberAddedBy,
+  MemberBooking,
   MemberBookings,
   MemberDetail,
 } from "@/domain/entities/member/MemberDetail"
@@ -24,6 +27,30 @@ type MemberExtras = {
   bookings: MemberBookings
 }
 
+const bookIdByIsbn = Object.fromEntries(
+  fakeBooks.map((book) => [book.isbn, book.id])
+)
+
+const branchIdByName = Object.fromEntries(
+  fakeBranches.map((branch) => [branch.branchName, branch.id])
+)
+
+function enrichMemberBooking(booking: MemberBooking): MemberBooking {
+  return {
+    ...booking,
+    bookId: booking.bookId ?? bookIdByIsbn[booking.isbn],
+    branchId: booking.branchId ?? branchIdByName[booking.branchName],
+  }
+}
+
+function enrichMemberBookings(bookings: MemberBookings): MemberBookings {
+  return {
+    active: bookings.active.map(enrichMemberBooking),
+    lateReturns: bookings.lateReturns.map(enrichMemberBooking),
+    history: bookings.history.map(enrichMemberBooking),
+  }
+}
+
 const emptyBookings: MemberBookings = {
   active: [],
   lateReturns: [],
@@ -40,11 +67,9 @@ function cloneExtras(extras: MemberExtras): MemberExtras {
     address: extras.address,
     addedBy: { ...extras.addedBy },
     bookings: {
-      active: extras.bookings.active.map((booking) => ({ ...booking })),
-      lateReturns: extras.bookings.lateReturns.map((booking) => ({
-        ...booking,
-      })),
-      history: extras.bookings.history.map((booking) => ({ ...booking })),
+      active: extras.bookings.active.map(enrichMemberBooking),
+      lateReturns: extras.bookings.lateReturns.map(enrichMemberBooking),
+      history: extras.bookings.history.map(enrichMemberBooking),
     },
   }
 }
@@ -86,7 +111,7 @@ export class MemberManagementFakeDataSource {
       address: extras.address,
       addedBy: { ...extras.addedBy },
       activeBookings: extras.bookings.active.length,
-      bookings: cloneExtras(extras).bookings,
+      bookings: enrichMemberBookings(extras.bookings),
     }
   }
 
