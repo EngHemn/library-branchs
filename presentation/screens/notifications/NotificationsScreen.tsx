@@ -1,6 +1,5 @@
 "use client"
 
-import { useMemo, useState } from "react"
 import { BellIcon, CheckCheckIcon } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
@@ -15,16 +14,12 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { cn } from "@/lib/utils"
 import type { Notification } from "@/domain/entities/notification/Notification"
-import { fakeNotifications as initialNotifications } from "@/data/fake/fakeNotifications"
+import type { NotificationsUseCase } from "@/domain/usecases/notifications/NotificationsUseCase"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
+import { useNotificationsViewModel } from "@/presentation/viewmodels/notifications/useNotificationsViewModel"
 
-function formatTimestamp(value: string): string {
-  return new Date(value).toLocaleString(undefined, {
-    month: "short",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  })
+type NotificationsScreenProps = {
+  notificationsUseCase: NotificationsUseCase
 }
 
 const typeBadgeVariant: Record<
@@ -34,6 +29,15 @@ const typeBadgeVariant: Record<
   info: "secondary",
   success: "default",
   warning: "destructive",
+}
+
+function formatTimestamp(value: string): string {
+  return new Date(value).toLocaleString(undefined, {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  })
 }
 
 function NotificationRow({
@@ -59,12 +63,7 @@ function NotificationRow({
       />
       <div className="min-w-0 flex-1 space-y-1">
         <div className="flex flex-wrap items-center gap-2">
-          <p
-            className={cn(
-              "text-sm",
-              !notification.read && "font-semibold"
-            )}
-          >
+          <p className={cn("text-sm", !notification.read && "font-semibold")}>
             {notification.title}
           </p>
           <Badge variant={typeBadgeVariant[notification.type]}>
@@ -117,63 +116,24 @@ function NotificationList({
   ))
 }
 
-export function NotificationsScreen() {
-  const [notifications, setNotifications] = useState(initialNotifications)
+export function NotificationsScreen({ notificationsUseCase }: NotificationsScreenProps) {
+  const { state, markAsRead, markAllAsRead } = useNotificationsViewModel(notificationsUseCase)
 
   useDashboardBreadcrumbs([
     { label: "Workspace", href: "/dashboard" },
     { label: "Notifications" },
   ])
 
-  const unreadCount = useMemo(
-    () => notifications.filter((n) => !n.read).length,
-    [notifications]
-  )
-
-  const readCount = notifications.length - unreadCount
-
-  function markAsRead(id: string) {
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, read: true } : n))
-    )
-  }
-
-  function markAllAsRead() {
-    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })))
-  }
-
-  const sorted = useMemo(
-    () =>
-      [...notifications].sort(
-        (a, b) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      ),
-    [notifications]
-  )
-
-  const unreadNotifications = useMemo(
-    () => sorted.filter((n) => !n.read),
-    [sorted]
-  )
-
-  const readNotifications = useMemo(
-    () => sorted.filter((n) => n.read),
-    [sorted]
-  )
-
   return (
     <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
       <div className="flex flex-col gap-4 pt-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="space-y-1">
-          <h1 className="text-2xl font-semibold tracking-tight">
-            Notifications
-          </h1>
+          <h1 className="text-2xl font-semibold tracking-tight">Notifications</h1>
           <p className="text-sm text-muted-foreground">
-            Stay up to date with library alerts, member activity, and system
-            events.
+            Stay up to date with library alerts, member activity, and system events.
           </p>
         </div>
-        {unreadCount > 0 && (
+        {state.unreadCount > 0 && (
           <Button type="button" variant="outline" size="sm" onClick={markAllAsRead}>
             <CheckCheckIcon />
             Mark all as read
@@ -185,17 +145,17 @@ export function NotificationsScreen() {
         <TabsList>
           <TabsTrigger value="unread">
             Unread
-            {unreadCount > 0 && (
+            {state.unreadCount > 0 && (
               <Badge variant="secondary" className="ml-1.5">
-                {unreadCount}
+                {state.unreadCount}
               </Badge>
             )}
           </TabsTrigger>
           <TabsTrigger value="read">
             Read
-            {readCount > 0 && (
+            {state.readCount > 0 && (
               <Badge variant="secondary" className="ml-1.5">
-                {readCount}
+                {state.readCount}
               </Badge>
             )}
           </TabsTrigger>
@@ -209,13 +169,13 @@ export function NotificationsScreen() {
                 <CardTitle className="text-base">Unread</CardTitle>
               </div>
               <CardDescription>
-                {unreadCount} unread notification
-                {unreadCount === 1 ? "" : "s"}
+                {state.unreadCount} unread notification
+                {state.unreadCount === 1 ? "" : "s"}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
               <NotificationList
-                notifications={unreadNotifications}
+                notifications={state.unreadNotifications}
                 emptyMessage="You're all caught up. No unread notifications."
                 onMarkRead={markAsRead}
               />
@@ -231,13 +191,13 @@ export function NotificationsScreen() {
                 <CardTitle className="text-base">Read</CardTitle>
               </div>
               <CardDescription>
-                {readCount} read notification
-                {readCount === 1 ? "" : "s"}
+                {state.readCount} read notification
+                {state.readCount === 1 ? "" : "s"}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
               <NotificationList
-                notifications={readNotifications}
+                notifications={state.readNotifications}
                 emptyMessage="No read notifications yet."
                 onMarkRead={markAsRead}
               />
