@@ -1,6 +1,7 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useState } from "react"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 import type { Member, MemberStatus } from "@/domain/entities/member/Member"
 import type { MemberManagementUseCase } from "@/domain/usecases/members/MemberManagementUseCase"
@@ -190,62 +191,57 @@ function filterMembers(members: Member[], filters: MemberFilterState): Member[] 
 export function useMembersViewModel(
   memberManagementUseCase: MemberManagementUseCase
 ): MembersViewModel {
-  const [status, setStatus] = useState<MembersPageStatus>("idle")
-  const [members, setMembers] = useState<Member[]>([])
+  const queryClient = useQueryClient()
   const [appliedFilters, setAppliedFilters] =
     useState<MemberFilterState>(defaultFilters)
-  const [error, setError] = useState<string | null>(null)
-  const [isDeleting, setIsDeleting] = useState(false)
 
-  async function loadMembers(): Promise<void> {
-    setStatus("loading")
-    setError(null)
+  const membersQuery = useQuery({
+    queryKey: ["members"],
+    queryFn: async () => {
+      const result = await memberManagementUseCase.getMembers()
+      if (!result.success) throw new Error(result.error)
+      return result.data
+    },
+  })
 
-    const result = await memberManagementUseCase.getMembers()
+  const { mutateAsync: deleteMemberAsync, isPending: isDeleting } = useMutation({
+    mutationFn: async (memberId: string) => {
+      const result = await memberManagementUseCase.deleteMember(memberId)
+      if (!result.success) throw new Error(result.error)
+      return result.data
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["members"] }),
+  })
 
-    if (!result.success) {
-      setMembers([])
-      setStatus("error")
-      setError(result.error)
-      return
-    }
+  const members = membersQuery.data ?? []
+  const filteredMembers = filterMembers(members, appliedFilters)
+  const registeredBranches = getUniqueRegisteredBranches(members)
+  const usedBranches = getUniqueUsedBranches(members)
+  const activeFilters = buildActiveFilters(appliedFilters)
 
-    setMembers(result.data)
-    setStatus("ready")
-  }
+  const status: MembersPageStatus = membersQuery.isPending
+    ? "loading"
+    : membersQuery.isError
+      ? "error"
+      : membersQuery.isSuccess
+        ? "ready"
+        : "idle"
 
-  useEffect(() => {
-    void loadMembers()
-  }, [memberManagementUseCase])
+  const queryError = membersQuery.isError
+    ? membersQuery.error instanceof Error
+      ? membersQuery.error.message
+      : String(membersQuery.error)
+    : null
 
-  async function deleteMember(memberId: string): Promise<void> {
-    setIsDeleting(true)
-    setError(null)
-
-    const result = await memberManagementUseCase.deleteMember(memberId)
-
-    if (!result.success) {
-      setIsDeleting(false)
-      setError(result.error)
-      setStatus("error")
-      return
-    }
-
-    setMembers((current) =>
-      current.filter((member) => member.id !== memberId)
-    )
-    setIsDeleting(false)
-  }
-
-  const setSearchQuery = (searchQuery: string): void => {
+  function setSearchQuery(searchQuery: string): void {
     setAppliedFilters((current) => ({ ...current, searchQuery }))
   }
 
-  const applyFilters = (filters: MemberFilterState): void => {
+  function applyFilters(filters: MemberFilterState): void {
     setAppliedFilters(filters)
   }
 
-  const clearFilter = (filterId: MemberActiveFilterId): void => {
+  function clearFilter(filterId: MemberActiveFilterId): void {
     setAppliedFilters((current) => {
       switch (filterId) {
         case "search":
@@ -264,53 +260,31 @@ export function useMembersViewModel(
     })
   }
 
-  const resetFilters = (): void => {
+  function resetFilters(): void {
     setAppliedFilters(defaultFilters)
   }
 
-  const registeredBranches = useMemo(
-    () => getUniqueRegisteredBranches(members),
-    [members]
-  )
+  async function deleteMember(memberId: string): Promise<void> {
+    await deleteMemberAsync(memberId)
+  }
 
-  const usedBranches = useMemo(() => getUniqueUsedBranches(members), [members])
+  async function reload(): Promise<void> {
+    await membersQuery.refetch()
+  }
 
-  const activeFilters = useMemo(
-    () => buildActiveFilters(appliedFilters),
-    [appliedFilters]
-  )
-
-  const filteredMembers = useMemo(
-    () => filterMembers(members, appliedFilters),
-    [members, appliedFilters]
-  )
-
-  const state = useMemo<MembersViewModelState>(
-    () => ({
-      status,
-      members,
-      filteredMembers,
-      registeredBranches,
-      usedBranches,
-      appliedFilters,
-      activeFilters,
-      error: status === "error" ? error : null,
-      isLoading: status === "idle" || status === "loading",
-      isReady: status === "ready",
-      isDeleting,
-    }),
-    [
-      activeFilters,
-      appliedFilters,
-      error,
-      filteredMembers,
-      isDeleting,
-      members,
-      registeredBranches,
-      status,
-      usedBranches,
-    ]
-  )
+  const state: MembersViewModelState = {
+    status,
+    members,
+    filteredMembers,
+    registeredBranches,
+    usedBranches,
+    appliedFilters,
+    activeFilters,
+    error: status === "error" ? queryError : null,
+    isLoading: membersQuery.isPending,
+    isReady: membersQuery.isSuccess,
+    isDeleting,
+  }
 
   return {
     state,
@@ -319,6 +293,6 @@ export function useMembersViewModel(
     clearFilter,
     resetFilters,
     deleteMember,
-    reload: loadMembers,
+    reload,
   }
 }

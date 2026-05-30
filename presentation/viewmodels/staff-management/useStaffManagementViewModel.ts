@@ -1,6 +1,7 @@
 "use client"
 
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useState } from "react"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 import type {
   StaffMember,
@@ -74,8 +75,9 @@ const emptyStats: StaffStats = {
   totalStaff: 0,
   activeStaff: 0,
   inactiveStaff: 0,
-  managers: 0,
-  librarians: 0,
+  branchAdmins: 0,
+  subBranchAdmins: 0,
+  staffMembers: 0,
 }
 
 function calculateStaffStats(staff: StaffMember[]): StaffStats {
@@ -85,8 +87,11 @@ function calculateStaffStats(staff: StaffMember[]): StaffStats {
       activeStaff: stats.activeStaff + (member.status === "active" ? 1 : 0),
       inactiveStaff:
         stats.inactiveStaff + (member.status === "inactive" ? 1 : 0),
-      managers: stats.managers + (member.role === "manager" ? 1 : 0),
-      librarians: stats.librarians + (member.role === "librarian" ? 1 : 0),
+      branchAdmins:
+        stats.branchAdmins + (member.role === "branch_admin" ? 1 : 0),
+      subBranchAdmins:
+        stats.subBranchAdmins + (member.role === "sub_branch_admin" ? 1 : 0),
+      staffMembers: stats.staffMembers + (member.role === "staff" ? 1 : 0),
     }),
     emptyStats
   )
@@ -94,191 +99,162 @@ function calculateStaffStats(staff: StaffMember[]): StaffStats {
 
 function matchesStaffSearch(member: StaffMember, searchQuery: string): boolean {
   const normalizedQuery = searchQuery.trim().toLowerCase()
-
-  if (!normalizedQuery) {
-    return true
-  }
-
+  if (!normalizedQuery) return true
   return [member.staffName, member.email].some((value) =>
     value.toLowerCase().includes(normalizedQuery)
   )
 }
 
 function getUniqueBranches(staff: StaffMember[]): string[] {
-  const branchSet = new Set(staff.map((member) => member.branch))
-  return Array.from(branchSet).sort()
+  return Array.from(new Set(staff.map((m) => m.branch))).sort()
 }
 
 export function useStaffManagementViewModel(
   authUseCase: AuthUseCase,
   staffManagementUseCase: StaffManagementUseCase
 ): StaffManagementViewModel {
-  const [status, setStatus] = useState<StaffManagementPageStatus>("idle")
-  const [user, setUser] = useState<User | null>(null)
-  const [staff, setStaff] = useState<StaffMember[]>([])
+  const queryClient = useQueryClient()
   const [filters, setFilters] = useState<StaffFilterState>(defaultFilters)
   const [dialog, setDialog] = useState<StaffManagementDialog>(null)
   const [error, setError] = useState<string | null>(null)
 
-  const reload = useCallback(async (): Promise<void> => {
-    setStatus("loading")
-    setError(null)
-
-    const currentUserResult = await authUseCase.getCurrentUser()
-
-    if (!currentUserResult.success) {
-      setStatus("error")
-      setUser(null)
-      setError(currentUserResult.error)
-      return
-    }
-
-    if (!currentUserResult.data) {
-      setStatus("unauthenticated")
-      setUser(null)
-      return
-    }
-
-    const staffResult = await staffManagementUseCase.getStaff()
-
-    if (!staffResult.success) {
-      setStatus("error")
-      setError(staffResult.error)
-      return
-    }
-
-    setUser(currentUserResult.data)
-    setStaff(staffResult.data)
-    setStatus("success")
-  }, [authUseCase, staffManagementUseCase])
-
-  const logout = useCallback(async (): Promise<void> => {
-    setStatus("loading")
-
-    const result = await authUseCase.logout()
-
-    if (!result.success) {
-      setStatus("error")
-      setError(result.error)
-      return
-    }
-
-    setUser(null)
-    setStatus("unauthenticated")
-  }, [authUseCase])
-
-  useEffect(() => {
-    const timeoutId = window.setTimeout(() => {
-      void reload()
-    }, 0)
-
-    return () => {
-      window.clearTimeout(timeoutId)
-    }
-  }, [reload])
-
-  const setSearchQuery = useCallback((searchQuery: string): void => {
-    setFilters((current) => ({ ...current, searchQuery }))
-  }, [])
-
-  const setRoleFilter = useCallback((roleFilter: StaffRoleFilter): void => {
-    setFilters((current) => ({ ...current, roleFilter }))
-  }, [])
-
-  const setBranchFilter = useCallback(
-    (branchFilter: StaffBranchFilter): void => {
-      setFilters((current) => ({ ...current, branchFilter }))
+  const userQuery = useQuery({
+    queryKey: ["currentUser"],
+    queryFn: async () => {
+      const result = await authUseCase.getCurrentUser()
+      if (!result.success) throw new Error(result.error)
+      return result.data ?? null
     },
-    []
-  )
+  })
 
-  const setStatusFilter = useCallback(
-    (statusFilter: StaffStatusFilter): void => {
-      setFilters((current) => ({ ...current, statusFilter }))
+  const staffQuery = useQuery({
+    queryKey: ["staff"],
+    queryFn: async () => {
+      const result = await staffManagementUseCase.getStaff()
+      if (!result.success) throw new Error(result.error)
+      return result.data
     },
-    []
-  )
+    enabled: !!userQuery.data,
+  })
 
-  const closeDialog = useCallback((): void => {
-    setDialog(null)
-  }, [])
+  const logoutMutation = useMutation({
+    mutationFn: async () => {
+      const result = await authUseCase.logout()
+      if (!result.success) throw new Error(result.error)
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["currentUser"] })
+      void queryClient.invalidateQueries({ queryKey: ["staff"] })
+    },
+    onError: (err: Error) => setError(err.message),
+  })
 
-  const deleteStaff = useCallback(
-    async (staffId: string): Promise<void> => {
+  const deleteStaffMutation = useMutation({
+    mutationFn: async (staffId: string) => {
       const result = await staffManagementUseCase.deleteStaff(staffId)
-
-      if (!result.success) {
-        setDialog({
-          title: "Staff action unavailable",
-          description: result.error,
-        })
-        return
-      }
-
-      setStaff((current) =>
-        current.filter((member) => member.id !== staffId)
-      )
+      if (!result.success) throw new Error(result.error)
     },
-    [staffManagementUseCase]
-  )
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["staff"] }),
+    onError: (err: Error) =>
+      setDialog({ title: "Staff action unavailable", description: err.message }),
+  })
 
-  const toggleStaffStatus = useCallback(
-    async (staffId: string): Promise<void> => {
+  const toggleStatusMutation = useMutation({
+    mutationFn: async (staffId: string) => {
       const result = await staffManagementUseCase.toggleStaffStatus(staffId)
-
-      if (!result.success) {
-        setDialog({
-          title: "Staff action unavailable",
-          description: result.error,
-        })
-        return
-      }
-
-      setStaff((current) =>
-        current.map((member) =>
-          member.id === result.data.id ? result.data : member
-        )
-      )
+      if (!result.success) throw new Error(result.error)
+      return result.data
     },
-    [staffManagementUseCase]
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["staff"] }),
+    onError: (err: Error) =>
+      setDialog({ title: "Staff action unavailable", description: err.message }),
+  })
+
+  async function reload(): Promise<void> {
+    await Promise.all([userQuery.refetch(), staffQuery.refetch()])
+  }
+
+  async function logout(): Promise<void> {
+    await logoutMutation.mutateAsync().catch(() => undefined)
+  }
+
+  function setSearchQuery(searchQuery: string): void {
+    setFilters((f) => ({ ...f, searchQuery }))
+  }
+
+  function setRoleFilter(roleFilter: StaffRoleFilter): void {
+    setFilters((f) => ({ ...f, roleFilter }))
+  }
+
+  function setBranchFilter(branchFilter: StaffBranchFilter): void {
+    setFilters((f) => ({ ...f, branchFilter }))
+  }
+
+  function setStatusFilter(statusFilter: StaffStatusFilter): void {
+    setFilters((f) => ({ ...f, statusFilter }))
+  }
+
+  function closeDialog(): void {
+    setDialog(null)
+  }
+
+  async function deleteStaff(staffId: string): Promise<void> {
+    await deleteStaffMutation.mutateAsync(staffId).catch(() => undefined)
+  }
+
+  async function toggleStaffStatus(staffId: string): Promise<void> {
+    await toggleStatusMutation.mutateAsync(staffId).catch(() => undefined)
+  }
+
+  const staff = staffQuery.data ?? []
+  const user = userQuery.data ?? null
+  const isUnauthenticated = userQuery.isSuccess && userQuery.data === null
+  const isLoading =
+    userQuery.isPending || (!!userQuery.data && staffQuery.isPending)
+  const isReady =
+    userQuery.isSuccess &&
+    !!user &&
+    staffQuery.isSuccess
+
+  let status: StaffManagementPageStatus
+  if (isLoading) {
+    status = "loading"
+  } else if (userQuery.isError || staffQuery.isError) {
+    status = "error"
+  } else if (isUnauthenticated) {
+    status = "unauthenticated"
+  } else if (isReady) {
+    status = "success"
+  } else {
+    status = "idle"
+  }
+
+  const filteredStaff = staff.filter(
+    (member) =>
+      matchesStaffSearch(member, filters.searchQuery) &&
+      (filters.roleFilter === "all" || member.role === filters.roleFilter) &&
+      (filters.branchFilter === "all" ||
+        member.branch === filters.branchFilter) &&
+      (filters.statusFilter === "all" || member.status === filters.statusFilter)
   )
 
-  const branches = useMemo(() => getUniqueBranches(staff), [staff])
+  const queryError =
+    userQuery.error?.message ?? staffQuery.error?.message ?? null
 
-  const filteredStaff = useMemo(
-    () =>
-      staff.filter(
-        (member) =>
-          matchesStaffSearch(member, filters.searchQuery) &&
-          (filters.roleFilter === "all" ||
-            member.role === filters.roleFilter) &&
-          (filters.branchFilter === "all" ||
-            member.branch === filters.branchFilter) &&
-          (filters.statusFilter === "all" ||
-            member.status === filters.statusFilter)
-      ),
-    [staff, filters]
-  )
-
-  const stats = useMemo(() => calculateStaffStats(staff), [staff])
-
-  const state = useMemo<StaffManagementViewModelState>(
-    () => ({
-      status,
-      user,
-      staff,
-      filteredStaff,
-      branches,
-      filters,
-      stats,
-      dialog,
-      error: status === "error" ? error : null,
-      isLoading: status === "idle" || status === "loading",
-      isReady: status === "success",
-      isUnauthenticated: status === "unauthenticated",
-    }),
-    [branches, dialog, error, filteredStaff, filters, staff, stats, status, user]
-  )
+  const state: StaffManagementViewModelState = {
+    status,
+    user,
+    staff,
+    filteredStaff,
+    branches: getUniqueBranches(staff),
+    filters,
+    stats: calculateStaffStats(staff),
+    dialog,
+    error: status === "error" ? (queryError ?? error) : null,
+    isLoading,
+    isReady,
+    isUnauthenticated,
+  }
 
   return {
     state,

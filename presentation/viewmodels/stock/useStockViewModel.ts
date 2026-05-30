@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useState } from "react"
 
 import type {
   AddStockInput,
@@ -12,6 +12,7 @@ import type {
 import type { StockMovement } from "@/domain/entities/stock/StockMovement"
 import type { MovementType } from "@/domain/entities/stock/StockMovement"
 import type { StockUseCase } from "@/domain/usecases/stock/StockUseCase"
+import { useStockQueries } from "./useStockQueries"
 
 type AsyncStatus = "idle" | "loading" | "success" | "error"
 
@@ -49,6 +50,8 @@ type StockViewModelState = {
   isSubmitting: boolean
   submitError: string | null
 
+  expandedStockGroupIds: string[]
+
   filteredStockRows: StockRow[]
   filteredMovements: StockMovement[]
 
@@ -80,6 +83,7 @@ export type StockViewModel = {
   setMovementDateFrom: (d: string | null) => void
   setMovementDateTo: (d: string | null) => void
   setMovementUserFilter: (u: string | null) => void
+  toggleStockGroupExpanded: (groupId: string) => void
   reload: () => Promise<void>
 }
 
@@ -190,19 +194,10 @@ function filterMovements(
 }
 
 export function useStockViewModel(stockUseCase: StockUseCase): StockViewModel {
-  const [stockRows, setStockRows] = useState<StockRow[]>([])
-  const [stockStatus, setStockStatus] = useState<AsyncStatus>("idle")
-  const [stockError, setStockError] = useState<string | null>(null)
-
-  const [summary, setSummary] = useState<StockSummary | null>(null)
-  const [summaryStatus, setSummaryStatus] = useState<AsyncStatus>("idle")
-
-  const [movements, setMovements] = useState<StockMovement[]>([])
-  const [movementsStatus, setMovementsStatus] = useState<AsyncStatus>("idle")
-  const [movementsError, setMovementsError] = useState<string | null>(null)
+  const stockData = useStockQueries(stockUseCase)
 
   const [searchQuery, setSearchQuery] = useState("")
-  const [selectedMainBranchId, setSelectedMainBranchId] = useState<string | null>(null)
+  const [selectedMainBranchId, setSelectedMainBranchIdState] = useState<string | null>(null)
   const [selectedSubBranchId, setSelectedSubBranchId] = useState<string | null>(null)
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [showLowStock, setShowLowStock] = useState(false)
@@ -219,277 +214,140 @@ export function useStockViewModel(stockUseCase: StockUseCase): StockViewModel {
   const [isReduceStockDialogOpen, setIsReduceStockDialogOpen] = useState(false)
   const [isTransferDialogOpen, setIsTransferDialogOpen] = useState(false)
   const [selectedStockRow, setSelectedStockRow] = useState<StockRow | null>(null)
+  const [expandedStockGroupIds, setExpandedStockGroupIds] = useState<string[]>([])
 
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [submitError, setSubmitError] = useState<string | null>(null)
+  function setSelectedMainBranchId(id: string | null): void {
+    setSelectedMainBranchIdState(id)
+    setSelectedSubBranchId(null)
+  }
 
-  const loadAll = useCallback(async () => {
-    setStockStatus("loading")
-    setSummaryStatus("loading")
-    setMovementsStatus("loading")
-
-    const [stockResult, summaryResult, movementsResult] = await Promise.all([
-      stockUseCase.getStockRows(),
-      stockUseCase.getStockSummary(),
-      stockUseCase.getStockMovements(),
-    ])
-
-    if (stockResult.success) {
-      setStockRows(stockResult.data)
-      setStockStatus("success")
-    } else {
-      setStockError(stockResult.error)
-      setStockStatus("error")
-    }
-
-    if (summaryResult.success) {
-      setSummary(summaryResult.data)
-      setSummaryStatus("success")
-    } else {
-      setSummaryStatus("error")
-    }
-
-    if (movementsResult.success) {
-      setMovements(movementsResult.data)
-      setMovementsStatus("success")
-    } else {
-      setMovementsError(movementsResult.error)
-      setMovementsStatus("error")
-    }
-  }, [stockUseCase])
-
-  useEffect(() => {
-    void loadAll()
-  }, [loadAll])
-
-  const openAddStockDialog = useCallback((row: StockRow) => {
+  function openAddStockDialog(row: StockRow): void {
     setSelectedStockRow(row)
-    setSubmitError(null)
+    stockData.setSubmitError(null)
     setIsAddStockDialogOpen(true)
-  }, [])
+  }
 
-  const openReduceStockDialog = useCallback((row: StockRow) => {
+  function openReduceStockDialog(row: StockRow): void {
     setSelectedStockRow(row)
-    setSubmitError(null)
+    stockData.setSubmitError(null)
     setIsReduceStockDialogOpen(true)
-  }, [])
+  }
 
-  const openTransferDialog = useCallback((row: StockRow | null) => {
+  function openTransferDialog(row: StockRow | null): void {
     setSelectedStockRow(row)
-    setSubmitError(null)
+    stockData.setSubmitError(null)
     setIsTransferDialogOpen(true)
-  }, [])
+  }
 
-  const closeDialogs = useCallback(() => {
+  function closeDialogs(): void {
     setIsAddStockDialogOpen(false)
     setIsReduceStockDialogOpen(false)
     setIsTransferDialogOpen(false)
     setSelectedStockRow(null)
-    setSubmitError(null)
-  }, [])
+    stockData.setSubmitError(null)
+  }
 
-  const addStock = useCallback(
-    async (input: AddStockInput) => {
-      setIsSubmitting(true)
-      setSubmitError(null)
-      const result = await stockUseCase.addStock(input)
-      setIsSubmitting(false)
-      if (!result.success) {
-        setSubmitError(result.error)
-        return
-      }
-      setStockRows((prev) =>
-        prev.map((r) => (r.id === result.data.id ? result.data : r))
-      )
+  async function addStock(input: AddStockInput): Promise<void> {
+    try {
+      await stockData.addStock(input)
       setIsAddStockDialogOpen(false)
       setSelectedStockRow(null)
-    },
-    [stockUseCase]
-  )
+    } catch {
+      // submitError set via onError in useStockQueries
+    }
+  }
 
-  const reduceStock = useCallback(
-    async (input: ReduceStockInput) => {
-      setIsSubmitting(true)
-      setSubmitError(null)
-      const result = await stockUseCase.reduceStock(input)
-      setIsSubmitting(false)
-      if (!result.success) {
-        setSubmitError(result.error)
-        return
-      }
-      setStockRows((prev) =>
-        prev.map((r) => (r.id === result.data.id ? result.data : r))
-      )
+  async function reduceStock(input: ReduceStockInput): Promise<void> {
+    try {
+      await stockData.reduceStock(input)
       setIsReduceStockDialogOpen(false)
       setSelectedStockRow(null)
-    },
-    [stockUseCase]
-  )
+    } catch {
+      // submitError set via onError in useStockQueries
+    }
+  }
 
-  const transferStock = useCallback(
-    async (input: TransferStockInput) => {
-      setIsSubmitting(true)
-      setSubmitError(null)
-      const result = await stockUseCase.transferStock(input)
-      setIsSubmitting(false)
-      if (!result.success) {
-        setSubmitError(result.error)
-        return
-      }
-      void loadAll()
+  async function transferStock(input: TransferStockInput): Promise<void> {
+    try {
+      await stockData.transferStock(input)
       setIsTransferDialogOpen(false)
       setSelectedStockRow(null)
-    },
-    [stockUseCase, loadAll]
+    } catch {
+      // submitError set via onError in useStockQueries
+    }
+  }
+
+  function toggleStockGroupExpanded(groupId: string): void {
+    setExpandedStockGroupIds((ids) =>
+      ids.includes(groupId)
+        ? ids.filter((id) => id !== groupId)
+        : [...ids, groupId]
+    )
+  }
+
+  const { stockRows, movements } = stockData
+
+  const filteredStockRows = filterStockRows(
+    stockRows,
+    searchQuery,
+    selectedMainBranchId,
+    selectedSubBranchId,
+    selectedCategory,
+    showLowStock,
+    showOutOfStock
   )
 
-  const handleSetMainBranchId = useCallback((id: string | null) => {
-    setSelectedMainBranchId(id)
-    setSelectedSubBranchId(null)
-  }, [])
-
-  const filteredStockRows = useMemo(
-    () =>
-      filterStockRows(
-        stockRows,
-        searchQuery,
-        selectedMainBranchId,
-        selectedSubBranchId,
-        selectedCategory,
-        showLowStock,
-        showOutOfStock
-      ),
-    [
-      stockRows,
-      searchQuery,
-      selectedMainBranchId,
-      selectedSubBranchId,
-      selectedCategory,
-      showLowStock,
-      showOutOfStock,
-    ]
+  const filteredMovements = filterMovements(
+    movements,
+    movementSearchQuery,
+    movementTypeFilter,
+    movementBranchFilter,
+    movementDateFrom,
+    movementDateTo,
+    movementUserFilter
   )
 
-  const filteredMovements = useMemo(
-    () =>
-      filterMovements(
-        movements,
-        movementSearchQuery,
-        movementTypeFilter,
-        movementBranchFilter,
-        movementDateFrom,
-        movementDateTo,
-        movementUserFilter
-      ),
-    [
-      movements,
-      movementSearchQuery,
-      movementTypeFilter,
-      movementBranchFilter,
-      movementDateFrom,
-      movementDateTo,
-      movementUserFilter,
-    ]
-  )
-
-  const availableMainBranches = useMemo(
-    () => getMainBranches(stockRows),
-    [stockRows]
-  )
-  const availableSubBranches = useMemo(
-    () => getSubBranches(stockRows, selectedMainBranchId),
-    [stockRows, selectedMainBranchId]
-  )
-  const availableCategories = useMemo(
-    () => getCategories(stockRows),
-    [stockRows]
-  )
-  const availableUsers = useMemo(
-    () => getMovementUsers(movements),
-    [movements]
-  )
-  const availableMovementBranches = useMemo(
-    () => getMovementBranches(movements),
-    [movements]
-  )
-
-  const state = useMemo<StockViewModelState>(
-    () => ({
-      stockRows,
-      stockStatus,
-      stockError,
-      summary,
-      summaryStatus,
-      movements,
-      movementsStatus,
-      movementsError,
-      searchQuery,
-      selectedMainBranchId,
-      selectedSubBranchId,
-      selectedCategory,
-      showLowStock,
-      showOutOfStock,
-      movementSearchQuery,
-      movementTypeFilter,
-      movementBranchFilter,
-      movementDateFrom,
-      movementDateTo,
-      movementUserFilter,
-      isAddStockDialogOpen,
-      isReduceStockDialogOpen,
-      isTransferDialogOpen,
-      selectedStockRow,
-      isSubmitting,
-      submitError,
-      filteredStockRows,
-      filteredMovements,
-      availableMainBranches,
-      availableSubBranches,
-      availableCategories,
-      availableUsers,
-      availableMovementBranches,
-    }),
-    [
-      stockRows,
-      stockStatus,
-      stockError,
-      summary,
-      summaryStatus,
-      movements,
-      movementsStatus,
-      movementsError,
-      searchQuery,
-      selectedMainBranchId,
-      selectedSubBranchId,
-      selectedCategory,
-      showLowStock,
-      showOutOfStock,
-      movementSearchQuery,
-      movementTypeFilter,
-      movementBranchFilter,
-      movementDateFrom,
-      movementDateTo,
-      movementUserFilter,
-      isAddStockDialogOpen,
-      isReduceStockDialogOpen,
-      isTransferDialogOpen,
-      selectedStockRow,
-      isSubmitting,
-      submitError,
-      filteredStockRows,
-      filteredMovements,
-      availableMainBranches,
-      availableSubBranches,
-      availableCategories,
-      availableUsers,
-      availableMovementBranches,
-    ]
-  )
+  const state: StockViewModelState = {
+    stockRows,
+    stockStatus: stockData.stockStatus,
+    stockError: stockData.stockError,
+    summary: stockData.summary,
+    summaryStatus: stockData.summaryStatus,
+    movements,
+    movementsStatus: stockData.movementsStatus,
+    movementsError: stockData.movementsError,
+    searchQuery,
+    selectedMainBranchId,
+    selectedSubBranchId,
+    selectedCategory,
+    showLowStock,
+    showOutOfStock,
+    movementSearchQuery,
+    movementTypeFilter,
+    movementBranchFilter,
+    movementDateFrom,
+    movementDateTo,
+    movementUserFilter,
+    isAddStockDialogOpen,
+    isReduceStockDialogOpen,
+    isTransferDialogOpen,
+    selectedStockRow,
+    isSubmitting: stockData.isSubmitting,
+    submitError: stockData.submitError,
+    expandedStockGroupIds,
+    filteredStockRows,
+    filteredMovements,
+    availableMainBranches: getMainBranches(stockRows),
+    availableSubBranches: getSubBranches(stockRows, selectedMainBranchId),
+    availableCategories: getCategories(stockRows),
+    availableUsers: getMovementUsers(movements),
+    availableMovementBranches: getMovementBranches(movements),
+  }
 
   return {
     state,
     setSearchQuery,
-    setSelectedMainBranchId: handleSetMainBranchId,
+    setSelectedMainBranchId,
     setSelectedSubBranchId,
     setSelectedCategory,
     setShowLowStock,
@@ -507,6 +365,7 @@ export function useStockViewModel(stockUseCase: StockUseCase): StockViewModel {
     setMovementDateFrom,
     setMovementDateTo,
     setMovementUserFilter,
-    reload: loadAll,
+    toggleStockGroupExpanded,
+    reload: stockData.reload,
   }
 }

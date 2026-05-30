@@ -1,8 +1,8 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useForm } from "react-hook-form"
+import { useMutation, useQuery } from "@tanstack/react-query"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
 
 import type { Branch } from "@/domain/entities/branch/Branch"
 import type { CreateMemberInput } from "@/domain/repositories/MemberManagementRepository"
@@ -59,12 +59,8 @@ export function useCreateMemberViewModel(
   memberManagementUseCase: MemberManagementUseCase,
   branchManagementUseCase: BranchManagementUseCase
 ): CreateMemberViewModel {
-  const [status, setStatus] = useState<CreateMemberStatus>("idle")
-  const [branches, setBranches] = useState<Branch[]>([])
-  const [error, setError] = useState<string | null>(null)
-
   const form = useForm<MemberFormInput, unknown, MemberFormValues>({
-    resolver: zodResolver(memberFormSchema as never),
+    resolver: zodResolver(memberFormSchema),
     defaultValues: {
       memberName: "",
       email: "",
@@ -75,56 +71,58 @@ export function useCreateMemberViewModel(
     },
   })
 
-  useEffect(() => {
-    let cancelled = false
-
-    async function loadBranches(): Promise<void> {
-      setStatus("loading")
-      setError(null)
-
+  const branchesQuery = useQuery({
+    queryKey: ["branches"],
+    queryFn: async () => {
       const result = await branchManagementUseCase.getBranches()
+      if (!result.success) throw new Error(result.error)
+      return result.data
+    },
+  })
 
-      if (cancelled) return
+  const branches = branchesQuery.data ?? []
 
-      if (!result.success) {
-        setStatus("error")
-        setError(result.error)
-        return
-      }
+  const createMutation = useMutation({
+    mutationFn: async (values: MemberFormValues) => {
+      const result = await memberManagementUseCase.createMember(
+        formToCreateInput(values, branches)
+      )
+      if (!result.success) throw new Error(result.error)
+      return result.data
+    },
+  })
 
-      setBranches(result.data)
-      setStatus("ready")
-    }
+  const status: CreateMemberStatus = branchesQuery.isPending
+    ? "loading"
+    : branchesQuery.isError
+      ? "error"
+      : createMutation.isPending
+        ? "saving"
+        : createMutation.isSuccess
+          ? "saved"
+          : createMutation.isError
+            ? "error"
+            : "ready"
 
-    void loadBranches()
-
-    return () => {
-      cancelled = true
-    }
-  }, [branchManagementUseCase])
+  const error = branchesQuery.isError
+    ? branchesQuery.error instanceof Error
+      ? branchesQuery.error.message
+      : String(branchesQuery.error)
+    : createMutation.isError
+      ? createMutation.error instanceof Error
+        ? createMutation.error.message
+        : String(createMutation.error)
+      : null
 
   async function save(values: MemberFormValues): Promise<void> {
-    setStatus("saving")
-    setError(null)
-
-    const result = await memberManagementUseCase.createMember(
-      formToCreateInput(values, branches)
-    )
-
-    if (!result.success) {
-      setStatus("ready")
-      setError(result.error)
-      return
-    }
-
-    setStatus("saved")
+    await createMutation.mutateAsync(values)
   }
 
   const state: CreateMemberViewModelState = {
     status,
     branches,
     error,
-    isLoading: status === "idle" || status === "loading",
+    isLoading: status === "loading",
     isReady: status === "ready",
     isSaving: status === "saving",
     isSaved: status === "saved",

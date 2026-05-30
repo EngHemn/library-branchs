@@ -1,6 +1,7 @@
 "use client"
 
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useState } from "react"
+import { useQuery } from "@tanstack/react-query"
 import { format, subDays, startOfYear } from "date-fns"
 
 import type {
@@ -45,13 +46,9 @@ export type ReportsViewModel = {
   reload: () => void
 }
 
-function getDateRangeForPeriod(period: ReportPeriod): {
-  dateFrom: string
-  dateTo: string
-} {
+function getDateRangeForPeriod(period: ReportPeriod): { dateFrom: string; dateTo: string } {
   const to = new Date()
   let from = new Date()
-
   switch (period) {
     case "7d":
       from = subDays(to, 6)
@@ -66,11 +63,7 @@ function getDateRangeForPeriod(period: ReportPeriod): {
       from = startOfYear(to)
       break
   }
-
-  return {
-    dateFrom: format(from, "yyyy-MM-dd"),
-    dateTo: format(to, "yyyy-MM-dd"),
-  }
+  return { dateFrom: format(from, "yyyy-MM-dd"), dateTo: format(to, "yyyy-MM-dd") }
 }
 
 function filterKpis(kpis: ReportKpi[], category: ReportCategory): ReportKpi[] {
@@ -78,122 +71,72 @@ function filterKpis(kpis: ReportKpi[], category: ReportCategory): ReportKpi[] {
 }
 
 function filterCharts(charts: ReportChart[], category: ReportCategory): ReportChart[] {
-  return charts
-    .filter((chart) => chart.category === category)
-    .slice(0, REPORT_CHARTS_PER_TAB)
+  return charts.filter((chart) => chart.category === category).slice(0, REPORT_CHARTS_PER_TAB)
 }
 
 function filterTables(tables: ReportTable[], category: ReportCategory): ReportTable[] {
-  if (category !== "overview") {
-    return []
-  }
-
+  if (category !== "overview") return []
   return tables.filter((table) => table.category === "overview")
 }
 
-export function useReportsViewModel(
-  getReportsUseCase: GetReportsUseCase
-): ReportsViewModel {
+export function useReportsViewModel(getReportsUseCase: GetReportsUseCase): ReportsViewModel {
   const initialRange = getDateRangeForPeriod("30d")
-  const [reports, setReports] = useState<ReportsBundle | null>(null)
-  const [status, setStatus] = useState<AsyncStatus>("idle")
-  const [error, setError] = useState<string | null>(null)
+
   const [period, setPeriodState] = useState<ReportPeriod>("30d")
   const [branchId, setBranchId] = useState("all")
   const [dateFrom, setDateFrom] = useState(initialRange.dateFrom)
   const [dateTo, setDateTo] = useState(initialRange.dateTo)
   const [category, setCategory] = useState<ReportCategory>("overview")
 
-  const query: ReportsQuery = useMemo(
-    () => ({
-      period,
-      branchId,
-      dateFrom,
-      dateTo,
-    }),
-    [period, branchId, dateFrom, dateTo]
-  )
+  const query: ReportsQuery = { period, branchId, dateFrom, dateTo }
 
-  const loadReports = useCallback(async () => {
-    setStatus("loading")
-    setError(null)
+  const { data: reports, isPending, isFetching, isError, error, refetch } = useQuery({
+    queryKey: ["reports", query],
+    queryFn: async () => {
+      const result = await getReportsUseCase.getReports(query)
+      if (!result.success) throw new Error(result.error)
+      return result.data
+    },
+  })
 
-    const result = await getReportsUseCase.getReports(query)
+  const status: AsyncStatus = (() => {
+    if (isPending || isFetching) return "loading"
+    if (isError) return "error"
+    if (reports !== undefined) return "success"
+    return "idle"
+  })()
 
-    if (!result.success) {
-      setReports(null)
-      setStatus("error")
-      setError(result.error)
-      return
-    }
-
-    setReports(result.data)
-    setStatus("success")
-  }, [getReportsUseCase, query])
-
-  useEffect(() => {
-    void loadReports()
-  }, [loadReports])
-
-  const setPeriod = useCallback((nextPeriod: ReportPeriod) => {
+  function setPeriod(nextPeriod: ReportPeriod): void {
     const range = getDateRangeForPeriod(nextPeriod)
     setPeriodState(nextPeriod)
     setDateFrom(range.dateFrom)
     setDateTo(range.dateTo)
-  }, [])
+  }
 
-  const kpis = useMemo(() => {
-    if (!reports) {
-      return []
-    }
+  function reload(): void {
+    void refetch()
+  }
 
-    return filterKpis(reports.kpis, category)
-  }, [reports, category])
-
-  const charts = useMemo(() => {
-    if (!reports) {
-      return []
-    }
-
-    return filterCharts(reports.charts, category)
-  }, [reports, category])
-
-  const tables = useMemo(() => {
-    if (!reports) {
-      return []
-    }
-
-    return filterTables(reports.tables, category)
-  }, [reports, category])
-
-  const branches = reports?.branches ?? []
+  const kpis = reports ? filterKpis(reports.kpis, category) : []
+  const charts = reports ? filterCharts(reports.charts, category) : []
+  const tables = reports ? filterTables(reports.tables, category) : []
 
   const state: ReportsViewModelState = {
-    reports,
+    reports: reports ?? null,
     status,
-    error,
+    error: isError && error instanceof Error ? error.message : null,
     period,
     branchId,
     dateFrom,
     dateTo,
-    branches,
+    branches: reports?.branches ?? [],
     category,
-    isLoading: status === "idle" || status === "loading",
-    isReady: status === "success" && reports !== null,
+    isLoading: isPending || isFetching,
+    isReady: status === "success" && reports !== undefined,
     kpis,
     charts,
     tables,
   }
 
-  return {
-    state,
-    setPeriod,
-    setBranchId,
-    setDateFrom,
-    setDateTo,
-    setCategory,
-    reload: () => {
-      void loadReports()
-    },
-  }
+  return { state, setPeriod, setBranchId, setDateFrom, setDateTo, setCategory, reload }
 }

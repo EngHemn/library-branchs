@@ -1,12 +1,13 @@
 "use client"
 
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useState } from "react"
 
 import type { Branch } from "@/domain/entities/branch/Branch"
 import type { CartItem } from "@/domain/entities/sales/CartItem"
 import type { Sale } from "@/domain/entities/sales/Sale"
 import type { SaleBook } from "@/domain/entities/sales/SaleBook"
 import type { SalesUseCase } from "@/domain/usecases/sales/SalesUseCase"
+import { useSalesData } from "./useSalesData"
 
 export type BranchNode = {
   branch: Branch
@@ -77,9 +78,7 @@ function getUniqueValues(
   const values = new Set<string>()
   for (const book of books) {
     const value = accessor(book)
-    if (value) {
-      values.add(value)
-    }
+    if (value) values.add(value)
   }
   return Array.from(values).sort()
 }
@@ -101,143 +100,74 @@ function computeCartTotals(cart: CartItem[]): {
   let subtotal = 0
   let discountAmount = 0
   let itemCount = 0
-
   for (const item of cart) {
     subtotal += item.book.price * item.quantity
     discountAmount +=
       ((item.book.price * item.book.discount) / 100) * item.quantity
     itemCount += item.quantity
   }
-
   return { subtotal, discountAmount, total: subtotal - discountAmount, itemCount }
 }
 
 export function useSalesViewModel(salesUseCase: SalesUseCase): SalesViewModel {
-  const [branches, setBranches] = useState<Branch[]>([])
-  const [branchesStatus, setBranchesStatus] = useState<AsyncStatus>("idle")
-  const [branchesError, setBranchesError] = useState<string | null>(null)
-
-  const [books, setBooks] = useState<SaleBook[]>([])
-  const [booksStatus, setBooksStatus] = useState<AsyncStatus>("idle")
-  const [booksError, setBooksError] = useState<string | null>(null)
+  const salesData = useSalesData(salesUseCase)
 
   const [shoppingBranchId, setShoppingBranchId] = useState<string | null>(null)
-  const [displayedBranchId, setDisplayedBranchId] = useState<string | null>(null)
-
   const [cart, setCart] = useState<CartItem[]>([])
   const [pendingBranchId, setPendingBranchId] = useState<string | null>(null)
-  const [isChangeBranchDialogOpen, setIsChangeBranchDialogOpen] =
-    useState(false)
-
-  const [isPlacingSale, setIsPlacingSale] = useState(false)
-  const [saleResult, setSaleResult] = useState<Sale | null>(null)
-  const [saleError, setSaleError] = useState<string | null>(null)
-
+  const [isChangeBranchDialogOpen, setIsChangeBranchDialogOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [languageFilter, setLanguageFilter] = useState<SalesFilter>("all")
   const [categoryFilter, setCategoryFilter] = useState<SalesFilter>("all")
   const [authorFilter, setAuthorFilter] = useState<SalesFilter>("all")
   const [translatorFilter, setTranslatorFilter] = useState<SalesFilter>("all")
 
-  useEffect(() => {
-    setBranchesStatus("loading")
-    setBranchesError(null)
-    setBooksStatus("loading")
-    setBooksError(null)
-    Promise.all([salesUseCase.getBranches(), salesUseCase.getAllBooks()]).then(
-      ([branchesResult, booksResult]) => {
-        if (!branchesResult.success) {
-          setBranchesStatus("error")
-          setBranchesError(branchesResult.error)
-          return
-        }
+  function resetFilters(): void {
+    setSearchQuery("")
+    setLanguageFilter("all")
+    setCategoryFilter("all")
+    setAuthorFilter("all")
+    setTranslatorFilter("all")
+  }
 
-        if (!booksResult.success) {
-          setBooksStatus("error")
-          setBooksError(booksResult.error)
-          return
-        }
+  function viewBranchBooks(branchId: string): void {
+    salesData.setDisplayedBranch(branchId)
+    resetFilters()
+  }
 
-        setBranches(branchesResult.data)
-        setBooks(booksResult.data)
-        setBranchesStatus("success")
-        setBooksStatus("success")
-      }
-    )
-  }, [salesUseCase])
+  function requestSetShoppingBranch(branchId: string): void {
+    if (branchId === shoppingBranchId) {
+      viewBranchBooks(branchId)
+      return
+    }
+    if (cart.length === 0) {
+      setShoppingBranchId(branchId)
+      viewBranchBooks(branchId)
+      return
+    }
+    setPendingBranchId(branchId)
+    setIsChangeBranchDialogOpen(true)
+  }
 
-  const loadBooksForBranch = useCallback(
-    async (branchId: string): Promise<void> => {
-      setBooksStatus("loading")
-      setBooksError(null)
-      const result = await salesUseCase.getBooksByBranch(branchId)
-      if (!result.success) {
-        setBooksStatus("error")
-        setBooksError(result.error)
-        return
-      }
-      setBooks(result.data)
-      setBooksStatus("success")
-    },
-    [salesUseCase]
-  )
-
-  const viewBranchBooks = useCallback(
-    (branchId: string): void => {
-      setDisplayedBranchId(branchId)
-      setSearchQuery("")
-      setLanguageFilter("all")
-      setCategoryFilter("all")
-      setAuthorFilter("all")
-      setTranslatorFilter("all")
-      void loadBooksForBranch(branchId)
-    },
-    [loadBooksForBranch]
-  )
-
-  const requestSetShoppingBranch = useCallback(
-    (branchId: string): void => {
-      if (branchId === shoppingBranchId) {
-        viewBranchBooks(branchId)
-        return
-      }
-
-      if (cart.length === 0) {
-        setShoppingBranchId(branchId)
-        viewBranchBooks(branchId)
-        return
-      }
-
-      setPendingBranchId(branchId)
-      setIsChangeBranchDialogOpen(true)
-    },
-    [shoppingBranchId, cart.length, viewBranchBooks]
-  )
-
-  const confirmBranchChange = useCallback((): void => {
+  function confirmBranchChange(): void {
     if (!pendingBranchId) return
     setCart([])
     setShoppingBranchId(pendingBranchId)
     viewBranchBooks(pendingBranchId)
     setPendingBranchId(null)
     setIsChangeBranchDialogOpen(false)
-  }, [pendingBranchId, viewBranchBooks])
+  }
 
-  const cancelBranchChange = useCallback((): void => {
+  function cancelBranchChange(): void {
     setPendingBranchId(null)
     setIsChangeBranchDialogOpen(false)
-  }, [])
+  }
 
-  const addToCart = useCallback((book: SaleBook): void => {
+  function addToCart(book: SaleBook): void {
     if (!shoppingBranchId) {
       setShoppingBranchId(book.branchId)
-      setDisplayedBranchId(book.branchId)
-      setSearchQuery("")
-      setLanguageFilter("all")
-      setCategoryFilter("all")
-      setAuthorFilter("all")
-      setTranslatorFilter("all")
-      void loadBooksForBranch(book.branchId)
+      salesData.setDisplayedBranch(book.branchId)
+      resetFilters()
     }
     setCart((current) => {
       const existing = current.find((item) => item.book.id === book.id)
@@ -250,183 +180,95 @@ export function useSalesViewModel(salesUseCase: SalesUseCase): SalesViewModel {
       }
       return [...current, { book, quantity: 1 }]
     })
-  }, [shoppingBranchId, loadBooksForBranch])
+  }
 
-  const removeFromCart = useCallback((bookId: string): void => {
+  function removeFromCart(bookId: string): void {
     setCart((current) => current.filter((item) => item.book.id !== bookId))
-  }, [])
+  }
 
-  const updateQuantity = useCallback(
-    (bookId: string, quantity: number): void => {
-      if (quantity <= 0) {
-        removeFromCart(bookId)
-        return
-      }
-      setCart((current) =>
-        current.map((item) =>
-          item.book.id === bookId ? { ...item, quantity } : item
-        )
-      )
-    },
-    [removeFromCart]
-  )
-
-  const clearCart = useCallback((): void => {
-    setCart([])
-  }, [])
-
-  const placeSale = useCallback(async (): Promise<void> => {
-    if (!shoppingBranchId || cart.length === 0) return
-    setIsPlacingSale(true)
-    setSaleError(null)
-    const result = await salesUseCase.placeSale(shoppingBranchId, cart)
-    if (!result.success) {
-      setSaleError(result.error)
-      setIsPlacingSale(false)
+  function updateQuantity(bookId: string, quantity: number): void {
+    if (quantity <= 0) {
+      removeFromCart(bookId)
       return
     }
-    setSaleResult(result.data)
-    setCart([])
-    setIsPlacingSale(false)
-  }, [shoppingBranchId, cart, salesUseCase])
-
-  const resetSale = useCallback((): void => {
-    setSaleResult(null)
-    setSaleError(null)
-  }, [])
-
-  const branchNodes = useMemo(() => buildBranchNodes(branches), [branches])
-
-  const { subtotal, discountAmount, total, itemCount } = useMemo(
-    () => computeCartTotals(cart),
-    [cart]
-  )
-
-  const shoppingBranch = useMemo(
-    () => branches.find((b) => b.id === shoppingBranchId) ?? null,
-    [branches, shoppingBranchId]
-  )
-
-  const displayedBranch = useMemo(
-    () => branches.find((b) => b.id === displayedBranchId) ?? null,
-    [branches, displayedBranchId]
-  )
-
-  const pendingBranch = useMemo(
-    () => branches.find((b) => b.id === pendingBranchId) ?? null,
-    [branches, pendingBranchId]
-  )
-
-  const filteredBooks = useMemo(() => {
-    const q = searchQuery.trim().toLowerCase()
-    const hasSearch = q.length > 0
-
-    return books.filter(
-      (b) =>
-        (!hasSearch ||
-          b.title.toLowerCase().includes(q) ||
-          b.author.toLowerCase().includes(q) ||
-          b.category.toLowerCase().includes(q)) &&
-        (languageFilter === "all" || b.language === languageFilter) &&
-        (categoryFilter === "all" || b.category === categoryFilter) &&
-        (authorFilter === "all" || b.author === authorFilter) &&
-        (translatorFilter === "all" || b.translator === translatorFilter)
+    setCart((current) =>
+      current.map((item) =>
+        item.book.id === bookId ? { ...item, quantity } : item
+      )
     )
-  }, [
+  }
+
+  function clearCart(): void {
+    setCart([])
+  }
+
+  async function placeSale(): Promise<void> {
+    if (!shoppingBranchId || cart.length === 0) return
+    try {
+      await salesData.placeSale(shoppingBranchId, cart)
+      setCart([])
+    } catch {
+      // saleError set via onError in useSalesData
+    }
+  }
+
+  const { branches, books, displayedBranchId } = salesData
+  const { subtotal, discountAmount, total, itemCount } = computeCartTotals(cart)
+
+  const shoppingBranch = branches.find((b) => b.id === shoppingBranchId) ?? null
+  const displayedBranch = branches.find((b) => b.id === displayedBranchId) ?? null
+  const pendingBranch = branches.find((b) => b.id === pendingBranchId) ?? null
+
+  const q = searchQuery.trim().toLowerCase()
+  const filteredBooks = books.filter(
+    (b) =>
+      (!q ||
+        b.title.toLowerCase().includes(q) ||
+        b.author.toLowerCase().includes(q) ||
+        b.category.toLowerCase().includes(q)) &&
+      (languageFilter === "all" || b.language === languageFilter) &&
+      (categoryFilter === "all" || b.category === categoryFilter) &&
+      (authorFilter === "all" || b.author === authorFilter) &&
+      (translatorFilter === "all" || b.translator === translatorFilter)
+  )
+
+  const state: SalesViewModelState = {
+    branchNodes: buildBranchNodes(branches),
+    branchesStatus: salesData.branchesStatus,
+    branchesError: salesData.branchesError,
+    shoppingBranchId,
+    displayedBranchId,
+    shoppingBranch,
+    displayedBranch,
     books,
+    filteredBooks,
+    booksStatus: salesData.booksStatus,
+    booksError: salesData.booksError,
+    cart,
+    cartSubtotal: subtotal,
+    cartDiscountAmount: discountAmount,
+    cartTotal: total,
+    cartItemCount: itemCount,
+    pendingBranchId,
+    pendingBranchName: pendingBranch?.branchName ?? null,
+    isChangeBranchDialogOpen,
+    isPlacingSale: salesData.isPlacingSale,
+    saleResult: salesData.saleResult,
+    saleError: salesData.saleError,
+    isViewingOtherBranch:
+      displayedBranchId !== null &&
+      shoppingBranchId !== null &&
+      displayedBranchId !== shoppingBranchId,
     searchQuery,
     languageFilter,
     categoryFilter,
     authorFilter,
     translatorFilter,
-  ])
-
-  const languages = useMemo(
-    () => getUniqueValues(books, (book) => book.language),
-    [books]
-  )
-  const categories = useMemo(
-    () => getUniqueValues(books, (book) => book.category),
-    [books]
-  )
-  const authors = useMemo(() => getUniqueValues(books, (book) => book.author), [books])
-  const translators = useMemo(
-    () => getUniqueValues(books, (book) => book.translator ?? null),
-    [books]
-  )
-
-  const state = useMemo<SalesViewModelState>(
-    () => ({
-      branchNodes,
-      branchesStatus,
-      branchesError,
-      shoppingBranchId,
-      displayedBranchId,
-      shoppingBranch,
-      displayedBranch,
-      books,
-      filteredBooks,
-      booksStatus,
-      booksError,
-      cart,
-      cartSubtotal: subtotal,
-      cartDiscountAmount: discountAmount,
-      cartTotal: total,
-      cartItemCount: itemCount,
-      pendingBranchId,
-      pendingBranchName: pendingBranch?.branchName ?? null,
-      isChangeBranchDialogOpen,
-      isPlacingSale,
-      saleResult,
-      saleError,
-      isViewingOtherBranch:
-        displayedBranchId !== null &&
-        shoppingBranchId !== null &&
-        displayedBranchId !== shoppingBranchId,
-      searchQuery,
-      languageFilter,
-      categoryFilter,
-      authorFilter,
-      translatorFilter,
-      languages,
-      categories,
-      authors,
-      translators,
-    }),
-    [
-      branchNodes,
-      branchesStatus,
-      branchesError,
-      shoppingBranchId,
-      displayedBranchId,
-      shoppingBranch,
-      displayedBranch,
-      books,
-      filteredBooks,
-      booksStatus,
-      booksError,
-      cart,
-      subtotal,
-      discountAmount,
-      total,
-      itemCount,
-      pendingBranchId,
-      pendingBranch,
-      isChangeBranchDialogOpen,
-      isPlacingSale,
-      saleResult,
-      saleError,
-      searchQuery,
-      languageFilter,
-      categoryFilter,
-      authorFilter,
-      translatorFilter,
-      languages,
-      categories,
-      authors,
-      translators,
-    ]
-  )
+    languages: getUniqueValues(books, (b) => b.language),
+    categories: getUniqueValues(books, (b) => b.category),
+    authors: getUniqueValues(books, (b) => b.author),
+    translators: getUniqueValues(books, (b) => b.translator ?? null),
+  }
 
   return {
     state,
@@ -444,6 +286,6 @@ export function useSalesViewModel(salesUseCase: SalesUseCase): SalesViewModel {
     setCategoryFilter,
     setAuthorFilter,
     setTranslatorFilter,
-    resetSale,
+    resetSale: salesData.resetSale,
   }
 }

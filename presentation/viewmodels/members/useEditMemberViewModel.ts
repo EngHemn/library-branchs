@@ -1,8 +1,9 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useForm } from "react-hook-form"
+import { useEffect } from "react"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
 
 import type { Branch } from "@/domain/entities/branch/Branch"
 import type { UpdateMemberInput } from "@/domain/repositories/MemberManagementRepository"
@@ -65,12 +66,10 @@ export function useEditMemberViewModel(
   memberManagementUseCase: MemberManagementUseCase,
   branchManagementUseCase: BranchManagementUseCase
 ): EditMemberViewModel {
-  const [status, setStatus] = useState<EditMemberStatus>("idle")
-  const [branches, setBranches] = useState<Branch[]>([])
-  const [error, setError] = useState<string | null>(null)
+  const queryClient = useQueryClient()
 
   const form = useForm<MemberFormInput, unknown, MemberFormValues>({
-    resolver: zodResolver(memberFormSchema as never),
+    resolver: zodResolver(memberFormSchema),
     defaultValues: {
       memberName: "",
       email: "",
@@ -81,41 +80,27 @@ export function useEditMemberViewModel(
     },
   })
 
+  const branchesQuery = useQuery({
+    queryKey: ["branches"],
+    queryFn: async () => {
+      const result = await branchManagementUseCase.getBranches()
+      if (!result.success) throw new Error(result.error)
+      return result.data
+    },
+  })
+
+  const memberQuery = useQuery({
+    queryKey: ["member", memberId],
+    queryFn: async () => {
+      const result = await memberManagementUseCase.getMemberById(memberId)
+      if (!result.success) throw new Error(result.error)
+      return result.data ?? null
+    },
+  })
+
   useEffect(() => {
-    let cancelled = false
-
-    async function loadData(): Promise<void> {
-      setStatus("loading")
-      setError(null)
-
-      const [memberResult, branchesResult] = await Promise.all([
-        memberManagementUseCase.getMemberById(memberId),
-        branchManagementUseCase.getBranches(),
-      ])
-
-      if (cancelled) return
-
-      if (!branchesResult.success) {
-        setStatus("error")
-        setError(branchesResult.error)
-        return
-      }
-
-      setBranches(branchesResult.data)
-
-      if (!memberResult.success) {
-        setStatus("error")
-        setError(memberResult.error)
-        return
-      }
-
-      if (!memberResult.data) {
-        setStatus("not-found")
-        return
-      }
-
-      const member = memberResult.data
-
+    if (memberQuery.data) {
+      const member = memberQuery.data
       form.reset({
         memberName: member.memberName,
         email: member.email,
@@ -124,38 +109,63 @@ export function useEditMemberViewModel(
         address: member.address,
         status: member.status,
       })
-      setStatus("ready")
     }
+  }, [memberQuery.data, form])
 
-    void loadData()
+  const branches = branchesQuery.data ?? []
 
-    return () => {
-      cancelled = true
-    }
-  }, [memberId, memberManagementUseCase, branchManagementUseCase, form])
+  const updateMutation = useMutation({
+    mutationFn: async (values: MemberFormValues) => {
+      const result = await memberManagementUseCase.updateMember(
+        formToUpdateInput(memberId, values, branches)
+      )
+      if (!result.success) throw new Error(result.error)
+      return result.data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["members"] })
+      queryClient.invalidateQueries({ queryKey: ["member", memberId] })
+    },
+  })
+
+  const isDataLoading = branchesQuery.isPending || memberQuery.isPending
+  const isDataError = branchesQuery.isError || memberQuery.isError
+
+  const status: EditMemberStatus = isDataLoading
+    ? "loading"
+    : isDataError
+      ? "error"
+      : memberQuery.isSuccess && !memberQuery.data
+        ? "not-found"
+        : updateMutation.isPending
+          ? "saving"
+          : updateMutation.isSuccess
+            ? "saved"
+            : "ready"
+
+  const error = branchesQuery.isError
+    ? branchesQuery.error instanceof Error
+      ? branchesQuery.error.message
+      : String(branchesQuery.error)
+    : memberQuery.isError
+      ? memberQuery.error instanceof Error
+        ? memberQuery.error.message
+        : String(memberQuery.error)
+      : updateMutation.isError
+        ? updateMutation.error instanceof Error
+          ? updateMutation.error.message
+          : String(updateMutation.error)
+        : null
 
   async function save(values: MemberFormValues): Promise<void> {
-    setStatus("saving")
-    setError(null)
-
-    const result = await memberManagementUseCase.updateMember(
-      formToUpdateInput(memberId, values, branches)
-    )
-
-    if (!result.success) {
-      setStatus("ready")
-      setError(result.error)
-      return
-    }
-
-    setStatus("saved")
+    await updateMutation.mutateAsync(values)
   }
 
   const state: EditMemberViewModelState = {
     status,
     branches,
     error,
-    isLoading: status === "idle" || status === "loading",
+    isLoading: status === "loading",
     isReady: status === "ready",
     isNotFound: status === "not-found",
     isError: status === "error",
