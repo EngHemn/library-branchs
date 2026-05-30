@@ -46,6 +46,11 @@ const periodOptions: { value: ReportPeriod; label: string }[] = [
   { value: "ytd", label: "Year to date" },
 ]
 
+const PERIOD_VALUES = new Set<string>(periodOptions.map((o) => o.value))
+function isReportPeriod(value: string): value is ReportPeriod {
+  return PERIOD_VALUES.has(value)
+}
+
 function formatGeneratedAt(iso: string): string {
   const date = new Date(iso)
   if (Number.isNaN(date.getTime())) {
@@ -157,7 +162,7 @@ export function ReportsFilters({
           </Label>
           <Select
             value={period}
-            onValueChange={(value) => onPeriodChange(value as ReportPeriod)}
+            onValueChange={(value) => { if (isReportPeriod(value)) onPeriodChange(value) }}
           >
             <SelectTrigger id="report-period" className="w-full">
               <SelectValue />

@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { PlusIcon, RefreshCwIcon } from "lucide-react"
 
@@ -23,11 +23,31 @@ import {
 import { Skeleton } from "@/components/ui/skeleton"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { TooltipProvider } from "@/components/ui/tooltip"
-import type { Branch } from "@/domain/entities/branch/Branch"
+import type {
+  Branch,
+  MainBranchRequest,
+  SubBranchRequest,
+} from "@/domain/entities/branch/Branch"
 import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { BranchManagementUseCase } from "@/domain/usecases/branch/BranchManagementUseCase"
 import { ActiveFilters } from "@/presentation/components/branch-management/ActiveFilters"
 import { BranchFilters } from "@/presentation/components/branch-management/BranchFilters"
+import {
+  BranchRequestApproveDialog,
+  type BranchRequestApproveAction,
+} from "@/presentation/components/branch-management/BranchRequestApproveDialog"
+import {
+  BranchRequestConfirmDialog,
+  type BranchRequestConfirmAction,
+} from "@/presentation/components/branch-management/BranchRequestConfirmDialog"
+import {
+  BranchRequestLocationDialog,
+  type BranchRequestLocationView,
+} from "@/presentation/components/branch-management/BranchRequestLocationDialog"
+import {
+  BranchRequestReplyDialog,
+  type BranchRequestReplyAction,
+} from "@/presentation/components/branch-management/BranchRequestReplyDialog"
 import { BranchStatsCards } from "@/presentation/components/branch-management/BranchStatsCards"
 import { BranchesTable } from "@/presentation/components/branch-management/BranchesTable"
 import { MainBranchRequestsTable } from "@/presentation/components/branch-management/MainBranchRequestsTable"
@@ -72,6 +92,16 @@ export function BranchManagementPage({
   const router = useRouter()
   const viewModel = useBranchManagementViewModel(authUseCase, branchManagementUseCase)
   const { state } = viewModel
+  const [pendingRequestAction, setPendingRequestAction] =
+    useState<BranchRequestConfirmAction | null>(null)
+  const [pendingApproveAction, setPendingApproveAction] =
+    useState<BranchRequestApproveAction | null>(null)
+  const [pendingLocationView, setPendingLocationView] =
+    useState<BranchRequestLocationView | null>(null)
+  const [pendingReplyAction, setPendingReplyAction] =
+    useState<BranchRequestReplyAction | null>(null)
+  const [isSendingReply, setIsSendingReply] = useState(false)
+  const [isApprovingRequest, setIsApprovingRequest] = useState(false)
 
   useEffect(() => {
     if (state.isUnauthenticated) {
@@ -93,6 +123,108 @@ export function BranchManagementPage({
     if (confirmed) {
       void viewModel.deleteBranch(branch.id)
     }
+  }
+
+  const handleConfirmRequestAction = (message?: string): void => {
+    if (!pendingRequestAction) {
+      return
+    }
+
+    switch (pendingRequestAction.kind) {
+      case "reject-main":
+        void viewModel.rejectMainBranchRequest(
+          pendingRequestAction.request.id,
+          message
+        )
+        break
+      case "reject-sub":
+        void viewModel.rejectSubBranchRequest(
+          pendingRequestAction.request.id,
+          message
+        )
+        break
+    }
+
+    setPendingRequestAction(null)
+  }
+
+  const handleConfirmApprove = async (password: string): Promise<void> => {
+    if (!pendingApproveAction) {
+      return
+    }
+
+    setIsApprovingRequest(true)
+
+    if (pendingApproveAction.kind === "main") {
+      await viewModel.approveMainBranchRequest(
+        pendingApproveAction.request.id,
+        password
+      )
+    } else {
+      await viewModel.approveSubBranchRequest(
+        pendingApproveAction.request.id,
+        password
+      )
+    }
+
+    setIsApprovingRequest(false)
+    setPendingApproveAction(null)
+  }
+
+  const handleConfirmReply = async (message: string): Promise<void> => {
+    if (!pendingReplyAction) {
+      return
+    }
+
+    setIsSendingReply(true)
+
+    if (pendingReplyAction.kind === "main") {
+      await viewModel.replyToMainBranchRequest(
+        pendingReplyAction.request.id,
+        message
+      )
+    } else {
+      await viewModel.replyToSubBranchRequest(
+        pendingReplyAction.request.id,
+        message
+      )
+    }
+
+    setIsSendingReply(false)
+    setPendingReplyAction(null)
+  }
+
+  const openMainApproveConfirm = (request: MainBranchRequest): void => {
+    setPendingApproveAction({ kind: "main", request })
+  }
+
+  const openMainRejectConfirm = (request: MainBranchRequest): void => {
+    setPendingRequestAction({ kind: "reject-main", request })
+  }
+
+  const openSubApproveConfirm = (request: SubBranchRequest): void => {
+    setPendingApproveAction({ kind: "sub", request })
+  }
+
+  const openSubRejectConfirm = (request: SubBranchRequest): void => {
+    setPendingRequestAction({ kind: "reject-sub", request })
+  }
+
+  const openMainReply = (request: MainBranchRequest): void => {
+    setPendingReplyAction({ kind: "main", request })
+  }
+
+  const openSubReply = (request: SubBranchRequest): void => {
+    setPendingReplyAction({ kind: "sub", request })
+  }
+
+  const openRequestLocation = (request: {
+    branchName: string
+    address: string
+    latitude: number | null
+    longitude: number | null
+  }): void => {
+    setPendingLocationView(request)
   }
 
   return (
@@ -170,8 +302,17 @@ export function BranchManagementPage({
                 <MainBranchRequestsTable
                   requests={state.mainBranchRequests}
                   expandedRequestIds={state.expandedMainRequestIds}
-                  onApprove={(request) => void viewModel.approveMainBranchRequest(request.id)}
-                  onReject={(request) => void viewModel.rejectMainBranchRequest(request.id)}
+                  onApprove={openMainApproveConfirm}
+                  onReject={openMainRejectConfirm}
+                  onReply={openMainReply}
+                  onViewLocation={(request) =>
+                    openRequestLocation({
+                      branchName: request.branchName,
+                      address: request.address,
+                      latitude: request.latitude,
+                      longitude: request.longitude,
+                    })
+                  }
                   onToggleNote={(request) => viewModel.toggleMainRequestNote(request.id)}
                 />
               </TabsContent>
@@ -180,8 +321,17 @@ export function BranchManagementPage({
                 <SubBranchRequestsTable
                   requests={state.subBranchRequests}
                   expandedRequestIds={state.expandedSubRequestIds}
-                  onApprove={(request) => void viewModel.approveSubBranchRequest(request.id)}
-                  onReject={(request) => void viewModel.rejectSubBranchRequest(request.id)}
+                  onApprove={openSubApproveConfirm}
+                  onReject={openSubRejectConfirm}
+                  onReply={openSubReply}
+                  onViewLocation={(request) =>
+                    openRequestLocation({
+                      branchName: request.branchName,
+                      address: request.address,
+                      latitude: request.latitude,
+                      longitude: request.longitude,
+                    })
+                  }
                   onToggleNote={(request) => viewModel.toggleSubRequestNote(request.id)}
                 />
               </TabsContent>
@@ -189,6 +339,40 @@ export function BranchManagementPage({
           </div>
         </TooltipProvider>
       ) : null}
+
+      <BranchRequestApproveDialog
+        action={pendingApproveAction}
+        isSubmitting={isApprovingRequest}
+        onConfirm={(password) => void handleConfirmApprove(password)}
+        onCancel={() => {
+          if (!isApprovingRequest) {
+            setPendingApproveAction(null)
+          }
+        }}
+        onViewLocation={openRequestLocation}
+      />
+
+      <BranchRequestLocationDialog
+        location={pendingLocationView}
+        onClose={() => setPendingLocationView(null)}
+      />
+
+      <BranchRequestConfirmDialog
+        action={pendingRequestAction}
+        onConfirm={handleConfirmRequestAction}
+        onCancel={() => setPendingRequestAction(null)}
+      />
+
+      <BranchRequestReplyDialog
+        action={pendingReplyAction}
+        isSending={isSendingReply}
+        onConfirm={(message) => void handleConfirmReply(message)}
+        onCancel={() => {
+          if (!isSendingReply) {
+            setPendingReplyAction(null)
+          }
+        }}
+      />
 
       <Dialog
         open={Boolean(state.dialog)}

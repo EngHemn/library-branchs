@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import { useRouter } from "next/navigation"
 import {
   ArrowLeftIcon,
@@ -22,10 +23,24 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { TooltipProvider } from "@/components/ui/tooltip"
+import type { Author } from "@/domain/entities/author/Author"
+import type { Book } from "@/domain/entities/book/Book"
+import type { Branch } from "@/domain/entities/branch/Branch"
 import type { BranchDetailUseCase } from "@/domain/usecases/branch/BranchDetailUseCase"
+import type { Member } from "@/domain/entities/member/Member"
+import type { StaffMember } from "@/domain/entities/staff/StaffMember"
+import type { Translator } from "@/domain/entities/translator/Translator"
 import { AuthorsTab } from "@/presentation/components/branch-detail/AuthorsTab"
 import { BooksTab } from "@/presentation/components/branch-detail/BooksTab"
 import { BranchDetailsTab } from "@/presentation/components/branch-detail/BranchDetailsTab"
@@ -40,6 +55,53 @@ import { useBranchDetailViewModel } from "@/presentation/viewmodels/branch-manag
 type ViewBranchScreenProps = {
   branchId: string
   branchDetailUseCase: BranchDetailUseCase
+}
+
+type PendingDelete =
+  | { kind: "subBranch"; item: Branch }
+  | { kind: "book"; item: Book }
+  | { kind: "author"; item: Author }
+  | { kind: "translator"; item: Translator }
+  | { kind: "staff"; item: StaffMember }
+  | { kind: "member"; item: Member }
+
+function getDeleteDialogContent(pendingDelete: PendingDelete | null) {
+  if (!pendingDelete) {
+    return null
+  }
+
+  switch (pendingDelete.kind) {
+    case "subBranch":
+      return {
+        title: "Delete Sub Branch",
+        description: `Are you sure you want to delete "${pendingDelete.item.branchName}"? This action cannot be undone.`,
+      }
+    case "book":
+      return {
+        title: "Delete Book",
+        description: `Are you sure you want to delete "${pendingDelete.item.title}"? This action cannot be undone.`,
+      }
+    case "author":
+      return {
+        title: "Delete Author",
+        description: `Are you sure you want to delete "${pendingDelete.item.name}"? This action cannot be undone.`,
+      }
+    case "translator":
+      return {
+        title: "Delete Translator",
+        description: `Are you sure you want to delete "${pendingDelete.item.name}"? This action cannot be undone.`,
+      }
+    case "staff":
+      return {
+        title: "Delete Staff Member",
+        description: `Are you sure you want to delete "${pendingDelete.item.staffName}"? This action cannot be undone.`,
+      }
+    case "member":
+      return {
+        title: "Delete Member",
+        description: `Are you sure you want to delete "${pendingDelete.item.memberName}"? This action cannot be undone.`,
+      }
+  }
 }
 
 function LoadingState() {
@@ -72,6 +134,37 @@ export function ViewBranchScreen({ branchId, branchDetailUseCase }: ViewBranchSc
   const router = useRouter()
   const viewModel = useBranchDetailViewModel(branchId, branchDetailUseCase)
   const { state } = viewModel
+  const [pendingDelete, setPendingDelete] = useState<PendingDelete | null>(null)
+  const deleteDialog = getDeleteDialogContent(pendingDelete)
+
+  const handleConfirmDelete = () => {
+    if (!pendingDelete) {
+      return
+    }
+
+    switch (pendingDelete.kind) {
+      case "subBranch":
+        void viewModel.deleteSubBranch(pendingDelete.item.id)
+        break
+      case "book":
+        void viewModel.deleteBook(pendingDelete.item.id)
+        break
+      case "author":
+        void viewModel.deleteAuthor(pendingDelete.item.id)
+        break
+      case "translator":
+        void viewModel.deleteTranslator(pendingDelete.item.id)
+        break
+      case "staff":
+        void viewModel.deleteStaff(pendingDelete.item.id)
+        break
+      case "member":
+        void viewModel.deleteMember(pendingDelete.item.id)
+        break
+    }
+
+    setPendingDelete(null)
+  }
 
   useDashboardBreadcrumbs([
     { label: "Workspace", href: "/dashboard" },
@@ -79,7 +172,7 @@ export function ViewBranchScreen({ branchId, branchDetailUseCase }: ViewBranchSc
     { label: state.branchDetail?.branchName ?? "Branch Details" },
   ])
 
-  const goBack = () => router.push("/dashboard/branches")
+  const goBack = () => router.back()
 
   return (
     <>
@@ -201,10 +294,7 @@ export function ViewBranchScreen({ branchId, branchDetailUseCase }: ViewBranchSc
                     onSearchQueryChange={viewModel.setSearchQuery}
                     onView={(branch) => router.push(`/dashboard/branches/${branch.id}`)}
                     onEdit={(branch) => router.push(`/dashboard/branches/${branch.id}/edit`)}
-                    onDelete={(branch) => {
-                      const confirmed = window.confirm(`Delete ${branch.branchName}?`)
-                      if (confirmed) void viewModel.deleteSubBranch(branch.id)
-                    }}
+                    onDelete={(branch) => setPendingDelete({ kind: "subBranch", item: branch })}
                     onToggleStatus={(branch) => void viewModel.toggleSubBranchStatus(branch.id)}
                   />
                 </TabsContent>
@@ -213,15 +303,14 @@ export function ViewBranchScreen({ branchId, branchDetailUseCase }: ViewBranchSc
               <TabsContent value="books">
                 <BooksTab
                   books={state.books}
+                  branchAuthors={state.branchAuthors}
+                  branchTranslators={state.branchTranslators}
                   permissions={state.permissions}
                   searchQuery={state.searchQuery}
                   onSearchQueryChange={viewModel.setSearchQuery}
-                  onView={() => {}}
-                  onEdit={() => {}}
-                  onDelete={(book) => {
-                    const confirmed = window.confirm(`Delete "${book.title}"?`)
-                    if (confirmed) void viewModel.deleteBook(book.id)
-                  }}
+                  onView={(book) => router.push(`/dashboard/books/${book.id}`)}
+                  onEdit={(book) => router.push(`/dashboard/books/${book.id}/edit`)}
+                  onDelete={(book) => setPendingDelete({ kind: "book", item: book })}
                   onToggleStatus={(book) => void viewModel.toggleBookStatus(book.id)}
                 />
               </TabsContent>
@@ -232,12 +321,9 @@ export function ViewBranchScreen({ branchId, branchDetailUseCase }: ViewBranchSc
                   permissions={state.permissions}
                   searchQuery={state.searchQuery}
                   onSearchQueryChange={viewModel.setSearchQuery}
-                  onView={() => {}}
-                  onEdit={() => {}}
-                  onDelete={(author) => {
-                    const confirmed = window.confirm(`Delete ${author.name}?`)
-                    if (confirmed) void viewModel.deleteAuthor(author.id)
-                  }}
+                  onView={(author) => router.push(`/dashboard/authors/${author.id}`)}
+                  onEdit={(author) => router.push(`/dashboard/authors/${author.id}/edit`)}
+                  onDelete={(author) => setPendingDelete({ kind: "author", item: author })}
                   onToggleStatus={(author) => void viewModel.toggleAuthorStatus(author.id)}
                 />
               </TabsContent>
@@ -248,12 +334,13 @@ export function ViewBranchScreen({ branchId, branchDetailUseCase }: ViewBranchSc
                   permissions={state.permissions}
                   searchQuery={state.searchQuery}
                   onSearchQueryChange={viewModel.setSearchQuery}
-                  onView={() => {}}
-                  onEdit={() => {}}
-                  onDelete={(translator) => {
-                    const confirmed = window.confirm(`Delete ${translator.name}?`)
-                    if (confirmed) void viewModel.deleteTranslator(translator.id)
-                  }}
+                  onView={(translator) => router.push(`/dashboard/translators/${translator.id}`)}
+                  onEdit={(translator) =>
+                    router.push(`/dashboard/translators/${translator.id}/edit`)
+                  }
+                  onDelete={(translator) =>
+                    setPendingDelete({ kind: "translator", item: translator })
+                  }
                   onToggleStatus={(translator) => void viewModel.toggleTranslatorStatus(translator.id)}
                 />
               </TabsContent>
@@ -264,12 +351,13 @@ export function ViewBranchScreen({ branchId, branchDetailUseCase }: ViewBranchSc
                   permissions={state.permissions}
                   searchQuery={state.searchQuery}
                   onSearchQueryChange={viewModel.setSearchQuery}
-                  onView={() => {}}
-                  onEdit={() => {}}
-                  onDelete={(staffMember) => {
-                    const confirmed = window.confirm(`Delete ${staffMember.staffName}?`)
-                    if (confirmed) void viewModel.deleteStaff(staffMember.id)
-                  }}
+                  onView={(staffMember) => router.push(`/dashboard/staff/${staffMember.id}`)}
+                  onEdit={(staffMember) =>
+                    router.push(`/dashboard/staff/${staffMember.id}/edit`)
+                  }
+                  onDelete={(staffMember) =>
+                    setPendingDelete({ kind: "staff", item: staffMember })
+                  }
                   onToggleStatus={(staffMember) => void viewModel.toggleStaffStatus(staffMember.id)}
                 />
               </TabsContent>
@@ -280,12 +368,9 @@ export function ViewBranchScreen({ branchId, branchDetailUseCase }: ViewBranchSc
                   permissions={state.permissions}
                   searchQuery={state.searchQuery}
                   onSearchQueryChange={viewModel.setSearchQuery}
-                  onView={() => {}}
-                  onEdit={() => {}}
-                  onDelete={(member) => {
-                    const confirmed = window.confirm(`Delete ${member.memberName}?`)
-                    if (confirmed) void viewModel.deleteMember(member.id)
-                  }}
+                  onView={(member) => router.push(`/dashboard/members/${member.id}`)}
+                  onEdit={(member) => router.push(`/dashboard/members/${member.id}/edit`)}
+                  onDelete={(member) => setPendingDelete({ kind: "member", item: member })}
                   onToggleStatus={(member) => void viewModel.toggleMemberStatus(member.id)}
                 />
               </TabsContent>
@@ -293,6 +378,28 @@ export function ViewBranchScreen({ branchId, branchDetailUseCase }: ViewBranchSc
           </div>
         </TooltipProvider>
       ) : null}
+
+      <Dialog
+        open={pendingDelete !== null}
+        onOpenChange={(isOpen) => {
+          if (!isOpen) setPendingDelete(null)
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{deleteDialog?.title ?? ""}</DialogTitle>
+            <DialogDescription>{deleteDialog?.description ?? ""}</DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setPendingDelete(null)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={handleConfirmDelete}>
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   )
 }

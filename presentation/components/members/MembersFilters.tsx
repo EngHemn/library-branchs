@@ -1,6 +1,11 @@
 "use client"
 
 import { useEffect, useState } from "react"
+
+const MEMBER_STATUS_VALUES = new Set<string>(["all", "active", "inactive", "suspended"])
+function isMemberStatusFilter(value: string): value is MemberStatusFilter {
+  return MEMBER_STATUS_VALUES.has(value)
+}
 import { ListFilterIcon, SearchIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -150,11 +155,9 @@ export function MembersFilters({
                 <Label>Status</Label>
                 <Select
                   value={draft.statusFilter}
-                  onValueChange={(value) =>
-                    updateDraft({
-                      statusFilter: value as MemberStatusFilter,
-                    })
-                  }
+                  onValueChange={(value) => {
+                    if (isMemberStatusFilter(value)) updateDraft({ statusFilter: value })
+                  }}
                 >
                   <SelectTrigger className="w-full">
                     <SelectValue />
@@ -173,11 +176,7 @@ export function MembersFilters({
                 <Label>Registered Branch</Label>
                 <Select
                   value={draft.branchRegisteredFilter}
-                  onValueChange={(value) =>
-                    updateDraft({
-                      branchRegisteredFilter: value as MemberBranchFilter,
-                    })
-                  }
+                  onValueChange={(value) => updateDraft({ branchRegisteredFilter: value })}
                 >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="All branches" />
@@ -197,11 +196,7 @@ export function MembersFilters({
                 <Label>Branch Used</Label>
                 <Select
                   value={draft.branchUsedFilter}
-                  onValueChange={(value) =>
-                    updateDraft({
-                      branchUsedFilter: value as MemberBranchFilter,
-                    })
-                  }
+                  onValueChange={(value) => updateDraft({ branchUsedFilter: value })}
                 >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="All branches" />

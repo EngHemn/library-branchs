@@ -38,6 +38,11 @@ type StockFiltersProps = {
 
 type StockStatusFilter = "all" | "low_stock" | "out_of_stock"
 
+const STOCK_STATUS_VALUES = new Set<string>(["all", "low_stock", "out_of_stock"])
+function isStockStatusFilter(value: string): value is StockStatusFilter {
+  return STOCK_STATUS_VALUES.has(value)
+}
+
 export function StockFilters({
   searchQuery,
   onSearchChange,
@@ -169,9 +174,9 @@ export function StockFilters({
             <Label htmlFor="status-filter">Stock Status</Label>
             <Select
               value={statusFilterValue}
-              onValueChange={(v) =>
-                handleStatusChange(v as StockStatusFilter)
-              }
+              onValueChange={(v) => {
+                if (isStockStatusFilter(v)) handleStatusChange(v)
+              }}
             >
               <SelectTrigger id="status-filter" className="w-full">
                 <SelectValue />

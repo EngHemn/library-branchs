@@ -88,7 +88,7 @@ function FilterCombobox({
   return (
     <Combobox
       value={value}
-      onValueChange={(next) => onValueChange((next as string) ?? "all")}
+      onValueChange={(next) => onValueChange(next ?? "all")}
       onInputValueChange={() => undefined}
       filter={null}
     >

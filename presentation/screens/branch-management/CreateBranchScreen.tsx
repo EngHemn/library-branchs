@@ -1,7 +1,8 @@
 "use client"
 
-import { useRouter } from "next/navigation"
-import { ArrowLeftIcon, Loader2Icon, PlusIcon } from "lucide-react"
+import { useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
+import { ArrowLeftIcon, EyeIcon, EyeOffIcon, Loader2Icon, PlusIcon, RefreshCwIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -58,8 +59,12 @@ function LoadingState() {
 
 export function CreateBranchScreen({ branchManagementUseCase }: CreateBranchScreenProps) {
   const router = useRouter()
-  const viewModel = useCreateBranchViewModel(branchManagementUseCase)
+  const searchParams = useSearchParams()
+  const requestId = searchParams.get("requestId")
+  const returnTo = searchParams.get("returnTo") ?? "/dashboard/branches"
+  const viewModel = useCreateBranchViewModel(branchManagementUseCase, requestId)
   const { state } = viewModel
+  const [showPassword, setShowPassword] = useState(false)
 
   useDashboardBreadcrumbs([
     { label: "Workspace", href: "/dashboard" },
@@ -67,7 +72,7 @@ export function CreateBranchScreen({ branchManagementUseCase }: CreateBranchScre
     { label: "Create Branch" },
   ])
 
-  const goBack = () => router.push("/dashboard/branches")
+  const goBack = () => router.push(returnTo)
 
   return (
     <>
@@ -90,11 +95,33 @@ export function CreateBranchScreen({ branchManagementUseCase }: CreateBranchScre
             <Card className="rounded-lg border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-950">
               <CardContent className="flex items-center gap-3 py-3">
                 <p className="text-sm font-medium text-green-800 dark:text-green-200">
-                  Branch created successfully.
+                  {state.appliedRequestId
+                    ? "Branch created and main branch request approved."
+                    : "Branch created successfully."}
                 </p>
+                {state.savedBranchId ? (
+                  <Button
+                    size="sm"
+                    onClick={() =>
+                      router.push(`/dashboard/branches/${state.savedBranchId}`)
+                    }
+                  >
+                    View branch
+                  </Button>
+                ) : null}
                 <Button size="sm" variant="outline" onClick={goBack}>
                   Back to branches
                 </Button>
+              </CardContent>
+            </Card>
+          ) : null}
+
+          {state.appliedRequestId ? (
+            <Card className="rounded-lg border-blue-200 bg-blue-50 dark:border-blue-900 dark:bg-blue-950">
+              <CardContent className="py-3">
+                <p className="text-sm font-medium text-blue-800 dark:text-blue-200">
+                  Main branch request {state.appliedRequestId} applied. Complete address and location, then create the branch.
+                </p>
               </CardContent>
             </Card>
           ) : null}
@@ -155,6 +182,31 @@ export function CreateBranchScreen({ branchManagementUseCase }: CreateBranchScre
                     ) : null}
                   </div>
 
+                  {state.form.type === "main" && state.mainBranchRequests.length > 0 ? (
+                    <div className="space-y-2 sm:col-span-2">
+                      <Label htmlFor="mainBranchRequest">Apply Main Branch Request</Label>
+                      <Select
+                        value={state.appliedRequestId ?? ""}
+                        onValueChange={(value) => viewModel.applyMainBranchRequest(value)}
+                        disabled={state.isSaving || state.isSaved}
+                      >
+                        <SelectTrigger id="mainBranchRequest">
+                          <SelectValue placeholder="Select a pending request to prefill the form" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {state.mainBranchRequests.map((request) => (
+                            <SelectItem key={request.id} value={request.id}>
+                              {request.id} — {request.branchName}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <p className="text-xs text-muted-foreground">
+                        Prefills branch name, email, admin, and phone from the selected request.
+                      </p>
+                    </div>
+                  ) : null}
+
                   <div className="space-y-2">
                     <Label htmlFor="email">Email</Label>
                     <Input
@@ -195,6 +247,44 @@ export function CreateBranchScreen({ branchManagementUseCase }: CreateBranchScre
                     />
                     {state.fieldErrors.phone ? (
                       <p className="text-sm text-destructive">{state.fieldErrors.phone}</p>
+                    ) : null}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="password">Password</Label>
+                    <div className="flex gap-2">
+                      <div className="relative flex-1">
+                        <Input
+                          id="password"
+                          type={showPassword ? "text" : "password"}
+                          placeholder="Enter or generate a password"
+                          value={state.form.password}
+                          onChange={(e) => viewModel.setField("password", e.target.value)}
+                          disabled={state.isSaving || state.isSaved}
+                          className="pr-10"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword((v) => !v)}
+                          className="absolute inset-y-0 right-2 flex items-center text-muted-foreground hover:text-foreground"
+                          tabIndex={-1}
+                        >
+                          {showPassword ? <EyeOffIcon className="h-4 w-4" /> : <EyeIcon className="h-4 w-4" />}
+                        </button>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        onClick={viewModel.autoGeneratePassword}
+                        disabled={state.isSaving || state.isSaved}
+                        title="Auto-generate password"
+                      >
+                        <RefreshCwIcon className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    {state.fieldErrors.password ? (
+                      <p className="text-sm text-destructive">{state.fieldErrors.password}</p>
                     ) : null}
                   </div>
 

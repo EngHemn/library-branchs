@@ -2,8 +2,17 @@
 
 import { Suspense } from "react"
 
+import { BookingManagementFakeDataSource } from "@/data/datasources/BookingManagementFakeDataSource"
+import { BookingManagementRepositoryImpl } from "@/data/repositories/BookingManagementRepositoryImpl"
+import { BookingManagementUseCase } from "@/domain/usecases/bookings/BookingManagementUseCase"
 import { Skeleton } from "@/components/ui/skeleton"
 import { CreateBookingScreen } from "@/presentation/screens/bookings/CreateBookingScreen"
+
+const bookingManagementFakeDataSource = new BookingManagementFakeDataSource()
+const bookingManagementRepository = new BookingManagementRepositoryImpl(
+  bookingManagementFakeDataSource
+)
+const bookingManagementUseCase = new BookingManagementUseCase(bookingManagementRepository)
 
 function CreateBookingPageFallback() {
   return (
@@ -18,7 +27,7 @@ function CreateBookingPageFallback() {
 export default function CreateBookingPage() {
   return (
     <Suspense fallback={<CreateBookingPageFallback />}>
-      <CreateBookingScreen />
+      <CreateBookingScreen bookingManagementUseCase={bookingManagementUseCase} />
     </Suspense>
   )
 }

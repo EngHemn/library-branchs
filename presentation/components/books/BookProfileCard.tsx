@@ -12,6 +12,8 @@ import {
 } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import type { BookDetail } from "@/domain/entities/book/BookDetail"
+import { getAuthorViewHref } from "@/lib/authorLink"
+import { getTranslatorViewHref } from "@/lib/translatorLink"
 
 type BookProfileCardProps = {
   book: BookDetail
@@ -29,19 +31,47 @@ function getInitials(name: string): string {
 type ProfileRow = {
   label: string
   value: string
+  href?: string | null
+}
+
+function ProfileValue({ value, href }: { value: string; href?: string | null }) {
+  if (!href) {
+    return <span className="text-sm font-medium">{value}</span>
+  }
+
+  return (
+    <Link
+      href={href}
+      className="text-sm font-medium text-primary underline-offset-4 hover:underline"
+    >
+      {value}
+    </Link>
+  )
 }
 
 export function BookProfileCard({ book }: BookProfileCardProps) {
   const rows: ProfileRow[] = [
     { label: "ID", value: book.id },
     { label: "ISBN", value: book.isbn },
-    { label: "Author", value: book.author },
-    { label: "Translator", value: book.translator ?? "—" },
+    {
+      label: "Author",
+      value: book.author,
+      href: getAuthorViewHref(book.author),
+    },
+    {
+      label: "Translator",
+      value: book.translator ?? "—",
+      href: book.translator ? getTranslatorViewHref(book.translator) : null,
+    },
     { label: "Category", value: book.category },
     { label: "Language", value: book.language },
     { label: "Pages", value: book.pages.toLocaleString() },
     { label: "Publication Date", value: book.publicationDate },
-    { label: "First Added Branch", value: book.firstAddedBranch },
+    {
+      label: "First Added Branch",
+      value: book.firstAddedBranch,
+      href: `/dashboard/branches/${book.branchId}`,
+    },
     { label: "Book Created", value: book.createdAt },
   ]
 
@@ -59,8 +89,8 @@ export function BookProfileCard({ book }: BookProfileCardProps) {
                 <dt className="shrink-0 text-sm text-muted-foreground">
                   {row.label}
                 </dt>
-                <dd className="text-right text-sm font-medium">
-                  {row.value}
+                <dd className="text-right">
+                  <ProfileValue value={row.value} href={row.href} />
                 </dd>
               </div>
             </div>

@@ -5,7 +5,8 @@ import { useTheme } from "next-themes"
 
 import { cn } from "@/lib/utils"
 import { useColorTheme } from "@/presentation/hooks/useColorTheme"
-import type { ColorThemeId } from "@/presentation/hooks/useColorTheme"
+
+type CSSWithVars = React.CSSProperties & Record<`--${string}`, string | number>
 
 type ModeOption = {
   id: string
@@ -146,7 +147,7 @@ export function AppearanceSection() {
                 type="button"
                 role="radio"
                 aria-checked={isSelected}
-                onClick={() => setColorTheme(ct.id as ColorThemeId)}
+                onClick={() => setColorTheme(ct.id)}
                 className={cn(
                   "group flex flex-col items-center gap-2 rounded-lg p-1.5 transition-all duration-200 ease-in-out",
                   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
@@ -154,7 +155,7 @@ export function AppearanceSection() {
                 )}
                 style={
                   isSelected
-                    ? ({ "--tw-ring-color": ct.color } as React.CSSProperties)
+                    ? ({ "--tw-ring-color": ct.color } as CSSWithVars)
                     : undefined
                 }
               >

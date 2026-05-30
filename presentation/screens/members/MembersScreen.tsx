@@ -24,13 +24,16 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import type { Member } from "@/domain/entities/member/Member"
 import type { MemberManagementUseCase } from "@/domain/usecases/members/MemberManagementUseCase"
+import type { BranchManagementUseCase } from "@/domain/usecases/branch/BranchManagementUseCase"
 import { MembersFilters } from "@/presentation/components/members/MembersFilters"
 import { MembersTable } from "@/presentation/components/members/MembersTable"
+import { useBranchNameLookup } from "@/presentation/hooks/useBranchNameLookup"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
 import { useMembersViewModel } from "@/presentation/viewmodels/members/useMembersViewModel"
 
 type MembersScreenProps = {
   memberManagementUseCase: MemberManagementUseCase
+  branchManagementUseCase: BranchManagementUseCase
 }
 
 function LoadingMembersScreen() {
@@ -46,9 +49,13 @@ function LoadingMembersScreen() {
   )
 }
 
-export function MembersScreen({ memberManagementUseCase }: MembersScreenProps) {
+export function MembersScreen({
+  memberManagementUseCase,
+  branchManagementUseCase,
+}: MembersScreenProps) {
   const router = useRouter()
   const viewModel = useMembersViewModel(memberManagementUseCase)
+  const branchNameToId = useBranchNameLookup(branchManagementUseCase)
   const { state } = viewModel
   const [deleteMember, setDeleteMember] = useState<Member | null>(null)
 
@@ -115,6 +122,7 @@ export function MembersScreen({ memberManagementUseCase }: MembersScreenProps) {
 
             <MembersTable
               members={state.filteredMembers}
+              branchNameToId={branchNameToId}
               onView={(member) => router.push(`/dashboard/members/${member.id}`)}
               onEdit={(member) => router.push(`/dashboard/members/${member.id}/edit`)}
               onDelete={(member) => setDeleteMember(member)}

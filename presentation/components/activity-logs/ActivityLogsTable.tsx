@@ -13,7 +13,9 @@ import {
   type DataTableColumn,
 } from "@/components/ui/data-table"
 import type { ActivityLog } from "@/domain/entities/activity-log/ActivityLog"
+import { BranchLink } from "@/presentation/components/branch-management/BranchLink"
 import { ActivityLogActionBadge } from "@/presentation/components/activity-logs/ActivityLogActionBadge"
+import { StaffLink } from "@/presentation/components/shared/DashboardEntityLink"
 
 type ActivityLogsTableProps = {
   logs: ActivityLog[]
@@ -96,7 +98,7 @@ export function ActivityLogsTable({ logs }: ActivityLogsTableProps) {
       sortValue: (log) => log.staffName,
       cell: (log) => (
         <div>
-          <p className="text-sm font-medium">{log.staffName}</p>
+          <StaffLink staffId={log.staffId} name={log.staffName} className="text-sm" />
           <p className="font-mono text-xs text-muted-foreground">{log.staffId}</p>
         </div>
       ),
@@ -107,7 +109,11 @@ export function ActivityLogsTable({ logs }: ActivityLogsTableProps) {
       sortable: true,
       sortValue: (log) => log.branchName,
       cell: (log) => (
-        <span className="text-sm text-muted-foreground">{log.branchName}</span>
+        <BranchLink
+          branchId={log.branchId}
+          branchName={log.branchName}
+          className="text-sm"
+        />
       ),
     },
     {

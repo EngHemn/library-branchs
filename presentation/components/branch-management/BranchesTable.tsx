@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/data-table"
 import type { Branch } from "@/domain/entities/branch/Branch"
 import { BranchActionButton } from "@/presentation/components/branch-management/BranchActionButton"
+import { BranchAdminLink } from "@/presentation/components/branch-management/BranchAdminLink"
 
 type BranchesTableProps = {
   branches: Branch[]
@@ -103,7 +104,9 @@ export function BranchesTable({
       header: "Admin Name",
       sortable: true,
       sortValue: (branch) => branch.adminName,
-      cell: (branch) => branch.adminName,
+      cell: (branch) => (
+        <BranchAdminLink branchId={branch.id} adminName={branch.adminName} />
+      ),
     },
     {
       key: "parentBranch",

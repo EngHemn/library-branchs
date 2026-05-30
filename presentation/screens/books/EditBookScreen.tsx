@@ -75,7 +75,7 @@ export function EditBookScreen({ bookId, getBooksUseCase }: EditBookScreenProps)
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button variant="outline" onClick={() => router.push("/dashboard/books")}>
+              <Button variant="outline" onClick={() => router.back()}>
                 <ArrowLeftIcon />
                 Back to books
               </Button>
@@ -92,7 +92,7 @@ export function EditBookScreen({ bookId, getBooksUseCase }: EditBookScreenProps)
               <CardDescription>{state.error}</CardDescription>
             </CardHeader>
             <CardContent className="flex gap-3">
-              <Button variant="outline" onClick={() => router.push("/dashboard/books")}>
+              <Button variant="outline" onClick={() => router.back()}>
                 <ArrowLeftIcon />
                 Back to books
               </Button>

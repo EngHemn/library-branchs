@@ -44,13 +44,23 @@ function applyColorTheme(themeId: ColorThemeId): void {
   }
 }
 
-export function useColorTheme() {
+type UseColorThemeReturn = {
+  colorTheme: ColorThemeId
+  setColorTheme: (themeId: ColorThemeId) => void
+  colorThemes: ColorTheme[]
+}
+
+function isColorThemeId(value: string): value is ColorThemeId {
+  return colorThemes.some((t) => t.id === value)
+}
+
+export function useColorTheme(): UseColorThemeReturn {
   const [colorTheme, setColorThemeState] =
     useState<ColorThemeId>(DEFAULT_THEME)
 
   useEffect(() => {
-    const stored = (localStorage.getItem(STORAGE_KEY) ??
-      DEFAULT_THEME) as ColorThemeId
+    const raw = localStorage.getItem(STORAGE_KEY) ?? DEFAULT_THEME
+    const stored: ColorThemeId = isColorThemeId(raw) ? raw : DEFAULT_THEME
     setColorThemeState(stored)
     applyColorTheme(stored)
   }, [])

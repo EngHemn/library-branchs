@@ -1,6 +1,6 @@
 "use client"
 
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { ArrowLeftIcon, Loader2Icon, PlusIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -54,6 +54,8 @@ export function CreateMemberScreen({
   branchManagementUseCase,
 }: CreateMemberScreenProps) {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const returnTo = searchParams.get("returnTo") ?? "/dashboard/members"
   const viewModel = useCreateMemberViewModel(memberManagementUseCase, branchManagementUseCase)
   const { state, form } = viewModel
 
@@ -63,7 +65,7 @@ export function CreateMemberScreen({
     { label: "Add Member" },
   ])
 
-  const goBack = () => router.push("/dashboard/members")
+  const goBack = () => router.push(returnTo)
 
   return (
     <>

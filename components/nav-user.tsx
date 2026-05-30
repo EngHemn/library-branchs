@@ -1,7 +1,6 @@
 "use client"
 
 import Link from "next/link"
-import { useMemo } from "react"
 import {
   Avatar,
   AvatarFallback,
@@ -43,16 +42,13 @@ export function NavUser({
   onLogout?: () => Promise<void> | void
 }) {
   const { isMobile } = useSidebar()
-  const initials = useMemo(
-    () =>
-      user.name
-        .split(" ")
-        .map((part) => part[0])
-        .join("")
-        .slice(0, 2)
-        .toUpperCase() || "LU",
-    [user.name]
-  )
+  const initials =
+    user.name
+      .split(" ")
+      .map((part) => part[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase() || "LU"
 
   return (
     <SidebarMenu>

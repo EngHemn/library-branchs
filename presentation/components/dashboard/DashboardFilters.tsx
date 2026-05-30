@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useMemo, useState } from "react"
+import { useState } from "react"
 
 import {
   Combobox,
@@ -28,17 +28,18 @@ type DashboardFiltersProps = {
   onDateRangeChange: (range: DateRangeFilter) => void
 }
 
-type BranchOption = {
-  value: string
-  label: string
-}
-
-const dateRangeOptions: { value: DateRangeFilter; label: string }[] = [
+const DATE_RANGE_OPTIONS: { value: DateRangeFilter; label: string }[] = [
   { value: "all", label: "All time" },
   { value: "today", label: "Today" },
   { value: "week", label: "This week" },
   { value: "month", label: "This month" },
 ]
+
+const DATE_RANGE_VALUES = new Set<string>(DATE_RANGE_OPTIONS.map((o) => o.value))
+
+function isDateRangeFilter(value: string): value is DateRangeFilter {
+  return DATE_RANGE_VALUES.has(value)
+}
 
 export function DashboardFilters({
   branches,
@@ -49,61 +50,52 @@ export function DashboardFilters({
 }: DashboardFiltersProps) {
   const [inputValue, setInputValue] = useState("")
 
-  const allBranchOptions: BranchOption[] = useMemo(
-    () => [
-      { value: "all", label: "All branches" },
-      ...branches.map((b) => ({ value: b.id, label: b.name })),
-    ],
-    [branches]
-  )
+  const allBranchOptions = [
+    { value: "all", label: "All branches" },
+    ...branches.map((b) => ({ value: b.id, label: b.name })),
+  ]
 
-  const optionMap = useMemo(() => {
-    const map = new Map<string, BranchOption>()
-    for (const option of allBranchOptions) {
-      map.set(option.value, option)
-    }
-    return map
-  }, [allBranchOptions])
-
+  const optionMap = new Map(allBranchOptions.map((o) => [o.value, o]))
   const selectedOption = optionMap.get(selectedBranchId)
 
-  const filteredOptions = useMemo(() => {
-    const query = inputValue.trim().toLowerCase()
-    if (!query) return allBranchOptions
-    return allBranchOptions.filter((o) => o.label.toLowerCase().includes(query))
-  }, [allBranchOptions, inputValue])
+  const query = inputValue.trim().toLowerCase()
+  const filteredOptions = query
+    ? allBranchOptions.filter((o) => o.label.toLowerCase().includes(query))
+    : allBranchOptions
 
-  const itemToStringLabel = useCallback(
-    (value: string) => optionMap.get(value)?.label ?? value,
-    [optionMap]
-  )
+  function itemToStringLabel(value: string): string {
+    return optionMap.get(value)?.label ?? value
+  }
 
-  const handleValueChange = useCallback(
-    (nextValue: string | null) => {
-      onBranchChange(nextValue ?? "all")
-    },
-    [onBranchChange]
-  )
+  function handleValueChange(nextValue: string | null): void {
+    onBranchChange(nextValue ?? "all")
+  }
 
-  const handleInputValueChange = useCallback(
-    (nextInput: string, eventDetails?: { reason?: string }) => {
-      setInputValue(nextInput)
-      if (
-        eventDetails?.reason === "input-change" &&
-        selectedBranchId !== "all" &&
-        selectedOption &&
-        nextInput.trim().toLowerCase() !== selectedOption.label.trim().toLowerCase()
-      ) {
-        onBranchChange("all")
-      }
-    },
-    [onBranchChange, selectedBranchId, selectedOption]
-  )
+  function handleInputValueChange(nextInput: string, eventDetails?: { reason?: string }): void {
+    setInputValue(nextInput)
+    if (
+      eventDetails?.reason === "input-change" &&
+      selectedBranchId !== "all" &&
+      selectedOption &&
+      nextInput.trim().toLowerCase() !== selectedOption.label.trim().toLowerCase()
+    ) {
+      onBranchChange("all")
+    }
+  }
+
+  function handleDateRangeChange(value: string): void {
+    if (isDateRangeFilter(value)) {
+      onDateRangeChange(value)
+    }
+  }
 
   return (
     <div className="flex flex-wrap items-end gap-3">
       <div className="min-w-[220px] flex-1">
-        <Label htmlFor="dashboard-branch-filter" className="mb-1.5 block text-xs font-medium text-muted-foreground">
+        <Label
+          htmlFor="dashboard-branch-filter"
+          className="mb-1.5 block text-xs font-medium text-muted-foreground"
+        >
           Branch
         </Label>
         <Combobox
@@ -138,15 +130,18 @@ export function DashboardFilters({
       </div>
 
       <div className="w-40">
-        <Label htmlFor="dashboard-date-filter" className="mb-1.5 block text-xs font-medium text-muted-foreground">
+        <Label
+          htmlFor="dashboard-date-filter"
+          className="mb-1.5 block text-xs font-medium text-muted-foreground"
+        >
           Date range
         </Label>
-        <Select value={dateRange} onValueChange={(v) => onDateRangeChange(v as DateRangeFilter)}>
+        <Select value={dateRange} onValueChange={handleDateRangeChange}>
           <SelectTrigger id="dashboard-date-filter" className="h-9 w-full">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {dateRangeOptions.map((option) => (
+            {DATE_RANGE_OPTIONS.map((option) => (
               <SelectItem key={option.value} value={option.value}>
                 {option.label}
               </SelectItem>

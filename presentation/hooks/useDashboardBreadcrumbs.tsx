@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useContext, useState, useEffect, useCallback } from "react"
+import { createContext, useContext, useState, useEffect } from "react"
 import type { ReactNode } from "react"
 
 type BreadcrumbItem = {
@@ -18,18 +18,17 @@ export const DashboardBreadcrumbContext =
 
 export type { BreadcrumbItem }
 
-export function DashboardBreadcrumbProvider({ children }: { children: ReactNode }) {
+export function DashboardBreadcrumbProvider({ children }: { children: ReactNode }): React.JSX.Element {
   const [breadcrumbs, setBreadcrumbs] = useState<BreadcrumbItem[]>([])
-  const set = useCallback((items: BreadcrumbItem[]) => setBreadcrumbs(items), [])
 
   return (
-    <DashboardBreadcrumbContext.Provider value={{ breadcrumbs, setBreadcrumbs: set }}>
+    <DashboardBreadcrumbContext.Provider value={{ breadcrumbs, setBreadcrumbs }}>
       {children}
     </DashboardBreadcrumbContext.Provider>
   )
 }
 
-export function useDashboardBreadcrumbs(items: BreadcrumbItem[]) {
+export function useDashboardBreadcrumbs(items: BreadcrumbItem[]): void {
   const ctx = useContext(DashboardBreadcrumbContext)
   if (!ctx) throw new Error("useDashboardBreadcrumbs must be used within DashboardBreadcrumbProvider")
 
@@ -42,7 +41,7 @@ export function useDashboardBreadcrumbs(items: BreadcrumbItem[]) {
   }, [key, setBreadcrumbs])
 }
 
-export function useBreadcrumbs() {
+export function useBreadcrumbs(): BreadcrumbItem[] {
   const ctx = useContext(DashboardBreadcrumbContext)
   if (!ctx) throw new Error("useBreadcrumbs must be used within DashboardBreadcrumbProvider")
   return ctx.breadcrumbs

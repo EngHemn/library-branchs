@@ -167,6 +167,8 @@ export function StockManagementScreen({ viewModel }: StockManagementScreenProps)
               <StockTable
                 rows={state.filteredStockRows}
                 isLoading={false}
+                expandedGroupIds={state.expandedStockGroupIds}
+                onToggleGroupExpanded={viewModel.toggleStockGroupExpanded}
                 onAddStock={handleAddStock}
                 onReduceStock={handleReduceStock}
                 onTransfer={(row) => viewModel.openTransferDialog(row)}

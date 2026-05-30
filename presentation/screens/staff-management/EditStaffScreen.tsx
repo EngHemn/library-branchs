@@ -1,7 +1,8 @@
 "use client"
 
+import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { ArrowLeftIcon, Loader2Icon, SaveIcon } from "lucide-react"
+import { ArrowLeftIcon, EyeIcon, EyeOffIcon, Loader2Icon, RefreshCwIcon, SaveIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -62,6 +63,7 @@ export function EditStaffScreen({ staffId, staffManagementUseCase, branchManagem
   const router = useRouter()
   const viewModel = useEditStaffViewModel(staffId, staffManagementUseCase, branchManagementUseCase)
   const { state } = viewModel
+  const [showPassword, setShowPassword] = useState(false)
 
   useDashboardBreadcrumbs([
     { label: "Workspace", href: "/dashboard" },
@@ -186,11 +188,9 @@ export function EditStaffScreen({ staffId, staffManagementUseCase, branchManagem
                         <SelectValue placeholder="Select role" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="manager">Manager</SelectItem>
-                        <SelectItem value="librarian">Librarian</SelectItem>
-                        <SelectItem value="assistant">Assistant</SelectItem>
-                        <SelectItem value="clerk">Clerk</SelectItem>
-                        <SelectItem value="security">Security</SelectItem>
+                        <SelectItem value="branch_admin">Branch Admin</SelectItem>
+                        <SelectItem value="sub_branch_admin">Sub-Branch Admin</SelectItem>
+                        <SelectItem value="staff">Staff</SelectItem>
                       </SelectContent>
                     </Select>
                     {state.fieldErrors.role ? (
@@ -245,6 +245,47 @@ export function EditStaffScreen({ staffId, staffManagementUseCase, branchManagem
                     </Select>
                     {state.fieldErrors.branch ? (
                       <p className="text-sm text-destructive">{state.fieldErrors.branch}</p>
+                    ) : null}
+                  </div>
+
+                  <div className="space-y-2 sm:col-span-2">
+                    <Label htmlFor="password">
+                      Password{" "}
+                      <span className="text-xs font-normal text-muted-foreground">(leave empty to keep current)</span>
+                    </Label>
+                    <div className="flex gap-2">
+                      <div className="relative flex-1">
+                        <Input
+                          id="password"
+                          type={showPassword ? "text" : "password"}
+                          placeholder="New password (optional)"
+                          value={state.form.password}
+                          onChange={(e) => viewModel.setField("password", e.target.value)}
+                          disabled={state.isSaving}
+                          className="pr-10"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword((v) => !v)}
+                          className="absolute inset-y-0 right-2 flex items-center text-muted-foreground hover:text-foreground"
+                          tabIndex={-1}
+                        >
+                          {showPassword ? <EyeOffIcon className="h-4 w-4" /> : <EyeIcon className="h-4 w-4" />}
+                        </button>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        onClick={viewModel.autoGeneratePassword}
+                        disabled={state.isSaving}
+                        title="Auto-generate password"
+                      >
+                        <RefreshCwIcon className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    {state.fieldErrors.password ? (
+                      <p className="text-sm text-destructive">{state.fieldErrors.password}</p>
                     ) : null}
                   </div>
                 </div>

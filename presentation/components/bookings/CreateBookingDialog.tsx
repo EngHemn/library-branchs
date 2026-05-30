@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useState } from "react"
 import { CalendarIcon } from "lucide-react"
 import { format } from "date-fns"
 
@@ -27,9 +27,6 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-import { fakeBooks } from "@/data/fake/fakeBooks"
-import { fakeBranches } from "@/data/fake/fakeBranches"
-import { fakeMembers } from "@/data/fake/fakeMembers"
 import { cn } from "@/lib/utils"
 import {
   BookingSearchCombobox,
@@ -39,6 +36,10 @@ import {
 type CreateBookingDialogProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
+  bookOptions?: BookingComboboxOption[]
+  branchOptions?: BookingComboboxOption[]
+  memberOptions?: BookingComboboxOption[]
+  onBranchChange?: (branchId: string) => void
 }
 
 type BookingFormState = {
@@ -65,62 +66,29 @@ const CREATE_BOOK_HREF = "/dashboard/books/create"
 const CREATE_BRANCH_HREF = "/dashboard/branches/create"
 const CREATE_MEMBER_HREF = "/dashboard/members/create"
 
-function toBookOptions(): BookingComboboxOption[] {
-  return fakeBooks.map((book) => ({
-    value: book.id,
-    label: book.title,
-    searchText: [book.isbn, book.author, book.category].filter(Boolean).join(" "),
-  }))
-}
-
-function toBranchOptions(): BookingComboboxOption[] {
-  return fakeBranches.map((branch) => ({
-    value: branch.id,
-    label: branch.branchName,
-    searchText: [branch.email, branch.address].filter(Boolean).join(" "),
-  }))
-}
-
-function toMemberOptions(branchId: string): BookingComboboxOption[] {
-  const members = branchId
-    ? fakeMembers.filter((member) => member.branchId === branchId)
-    : fakeMembers
-
-  return members.map((member) => ({
-    value: member.id,
-    label: member.memberName,
-    searchText: [member.memberId, member.membershipNumber, member.email]
-      .filter(Boolean)
-      .join(" "),
-  }))
-}
-
 export function CreateBookingDialog({
   open,
   onOpenChange,
+  bookOptions = [],
+  branchOptions = [],
+  memberOptions = [],
+  onBranchChange,
 }: CreateBookingDialogProps) {
   const [bookingForm, setBookingForm] =
     useState<BookingFormState>(INITIAL_BOOKING_FORM)
 
-  const bookOptions = useMemo(() => toBookOptions(), [])
-  const branchOptions = useMemo(() => toBranchOptions(), [])
-  const memberOptions = useMemo(
-    () => toMemberOptions(bookingForm.branchId),
-    [bookingForm.branchId]
-  )
-
-  const handleOpenChange = (isOpen: boolean) => {
+  function handleOpenChange(isOpen: boolean) {
     if (!isOpen) {
       setBookingForm(INITIAL_BOOKING_FORM)
     }
     onOpenChange(isOpen)
   }
 
-  const handleClose = () => {
+  function handleClose() {
     handleOpenChange(false)
   }
 
-  const handleNavigateToCreate = () => {
+  function handleNavigateToCreate() {
     handleClose()
   }
 
@@ -157,13 +125,14 @@ export function CreateBookingDialog({
                 id="booking-branch"
                 options={branchOptions}
                 value={bookingForm.branchId}
-                onValueChange={(branchId) =>
+                onValueChange={(branchId) => {
                   setBookingForm((previous) => ({
                     ...previous,
                     branchId,
                     memberId: "",
                   }))
-                }
+                  onBranchChange?.(branchId)
+                }}
                 placeholder="Search branch..."
                 createHref={CREATE_BRANCH_HREF}
                 addLabel="Add branch"

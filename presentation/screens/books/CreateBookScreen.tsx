@@ -58,7 +58,7 @@ export function CreateBookScreen({ getBooksUseCase }: CreateBookScreenProps) {
     { label: "Add Book" },
   ])
 
-  const goBack = () => router.push("/dashboard/books")
+  const goBack = () => router.back()
 
   return (
     <>

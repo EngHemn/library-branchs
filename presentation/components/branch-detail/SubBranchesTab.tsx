@@ -19,6 +19,7 @@ import { Input } from "@/components/ui/input"
 import type { Branch } from "@/domain/entities/branch/Branch"
 import type { BranchPermissions } from "@/domain/entities/permission/BranchPermissions"
 import { BranchActionButton } from "@/presentation/components/branch-management/BranchActionButton"
+import { BranchAdminLink } from "@/presentation/components/branch-management/BranchAdminLink"
 
 type SubBranchesTabProps = {
   subBranches: Branch[]
@@ -65,7 +66,9 @@ export function SubBranchesTab({
       header: "Branch Admin",
       sortable: true,
       sortValue: (b) => b.adminName,
-      cell: (b) => b.adminName,
+      cell: (b) => (
+        <BranchAdminLink branchId={b.id} adminName={b.adminName} />
+      ),
     },
     {
       key: "email",

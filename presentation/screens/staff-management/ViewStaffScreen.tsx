@@ -87,7 +87,7 @@ export function ViewStaffScreen({ staffId, staffManagementUseCase, branchDetailU
     { label: state.staffMember?.staffName ?? "Staff Details" },
   ])
 
-  const goBack = () => router.push("/dashboard/staff")
+  const goBack = () => router.back()
 
   return (
     <>
@@ -186,10 +186,12 @@ export function ViewStaffScreen({ staffId, staffManagementUseCase, branchDetailU
               <TabsContent value="books">
                 <BooksTab
                   books={state.books}
+                  branchAuthors={state.branchAuthors}
+                  branchTranslators={state.branchTranslators}
                   permissions={viewPermissions}
                   searchQuery={state.searchQuery}
                   onSearchQueryChange={viewModel.setSearchQuery}
-                  onView={() => {}}
+                  onView={(book) => router.push(`/dashboard/books/${book.id}`)}
                   onEdit={() => {}}
                   onDelete={() => {}}
                   onToggleStatus={() => {}}
@@ -202,7 +204,7 @@ export function ViewStaffScreen({ staffId, staffManagementUseCase, branchDetailU
                   permissions={viewPermissions}
                   searchQuery={state.searchQuery}
                   onSearchQueryChange={viewModel.setSearchQuery}
-                  onView={() => {}}
+                  onView={(author) => router.push(`/dashboard/authors/${author.id}`)}
                   onEdit={() => {}}
                   onDelete={() => {}}
                   onToggleStatus={() => {}}
@@ -215,7 +217,9 @@ export function ViewStaffScreen({ staffId, staffManagementUseCase, branchDetailU
                   permissions={viewPermissions}
                   searchQuery={state.searchQuery}
                   onSearchQueryChange={viewModel.setSearchQuery}
-                  onView={() => {}}
+                  onView={(translator) =>
+                    router.push(`/dashboard/translators/${translator.id}`)
+                  }
                   onEdit={() => {}}
                   onDelete={() => {}}
                   onToggleStatus={() => {}}

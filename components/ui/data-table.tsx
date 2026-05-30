@@ -134,14 +134,9 @@ export function DataTable<TItem, TColumnKey extends string>({
   const [pageSize, setPageSize] = React.useState<number>(initialPageSize)
   const [pageIndex, setPageIndex] = React.useState<number>(0)
 
-  const sortedData = React.useMemo(() => {
-    if (!sortKey) {
-      return data
-    }
-
-    const sortedColumn = columns.find((column) => column.key === sortKey)
-
-    if (!sortedColumn?.sortable || !sortedColumn.sortValue) {
+  const sortedColumn = sortKey ? columns.find((column) => column.key === sortKey) : null
+  const sortedData = (() => {
+    if (!sortKey || !sortedColumn?.sortable || !sortedColumn.sortValue) {
       return data
     }
 
@@ -155,7 +150,7 @@ export function DataTable<TItem, TColumnKey extends string>({
 
       return sortDirection === "asc" ? comparison : comparison * -1
     })
-  }, [columns, data, sortDirection, sortKey])
+  })()
 
   const pageCount = Math.max(1, Math.ceil(sortedData.length / pageSize))
   const currentPageIndex = Math.min(pageIndex, pageCount - 1)

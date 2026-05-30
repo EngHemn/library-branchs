@@ -14,6 +14,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import type { BranchDetail } from "@/domain/entities/branch/BranchDetail"
+import { BranchAdminLink } from "@/presentation/components/branch-management/BranchAdminLink"
 
 type BranchDetailsTabProps = {
   branchDetail: BranchDetail
@@ -138,7 +139,10 @@ export function BranchDetailsTab({ branchDetail }: BranchDetailsTabProps) {
               {branchDetail.address}
             </InfoRow>
             <InfoRow icon={UsersIcon} label="Admin">
-              {branchDetail.adminName}
+              <BranchAdminLink
+                branchId={branchDetail.id}
+                adminName={branchDetail.adminName}
+              />
             </InfoRow>
             <InfoRow icon={CalendarIcon} label="Created Date">
               {new Date(branchDetail.createdDate).toLocaleDateString("en-US", {

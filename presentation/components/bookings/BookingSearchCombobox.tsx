@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useMemo, useState } from "react"
+import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { PlusIcon } from "lucide-react"
 
@@ -55,20 +55,9 @@ export function BookingSearchCombobox({
   const router = useRouter()
   const [inputValue, setInputValue] = useState("")
 
-  const optionMap = useMemo(() => {
-    const map = new Map<string, BookingComboboxOption>()
-    for (const option of options) {
-      map.set(option.value, option)
-    }
-    return map
-  }, [options])
-
+  const optionMap = new Map(options.map((o) => [o.value, o]))
   const selectedOption = value ? optionMap.get(value) : undefined
-
-  const filteredOptions = useMemo(() => {
-    // Custom filtering is enabled by passing `filter={null}` to the Combobox.
-    return options.filter((option) => matchesQuery(option, inputValue))
-  }, [inputValue, options])
+  const filteredOptions = options.filter((option) => matchesQuery(option, inputValue))
 
   const hasSearchQuery = inputValue.trim().length > 0
   const showAddAction =
@@ -80,46 +69,32 @@ export function BookingSearchCombobox({
 
   // Maps a value id to its display label so Base UI's internal
   // `stringifyAsLabel` returns the correct label after selection.
-  // Without this, Base UI would write the raw id back into the input on close,
-  // breaking the controlled state.
-  const itemToStringLabel = useCallback(
-    (itemValue: string) => optionMap.get(itemValue)?.label ?? itemValue,
-    [optionMap]
-  )
+  function itemToStringLabel(itemValue: string): string {
+    return optionMap.get(itemValue)?.label ?? itemValue
+  }
 
-  const handleValueChange = useCallback(
-    (nextValue: string | null) => {
-      onValueChange(nextValue ?? "")
-    },
-    [onValueChange]
-  )
+  function handleValueChange(nextValue: string | null): void {
+    onValueChange(nextValue ?? "")
+  }
 
-  const handleInputValueChange = useCallback(
-    (nextInput: string, eventDetails?: { reason?: string }) => {
-      setInputValue(nextInput)
+  function handleInputValueChange(nextInput: string, eventDetails?: { reason?: string }): void {
+    setInputValue(nextInput)
 
-      // If the user starts typing while something is selected, clear selection.
-      // Only do this for direct input edits; Base UI also calls this callback
-      // for item selection/close lifecycle updates.
-      // Compare against the label (not the raw id) since Base UI fills the
-      // input with the label via `itemToStringLabel`.
-      if (
-        eventDetails?.reason === "input-change" &&
-        value &&
-        selectedOption &&
-        nextInput.trim().toLowerCase() !==
-          selectedOption.label.trim().toLowerCase()
-      ) {
-        onValueChange("")
-      }
-    },
-    [onValueChange, selectedOption, value]
-  )
+    // If the user starts typing while something is selected, clear selection.
+    if (
+      eventDetails?.reason === "input-change" &&
+      value &&
+      selectedOption &&
+      nextInput.trim().toLowerCase() !== selectedOption.label.trim().toLowerCase()
+    ) {
+      onValueChange("")
+    }
+  }
 
-  const handleNavigateToCreate = useCallback(() => {
+  function handleNavigateToCreate(): void {
     onNavigateToCreate?.()
     router.push(createHref)
-  }, [createHref, onNavigateToCreate, router])
+  }
 
   return (
     <Combobox

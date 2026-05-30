@@ -1,5 +1,7 @@
 "use client"
 
+import { useState } from "react"
+import { useRouter } from "next/navigation"
 import {
   EyeIcon,
   PencilIcon,
@@ -12,16 +14,30 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
+  Combobox,
+  ComboboxContent,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from "@/components/ui/combobox"
+import {
   DataTable,
   type DataTableColumn,
 } from "@/components/ui/data-table"
 import { Input } from "@/components/ui/input"
+import type { Author } from "@/domain/entities/author/Author"
 import type { Book, BookStatus } from "@/domain/entities/book/Book"
 import type { BranchPermissions } from "@/domain/entities/permission/BranchPermissions"
+import type { Translator } from "@/domain/entities/translator/Translator"
+import { getAuthorViewHref } from "@/lib/authorLink"
+import { getTranslatorViewHref } from "@/lib/translatorLink"
+import { CategoryDetailDialog } from "@/presentation/components/books/CategoryDetailDialog"
 import { BranchActionButton } from "@/presentation/components/branch-management/BranchActionButton"
 
 type BooksTabProps = {
   books: Book[]
+  branchAuthors?: Author[]
+  branchTranslators?: Translator[]
   permissions: BranchPermissions
   searchQuery: string
   onSearchQueryChange: (query: string) => void
@@ -43,6 +59,8 @@ type BookColumnKey =
   | "status"
   | "actions"
 
+type BookFilter = "all" | string
+
 const bookStatusLabels: Record<BookStatus, string> = {
   available: "Available",
   borrowed: "Borrowed",
@@ -50,15 +68,126 @@ const bookStatusLabels: Record<BookStatus, string> = {
   unavailable: "Unavailable",
 }
 
-const bookStatusVariants: Record<BookStatus, "default" | "secondary" | "outline" | "destructive"> = {
+const bookStatusVariants: Record<
+  BookStatus,
+  "default" | "secondary" | "outline" | "destructive"
+> = {
   available: "default",
   borrowed: "secondary",
   reserved: "outline",
   unavailable: "destructive",
 }
 
+function getUniqueValues(
+  books: Book[],
+  getValue: (book: Book) => string | null
+): string[] {
+  const values = new Set<string>()
+
+  for (const book of books) {
+    const value = getValue(book)
+    if (value) {
+      values.add(value)
+    }
+  }
+
+  return Array.from(values).sort((a, b) => a.localeCompare(b))
+}
+
+type FilterComboboxProps = {
+  value: BookFilter
+  onValueChange: (value: BookFilter) => void
+  placeholder: string
+  allLabel: string
+  options: string[]
+  widthClassName: string
+}
+
+function FilterCombobox({
+  value,
+  onValueChange,
+  placeholder,
+  allLabel,
+  options,
+  widthClassName,
+}: FilterComboboxProps) {
+  return (
+    <Combobox
+      value={value}
+      onValueChange={(next) => onValueChange(next ?? "all")}
+      onInputValueChange={() => undefined}
+      filter={null}
+    >
+      <ComboboxInput
+        className={widthClassName}
+        placeholder={placeholder}
+        disabled={false}
+      />
+      <ComboboxContent>
+        <ComboboxList>
+          <ComboboxItem value="all">{allLabel}</ComboboxItem>
+          {options.map((option) => (
+            <ComboboxItem key={option} value={option}>
+              {option}
+            </ComboboxItem>
+          ))}
+        </ComboboxList>
+      </ComboboxContent>
+    </Combobox>
+  )
+}
+
+function resolveAuthorHref(name: string, branchAuthors: Author[]): string | null {
+  const branchMatch = branchAuthors.find((author) => author.name === name)
+  if (branchMatch) {
+    return `/dashboard/authors/${branchMatch.id}`
+  }
+
+  return getAuthorViewHref(name)
+}
+
+function resolveTranslatorHref(
+  name: string,
+  branchTranslators: Translator[]
+): string | null {
+  const branchMatch = branchTranslators.find(
+    (translator) => translator.name === name
+  )
+  if (branchMatch) {
+    return `/dashboard/translators/${branchMatch.id}`
+  }
+
+  return getTranslatorViewHref(name)
+}
+
+function PersonNameButton({
+  name,
+  href,
+  onNavigate,
+}: {
+  name: string
+  href: string | null
+  onNavigate: (href: string) => void
+}) {
+  if (!href) {
+    return <span>{name}</span>
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={() => onNavigate(href)}
+      className="font-medium text-primary underline-offset-4 hover:underline"
+    >
+      {name}
+    </button>
+  )
+}
+
 export function BooksTab({
   books,
+  branchAuthors = [],
+  branchTranslators = [],
   permissions,
   searchQuery,
   onSearchQueryChange,
@@ -67,6 +196,32 @@ export function BooksTab({
   onDelete,
   onToggleStatus,
 }: BooksTabProps) {
+  const router = useRouter()
+  const [categoryFilter, setCategoryFilter] = useState<BookFilter>("all")
+  const [authorFilter, setAuthorFilter] = useState<BookFilter>("all")
+  const [translatorFilter, setTranslatorFilter] = useState<BookFilter>("all")
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+
+  const categories = getUniqueValues(books, (book) => book.category)
+  const authorOptions = getUniqueValues(books, (book) => book.author)
+  const translatorOptions = getUniqueValues(books, (book) => book.translator)
+
+  const filteredBooks = books.filter(
+    (book) =>
+      (categoryFilter === "all" || book.category === categoryFilter) &&
+      (authorFilter === "all" || book.author === authorFilter) &&
+      (translatorFilter === "all" ||
+        (book.translator ?? "") === translatorFilter)
+  )
+
+  const selectedCategoryBookCount = selectedCategory
+    ? books.filter((book) => book.category === selectedCategory).length
+    : 0
+
+  const navigateTo = (href: string) => {
+    router.push(href)
+  }
+
   const columns: DataTableColumn<Book, BookColumnKey>[] = [
     {
       key: "cover",
@@ -97,19 +252,42 @@ export function BooksTab({
       header: "Category",
       sortable: true,
       sortValue: (b) => b.category,
-      cell: (b) => b.category,
+      cell: (b) => (
+        <button
+          type="button"
+          onClick={() => setSelectedCategory(b.category)}
+          className="font-medium text-primary underline-offset-4 hover:underline"
+        >
+          {b.category}
+        </button>
+      ),
     },
     {
       key: "author",
       header: "Author",
       sortable: true,
       sortValue: (b) => b.author,
-      cell: (b) => b.author,
+      cell: (b) => (
+        <PersonNameButton
+          name={b.author}
+          href={resolveAuthorHref(b.author, branchAuthors)}
+          onNavigate={navigateTo}
+        />
+      ),
     },
     {
       key: "translator",
       header: "Translator",
-      cell: (b) => b.translator ?? "-",
+      cell: (b) =>
+        b.translator ? (
+          <PersonNameButton
+            name={b.translator}
+            href={resolveTranslatorHref(b.translator, branchTranslators)}
+            onNavigate={navigateTo}
+          />
+        ) : (
+          "-"
+        ),
     },
     {
       key: "isbn",
@@ -186,31 +364,72 @@ export function BooksTab({
   ]
 
   return (
-    <Card className="rounded-lg">
-      <CardHeader className="flex-row items-center justify-between gap-4 space-y-0">
-        <CardTitle>Books</CardTitle>
-        <div className="relative w-full max-w-xs">
-          <SearchIcon className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Search books..."
-            value={searchQuery}
-            onChange={(e) => onSearchQueryChange(e.target.value)}
-            className="pl-9"
+    <>
+      <Card className="rounded-lg">
+        <CardHeader className="gap-4 space-y-0">
+          <CardTitle>Books</CardTitle>
+          <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
+            <div className="relative w-full max-w-xs">
+              <SearchIcon className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="Search books..."
+                value={searchQuery}
+                onChange={(e) => onSearchQueryChange(e.target.value)}
+                className="pl-9"
+              />
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <FilterCombobox
+                value={categoryFilter}
+                onValueChange={setCategoryFilter}
+                placeholder="Category"
+                allLabel="All Categories"
+                options={categories}
+                widthClassName="w-[170px]"
+              />
+              <FilterCombobox
+                value={authorFilter}
+                onValueChange={setAuthorFilter}
+                placeholder="Author"
+                allLabel="All Authors"
+                options={authorOptions}
+                widthClassName="w-[180px]"
+              />
+              <FilterCombobox
+                value={translatorFilter}
+                onValueChange={setTranslatorFilter}
+                placeholder="Translator"
+                allLabel="All Translators"
+                options={translatorOptions}
+                widthClassName="w-[180px]"
+              />
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <DataTable
+            data={filteredBooks}
+            columns={columns}
+            getRowId={(b) => b.id}
+            emptyTitle="No books found"
+            emptyDescription="This branch does not have any books yet."
+            initialSort={{ key: "title", direction: "asc" }}
+            initialPageSize={5}
+            tableClassName="min-w-[1100px]"
           />
-        </div>
-      </CardHeader>
-      <CardContent>
-        <DataTable
-          data={books}
-          columns={columns}
-          getRowId={(b) => b.id}
-          emptyTitle="No books found"
-          emptyDescription="This branch does not have any books yet."
-          initialSort={{ key: "title", direction: "asc" }}
-          initialPageSize={5}
-          tableClassName="min-w-[1100px]"
-        />
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+
+      <CategoryDetailDialog
+        categoryName={selectedCategory}
+        bookCount={selectedCategoryBookCount}
+        open={selectedCategory !== null}
+        onOpenChange={(open) => {
+          if (!open) {
+            setSelectedCategory(null)
+          }
+        }}
+      />
+    </>
   )
 }

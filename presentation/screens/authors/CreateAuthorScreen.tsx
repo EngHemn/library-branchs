@@ -55,6 +55,16 @@ export function CreateAuthorScreen({ getAuthorsUseCase }: CreateAuthorScreenProp
             <p className="text-sm font-medium text-green-800 dark:text-green-200">
               Author created successfully.
             </p>
+            {state.savedAuthorId ? (
+              <Button
+                size="sm"
+                onClick={() =>
+                  router.push(`/dashboard/authors/${state.savedAuthorId}`)
+                }
+              >
+                View author
+              </Button>
+            ) : null}
             <Button size="sm" variant="outline" onClick={goBack}>
               Back to authors
             </Button>

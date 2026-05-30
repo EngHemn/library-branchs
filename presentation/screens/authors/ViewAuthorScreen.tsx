@@ -68,7 +68,7 @@ export function ViewAuthorScreen({ authorId, getAuthorsUseCase }: ViewAuthorScre
     { label: state.author?.name ?? "Author Details" },
   ])
 
-  const goBack = () => router.push("/dashboard/authors")
+  const goBack = () => router.back()
 
   return (
     <>

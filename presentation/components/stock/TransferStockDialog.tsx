@@ -121,7 +121,7 @@ export function TransferStockDialog({
               <Label>Book (From Branch)</Label>
               <Combobox
                 value={selectedFromId || null}
-                onValueChange={(next) => setSelectedFromId((next as string) ?? "")}
+                onValueChange={(next) => setSelectedFromId(next ?? "")}
                 onInputValueChange={() => undefined}
                 filter={null}
               >
@@ -160,7 +160,7 @@ export function TransferStockDialog({
               <Label>To Branch</Label>
               <Combobox
                 value={selectedToId || null}
-                onValueChange={(next) => setSelectedToId((next as string) ?? "")}
+                onValueChange={(next) => setSelectedToId(next ?? "")}
                 onInputValueChange={() => undefined}
                 filter={null}
               >
