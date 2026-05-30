@@ -3,16 +3,12 @@
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 import {
-  ActivityIcon,
-  ArrowDownRightIcon,
-  ArrowUpRightIcon,
-  BarChart3Icon,
-  CheckCircle2Icon,
-  Clock3Icon,
+  AlertTriangleIcon,
+  BookOpenIcon,
+  CalendarDaysIcon,
   RefreshCwIcon,
 } from "lucide-react"
 
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -21,23 +17,22 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
 import { Skeleton } from "@/components/ui/skeleton"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-import type {
-  DashboardActivityTone,
-  DashboardMetricTrend,
-  DashboardTaskStatus,
-} from "@/domain/entities/dashboard/DashboardSummary"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { GetDashboardSummaryUseCase } from "@/domain/usecases/dashboard/GetDashboardSummaryUseCase"
+import { DashboardActivityFeed } from "@/presentation/components/dashboard/DashboardActivityFeed"
+import { DashboardBookCharts } from "@/presentation/components/dashboard/DashboardBookCharts"
+import { DashboardBookingCharts } from "@/presentation/components/dashboard/DashboardBookingCharts"
+import { DashboardFilters } from "@/presentation/components/dashboard/DashboardFilters"
+import { DashboardMetricsGrid } from "@/presentation/components/dashboard/DashboardMetricsGrid"
+import { DashboardOverviewCharts } from "@/presentation/components/dashboard/DashboardOverviewCharts"
+import { DashboardRecentBookingsTable } from "@/presentation/components/dashboard/DashboardRecentBookingsTable"
+import { DashboardRecentBooksTable } from "@/presentation/components/dashboard/DashboardRecentBooksTable"
+import { DashboardRecentMembersTable } from "@/presentation/components/dashboard/DashboardRecentMembersTable"
+import { DashboardRecentSalesTable } from "@/presentation/components/dashboard/DashboardRecentSalesTable"
+import { DashboardStaffCharts } from "@/presentation/components/dashboard/DashboardStaffCharts"
+import { DashboardStaffTable } from "@/presentation/components/dashboard/DashboardStaffTable"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
 import { useDashboardViewModel } from "@/presentation/viewmodels/dashboard/useDashboardViewModel"
 
@@ -46,63 +41,49 @@ type DashboardScreenProps = {
   getDashboardSummaryUseCase: GetDashboardSummaryUseCase
 }
 
-const taskStatusLabel: Record<DashboardTaskStatus, string> = {
-  pending: "Pending",
-  "in-progress": "In progress",
-  done: "Done",
-}
-
-const taskStatusVariant: Record<
-  DashboardTaskStatus,
-  "default" | "secondary" | "outline"
-> = {
-  pending: "outline",
-  "in-progress": "secondary",
-  done: "default",
-}
-
-const activityToneClassName: Record<DashboardActivityTone, string> = {
-  default: "bg-muted-foreground",
-  success: "bg-emerald-500",
-  warning: "bg-amber-500",
-}
-
-function MetricIcon({ trend }: { trend: DashboardMetricTrend }) {
-  if (trend === "up") {
-    return <ArrowUpRightIcon className="size-4 text-emerald-600" />
-  }
-
-  if (trend === "down") {
-    return <ArrowDownRightIcon className="size-4 text-emerald-600" />
-  }
-
-  return <ActivityIcon className="size-4 text-muted-foreground" />
-}
-
 function LoadingDashboard() {
   return (
-    <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
-      <div className="space-y-2">
-        <Skeleton className="h-8 w-44" />
-        <Skeleton className="h-4 w-72 max-w-full" />
+    <div className="flex flex-1 flex-col gap-6 p-4 pt-0 md:p-6 md:pt-0">
+      <div className="space-y-2 pt-4">
+        <Skeleton className="h-7 w-48" />
+        <Skeleton className="h-4 w-80 max-w-full" />
       </div>
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {Array.from({ length: 4 }).map((_, index) => (
-          <Card key={index} className="rounded-lg">
-            <CardHeader>
-              <Skeleton className="h-4 w-24" />
+      <div className="flex gap-3">
+        <Skeleton className="h-9 w-52" />
+        <Skeleton className="h-9 w-40" />
+      </div>
+      <div className="flex gap-2">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <Skeleton key={i} className="h-9 w-24 rounded-md" />
+        ))}
+      </div>
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <Card key={i} className="rounded-xl">
+            <CardHeader className="pb-2">
+              <Skeleton className="h-3 w-20" />
             </CardHeader>
-            <CardContent className="space-y-3">
-              <Skeleton className="h-8 w-28" />
-              <Skeleton className="h-4 w-full" />
+            <CardContent className="space-y-2">
+              <Skeleton className="h-7 w-24" />
+              <Skeleton className="h-3 w-full" />
             </CardContent>
           </Card>
         ))}
       </div>
-      <div className="grid flex-1 gap-4 lg:grid-cols-[1fr_360px]">
-        <Skeleton className="min-h-72 rounded-lg" />
-        <Skeleton className="min-h-72 rounded-lg" />
+      <div className="grid gap-4 lg:grid-cols-2">
+        <Skeleton className="h-56 rounded-xl" />
+        <Skeleton className="h-56 rounded-xl" />
       </div>
+    </div>
+  )
+}
+
+function EmptyTabContent({ label }: { label: string }) {
+  return (
+    <div className="flex min-h-48 items-center justify-center rounded-xl border border-dashed">
+      <p className="text-sm text-muted-foreground">
+        No {label} match the current filters.
+      </p>
     </div>
   )
 }
@@ -135,7 +116,7 @@ export function DashboardScreen({
 
       {state.error ? (
         <div className="flex flex-1 items-center justify-center p-4">
-          <Card className="w-full max-w-md rounded-lg">
+          <Card className="w-full max-w-md rounded-xl">
             <CardHeader>
               <CardTitle>Dashboard unavailable</CardTitle>
               <CardDescription>{state.error}</CardDescription>
@@ -152,148 +133,264 @@ export function DashboardScreen({
 
       {state.isReady && user && summary ? (
         <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
-          <section className="flex flex-col gap-3 pt-4 md:flex-row md:items-center md:justify-between">
+          <section className="flex flex-col gap-2 pt-4 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <h1 className="text-2xl font-semibold tracking-normal">
-                Dashboard
-              </h1>
+              <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
               <p className="mt-1 text-sm text-muted-foreground">
-                Welcome back, {user.fullName}. Here is the latest workspace
-                snapshot.
+                Welcome back, {user.fullName}. Here is your library overview.
               </p>
             </div>
-            <Button variant="outline" size="sm" onClick={viewModel.reload}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={viewModel.reload}
+              className="shrink-0"
+            >
               <RefreshCwIcon />
               Refresh
             </Button>
           </section>
 
-          <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            {summary.metrics.map((metric) => (
-              <Card key={metric.id} className="rounded-lg">
-                <CardHeader className="flex-row items-center justify-between space-y-0">
-                  <CardDescription>{metric.label}</CardDescription>
-                  <MetricIcon trend={metric.trend} />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-semibold">{metric.value}</div>
-                  <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
-                    <span className="font-medium text-foreground">
-                      {metric.change}
-                    </span>
-                    <span>{metric.helperText}</span>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </section>
+          <DashboardFilters
+            branches={summary.branches}
+            selectedBranchId={state.filterState.branchId}
+            dateRange={state.filterState.dateRange}
+            onBranchChange={viewModel.setBranchId}
+            onDateRangeChange={viewModel.setDateRange}
+          />
 
-          <section className="grid flex-1 gap-4 lg:grid-cols-[1fr_360px]">
-            <Card className="rounded-lg">
-              <CardHeader>
-                <CardTitle>Priority Work</CardTitle>
-                <CardDescription>
-                  Tasks that need attention from the workspace team.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Task</TableHead>
-                      <TableHead>Owner</TableHead>
-                      <TableHead>Due</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="w-36">Progress</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {summary.tasks.map((task) => (
-                      <TableRow key={task.id}>
-                        <TableCell className="font-medium">
-                          {task.title}
-                        </TableCell>
-                        <TableCell>{task.owner}</TableCell>
-                        <TableCell>{task.dueDate}</TableCell>
-                        <TableCell>
-                          <Badge variant={taskStatusVariant[task.status]}>
-                            {taskStatusLabel[task.status]}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-3">
-                            <Progress value={task.progress} />
-                            <span className="w-8 text-right text-xs text-muted-foreground">
-                              {task.progress}%
-                            </span>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
+          <Tabs defaultValue="overview">
+            <TabsList className="h-auto flex-wrap gap-1">
+              <TabsTrigger value="overview">Overview</TabsTrigger>
+              <TabsTrigger value="bookings">
+                Bookings
+                {state.filteredBookings.length > 0 && (
+                  <span className="ml-1.5 rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
+                    {state.filteredBookings.length}
+                  </span>
+                )}
+              </TabsTrigger>
+              <TabsTrigger value="books">
+                Books
+                {state.filteredBooks.length > 0 && (
+                  <span className="ml-1.5 rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
+                    {state.filteredBooks.length}
+                  </span>
+                )}
+              </TabsTrigger>
+              <TabsTrigger value="members">
+                Members
+                {state.filteredMembers.length > 0 && (
+                  <span className="ml-1.5 rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
+                    {state.filteredMembers.length}
+                  </span>
+                )}
+              </TabsTrigger>
+              <TabsTrigger value="sales">
+                Sales
+                {state.filteredSales.length > 0 && (
+                  <span className="ml-1.5 rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
+                    {state.filteredSales.length}
+                  </span>
+                )}
+              </TabsTrigger>
+              <TabsTrigger value="staff">
+                Staff
+                {state.filteredStaff.length > 0 && (
+                  <span className="ml-1.5 rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
+                    {state.filteredStaff.length}
+                  </span>
+                )}
+              </TabsTrigger>
+            </TabsList>
 
-            <Card className="rounded-lg">
-              <CardHeader>
-                <CardTitle>Recent Activity</CardTitle>
-                <CardDescription>
-                  Operational events from the last few hours.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {summary.activities.map((activity) => (
-                  <div key={activity.id} className="flex gap-3">
-                    <div
-                      className={`mt-1 size-2 rounded-full ${activityToneClassName[activity.tone]}`}
-                    />
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center justify-between gap-3">
-                        <p className="truncate text-sm font-medium">
-                          {activity.title}
-                        </p>
-                        <span className="shrink-0 text-xs text-muted-foreground">
-                          {activity.time}
-                        </span>
+            <TabsContent value="overview" className="mt-5 flex flex-col gap-5">
+              <DashboardMetricsGrid metrics={summary.metrics} />
+
+              <DashboardOverviewCharts
+                bookingsByStatus={summary.bookingsByStatus}
+                salesTrend={summary.salesTrend}
+              />
+
+              <div className="grid gap-4 lg:grid-cols-[1fr_340px]">
+                <Card className="rounded-xl">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base">Recent Activity</CardTitle>
+                    <CardDescription>
+                      Operational events from the last few hours.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <DashboardActivityFeed activities={summary.activities} />
+                  </CardContent>
+                </Card>
+
+                <div className="flex flex-col gap-4">
+                  <Card className="rounded-xl">
+                    <CardHeader className="flex-row items-center gap-3 space-y-0 pb-2">
+                      <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-amber-100 dark:bg-amber-900/40">
+                        <AlertTriangleIcon className="size-4 text-amber-600 dark:text-amber-400" />
+                      </span>
+                      <div className="min-w-0">
+                        <CardTitle className="text-sm">Stock Alerts</CardTitle>
+                        <CardDescription className="text-xs">
+                          Titles below minimum threshold
+                        </CardDescription>
                       </div>
-                      <p className="mt-1 text-sm leading-5 text-muted-foreground">
-                        {activity.description}
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-3xl font-bold">{summary.stockAlerts}</p>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        titles need restocking across branches
                       </p>
-                    </div>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-          </section>
+                    </CardContent>
+                  </Card>
 
-          <section className="grid gap-4 md:grid-cols-3">
-            <Card className="rounded-lg">
-              <CardHeader>
-                <BarChart3Icon className="size-5 text-muted-foreground" />
-                <CardTitle>Sales Pipeline</CardTitle>
-                <CardDescription>
-                  Forecast accuracy is holding at 91%.
-                </CardDescription>
-              </CardHeader>
-            </Card>
-            <Card className="rounded-lg">
-              <CardHeader>
-                <Clock3Icon className="size-5 text-muted-foreground" />
-                <CardTitle>Response Time</CardTitle>
-                <CardDescription>
-                  Support replies average 18 minutes today.
-                </CardDescription>
-              </CardHeader>
-            </Card>
-            <Card className="rounded-lg">
-              <CardHeader>
-                <CheckCircle2Icon className="size-5 text-muted-foreground" />
-                <CardTitle>Fulfillment</CardTitle>
-                <CardDescription>96% of orders are on schedule.</CardDescription>
-              </CardHeader>
-            </Card>
-          </section>
+                  <Card className="rounded-xl">
+                    <CardHeader className="flex-row items-center gap-3 space-y-0 pb-2">
+                      <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-rose-100 dark:bg-rose-900/40">
+                        <BookOpenIcon className="size-4 text-rose-600 dark:text-rose-400" />
+                      </span>
+                      <div className="min-w-0">
+                        <CardTitle className="text-sm">Overdue Returns</CardTitle>
+                        <CardDescription className="text-xs">
+                          Pending member follow-up
+                        </CardDescription>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-3xl font-bold">{summary.overdueBookings}</p>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        members have not returned books on time
+                      </p>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="rounded-xl">
+                    <CardHeader className="flex-row items-center gap-3 space-y-0 pb-2">
+                      <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-sky-100 dark:bg-sky-900/40">
+                        <CalendarDaysIcon className="size-4 text-sky-600 dark:text-sky-400" />
+                      </span>
+                      <div className="min-w-0">
+                        <CardTitle className="text-sm">Upcoming Events</CardTitle>
+                        <CardDescription className="text-xs">
+                          Scheduled this week
+                        </CardDescription>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-3xl font-bold">{summary.upcomingEvents}</p>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        library events scheduled for this week
+                      </p>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="bookings" className="mt-5 flex flex-col gap-5">
+              <DashboardBookingCharts
+                bookingsByStatus={summary.bookingsByStatus}
+                bookingsByType={summary.bookingsByType}
+              />
+              {state.filteredBookings.length === 0 ? (
+                <EmptyTabContent label="bookings" />
+              ) : (
+                <Card className="rounded-xl">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base">Recent Bookings</CardTitle>
+                    <CardDescription>
+                      All borrowing and reservation records matching the current filters.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-0">
+                    <DashboardRecentBookingsTable bookings={state.filteredBookings} />
+                  </CardContent>
+                </Card>
+              )}
+            </TabsContent>
+
+            <TabsContent value="books" className="mt-5 flex flex-col gap-5">
+              <DashboardBookCharts
+                booksByStatus={summary.booksByStatus}
+                booksByCategory={summary.booksByCategory}
+              />
+              {state.filteredBooks.length === 0 ? (
+                <EmptyTabContent label="books" />
+              ) : (
+                <Card className="rounded-xl">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base">Recent Books</CardTitle>
+                    <CardDescription>
+                      Catalog entries matching the current filters.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-0">
+                    <DashboardRecentBooksTable books={state.filteredBooks} />
+                  </CardContent>
+                </Card>
+              )}
+            </TabsContent>
+
+            <TabsContent value="members" className="mt-5">
+              {state.filteredMembers.length === 0 ? (
+                <EmptyTabContent label="members" />
+              ) : (
+                <Card className="rounded-xl">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base">Members</CardTitle>
+                    <CardDescription>
+                      Member registrations matching the current filters.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-0">
+                    <DashboardRecentMembersTable members={state.filteredMembers} />
+                  </CardContent>
+                </Card>
+              )}
+            </TabsContent>
+
+            <TabsContent value="sales" className="mt-5">
+              {state.filteredSales.length === 0 ? (
+                <EmptyTabContent label="sales" />
+              ) : (
+                <Card className="rounded-xl">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base">Sales</CardTitle>
+                    <CardDescription>
+                      Book purchase transactions matching the current filters.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-0">
+                    <DashboardRecentSalesTable sales={state.filteredSales} />
+                  </CardContent>
+                </Card>
+              )}
+            </TabsContent>
+
+            <TabsContent value="staff" className="mt-5 flex flex-col gap-5">
+              <DashboardStaffCharts
+                staffByRole={summary.staffByRole}
+                staffByBranch={summary.staffByBranch}
+              />
+              {state.filteredStaff.length === 0 ? (
+                <EmptyTabContent label="staff members" />
+              ) : (
+                <Card className="rounded-xl">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base">Staff Members</CardTitle>
+                    <CardDescription>
+                      All staff records matching the selected branch filter.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-0">
+                    <DashboardStaffTable staff={state.filteredStaff} />
+                  </CardContent>
+                </Card>
+              )}
+            </TabsContent>
+          </Tabs>
         </div>
       ) : null}
     </>
