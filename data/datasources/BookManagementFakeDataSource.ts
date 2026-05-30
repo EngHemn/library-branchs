@@ -8,8 +8,11 @@ import type { Result } from "@/domain/result/Result"
 import { fakeAuthors } from "@/data/fake/fakeAuthors"
 import { fakeBookDetails } from "@/data/fake/fakeBookDetails"
 import { fakeBooks } from "@/data/fake/fakeBooks"
+import { fakeBookings } from "@/data/fake/fakeBookings"
 import { fakeBranches } from "@/data/fake/fakeBranches"
+import { fakeMembers } from "@/data/fake/fakeMembers"
 import { fakeTranslators } from "@/data/fake/fakeTranslators"
+import type { BookingRecord } from "@/domain/entities/book/BookDetail"
 
 function delay(ms: number): Promise<void> {
   return new Promise((resolve) => {
@@ -19,13 +22,52 @@ function delay(ms: number): Promise<void> {
 
 let nextId = 100
 
+const branchIdByName = Object.fromEntries(
+  fakeBranches.map((branch) => [branch.branchName, branch.id])
+)
+
+const memberIdByName = Object.fromEntries(
+  fakeMembers.map((member) => [member.memberName, member.id])
+)
+
+const memberIdByBookingId = Object.fromEntries(
+  fakeBookings.map((booking) => [booking.bookingId, booking.memberId])
+)
+
+function enrichBookingRecord(
+  booking: BookingRecord,
+  branchStocks: { branchId: string; branchName: string }[]
+): BookingRecord {
+  const branchIdFromStock = branchStocks.find(
+    (stock) => stock.branchName === booking.branchName
+  )?.branchId
+
+  return {
+    ...booking,
+    branchId:
+      booking.branchId ??
+      branchIdFromStock ??
+      branchIdByName[booking.branchName],
+    memberId:
+      booking.memberId ??
+      memberIdByBookingId[booking.bookingId] ??
+      memberIdByName[booking.memberName],
+  }
+}
+
+function cloneBookDetail(detail: BookDetail): BookDetail {
+  return {
+    ...detail,
+    branchStocks: detail.branchStocks.map((stock) => ({ ...stock })),
+    bookingHistory: detail.bookingHistory.map((booking) =>
+      enrichBookingRecord(booking, detail.branchStocks)
+    ),
+  }
+}
+
 export class BookManagementFakeDataSource {
   private books: Book[] = fakeBooks.map((book) => ({ ...book }))
-  private bookDetails: BookDetail[] = fakeBookDetails.map((detail) => ({
-    ...detail,
-    branchStocks: detail.branchStocks.map((s) => ({ ...s })),
-    bookingHistory: detail.bookingHistory.map((b) => ({ ...b })),
-  }))
+  private bookDetails: BookDetail[] = fakeBookDetails.map(cloneBookDetail)
 
   async getBooks(): Promise<Result<Book[]>> {
     await delay(350)
@@ -43,13 +85,7 @@ export class BookManagementFakeDataSource {
 
     return {
       success: true,
-      data: detail
-        ? {
-            ...detail,
-            branchStocks: detail.branchStocks.map((s) => ({ ...s })),
-            bookingHistory: detail.bookingHistory.map((b) => ({ ...b })),
-          }
-        : null,
+      data: detail ? cloneBookDetail(detail) : null,
     }
   }
 

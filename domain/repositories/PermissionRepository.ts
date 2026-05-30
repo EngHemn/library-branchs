@@ -1,15 +1,23 @@
 import type {
+  CreatePermissionRoleInput,
   PermissionCode,
   PermissionConfig,
-  PermissionStaffMember,
+  PermissionRole,
+  UpdatePermissionRoleInput,
 } from "@/domain/entities/permission/Permission"
 import type { Result } from "@/domain/result/Result"
 
 export interface PermissionRepository {
-  getPermissionStaff(): Promise<Result<PermissionStaffMember[]>>
+  getPermissionRoles(): Promise<Result<PermissionRole[]>>
   getPermissionConfig(): Promise<Result<PermissionConfig>>
-  savePermissions(
-    staffId: string,
+  createRole(input: CreatePermissionRoleInput): Promise<Result<PermissionRole>>
+  updateRole(
+    roleId: string,
+    input: UpdatePermissionRoleInput
+  ): Promise<Result<PermissionRole>>
+  deleteRole(roleId: string): Promise<Result<null>>
+  saveRolePermissions(
+    roleId: string,
     permissions: PermissionCode[]
-  ): Promise<Result<PermissionStaffMember>>
+  ): Promise<Result<PermissionRole>>
 }

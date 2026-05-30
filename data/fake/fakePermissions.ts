@@ -1,7 +1,7 @@
 import type {
   PermissionCategory,
   PermissionConfig,
-  PermissionStaffMember,
+  PermissionRole,
 } from "@/domain/entities/permission/Permission"
 
 export const fakePermissionCategories: PermissionCategory[] = [
@@ -71,59 +71,26 @@ const allPermissions = fakePermissionCategories.flatMap(
   (category) => category.permissions
 )
 
-export const fakePermissionStaff: PermissionStaffMember[] = [
+export const fakePermissionRoles: PermissionRole[] = [
   {
-    id: "perm-staff-1",
-    name: "Lara Hassan",
-    email: "lara.hassan@liba.local",
-    role: "branch_admin",
-    branch: "Erbil Main Branch",
+    id: "branch_admin",
+    name: "Branch Admin",
+    description: "Full access to branch operations and staff management.",
     assignedPermissions: allPermissions,
-    isRoleLocked: true,
+    isSystem: true,
   },
   {
-    id: "perm-staff-2",
-    name: "Ranj Hussein",
-    email: "ranj.hussein@liba.local",
-    role: "sub_branch_admin",
-    branch: "Ankawa Sub Branch",
+    id: "sub_branch_admin",
+    name: "Sub-Branch Admin",
+    description: "Manage sub-branch resources and limited staff actions.",
     assignedPermissions: allPermissions,
-    isRoleLocked: true,
+    isSystem: true,
   },
   {
-    id: "perm-staff-3",
-    name: "Noor Salim",
-    email: "noor.salim@liba.local",
-    role: "staff",
-    branch: "Erbil Main Branch",
+    id: "staff",
+    name: "Staff",
+    description: "Standard staff access for day-to-day library operations.",
     assignedPermissions: ["book.view", "member.view", "booking.view"],
-    isRoleLocked: false,
-  },
-  {
-    id: "perm-staff-4",
-    name: "Karzan Jamal",
-    email: "karzan.jamal@liba.local",
-    role: "staff",
-    branch: "Ankawa Sub Branch",
-    assignedPermissions: [],
-    isRoleLocked: false,
-  },
-  {
-    id: "perm-staff-5",
-    name: "Shilan Yousif",
-    email: "shilan.yousif@liba.local",
-    role: "staff",
-    branch: "Sulaymaniyah Main Branch",
-    assignedPermissions: [],
-    isRoleLocked: false,
-  },
-  {
-    id: "perm-staff-6",
-    name: "Hawar Karim",
-    email: "hawar.karim@liba.local",
-    role: "branch_admin",
-    branch: "Sulaymaniyah Main Branch",
-    assignedPermissions: allPermissions,
-    isRoleLocked: true,
+    isSystem: true,
   },
 ]

@@ -10,6 +10,7 @@ export type CreateBranchFormErrors = {
   phone: string | null
   parentBranch: string | null
   location: string | null
+  password: string | null
 }
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -66,6 +67,7 @@ export function validateCreateBranchForm(
       phone: input.phone.trim(),
       latitude: input.latitude,
       longitude: input.longitude,
+      password: input.password,
     },
   }
 }
@@ -88,5 +90,6 @@ export function getCreateBranchFieldErrors(
       input.latitude === null || input.longitude === null
         ? "Branch location is required"
         : null,
+    password: input.password.trim().length < 6 ? "Password must be at least 6 characters" : null,
   }
 }

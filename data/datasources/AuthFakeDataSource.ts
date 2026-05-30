@@ -5,6 +5,19 @@ import { fakeUsers } from "@/data/fake/fakeUsers"
 
 const AUTH_SESSION_STORAGE_KEY = "liba.auth.current-user"
 
+type UserShape = { id: string; username: string; fullName: string; role: string }
+
+function isUserShape(value: unknown): value is UserShape {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    typeof (value as Record<string, unknown>).id === "string" &&
+    typeof (value as Record<string, unknown>).username === "string" &&
+    typeof (value as Record<string, unknown>).fullName === "string" &&
+    typeof (value as Record<string, unknown>).role === "string"
+  )
+}
+
 function delay(ms: number): Promise<void> {
   return new Promise((resolve) => {
     setTimeout(resolve, ms)
@@ -26,14 +39,9 @@ export class AuthFakeDataSource {
     }
 
     try {
-      const parsedUser = JSON.parse(storedUser) as Partial<User>
+      const parsedUser: unknown = JSON.parse(storedUser)
 
-      if (
-        typeof parsedUser.id !== "string" ||
-        typeof parsedUser.username !== "string" ||
-        typeof parsedUser.fullName !== "string" ||
-        typeof parsedUser.role !== "string"
-      ) {
+      if (!isUserShape(parsedUser)) {
         return null
       }
 

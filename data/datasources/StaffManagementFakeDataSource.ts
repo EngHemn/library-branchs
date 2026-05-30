@@ -1,8 +1,4 @@
-import type {
-  StaffMember,
-  StaffPermission,
-  StaffRole,
-} from "@/domain/entities/staff/StaffMember"
+import type { StaffMember } from "@/domain/entities/staff/StaffMember"
 import type {
   CreateStaffInput,
   UpdateStaffInput,
@@ -14,14 +10,6 @@ function delay(ms: number): Promise<void> {
   return new Promise((resolve) => {
     setTimeout(resolve, ms)
   })
-}
-
-const defaultPermissionsByRole: Record<StaffRole, StaffPermission[]> = {
-  manager: ["read", "write", "delete", "manage_staff", "manage_books"],
-  librarian: ["read", "write", "manage_books"],
-  assistant: ["read", "write"],
-  clerk: ["read"],
-  security: ["read"],
 }
 
 export class StaffManagementFakeDataSource {
@@ -61,7 +49,6 @@ export class StaffManagementFakeDataSource {
       branch: input.branch,
       email: input.email,
       phone: input.phone,
-      permissions: defaultPermissionsByRole[input.role],
       status: "active",
       branchId: input.branchId,
     }
@@ -96,7 +83,6 @@ export class StaffManagementFakeDataSource {
       branch: input.branch,
       email: input.email,
       phone: input.phone,
-      permissions: defaultPermissionsByRole[input.role],
       branchId: input.branchId,
     }
 

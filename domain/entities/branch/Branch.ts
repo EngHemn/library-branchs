@@ -18,6 +18,13 @@ export type Branch = {
   status: BranchStatus
 }
 
+export type BranchRequestReply = {
+  id: string
+  message: string
+  sentAt: string
+  sentBy: string
+}
+
 export type MainBranchRequest = {
   id: string
   branchName: string
@@ -25,8 +32,12 @@ export type MainBranchRequest = {
   email: string
   adminName: string
   adminEmail: string
+  address: string
+  latitude: number | null
+  longitude: number | null
   submittedDate: string
   note: string
+  replies: BranchRequestReply[]
 }
 
 export type SubBranchRequest = {
@@ -37,8 +48,12 @@ export type SubBranchRequest = {
   email: string
   adminName: string
   adminEmail: string
+  address: string
+  latitude: number | null
+  longitude: number | null
   submittedDate: string
   note: string
+  replies: BranchRequestReply[]
 }
 
 export type BranchStats = {

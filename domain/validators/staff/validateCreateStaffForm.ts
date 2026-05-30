@@ -7,6 +7,7 @@ export type CreateStaffFormErrors = {
   branch: string | null
   email: string | null
   phone: string | null
+  password: string | null
 }
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -60,6 +61,7 @@ export function validateCreateStaffForm(
       branch: input.branch,
       email: input.email.trim(),
       phone: input.phone.trim(),
+      password: input.password,
     },
   }
 }
@@ -73,5 +75,6 @@ export function getCreateStaffFieldErrors(
     branch: input.branchId ? null : "Branch is required",
     email: validateEmail(input.email),
     phone: validatePhone(input.phone),
+    password: input.password.trim().length < 6 ? "Password must be at least 6 characters" : null,
   }
 }

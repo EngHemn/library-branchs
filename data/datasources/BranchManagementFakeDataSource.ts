@@ -1,10 +1,13 @@
 import type {
   Branch,
+  BranchRequestReply,
   MainBranchRequest,
   SubBranchRequest,
 } from "@/domain/entities/branch/Branch"
 import type {
+  ApproveBranchRequestInput,
   CreateBranchInput,
+  ReplyToBranchRequestInput,
   UpdateBranchInput,
 } from "@/domain/repositories/BranchManagementRepository"
 import type { Result } from "@/domain/result/Result"
@@ -44,6 +47,19 @@ export class BranchManagementFakeDataSource {
     return {
       success: true,
       data: this.mainBranchRequests.map((request) => ({ ...request })),
+    }
+  }
+
+  async getMainBranchRequestById(
+    requestId: string
+  ): Promise<Result<MainBranchRequest | null>> {
+    await delay(200)
+
+    const request = this.mainBranchRequests.find((item) => item.id === requestId)
+
+    return {
+      success: true,
+      data: request ? { ...request } : null,
     }
   }
 
@@ -180,28 +196,307 @@ export class BranchManagementFakeDataSource {
     }
   }
 
-  async approveMainBranchRequest(requestId: string): Promise<Result<null>> {
+  async approveMainBranchRequest(
+    requestId: string,
+    input: ApproveBranchRequestInput
+  ): Promise<Result<Branch>> {
+    await delay(300)
+
+    const request = this.mainBranchRequests.find((item) => item.id === requestId)
+
+    if (!request) {
+      return {
+        success: false,
+        error: "Main branch request could not be found.",
+      }
+    }
+
+    if (!request.address.trim()) {
+      return {
+        success: false,
+        error: "Request address is required before approval.",
+      }
+    }
+
+    if (request.latitude === null || request.longitude === null) {
+      return {
+        success: false,
+        error: "Request location is required before approval.",
+      }
+    }
+
+    if (input.password.trim().length < 6) {
+      return {
+        success: false,
+        error: "Password must be at least 6 characters.",
+      }
+    }
+
+    const createResult = await this.createBranch({
+      branchName: request.branchName,
+      type: "main",
+      email: request.email,
+      adminName: request.adminName,
+      parentBranch: null,
+      address: request.address,
+      phone: request.phone,
+      latitude: request.latitude,
+      longitude: request.longitude,
+      password: input.password.trim(),
+    })
+
+    if (!createResult.success) {
+      return createResult
+    }
+
+    const removeResult = this.removeMainBranchRequest(requestId)
+
+    if (!removeResult.success) {
+      return {
+        success: false,
+        error: removeResult.error,
+      }
+    }
+
+    return createResult
+  }
+
+  async rejectMainBranchRequest(
+    requestId: string,
+    input?: ReplyToBranchRequestInput
+  ): Promise<Result<null>> {
     await delay(200)
+
+    if (input?.message.trim()) {
+      const replyResult = this.addMainBranchReply(requestId, input)
+
+      if (!replyResult.success) {
+        return {
+          success: false,
+          error: replyResult.error,
+        }
+      }
+    }
 
     return this.removeMainBranchRequest(requestId)
   }
 
-  async rejectMainBranchRequest(requestId: string): Promise<Result<null>> {
+  async approveSubBranchRequest(
+    requestId: string,
+    input: ApproveBranchRequestInput
+  ): Promise<Result<Branch>> {
+    await delay(300)
+
+    const request = this.subBranchRequests.find((item) => item.id === requestId)
+
+    if (!request) {
+      return {
+        success: false,
+        error: "Sub branch request could not be found.",
+      }
+    }
+
+    const parentBranch = this.branches.find(
+      (branch) =>
+        branch.branchName === request.parentBranchName && branch.type === "main"
+    )
+
+    if (!parentBranch) {
+      return {
+        success: false,
+        error: "Parent branch could not be found for this request.",
+      }
+    }
+
+    if (!request.address.trim()) {
+      return {
+        success: false,
+        error: "Request address is required before approval.",
+      }
+    }
+
+    if (request.latitude === null || request.longitude === null) {
+      return {
+        success: false,
+        error: "Request location is required before approval.",
+      }
+    }
+
+    if (input.password.trim().length < 6) {
+      return {
+        success: false,
+        error: "Password must be at least 6 characters.",
+      }
+    }
+
+    const createResult = await this.createBranch({
+      branchName: request.branchName,
+      type: "sub",
+      email: request.email,
+      adminName: request.adminName,
+      parentBranch: parentBranch.branchName,
+      address: request.address,
+      phone: request.phone,
+      latitude: request.latitude,
+      longitude: request.longitude,
+      password: input.password.trim(),
+    })
+
+    if (!createResult.success) {
+      return createResult
+    }
+
+    const removeResult = this.removeSubBranchRequest(requestId)
+
+    if (!removeResult.success) {
+      return {
+        success: false,
+        error: removeResult.error,
+      }
+    }
+
+    return createResult
+  }
+
+  async rejectSubBranchRequest(
+    requestId: string,
+    input?: ReplyToBranchRequestInput
+  ): Promise<Result<null>> {
     await delay(200)
 
+    if (input?.message.trim()) {
+      const replyResult = this.addSubBranchReply(requestId, input)
+
+      if (!replyResult.success) {
+        return {
+          success: false,
+          error: replyResult.error,
+        }
+      }
+    }
+
+    return this.removeSubBranchRequest(requestId)
+  }
+
+  async dismissMainBranchRequest(requestId: string): Promise<Result<null>> {
+    await delay(200)
     return this.removeMainBranchRequest(requestId)
   }
 
-  async approveSubBranchRequest(requestId: string): Promise<Result<null>> {
+  async dismissSubBranchRequest(requestId: string): Promise<Result<null>> {
     await delay(200)
-
     return this.removeSubBranchRequest(requestId)
   }
 
-  async rejectSubBranchRequest(requestId: string): Promise<Result<null>> {
-    await delay(200)
+  async replyToMainBranchRequest(
+    requestId: string,
+    input: ReplyToBranchRequestInput
+  ): Promise<Result<MainBranchRequest>> {
+    await delay(250)
 
-    return this.removeSubBranchRequest(requestId)
+    return this.addMainBranchReply(requestId, input)
+  }
+
+  async replyToSubBranchRequest(
+    requestId: string,
+    input: ReplyToBranchRequestInput
+  ): Promise<Result<SubBranchRequest>> {
+    await delay(250)
+
+    return this.addSubBranchReply(requestId, input)
+  }
+
+  private createReply(input: ReplyToBranchRequestInput): BranchRequestReply {
+    return {
+      id: `RPL-${Date.now()}`,
+      message: input.message.trim(),
+      sentAt: new Date().toISOString(),
+      sentBy: input.sentBy,
+    }
+  }
+
+  private addMainBranchReply(
+    requestId: string,
+    input: ReplyToBranchRequestInput
+  ): Result<MainBranchRequest> {
+    const message = input.message.trim()
+
+    if (!message) {
+      return {
+        success: false,
+        error: "Reply message is required.",
+      }
+    }
+
+    const requestIndex = this.mainBranchRequests.findIndex(
+      (request) => request.id === requestId
+    )
+
+    if (requestIndex === -1) {
+      return {
+        success: false,
+        error: "Main branch request could not be found.",
+      }
+    }
+
+    const updatedRequest: MainBranchRequest = {
+      ...this.mainBranchRequests[requestIndex],
+      replies: [
+        ...this.mainBranchRequests[requestIndex].replies,
+        this.createReply(input),
+      ],
+    }
+
+    this.mainBranchRequests = this.mainBranchRequests.map((request, index) =>
+      index === requestIndex ? updatedRequest : request
+    )
+
+    return {
+      success: true,
+      data: { ...updatedRequest },
+    }
+  }
+
+  private addSubBranchReply(
+    requestId: string,
+    input: ReplyToBranchRequestInput
+  ): Result<SubBranchRequest> {
+    const message = input.message.trim()
+
+    if (!message) {
+      return {
+        success: false,
+        error: "Reply message is required.",
+      }
+    }
+
+    const requestIndex = this.subBranchRequests.findIndex(
+      (request) => request.id === requestId
+    )
+
+    if (requestIndex === -1) {
+      return {
+        success: false,
+        error: "Sub branch request could not be found.",
+      }
+    }
+
+    const updatedRequest: SubBranchRequest = {
+      ...this.subBranchRequests[requestIndex],
+      replies: [
+        ...this.subBranchRequests[requestIndex].replies,
+        this.createReply(input),
+      ],
+    }
+
+    this.subBranchRequests = this.subBranchRequests.map((request, index) =>
+      index === requestIndex ? updatedRequest : request
+    )
+
+    return {
+      success: true,
+      data: { ...updatedRequest },
+    }
   }
 
   private removeMainBranchRequest(requestId: string): Result<null> {

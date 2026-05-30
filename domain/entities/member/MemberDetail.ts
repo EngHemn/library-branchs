@@ -10,8 +10,10 @@ export type MemberBookingType = "borrow" | "reserve"
 
 export type MemberBooking = {
   bookingId: string
+  bookId?: string
   bookTitle: string
   isbn: string
+  branchId?: string
   branchName: string
   type: MemberBookingType
   borrowedDate: string

@@ -23,6 +23,7 @@ export type UpdateEventInput = CreateEventInput & {
 
 export interface EventRepository {
   getEvents(): Promise<Result<LibraryEvent[]>>
+  getEventById(id: string): Promise<Result<LibraryEvent | null>>
   getEventSummary(): Promise<Result<EventSummary>>
   getEventBranchBooks(
     eventId: string,
