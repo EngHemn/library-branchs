@@ -1,6 +1,7 @@
 "use client"
 
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useState } from "react"
+import { useQuery } from "@tanstack/react-query"
 
 import type {
   ActivityLog,
@@ -39,13 +40,15 @@ export type ActivityLogsViewModel = {
   reload: () => Promise<void>
 }
 
+type ActivityLogsQueryData = {
+  logs: ActivityLog[]
+  branchOptions: ActivityLogBranchOption[]
+  staffOptions: ActivityLogStaffOption[]
+}
+
 function matchesSearch(log: ActivityLog, query: string): boolean {
   const normalizedQuery = query.trim().toLowerCase()
-
-  if (!normalizedQuery) {
-    return true
-  }
-
+  if (!normalizedQuery) return true
   const searchableValues = [
     log.description,
     log.entityType,
@@ -56,10 +59,7 @@ function matchesSearch(log: ActivityLog, query: string): boolean {
     log.id,
     log.ipAddress,
   ]
-
-  return searchableValues.some((value) =>
-    value.toLowerCase().includes(normalizedQuery)
-  )
+  return searchableValues.some((value) => value.toLowerCase().includes(normalizedQuery))
 }
 
 function filterLogs(
@@ -70,18 +70,9 @@ function filterLogs(
   staffFilter: ActivityStaffFilter
 ): ActivityLog[] {
   return logs.filter((log) => {
-    if (actionFilter !== "all" && log.action !== actionFilter) {
-      return false
-    }
-
-    if (branchFilter !== "all" && log.branchId !== branchFilter) {
-      return false
-    }
-
-    if (staffFilter !== "all" && log.staffId !== staffFilter) {
-      return false
-    }
-
+    if (actionFilter !== "all" && log.action !== actionFilter) return false
+    if (branchFilter !== "all" && log.branchId !== branchFilter) return false
+    if (staffFilter !== "all" && log.staffId !== staffFilter) return false
     return matchesSearch(log, searchQuery)
   })
 }
@@ -89,48 +80,46 @@ function filterLogs(
 export function useActivityLogsViewModel(
   getActivityLogsUseCase: GetActivityLogsUseCase
 ): ActivityLogsViewModel {
-  const [logs, setLogs] = useState<ActivityLog[]>([])
-  const [status, setStatus] = useState<AsyncStatus>("idle")
-  const [error, setError] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
   const [actionFilter, setActionFilter] = useState<ActivityActionFilter>("all")
   const [branchFilter, setBranchFilter] = useState<ActivityBranchFilter>("all")
   const [staffFilter, setStaffFilter] = useState<ActivityStaffFilter>("all")
-  const [branchOptions, setBranchOptions] = useState<ActivityLogBranchOption[]>([])
-  const [staffOptions, setStaffOptions] = useState<ActivityLogStaffOption[]>([])
 
-  const loadLogs = useCallback(async () => {
-    setStatus("loading")
-    setError(null)
+  const { data, isPending, isFetching, isError, error, refetch } =
+    useQuery<ActivityLogsQueryData>({
+      queryKey: ["activityLogs"],
+      queryFn: async () => {
+        const result = await getActivityLogsUseCase.execute()
+        if (!result.success) throw new Error(result.error)
+        return {
+          logs: result.data.logs,
+          branchOptions: result.data.branchOptions,
+          staffOptions: result.data.staffOptions,
+        }
+      },
+    })
 
-    const result = await getActivityLogsUseCase.execute()
+  const status: AsyncStatus = (() => {
+    if (isPending || isFetching) return "loading"
+    if (isError) return "error"
+    if (data !== undefined) return "success"
+    return "idle"
+  })()
 
-    if (!result.success) {
-      setStatus("error")
-      setError(result.error)
-      return
-    }
+  const logs = data?.logs ?? []
+  const branchOptions = data?.branchOptions ?? []
+  const staffOptions = data?.staffOptions ?? []
 
-    setLogs(result.data.logs)
-    setBranchOptions(result.data.branchOptions)
-    setStaffOptions(result.data.staffOptions)
-    setStatus("success")
-  }, [getActivityLogsUseCase])
+  const filteredLogs = filterLogs(logs, searchQuery, actionFilter, branchFilter, staffFilter)
 
-  useEffect(() => {
-    void loadLogs()
-  }, [loadLogs])
-
-  const filteredLogs = useMemo(
-    () =>
-      filterLogs(logs, searchQuery, actionFilter, branchFilter, staffFilter),
-    [logs, searchQuery, actionFilter, branchFilter, staffFilter]
-  )
+  async function reload(): Promise<void> {
+    await refetch()
+  }
 
   const state: ActivityLogsViewModelState = {
     logs,
     status,
-    error,
+    error: isError && error instanceof Error ? error.message : null,
     searchQuery,
     actionFilter,
     branchFilter,
@@ -138,16 +127,9 @@ export function useActivityLogsViewModel(
     branchOptions,
     staffOptions,
     filteredLogs,
-    isLoading: status === "idle" || status === "loading",
+    isLoading: isPending || isFetching,
     isReady: status === "success",
   }
 
-  return {
-    state,
-    setSearchQuery,
-    setActionFilter,
-    setBranchFilter,
-    setStaffFilter,
-    reload: loadLogs,
-  }
+  return { state, setSearchQuery, setActionFilter, setBranchFilter, setStaffFilter, reload }
 }

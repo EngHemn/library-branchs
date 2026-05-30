@@ -1,39 +1,20 @@
 "use client"
 
-import { useCallback, useMemo, useState } from "react"
+import { useState } from "react"
+import { useMutation } from "@tanstack/react-query"
 
 import type { User } from "@/domain/entities/User"
 import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
-
-type LoginAsyncState =
-  | {
-      status: "idle"
-      data: null
-      error: null
-    }
-  | {
-      status: "loading"
-      data: null
-      error: null
-    }
-  | {
-      status: "success"
-      data: User
-      error: null
-    }
-  | {
-      status: "error"
-      data: null
-      error: string
-    }
 
 type LoginFormState = {
   username: string
   password: string
 }
 
+type LoginAsyncStatus = "idle" | "loading" | "success" | "error"
+
 type LoginViewModelState = LoginFormState & {
-  status: LoginAsyncState["status"]
+  status: LoginAsyncStatus
   user: User | null
   error: string | null
   isLoading: boolean
@@ -48,105 +29,73 @@ type LoginViewModel = {
   logout: () => Promise<void>
 }
 
-const idleState: LoginAsyncState = {
-  status: "idle",
-  data: null,
-  error: null,
-}
+const emptyForm: LoginFormState = { username: "", password: "" }
 
 export function useLoginViewModel(authUseCase: AuthUseCase): LoginViewModel {
-  const [formState, setFormState] = useState<LoginFormState>({
-    username: "",
-    password: "",
+  const [formState, setFormState] = useState<LoginFormState>(emptyForm)
+
+  const loginMutation = useMutation({
+    mutationFn: async (credentials: LoginFormState) => {
+      const result = await authUseCase.login(credentials)
+      if (!result.success) throw new Error(result.error)
+      return result.data
+    },
   })
-  const [asyncState, setAsyncState] = useState<LoginAsyncState>(idleState)
 
-  const updateUsername = useCallback((value: string): void => {
-    setFormState((currentState) => ({
-      ...currentState,
-      username: value,
-    }))
-    setAsyncState(idleState)
-  }, [])
+  const logoutMutation = useMutation({
+    mutationFn: async () => {
+      const result = await authUseCase.logout()
+      if (!result.success) throw new Error(result.error)
+    },
+  })
 
-  const updatePassword = useCallback((value: string): void => {
-    setFormState((currentState) => ({
-      ...currentState,
-      password: value,
-    }))
-    setAsyncState(idleState)
-  }, [])
-
-  const submit = useCallback(async (): Promise<void> => {
-    setAsyncState({
-      status: "loading",
-      data: null,
-      error: null,
-    })
-
-    const result = await authUseCase.login(formState)
-
-    if (!result.success) {
-      setAsyncState({
-        status: "error",
-        data: null,
-        error: result.error,
-      })
-      return
-    }
-
-    setAsyncState({
-      status: "success",
-      data: result.data,
-      error: null,
-    })
-  }, [formState, authUseCase])
-
-  const logout = useCallback(async (): Promise<void> => {
-    setAsyncState({
-      status: "loading",
-      data: null,
-      error: null,
-    })
-
-    const result = await authUseCase.logout()
-
-    if (!result.success) {
-      setAsyncState({
-        status: "error",
-        data: null,
-        error: result.error,
-      })
-      return
-    }
-
-    setFormState({
-      username: "",
-      password: "",
-    })
-    setAsyncState(idleState)
-  }, [authUseCase])
-
-  const state = useMemo<LoginViewModelState>(
-    () => ({
-      ...formState,
-      status: asyncState.status,
-      user: asyncState.status === "success" ? asyncState.data : null,
-      error: asyncState.status === "error" ? asyncState.error : null,
-      isLoading: asyncState.status === "loading",
-      successMessage:
-        asyncState.status === "success"
-          ? `Welcome back, ${asyncState.data.fullName}`
-          : null,
-    }),
-    [asyncState, formState]
-  )
-
-  return {
-    state,
-    updateUsername,
-    updatePassword,
-    submit,
-    logout,
+  function updateUsername(value: string): void {
+    setFormState((prev) => ({ ...prev, username: value }))
+    loginMutation.reset()
   }
+
+  function updatePassword(value: string): void {
+    setFormState((prev) => ({ ...prev, password: value }))
+    loginMutation.reset()
+  }
+
+  async function submit(): Promise<void> {
+    await loginMutation.mutateAsync(formState)
+  }
+
+  async function logout(): Promise<void> {
+    await logoutMutation.mutateAsync()
+    setFormState(emptyForm)
+    loginMutation.reset()
+    logoutMutation.reset()
+  }
+
+  const status: LoginAsyncStatus = (() => {
+    if (loginMutation.isPending || logoutMutation.isPending) return "loading"
+    if (loginMutation.isSuccess) return "success"
+    if (loginMutation.isError || logoutMutation.isError) return "error"
+    return "idle"
+  })()
+
+  const loginError =
+    loginMutation.isError && loginMutation.error instanceof Error
+      ? loginMutation.error.message
+      : null
+  const logoutError =
+    logoutMutation.isError && logoutMutation.error instanceof Error
+      ? logoutMutation.error.message
+      : null
+
+  const state: LoginViewModelState = {
+    ...formState,
+    status,
+    user: loginMutation.isSuccess ? loginMutation.data : null,
+    error: loginError ?? logoutError,
+    isLoading: loginMutation.isPending || logoutMutation.isPending,
+    successMessage: loginMutation.isSuccess
+      ? `Welcome back, ${loginMutation.data.fullName}`
+      : null,
+  }
+
+  return { state, updateUsername, updatePassword, submit, logout }
 }
