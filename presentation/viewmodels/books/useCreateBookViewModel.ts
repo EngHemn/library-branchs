@@ -1,8 +1,9 @@
 "use client"
 
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 import {
   bookFormSchema,
@@ -52,15 +53,12 @@ const DEFAULT_LANGUAGES = ["English", "Kurdish", "Arabic", "Persian", "Turkish"]
 export function useCreateBookViewModel(
   getBooksUseCase: GetBooksUseCase
 ): CreateBookViewModel {
-  const [status, setStatus] = useState<CreateBookStatus>("idle")
-  const [authors, setAuthors] = useState<string[]>([])
-  const [translators, setTranslators] = useState<string[]>([])
-  const [categories, setCategories] = useState<string[]>(DEFAULT_CATEGORIES)
+  const queryClient = useQueryClient()
   const [languages, setLanguages] = useState<string[]>(DEFAULT_LANGUAGES)
   const [error, setError] = useState<string | null>(null)
 
   const form = useForm<BookFormValues>({
-    resolver: zodResolver(bookFormSchema as never),
+    resolver: zodResolver(bookFormSchema),
     defaultValues: {
       title: "",
       language: "",
@@ -74,41 +72,26 @@ export function useCreateBookViewModel(
     },
   })
 
-  useEffect(() => {
-    let cancelled = false
+  const authorNamesQuery = useQuery({
+    queryKey: ["authorNames"],
+    queryFn: async () => {
+      const result = await getBooksUseCase.getAuthorNames()
+      if (!result.success) throw new Error(result.error)
+      return result.data
+    },
+  })
 
-    async function loadData(): Promise<void> {
-      setStatus("loading")
+  const translatorNamesQuery = useQuery({
+    queryKey: ["translatorNames"],
+    queryFn: async () => {
+      const result = await getBooksUseCase.getTranslatorNames()
+      if (!result.success) throw new Error(result.error)
+      return result.data
+    },
+  })
 
-      const [authorResult, translatorResult] = await Promise.all([
-        getBooksUseCase.getAuthorNames(),
-        getBooksUseCase.getTranslatorNames(),
-      ])
-
-      if (cancelled) return
-
-      if (authorResult.success) setAuthors(authorResult.data)
-      if (translatorResult.success) setTranslators(translatorResult.data)
-
-      setStatus("ready")
-    }
-
-    void loadData()
-
-    return () => {
-      cancelled = true
-    }
-  }, [getBooksUseCase])
-
-  const addLanguage = useCallback((name: string) => {
-    setLanguages((prev) => (prev.includes(name) ? prev : [...prev, name]))
-  }, [])
-
-  const save = useCallback(
-    async (values: BookFormValues): Promise<void> => {
-      setStatus("saving")
-      setError(null)
-
+  const createBookMutation = useMutation({
+    mutationFn: async (values: BookFormValues) => {
       const result = await getBooksUseCase.createBook({
         ...values,
         shelfHint: "",
@@ -116,33 +99,50 @@ export function useCreateBookViewModel(
         stock: 0,
         branchId: "",
       })
-
-      if (!result.success) {
-        setStatus("ready")
-        setError(result.error)
-        return
-      }
-
-      setStatus("saved")
+      if (!result.success) throw new Error(result.error)
+      return result.data
     },
-    [getBooksUseCase]
-  )
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["books"] }),
+    onError: (err: Error) => setError(err.message),
+  })
 
-  const state = useMemo<CreateBookViewModelState>(
-    () => ({
-      status,
-      authors,
-      translators,
-      categories,
-      languages,
-      error,
-      isLoading: status === "idle" || status === "loading",
-      isReady: status === "ready",
-      isSaving: status === "saving",
-      isSaved: status === "saved",
-    }),
-    [authors, categories, error, languages, status, translators]
-  )
+  async function save(values: BookFormValues): Promise<void> {
+    setError(null)
+    try {
+      await createBookMutation.mutateAsync(values)
+    } catch {
+      // error handled in onError callback
+    }
+  }
+
+  function addLanguage(name: string): void {
+    setLanguages((prev) => (prev.includes(name) ? prev : [...prev, name]))
+  }
+
+  const isLoading = authorNamesQuery.isPending || translatorNamesQuery.isPending
+  const isSaving = createBookMutation.isPending
+  const isSaved = createBookMutation.isSuccess
+
+  const status: CreateBookStatus = isSaved
+    ? "saved"
+    : isSaving
+      ? "saving"
+      : isLoading
+        ? "loading"
+        : "ready"
+
+  const state: CreateBookViewModelState = {
+    status,
+    authors: authorNamesQuery.data ?? [],
+    translators: translatorNamesQuery.data ?? [],
+    categories: DEFAULT_CATEGORIES,
+    languages,
+    error,
+    isLoading,
+    isReady: status === "ready",
+    isSaving,
+    isSaved,
+  }
 
   return { state, form, save, addLanguage }
 }

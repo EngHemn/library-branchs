@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useQuery } from "@tanstack/react-query"
 
 import type { TranslatorDetail } from "@/domain/entities/translator/TranslatorDetail"
 import type { GetTranslatorsUseCase } from "@/domain/usecases/translators/GetTranslatorsUseCase"
@@ -31,43 +31,34 @@ export function useTranslatorDetailViewModel(
   translatorId: string,
   getTranslatorsUseCase: GetTranslatorsUseCase
 ): TranslatorDetailViewModel {
-  const [status, setStatus] = useState<TranslatorDetailStatus>("idle")
-  const [translator, setTranslator] = useState<TranslatorDetail | null>(null)
-  const [error, setError] = useState<string | null>(null)
+  const { data, status: queryStatus, error: queryError, refetch } = useQuery({
+    queryKey: ["translators", translatorId],
+    queryFn: async () => {
+      const result = await getTranslatorsUseCase.getTranslatorById(translatorId)
+      if (!result.success) throw new Error(result.error)
+      return result.data ?? null
+    },
+  })
 
-  async function loadTranslator(): Promise<void> {
-    await Promise.resolve()
-    setStatus("loading")
-    setError(null)
-    const result = await getTranslatorsUseCase.getTranslatorById(translatorId)
-    if (!result.success) {
-      setTranslator(null)
-      setStatus("error")
-      setError(result.error)
-      return
-    }
-    if (!result.data) {
-      setTranslator(null)
-      setStatus("not-found")
-      return
-    }
-    setTranslator(result.data)
-    setStatus("loaded")
+  async function reload(): Promise<void> {
+    await refetch()
   }
 
-  useEffect(() => {
-    void loadTranslator()
-  }, [translatorId, getTranslatorsUseCase])
+  const status: TranslatorDetailStatus =
+    queryStatus === "error" ? "error" :
+    queryStatus === "pending" ? "loading" :
+    data === null ? "not-found" :
+    "loaded"
 
   const state: TranslatorDetailViewModelState = {
     status,
-    translator,
-    error,
-    isLoading: status === "idle" || status === "loading",
+    translator: data ?? null,
+    error: queryError?.message ?? null,
+    isLoading: status === "loading",
     isLoaded: status === "loaded",
     isNotFound: status === "not-found",
     isError: status === "error",
   }
 
-  return { state, reload: loadTranslator }
+  return { state, reload }
 }

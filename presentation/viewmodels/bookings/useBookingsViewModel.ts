@@ -1,6 +1,7 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useState } from "react"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 import type {
   Booking,
@@ -101,187 +102,149 @@ function getUniqueBranches(bookings: Booking[]): string[] {
   return Array.from(branchSet).sort()
 }
 
-function calculateBookingStats(bookings: Booking[]): BookingStats {
-  return {
-    reserved: bookings.filter((booking) => booking.status === "reserved").length,
-    borrowed: bookings.filter((booking) => booking.status === "borrowed").length,
-    returned: bookings.filter((booking) => booking.status === "returned").length,
-    overdue: bookings.filter((booking) => booking.status === "overdue").length,
-    cancelled: bookings.filter((booking) => booking.status === "cancelled").length,
-    inside: bookings.filter((booking) => booking.type === "inside").length,
-    outside: bookings.filter((booking) => booking.type === "outside").length,
-  }
-}
-
-function replaceBooking(bookings: Booking[], updated: Booking): Booking[] {
-  return bookings.map((booking) =>
-    booking.id === updated.id ? updated : booking
-  )
-}
-
 export function useBookingsViewModel(
   bookingManagementUseCase: BookingManagementUseCase
 ): BookingsViewModel {
-  const [status, setStatus] = useState<BookingsPageStatus>("idle")
-  const [bookings, setBookings] = useState<Booking[]>([])
-  const [stats, setStats] = useState<BookingStats>(emptyStats)
+  const queryClient = useQueryClient()
   const [filters, setFilters] = useState<BookingFilterState>(defaultFilters)
-  const [error, setError] = useState<string | null>(null)
-  const [isActionPending, setIsActionPending] = useState(false)
+  const [actionError, setActionError] = useState<string | null>(null)
 
-  async function loadBookings(): Promise<void> {
-    setStatus("loading")
-    setError(null)
+  const bookingsQuery = useQuery({
+    queryKey: ["bookings"],
+    queryFn: async () => {
+      const result = await bookingManagementUseCase.getBookings()
+      if (!result.success) throw new Error(result.error)
+      return result.data
+    },
+  })
 
-    const result = await bookingManagementUseCase.getBookings()
+  const { mutateAsync: returnBookingAsync, isPending: isReturning } =
+    useMutation({
+      mutationFn: async (bookingId: string) => {
+        const result = await bookingManagementUseCase.returnBooking(bookingId)
+        if (!result.success) throw new Error(result.error)
+        return result.data
+      },
+      onSuccess: () => queryClient.invalidateQueries({ queryKey: ["bookings"] }),
+      onError: (err: Error) => setActionError(err.message),
+    })
 
-    if (!result.success) {
-      setBookings([])
-      setStats(emptyStats)
-      setStatus("error")
-      setError(result.error)
-      return
-    }
+  const { mutateAsync: extendBookingAsync, isPending: isExtending } =
+    useMutation({
+      mutationFn: async (bookingId: string) => {
+        const result = await bookingManagementUseCase.extendBooking(bookingId)
+        if (!result.success) throw new Error(result.error)
+        return result.data
+      },
+      onSuccess: () => queryClient.invalidateQueries({ queryKey: ["bookings"] }),
+      onError: (err: Error) => setActionError(err.message),
+    })
 
-    setBookings(result.data.bookings)
-    setStats(result.data.stats)
-    setStatus("ready")
+  const { mutateAsync: cancelBookingAsync, isPending: isCancelling } =
+    useMutation({
+      mutationFn: async (bookingId: string) => {
+        const result = await bookingManagementUseCase.cancelBooking(bookingId)
+        if (!result.success) throw new Error(result.error)
+        return result.data
+      },
+      onSuccess: () => queryClient.invalidateQueries({ queryKey: ["bookings"] }),
+      onError: (err: Error) => setActionError(err.message),
+    })
+
+  const { mutateAsync: deleteBookingAsync, isPending: isDeleting } =
+    useMutation({
+      mutationFn: async (bookingId: string) => {
+        const result = await bookingManagementUseCase.deleteBooking(bookingId)
+        if (!result.success) throw new Error(result.error)
+        return result.data
+      },
+      onSuccess: () => queryClient.invalidateQueries({ queryKey: ["bookings"] }),
+      onError: (err: Error) => setActionError(err.message),
+    })
+
+  const bookings = bookingsQuery.data?.bookings ?? []
+  const stats = bookingsQuery.data?.stats ?? emptyStats
+  const filteredBookings = filterBookings(bookings, filters)
+  const branches = getUniqueBranches(bookings)
+  const isActionPending = isReturning || isExtending || isCancelling || isDeleting
+
+  const status: BookingsPageStatus = bookingsQuery.isPending
+    ? "loading"
+    : bookingsQuery.isError
+      ? "error"
+      : bookingsQuery.isSuccess
+        ? "ready"
+        : "idle"
+
+  const queryError = bookingsQuery.isError
+    ? bookingsQuery.error instanceof Error
+      ? bookingsQuery.error.message
+      : String(bookingsQuery.error)
+    : null
+
+  function setSearchQuery(searchQuery: string): void {
+    setFilters((current) => ({ ...current, searchQuery }))
   }
 
-  useEffect(() => {
-    void loadBookings()
-  }, [bookingManagementUseCase])
+  function setStatusFilter(statusFilter: BookingStatusFilter): void {
+    setFilters((current) => ({ ...current, statusFilter }))
+  }
+
+  function setTypeFilter(typeFilter: BookingTypeFilter): void {
+    setFilters((current) => ({ ...current, typeFilter }))
+  }
+
+  function setBranchFilter(branchFilter: BookingBranchFilter): void {
+    setFilters((current) => ({ ...current, branchFilter }))
+  }
 
   async function returnBooking(bookingId: string): Promise<void> {
-    setIsActionPending(true)
-    setError(null)
-
-    const result = await bookingManagementUseCase.returnBooking(bookingId)
-
-    if (!result.success) {
-      setIsActionPending(false)
-      setError(result.error)
-      return
-    }
-
-    setBookings((current) => {
-      const next = replaceBooking(current, result.data)
-      setStats(calculateBookingStats(next))
-      return next
-    })
-    setIsActionPending(false)
+    setActionError(null)
+    await returnBookingAsync(bookingId)
   }
 
   async function extendBooking(bookingId: string): Promise<void> {
-    setIsActionPending(true)
-    setError(null)
-
-    const result = await bookingManagementUseCase.extendBooking(bookingId)
-
-    if (!result.success) {
-      setIsActionPending(false)
-      setError(result.error)
-      return
-    }
-
-    setBookings((current) => {
-      const next = replaceBooking(current, result.data)
-      setStats(calculateBookingStats(next))
-      return next
-    })
-    setIsActionPending(false)
+    setActionError(null)
+    await extendBookingAsync(bookingId)
   }
 
   async function cancelBooking(bookingId: string): Promise<void> {
-    setIsActionPending(true)
-    setError(null)
-
-    const result = await bookingManagementUseCase.cancelBooking(bookingId)
-
-    if (!result.success) {
-      setIsActionPending(false)
-      setError(result.error)
-      return
-    }
-
-    setBookings((current) => {
-      const next = replaceBooking(current, result.data)
-      setStats(calculateBookingStats(next))
-      return next
-    })
-    setIsActionPending(false)
+    setActionError(null)
+    await cancelBookingAsync(bookingId)
   }
 
   async function deleteBooking(bookingId: string): Promise<void> {
-    setIsActionPending(true)
-    setError(null)
-
-    const result = await bookingManagementUseCase.deleteBooking(bookingId)
-
-    if (!result.success) {
-      setIsActionPending(false)
-      setError(result.error)
-      return
-    }
-
-    setBookings((current) => {
-      const next = current.filter((booking) => booking.id !== bookingId)
-      setStats(calculateBookingStats(next))
-      return next
-    })
-    setIsActionPending(false)
+    setActionError(null)
+    await deleteBookingAsync(bookingId)
   }
 
-  const branches = useMemo(() => getUniqueBranches(bookings), [bookings])
+  async function reload(): Promise<void> {
+    await bookingsQuery.refetch()
+  }
 
-  const filteredBookings = useMemo(
-    () => filterBookings(bookings, filters),
-    [bookings, filters]
-  )
-
-  const state = useMemo<BookingsViewModelState>(
-    () => ({
-      status,
-      bookings,
-      filteredBookings,
-      stats,
-      branches,
-      filters,
-      error: status === "error" ? error : error,
-      isLoading: status === "idle" || status === "loading",
-      isReady: status === "ready",
-      isActionPending,
-    }),
-    [
-      bookings,
-      branches,
-      error,
-      filteredBookings,
-      filters,
-      isActionPending,
-      stats,
-      status,
-    ]
-  )
+  const state: BookingsViewModelState = {
+    status,
+    bookings,
+    filteredBookings,
+    stats,
+    branches,
+    filters,
+    error: queryError ?? actionError,
+    isLoading: bookingsQuery.isPending,
+    isReady: bookingsQuery.isSuccess,
+    isActionPending,
+  }
 
   return {
     state,
-    setSearchQuery: (searchQuery) => {
-      setFilters((current) => ({ ...current, searchQuery }))
-    },
-    setStatusFilter: (statusFilter) => {
-      setFilters((current) => ({ ...current, statusFilter }))
-    },
-    setTypeFilter: (typeFilter) => {
-      setFilters((current) => ({ ...current, typeFilter }))
-    },
-    setBranchFilter: (branchFilter) => {
-      setFilters((current) => ({ ...current, branchFilter }))
-    },
+    setSearchQuery,
+    setStatusFilter,
+    setTypeFilter,
+    setBranchFilter,
     returnBooking,
     extendBooking,
     cancelBooking,
     deleteBooking,
-    reload: loadBookings,
+    reload,
   }
 }

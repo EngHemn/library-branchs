@@ -1,6 +1,7 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useState } from "react"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 import type { Translator } from "@/domain/entities/translator/Translator"
 import type { GetTranslatorsUseCase } from "@/domain/usecases/translators/GetTranslatorsUseCase"
@@ -42,54 +43,55 @@ function getUniqueLanguages(translators: Translator[]): string[] {
 export function useTranslatorsViewModel(
   getTranslatorsUseCase: GetTranslatorsUseCase
 ): TranslatorsViewModel {
-  const [status, setStatus] = useState<TranslatorsStatus>("idle")
-  const [translators, setTranslators] = useState<Translator[]>([])
+  const queryClient = useQueryClient()
   const [searchQuery, setSearchQuery] = useState("")
-  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">(
-    "all"
-  )
-  const [languageFilter, setLanguageFilter] =
-    useState<TranslatorLanguageFilter>("all")
-  const [error, setError] = useState<string | null>(null)
-  const [isDeleting, setIsDeleting] = useState(false)
+  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all")
+  const [languageFilter, setLanguageFilter] = useState<TranslatorLanguageFilter>("all")
 
-  async function loadTranslators(): Promise<void> {
-    await Promise.resolve()
-    setStatus("loading")
-    setError(null)
-    const result = await getTranslatorsUseCase.getTranslators()
-    if (!result.success) {
-      setTranslators([])
-      setStatus("error")
-      setError(result.error)
-      return
-    }
-    setTranslators(result.data)
-    setStatus("ready")
-  }
+  const {
+    data: translators,
+    status: queryStatus,
+    error: queryError,
+    refetch,
+  } = useQuery({
+    queryKey: ["translators"],
+    queryFn: async () => {
+      const result = await getTranslatorsUseCase.getTranslators()
+      if (!result.success) throw new Error(result.error)
+      return result.data
+    },
+  })
+
+  const {
+    mutateAsync: deleteTranslatorAsync,
+    isPending: isDeleting,
+    error: deleteError,
+  } = useMutation({
+    mutationFn: async (translatorId: string) => {
+      const result = await getTranslatorsUseCase.deleteTranslator(translatorId)
+      if (!result.success) throw new Error(result.error)
+      return result.data
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["translators"] }),
+  })
 
   async function deleteTranslator(translatorId: string): Promise<void> {
-    setIsDeleting(true)
-    setError(null)
-    const result = await getTranslatorsUseCase.deleteTranslator(translatorId)
-    if (!result.success) {
-      setIsDeleting(false)
-      setError(result.error)
-      setStatus("error")
-      return
+    try {
+      await deleteTranslatorAsync(translatorId)
+    } catch {
+      // error captured in deleteError mutation state
     }
-
-    await loadTranslators()
-    setIsDeleting(false)
   }
 
-  useEffect(() => {
-    void loadTranslators()
-  }, [getTranslatorsUseCase])
+  async function reload(): Promise<void> {
+    await refetch()
+  }
 
-  const languages = useMemo(() => getUniqueLanguages(translators), [translators])
+  const allTranslators = translators ?? []
 
-  const filteredTranslators = translators.filter((translator) => {
+  const languages = getUniqueLanguages(allTranslators)
+
+  const filteredTranslators = allTranslators.filter((translator) => {
     const normalizedSearch = searchQuery.trim().toLowerCase()
     const matchesSearch =
       normalizedSearch.length === 0 ||
@@ -105,17 +107,22 @@ export function useTranslatorsViewModel(
     return matchesSearch && matchesStatus && matchesLanguage
   })
 
+  const status: TranslatorsStatus =
+    queryStatus === "success" ? "ready" :
+    queryStatus === "error" ? "error" :
+    "loading"
+
   const state: TranslatorsViewModelState = {
     status,
-    translators,
+    translators: allTranslators,
     filteredTranslators,
     languages,
     searchQuery,
     statusFilter,
     languageFilter,
-    error,
-    isLoading: status === "idle" || status === "loading",
-    isReady: status === "ready",
+    error: deleteError?.message ?? queryError?.message ?? null,
+    isLoading: queryStatus === "pending",
+    isReady: queryStatus === "success",
     isDeleting,
   }
 
@@ -125,6 +132,6 @@ export function useTranslatorsViewModel(
     setStatusFilter,
     setLanguageFilter,
     deleteTranslator,
-    reload: loadTranslators,
+    reload,
   }
 }

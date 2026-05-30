@@ -1,6 +1,7 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 import type { Author } from "@/domain/entities/author/Author"
 import type { GetAuthorsUseCase } from "@/domain/usecases/authors/GetAuthorsUseCase"
@@ -30,50 +31,52 @@ type AuthorsViewModel = {
 export function useAuthorsViewModel(
   getAuthorsUseCase: GetAuthorsUseCase
 ): AuthorsViewModel {
-  const [status, setStatus] = useState<AuthorsStatus>("idle")
-  const [authors, setAuthors] = useState<Author[]>([])
+  const queryClient = useQueryClient()
   const [searchQuery, setSearchQuery] = useState("")
-  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">(
-    "all"
-  )
-  const [error, setError] = useState<string | null>(null)
-  const [isDeleting, setIsDeleting] = useState(false)
+  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all")
 
-  async function loadAuthors(): Promise<void> {
-    await Promise.resolve()
-    setStatus("loading")
-    setError(null)
-    const result = await getAuthorsUseCase.getAuthors()
-    if (!result.success) {
-      setAuthors([])
-      setStatus("error")
-      setError(result.error)
-      return
-    }
-    setAuthors(result.data)
-    setStatus("ready")
-  }
+  const {
+    data: authors,
+    status: queryStatus,
+    error: queryError,
+    refetch,
+  } = useQuery({
+    queryKey: ["authors"],
+    queryFn: async () => {
+      const result = await getAuthorsUseCase.getAuthors()
+      if (!result.success) throw new Error(result.error)
+      return result.data
+    },
+  })
+
+  const {
+    mutateAsync: deleteAuthorAsync,
+    isPending: isDeleting,
+    error: deleteError,
+  } = useMutation({
+    mutationFn: async (authorId: string) => {
+      const result = await getAuthorsUseCase.deleteAuthor(authorId)
+      if (!result.success) throw new Error(result.error)
+      return result.data
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["authors"] }),
+  })
 
   async function deleteAuthor(authorId: string): Promise<void> {
-    setIsDeleting(true)
-    setError(null)
-    const result = await getAuthorsUseCase.deleteAuthor(authorId)
-    if (!result.success) {
-      setIsDeleting(false)
-      setError(result.error)
-      setStatus("error")
-      return
+    try {
+      await deleteAuthorAsync(authorId)
+    } catch {
+      // error captured in deleteError mutation state
     }
-
-    await loadAuthors()
-    setIsDeleting(false)
   }
 
-  useEffect(() => {
-    void loadAuthors()
-  }, [getAuthorsUseCase])
+  async function reload(): Promise<void> {
+    await refetch()
+  }
 
-  const filteredAuthors = authors.filter((author) => {
+  const allAuthors = authors ?? []
+
+  const filteredAuthors = allAuthors.filter((author) => {
     const normalizedSearch = searchQuery.trim().toLowerCase()
     const matchesSearch =
       normalizedSearch.length === 0 ||
@@ -86,15 +89,20 @@ export function useAuthorsViewModel(
     return matchesSearch && matchesStatus
   })
 
+  const status: AuthorsStatus =
+    queryStatus === "success" ? "ready" :
+    queryStatus === "error" ? "error" :
+    "loading"
+
   const state: AuthorsViewModelState = {
     status,
-    authors,
+    authors: allAuthors,
     filteredAuthors,
     searchQuery,
     statusFilter,
-    error,
-    isLoading: status === "idle" || status === "loading",
-    isReady: status === "ready",
+    error: deleteError?.message ?? queryError?.message ?? null,
+    isLoading: queryStatus === "pending",
+    isReady: queryStatus === "success",
     isDeleting,
   }
 
@@ -103,6 +111,6 @@ export function useAuthorsViewModel(
     setSearchQuery,
     setStatusFilter,
     deleteAuthor,
-    reload: loadAuthors,
+    reload,
   }
 }
