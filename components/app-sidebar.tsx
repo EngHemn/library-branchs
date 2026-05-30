@@ -4,6 +4,7 @@ import * as React from "react"
 import {
   ActivityIcon,
   BarChart3Icon,
+  BellIcon,
   BookOpenIcon,
   BoxesIcon,
   Building2Icon,
@@ -153,6 +154,11 @@ const sidebarGroups: SidebarGroup[] = [
         title: "Settings",
         href: "/dashboard/settings",
         icon: Settings2Icon,
+      },
+      {
+        title: "Notifications",
+        href: "/dashboard/notifications",
+        icon: BellIcon,
       },
       {
         title: "Activity Logs",
