@@ -22,13 +22,18 @@ type EventsFiltersProps = {
   onStatusFilterChange: (value: EventStatusFilter) => void
 }
 
-const statusOptions: { value: EventStatusFilter; label: string }[] = [
+const STATUS_OPTIONS: { value: EventStatusFilter; label: string }[] = [
   { value: "all", label: "All statuses" },
   { value: "upcoming", label: "Upcoming" },
   { value: "active", label: "Active" },
   { value: "completed", label: "Completed" },
   { value: "cancelled", label: "Cancelled" },
 ]
+
+const EVENT_STATUS_VALUES = new Set<string>(STATUS_OPTIONS.map((o) => o.value))
+function isEventStatusFilter(value: string): value is EventStatusFilter {
+  return EVENT_STATUS_VALUES.has(value)
+}
 
 export function EventsFilters({
   searchQuery,
@@ -57,15 +62,15 @@ export function EventsFilters({
         </Label>
         <Select
           value={statusFilter}
-          onValueChange={(value) =>
-            onStatusFilterChange(value as EventStatusFilter)
-          }
+          onValueChange={(value) => {
+            if (isEventStatusFilter(value)) onStatusFilterChange(value)
+          }}
         >
           <SelectTrigger id="event-status-filter" className="w-full">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {statusOptions.map((option) => (
+            {STATUS_OPTIONS.map((option) => (
               <SelectItem key={option.value} value={option.value}>
                 {option.label}
               </SelectItem>

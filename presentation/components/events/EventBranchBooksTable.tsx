@@ -7,6 +7,11 @@ import {
 } from "@/components/ui/data-table"
 import { Skeleton } from "@/components/ui/skeleton"
 import type { EventBranchBook } from "@/domain/entities/event/EventBranchBook"
+import {
+  AuthorLink,
+  BookLink,
+  TranslatorLink,
+} from "@/presentation/components/shared/DashboardEntityLink"
 
 type EventBranchBooksTableProps = {
   books: EventBranchBook[]
@@ -45,7 +50,7 @@ export function EventBranchBooksTable({
         sortValue: (book) => book.title,
         cell: (book) => (
           <div>
-            <span className="font-medium">{book.title}</span>
+            <BookLink bookId={book.bookId} title={book.title} />
             <div className="text-xs text-muted-foreground">{book.isbn}</div>
           </div>
         ),
@@ -55,14 +60,14 @@ export function EventBranchBooksTable({
         header: "Author",
         sortable: true,
         sortValue: (book) => book.author,
-        cell: (book) => <span className="font-medium">{book.author}</span>,
+        cell: (book) => <AuthorLink name={book.author} />,
       },
       {
         key: "translator",
         header: "Translator",
         sortable: true,
         sortValue: (book) => book.translator ?? "",
-        cell: (book) => book.translator ?? "-",
+        cell: (book) => <TranslatorLink name={book.translator} />,
       },
       {
         key: "category",

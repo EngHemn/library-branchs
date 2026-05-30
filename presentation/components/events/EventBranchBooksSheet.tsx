@@ -35,12 +35,18 @@ import {
 } from "@/components/ui/sheet"
 import type { EventBranchBook } from "@/domain/entities/event/EventBranchBook"
 import { EventBranchBooksTable } from "@/presentation/components/events/EventBranchBooksTable"
+import {
+  BranchDetailLink,
+  EventLink,
+} from "@/presentation/components/shared/DashboardEntityLink"
 
 type EventBooksFilter = "all" | string
 
 type EventBranchBooksSheetProps = {
   isOpen: boolean
+  eventId: string
   eventName: string
+  branchId: string
   branchName: string
   books: EventBranchBook[]
   booksStatus: "idle" | "loading" | "success" | "error"
@@ -87,7 +93,7 @@ function FilterCombobox({
       <Label htmlFor={id}>{label}</Label>
       <Combobox
         value={value}
-        onValueChange={(next) => onValueChange((next as string) ?? "all")}
+        onValueChange={(next) => onValueChange(next ?? "all")}
         onInputValueChange={() => undefined}
         filter={null}
       >
@@ -109,7 +115,9 @@ function FilterCombobox({
 
 export function EventBranchBooksSheet({
   isOpen,
+  eventId,
   eventName,
+  branchId,
   branchName,
   books,
   booksStatus,
@@ -228,9 +236,21 @@ export function EventBranchBooksSheet({
           className="flex w-full flex-col gap-0 p-0 sm:min-w-4/5"
         >
           <SheetHeader className="border-b px-4 py-4 text-left">
-            <SheetTitle className="text-base">{branchName}</SheetTitle>
+            <SheetTitle className="text-base">
+              <BranchDetailLink
+                branchId={branchId}
+                branchName={branchName}
+                className="text-base font-semibold"
+              />
+            </SheetTitle>
             <SheetDescription>
-              Books allocated for <strong>{eventName}</strong> at this branch
+              Books allocated for{" "}
+              <EventLink
+                eventId={eventId}
+                name={eventName}
+                className="font-semibold text-foreground"
+              />{" "}
+              at this branch
             </SheetDescription>
           </SheetHeader>
 

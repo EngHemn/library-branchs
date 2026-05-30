@@ -29,6 +29,10 @@ import {
 import type { EventStatus, LibraryEvent } from "@/domain/entities/event/Event"
 import { EventBranchesPanel } from "@/presentation/components/events/EventBranchesPanel"
 import { CategoryActionButton } from "@/presentation/components/categories/CategoryActionButton"
+import { EventBranchNameCell } from "@/presentation/components/events/EventBranchContextLinks"
+import {
+  EventLink,
+} from "@/presentation/components/shared/DashboardEntityLink"
 
 type EventsTableProps = {
   events: LibraryEvent[]
@@ -116,7 +120,11 @@ function BranchesCell({
 
     return (
       <div className="flex items-center justify-between gap-2">
-        <span className="font-medium">{branch.branchName}</span>
+        <EventBranchNameCell
+          branchId={branch.branchId}
+          branchName={branch.branchName}
+          showParentBranch={false}
+        />
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
@@ -198,9 +206,13 @@ export function EventsTable({
       sortable: true,
       sortValue: (event) => event.id,
       cell: (event) => (
-        <span className="font-mono text-xs text-muted-foreground">
+        <button
+          type="button"
+          onClick={() => onView(event)}
+          className="font-mono text-xs text-primary underline-offset-4 hover:underline"
+        >
           {event.id}
-        </span>
+        </button>
       ),
     },
     {
@@ -209,7 +221,7 @@ export function EventsTable({
       sortable: true,
       sortValue: (event) => event.name,
       cell: (event) => (
-        <span className="font-semibold">{event.name}</span>
+        <EventLink eventId={event.id} name={event.name} className="font-semibold" />
       ),
     },
     {

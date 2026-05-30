@@ -13,6 +13,10 @@ import type {
   EventBranchStatus,
 } from "@/domain/entities/event/Event"
 import { BranchActionButton } from "@/presentation/components/branch-management/BranchActionButton"
+import {
+  EventBranchNameCell,
+  EventCoordinatorCell,
+} from "@/presentation/components/events/EventBranchContextLinks"
 
 const branchStatusVariants: Record<
   EventBranchStatus,
@@ -65,7 +69,10 @@ export function EventBranchesPanel({
       sortable: true,
       sortValue: (branch) => branch.branchName,
       cell: (branch) => (
-        <span className="font-medium">{branch.branchName}</span>
+        <EventBranchNameCell
+          branchId={branch.branchId}
+          branchName={branch.branchName}
+        />
       ),
     },
     {
@@ -73,7 +80,12 @@ export function EventBranchesPanel({
       header: "Coordinator",
       sortable: true,
       sortValue: (branch) => branch.coordinatorName,
-      cell: (branch) => branch.coordinatorName,
+      cell: (branch) => (
+        <EventCoordinatorCell
+          branchId={branch.branchId}
+          coordinatorName={branch.coordinatorName}
+        />
+      ),
     },
     {
       key: "booksAllocated",
