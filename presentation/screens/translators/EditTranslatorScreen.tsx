@@ -16,6 +16,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import type { GetTranslatorsUseCase } from "@/domain/usecases/translators/GetTranslatorsUseCase"
 import { TranslatorFormFields } from "@/presentation/components/translators/TranslatorFormFields"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
+import { useFormSubmitSuccess } from "@/presentation/hooks/useFormSubmitSuccess"
 import { useEditTranslatorViewModel } from "@/presentation/viewmodels/translators/useEditTranslatorViewModel"
 
 type EditTranslatorScreenProps = {
@@ -60,6 +61,8 @@ export function EditTranslatorScreen({ translatorId, getTranslatorsUseCase }: Ed
   ])
 
   const goBack = () => router.back()
+
+  useFormSubmitSuccess(state.isSaved, "Translator updated successfully.")
 
   return (
     <>
@@ -117,19 +120,6 @@ export function EditTranslatorScreen({ translatorId, getTranslatorsUseCase }: Ed
               Back
             </Button>
           </section>
-
-          {state.isSaved ? (
-            <Card className="rounded-lg border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-950">
-              <CardContent className="flex items-center gap-3 py-3">
-                <p className="text-sm font-medium text-green-800 dark:text-green-200">
-                  Translator updated successfully.
-                </p>
-                <Button size="sm" variant="outline" onClick={goBack}>
-                  Back to translator
-                </Button>
-              </CardContent>
-            </Card>
-          ) : null}
 
           {state.error && state.isReady ? (
             <Card className="rounded-lg border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950">
