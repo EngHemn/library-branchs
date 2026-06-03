@@ -9,4 +9,5 @@ export type Author = {
   totalBooks: number
   status: AuthorStatus
   branchId: string
+  imageUrl?: string | null
 }

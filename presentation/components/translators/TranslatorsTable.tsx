@@ -1,8 +1,9 @@
 "use client"
 
-import { EyeIcon, PencilIcon, Trash2Icon } from "lucide-react"
+import { EyeIcon, LanguagesIcon, PencilIcon, Trash2Icon } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
+import { EntityImage } from "@/components/ui/entity-image"
 import {
   Card,
   CardContent,
@@ -25,7 +26,6 @@ type TranslatorsTableProps = {
 }
 
 type TranslatorColumnKey =
-  | "id"
   | "name"
   | "language"
   | "totalBooks"
@@ -45,23 +45,25 @@ export function TranslatorsTable({
 }: TranslatorsTableProps) {
   const columns: DataTableColumn<Translator, TranslatorColumnKey>[] = [
     {
-      key: "id",
-      header: "ID",
-      sortable: true,
-      sortValue: (translator) => translator.id,
-      cell: (translator) => (
-        <span className="font-mono text-xs text-muted-foreground">
-          {translator.id}
-        </span>
-      ),
-    },
-    {
       key: "name",
       header: "Name",
       sortable: true,
       sortValue: (translator) => translator.name,
       cell: (translator) => (
-        <span className="font-semibold">{translator.name}</span>
+        <div className="flex items-center gap-3">
+          <EntityImage
+            src={translator.imageUrl}
+            alt={translator.name}
+            width={40}
+            height={40}
+            className="size-10 shrink-0 rounded-full"
+            imageClassName="rounded-full"
+            fallback={
+              <LanguagesIcon className="size-5 text-muted-foreground" />
+            }
+          />
+          <span className="font-semibold">{translator.name}</span>
+        </div>
       ),
     },
     {

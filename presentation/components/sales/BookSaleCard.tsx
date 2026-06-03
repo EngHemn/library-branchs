@@ -20,8 +20,8 @@ import {
 } from "@/components/ui/dialog"
 import { Separator } from "@/components/ui/separator"
 import { cn } from "@/lib/utils"
+import { EntityImage } from "@/components/ui/entity-image"
 import type { SaleBook } from "@/domain/entities/sales/SaleBook"
-import Image from "next/image"
 
 type BookSaleCardProps = {
   book: SaleBook
@@ -66,29 +66,29 @@ function BookDetailDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-sm gap-0 overflow-hidden p-0">
-        <div className="relative flex h-48 w-full items-center justify-center bg-muted/50">
-          {book.coverUrl ? (
-            <img
-              src={book.coverUrl}
-              alt={book.title}
-              className="h-full w-full object-cover"
-            />
-          ) : (
-            <BookOpenIcon className="size-16 text-muted-foreground/25" />
-          )}
+        <div className="relative h-48 w-full">
+          <EntityImage
+            src={book.coverUrl}
+            alt={book.title}
+            fill
+            sizes="(max-width: 640px) 100vw, 384px"
+            className="size-full bg-muted/50"
+            imageClassName="object-cover"
+            fallback={<BookOpenIcon className="size-16 text-muted-foreground/25" />}
+          />
 
-          {hasDiscount && (
+          {hasDiscount ? (
             <Badge className="absolute right-3 top-3 bg-red-500 text-white hover:bg-red-500">
               -{book.discount}%
             </Badge>
-          )}
+          ) : null}
 
-          {cartQuantity > 0 && (
+          {cartQuantity > 0 ? (
             <Badge className="absolute left-3 top-3 gap-1">
               <ShoppingCartIcon className="size-3" />
               {cartQuantity} in cart
             </Badge>
-          )}
+          ) : null}
         </div>
 
         <div className="flex flex-col gap-4 p-5">
@@ -237,31 +237,29 @@ export function BookSaleCard({
           }
         }}
       >
-        <div className="relative flex h-40 items-center justify-center bg-muted/40">
-          {book.coverUrl ? (
-            <Image
-              width={100}
-              height={100}
-              src={book.coverUrl}
-              alt={book.title}
-              className="h-full w-full object-cover"
-            />
-          ) : (
-            <BookOpenIcon className="size-12 text-muted-foreground/25" />
-          )}
+        <div className="relative h-40 w-full">
+          <EntityImage
+            src={book.coverUrl}
+            alt={book.title}
+            fill
+            sizes="(max-width: 640px) 50vw, 240px"
+            className="size-full bg-muted/40"
+            imageClassName="object-cover"
+            fallback={<BookOpenIcon className="size-12 text-muted-foreground/25" />}
+          />
 
-          {hasDiscount && (
+          {hasDiscount ? (
             <Badge className="absolute right-2 top-2 bg-red-500 text-white hover:bg-red-500">
               -{book.discount}%
             </Badge>
-          )}
+          ) : null}
 
-          {cartQuantity > 0 && (
+          {cartQuantity > 0 ? (
             <Badge className="absolute left-2 top-2 gap-1">
               <ShoppingCartIcon className="size-3" />
               {cartQuantity}
             </Badge>
-          )}
+          ) : null}
         </div>
 
         <div className="flex flex-col gap-1.5 p-3">

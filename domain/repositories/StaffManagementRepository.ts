@@ -9,6 +9,7 @@ export type CreateStaffInput = {
   email: string
   phone: string
   password: string
+  imageUrl?: string | null
 }
 
 export type UpdateStaffInput = {
@@ -19,6 +20,7 @@ export type UpdateStaffInput = {
   email: string
   phone: string
   password?: string
+  imageUrl?: string | null
 }
 
 export interface StaffManagementRepository {

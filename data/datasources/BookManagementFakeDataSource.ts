@@ -8,6 +8,12 @@ import type { Result } from "@/domain/result/Result"
 import { fakeAuthors } from "@/data/fake/fakeAuthors"
 import { fakeBookDetails } from "@/data/fake/fakeBookDetails"
 import { fakeBooks } from "@/data/fake/fakeBooks"
+import {
+  appendLibraryBook,
+  getLibraryBooksSnapshot,
+  removeLibraryBook,
+  replaceLibraryBook,
+} from "@/data/shared/libraryBooksStore"
 import { fakeBookings } from "@/data/fake/fakeBookings"
 import { fakeBranches } from "@/data/fake/fakeBranches"
 import { fakeMembers } from "@/data/fake/fakeMembers"
@@ -66,7 +72,7 @@ function cloneBookDetail(detail: BookDetail): BookDetail {
 }
 
 export class BookManagementFakeDataSource {
-  private books: Book[] = fakeBooks.map((book) => ({ ...book }))
+  private books: Book[] = getLibraryBooksSnapshot()
   private bookDetails: BookDetail[] = fakeBookDetails.map(cloneBookDetail)
 
   async getBooks(): Promise<Result<Book[]>> {
@@ -114,7 +120,7 @@ export class BookManagementFakeDataSource {
     const newBook: Book = {
       id,
       title: input.title,
-      coverUrl: null,
+      coverUrl: input.coverUrl ?? null,
       language: input.language,
       category: input.category,
       author: input.author,
@@ -130,6 +136,7 @@ export class BookManagementFakeDataSource {
     }
 
     this.books.push({ ...newBook })
+    appendLibraryBook(newBook)
 
     const newDetail: BookDetail = {
       ...newBook,
@@ -177,6 +184,7 @@ export class BookManagementFakeDataSource {
     const updatedBook: Book = {
       ...existing,
       title: input.title,
+      coverUrl: input.coverUrl ?? existing.coverUrl ?? null,
       language: input.language,
       category: input.category,
       author: input.author,
@@ -189,6 +197,7 @@ export class BookManagementFakeDataSource {
     }
 
     this.books[bookIndex] = updatedBook
+    replaceLibraryBook(updatedBook)
 
     const detailIndex = this.bookDetails.findIndex((d) => d.id === input.id)
 
@@ -219,6 +228,7 @@ export class BookManagementFakeDataSource {
     }
 
     this.books = this.books.filter((book) => book.id !== bookId)
+    removeLibraryBook(bookId)
 
     return {
       success: true,

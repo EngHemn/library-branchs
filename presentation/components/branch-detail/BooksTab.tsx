@@ -12,6 +12,7 @@ import {
 } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
+import { EntityImage } from "@/components/ui/entity-image"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Combobox,
@@ -227,17 +228,17 @@ export function BooksTab({
       key: "cover",
       header: "Cover",
       cell: (b) => (
-        <div className="flex size-10 items-center justify-center rounded bg-muted text-xs text-muted-foreground">
-          {b.coverUrl ? (
-            <img
-              src={b.coverUrl}
-              alt={b.title}
-              className="size-10 rounded object-cover"
-            />
-          ) : (
-            "N/A"
-          )}
-        </div>
+        <EntityImage
+          src={b.coverUrl}
+          alt={b.title}
+          width={40}
+          height={40}
+          className="size-10 rounded-md"
+          imageClassName="rounded-md"
+          fallback={
+            <span className="text-xs text-muted-foreground">N/A</span>
+          }
+        />
       ),
     },
     {

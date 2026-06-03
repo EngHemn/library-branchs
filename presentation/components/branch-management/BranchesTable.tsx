@@ -1,6 +1,7 @@
 "use client"
 
 import {
+  Building2Icon,
   EyeIcon,
   PencilIcon,
   PowerIcon,
@@ -9,6 +10,7 @@ import {
 } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
+import { EntityImage } from "@/components/ui/entity-image"
 import {
   Card,
   CardContent,
@@ -33,6 +35,7 @@ type BranchesTableProps = {
 }
 
 type BranchColumnKey =
+  | "photo"
   | "id"
   | "branchName"
   | "type"
@@ -76,6 +79,21 @@ export function BranchesTable({
   onToggleStatus,
 }: BranchesTableProps) {
   const columns: DataTableColumn<Branch, BranchColumnKey>[] = [
+    {
+      key: "photo",
+      header: "Photo",
+      cell: (branch) => (
+        <EntityImage
+          src={branch.imageUrl}
+          alt={branch.branchName}
+          width={40}
+          height={40}
+          className="size-10 rounded-lg"
+          imageClassName="rounded-lg"
+          fallback={<Building2Icon className="size-5 text-muted-foreground" />}
+        />
+      ),
+    },
     {
       key: "id",
       header: "ID",

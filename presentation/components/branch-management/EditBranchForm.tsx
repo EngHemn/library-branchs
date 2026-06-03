@@ -20,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { ImageUpload } from "@/components/ui/image-upload"
 import { Separator } from "@/components/ui/separator"
 import type { Branch, BranchType } from "@/domain/entities/branch/Branch"
 import type { BranchFormErrors } from "@/domain/validators/branch/validateBranchForm"
@@ -31,6 +32,7 @@ type EditBranchFormField = {
   parentBranch: string | null
   address: string
   phone: string
+  imageUrl: string | null
 }
 
 type EditBranchFormProps = {
@@ -154,6 +156,16 @@ export function EditBranchForm({
               onChange={(e) => onFieldChange("address", e.target.value)}
             />
             <FieldError message={fieldErrors.address} />
+          </div>
+
+          <div className="space-y-2 sm:col-span-2">
+            <ImageUpload
+              label="Branch image"
+              previewAlt="Branch image preview"
+              value={form.imageUrl}
+              onChange={(url) => onFieldChange("imageUrl", url)}
+              disabled={isDisabled}
+            />
           </div>
 
           {branchType === "sub" ? (

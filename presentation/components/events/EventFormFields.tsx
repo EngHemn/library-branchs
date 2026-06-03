@@ -21,6 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
+import { ImageUpload } from "@/components/ui/image-upload"
 import type { EventStatus } from "@/domain/entities/event/Event"
 import type { EventBranchOption } from "@/domain/repositories/EventRepository"
 import type { EventFormValues } from "@/domain/schemas/eventFormSchema"
@@ -141,6 +142,25 @@ export function EventFormFields({
                   ))}
                 </SelectContent>
               </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="imageUrl"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <ImageUpload
+                  label="Event image"
+                  previewAlt="Event image preview"
+                  value={field.value ?? null}
+                  onChange={field.onChange}
+                  disabled={disabled}
+                />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}

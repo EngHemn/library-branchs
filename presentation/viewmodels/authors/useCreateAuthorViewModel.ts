@@ -24,7 +24,9 @@ type CreateAuthorViewModelState = {
 
 type CreateAuthorViewModel = {
   state: CreateAuthorViewModelState
-  form: ReturnType<typeof useForm<AuthorFormValues>>
+  form: ReturnType<
+    typeof useForm<AuthorFormInput, unknown, AuthorFormValues>
+  >
   save: (values: AuthorFormValues) => Promise<void>
 }
 
@@ -41,6 +43,7 @@ export function useCreateAuthorViewModel(
       dateOfBirth: "",
       status: "active",
       biography: "",
+      imageUrl: null,
     },
   })
 

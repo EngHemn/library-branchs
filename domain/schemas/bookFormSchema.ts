@@ -1,5 +1,7 @@
 import * as z from "zod"
 
+import { optionalImageUrlSchema } from "@/domain/schemas/optionalImageSchema"
+
 export const bookFormSchema = z.object({
   title: z.string().min(1, "Title is required"),
   language: z.string().min(1, "Language is required"),
@@ -10,6 +12,7 @@ export const bookFormSchema = z.object({
   description: z.string().min(1, "Description is required"),
   pages: z.coerce.number().min(1, "Pages must be at least 1"),
   publicationDate: z.string().min(1, "Publication date is required"),
+  coverUrl: optionalImageUrlSchema,
 })
 
 export type BookFormInput = z.input<typeof bookFormSchema>

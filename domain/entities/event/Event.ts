@@ -19,6 +19,7 @@ export type LibraryEvent = {
   endDate: string
   status: EventStatus
   branches: EventBranchParticipation[]
+  imageUrl?: string | null
 }
 
 export type EventSummary = {

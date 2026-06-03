@@ -122,6 +122,7 @@ export class BranchManagementFakeDataSource {
       staffCount: 0,
       bookCount: 0,
       status: "active",
+      imageUrl: input.imageUrl ?? null,
     }
 
     this.branches = [...this.branches, newBranch]
@@ -157,6 +158,7 @@ export class BranchManagementFakeDataSource {
       phone: input.phone,
       latitude: input.latitude,
       longitude: input.longitude,
+      imageUrl: input.imageUrl ?? branch.imageUrl ?? null,
     }
 
     this.branches = this.branches.map((item) =>

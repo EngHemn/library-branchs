@@ -85,6 +85,7 @@ export function useEditBookViewModel(
       description: "",
       pages: 0,
       publicationDate: "",
+      coverUrl: null,
     },
   })
 
@@ -136,6 +137,7 @@ export function useEditBookViewModel(
       description: book.description,
       pages: book.pages,
       publicationDate: book.publicationDate,
+      coverUrl: book.coverUrl ?? null,
     })
   }, [bookQuery.data, form])
 
@@ -145,6 +147,7 @@ export function useEditBookViewModel(
       const result = await getBooksUseCase.updateBook({
         id: bookId,
         ...values,
+        coverUrl: values.coverUrl,
         branchId: original?.branchId ?? "",
         price: original?.price ?? 0,
         stock: original?.stock ?? 0,

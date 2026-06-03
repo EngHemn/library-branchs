@@ -1,5 +1,7 @@
 import * as z from "zod"
 
+import { optionalImageUrlSchema } from "@/domain/schemas/optionalImageSchema"
+
 const eventStatusValues = [
   "upcoming",
   "active",
@@ -17,6 +19,7 @@ export const eventFormSchema = z
     branchIds: z
       .array(z.string())
       .min(1, "Select at least one branch"),
+    imageUrl: optionalImageUrlSchema,
   })
   .refine((values) => values.endDate >= values.startDate, {
     message: "End date must be on or after start date",

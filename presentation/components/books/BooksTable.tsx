@@ -10,6 +10,7 @@ import {
 } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
+import { EntityImage } from "@/components/ui/entity-image"
 import {
   Card,
   CardContent,
@@ -59,7 +60,6 @@ type BooksTableProps = {
 }
 
 type BookColumnKey =
-  | "cover"
   | "title"
   | "author"
   | "translator"
@@ -82,25 +82,27 @@ export function BooksTable({
 
   const columns: DataTableColumn<Book, BookColumnKey>[] = [
     {
-      key: "cover",
-      header: "Cover",
-      cell: () => (
-        <div className="flex size-10 items-center justify-center rounded-md bg-muted">
-          <BookIcon className="size-5 text-muted-foreground" />
-        </div>
-      ),
-    },
-    {
       key: "title",
       header: "Title",
       sortable: true,
       sortValue: (book) => book.title,
       cell: (book) => (
-        <div className="flex flex-col">
-          <span className="font-medium">{book.title}</span>
-          <span className="text-xs text-muted-foreground">
-            {book.language}
-          </span>
+        <div className="flex items-center gap-3">
+          <EntityImage
+            src={book.coverUrl}
+            alt={book.title}
+            width={40}
+            height={40}
+            className="size-10 shrink-0 rounded-md"
+            imageClassName="rounded-md"
+            fallback={<BookIcon className="size-5 text-muted-foreground" />}
+          />
+          <div className="min-w-0">
+            <span className="font-medium">{book.title}</span>
+            <span className="block text-xs text-muted-foreground">
+              {book.language}
+            </span>
+          </div>
         </div>
       ),
     },

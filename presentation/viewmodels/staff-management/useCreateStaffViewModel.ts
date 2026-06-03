@@ -30,6 +30,7 @@ type CreateStaffFormState = {
   email: string
   phone: string
   password: string
+  imageUrl: string | null
 }
 
 type CreateStaffViewModelState = {
@@ -46,7 +47,10 @@ type CreateStaffViewModelState = {
 
 type CreateStaffViewModel = {
   state: CreateStaffViewModelState
-  setField: (field: keyof CreateStaffFormState, value: string) => void
+  setField: <K extends keyof CreateStaffFormState>(
+    field: K,
+    value: CreateStaffFormState[K]
+  ) => void
   autoGeneratePassword: () => void
   save: () => Promise<void>
 }
@@ -58,6 +62,7 @@ const emptyForm: CreateStaffFormState = {
   email: "",
   phone: "",
   password: "",
+  imageUrl: null,
 }
 
 const emptyFieldErrors: CreateStaffFormErrors = {
@@ -86,6 +91,7 @@ function formToCreateInput(
     email: form.email,
     phone: form.phone,
     password: form.password,
+    imageUrl: form.imageUrl,
   }
 }
 
@@ -117,7 +123,10 @@ export function useCreateStaffViewModel(
     onError: (err: Error) => setError(err.message),
   })
 
-  function setField(field: keyof CreateStaffFormState, value: string): void {
+  function setField<K extends keyof CreateStaffFormState>(
+    field: K,
+    value: CreateStaffFormState[K]
+  ): void {
     setForm((current) => ({ ...current, [field]: value }))
   }
 

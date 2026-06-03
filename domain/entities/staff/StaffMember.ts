@@ -14,6 +14,7 @@ export type StaffMember = {
   phone: string
   status: StaffStatus
   branchId: string
+  imageUrl?: string | null
 }
 
 export type StaffStats = {

@@ -199,6 +199,7 @@ export class EventFakeDataSource {
       endDate: input.endDate,
       status: input.status,
       branches,
+      imageUrl: input.imageUrl ?? null,
     }
 
     nextEventNumber += 1
@@ -258,6 +259,7 @@ export class EventFakeDataSource {
       endDate: input.endDate,
       status: input.status,
       branches,
+      imageUrl: input.imageUrl ?? existingEvent.imageUrl ?? null,
     }
 
     this.events = this.events.map((event) =>

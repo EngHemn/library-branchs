@@ -51,6 +51,7 @@ export class StaffManagementFakeDataSource {
       phone: input.phone,
       status: "active",
       branchId: input.branchId,
+      imageUrl: input.imageUrl ?? null,
     }
 
     this.staff = [...this.staff, newMember]
@@ -84,6 +85,7 @@ export class StaffManagementFakeDataSource {
       email: input.email,
       phone: input.phone,
       branchId: input.branchId,
+      imageUrl: input.imageUrl ?? member.imageUrl ?? null,
     }
 
     this.staff = this.staff.map((item) =>

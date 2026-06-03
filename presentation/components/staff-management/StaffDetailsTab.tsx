@@ -12,6 +12,7 @@ import {
 
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { EntityImage } from "@/components/ui/entity-image"
 import { getPermissionRoleLabel } from "@/domain/entities/permission/Permission"
 import type { StaffMember } from "@/domain/entities/staff/StaffMember"
 
@@ -113,9 +114,19 @@ export function StaffDetailsTab({
       <Card className="rounded-lg">
         <CardHeader>
           <CardTitle className="flex items-center gap-3">
-            <div className="flex size-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
-              <UsersIcon className="size-6" />
-            </div>
+            <EntityImage
+              src={staffMember.imageUrl}
+              alt={staffMember.staffName}
+              fill
+              sizes="48px"
+              className="size-12 rounded-lg"
+              imageClassName="rounded-lg"
+              fallback={
+                <div className="flex size-full items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <UsersIcon className="size-6" />
+                </div>
+              }
+            />
             <div className="min-w-0">
               <h3 className="text-lg font-semibold">
                 {staffMember.staffName}

@@ -16,6 +16,7 @@ export type Branch = {
   staffCount: number
   bookCount: number
   status: BranchStatus
+  imageUrl?: string | null
 }
 
 export type BranchRequestReply = {
