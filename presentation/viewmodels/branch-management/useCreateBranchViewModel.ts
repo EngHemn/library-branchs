@@ -36,6 +36,7 @@ type CreateBranchFormState = {
   latitude: number | null
   longitude: number | null
   password: string
+  imageUrl: string | null
 }
 
 type CreateBranchViewModelState = {
@@ -43,7 +44,6 @@ type CreateBranchViewModelState = {
   form: CreateBranchFormState
   fieldErrors: CreateBranchFormErrors
   mainBranches: Branch[]
-  mainBranchRequests: MainBranchRequest[]
   appliedRequestId: string | null
   savedBranchId: string | null
   error: string | null
@@ -58,7 +58,6 @@ type CreateBranchViewModel = {
   state: CreateBranchViewModelState
   setField: (field: keyof CreateBranchFormState, value: string | null) => void
   setLocation: (latitude: number | null, longitude: number | null) => void
-  applyMainBranchRequest: (requestId: string) => void
   autoGeneratePassword: () => void
   save: () => Promise<void>
 }
@@ -74,6 +73,7 @@ const emptyForm: CreateBranchFormState = {
   latitude: null,
   longitude: null,
   password: "",
+  imageUrl: null,
 }
 
 const emptyFieldErrors: CreateBranchFormErrors = {
@@ -104,6 +104,7 @@ function formToCreateInput(form: CreateBranchFormState): CreateBranchInput {
     latitude: form.latitude,
     longitude: form.longitude,
     password: form.password,
+    imageUrl: form.imageUrl,
   }
 }
 
@@ -136,16 +137,11 @@ export function useCreateBranchViewModel(
   const { data: prereqs, isPending: isLoadingPrereqs } = useQuery({
     queryKey: ["createBranchPrerequisites", initialRequestId ?? ""],
     queryFn: async () => {
-      const [branchesResult, requestsResult] = await Promise.all([
-        branchManagementUseCase.getBranches(),
-        branchManagementUseCase.getMainBranchRequests(),
-      ])
+      const branchesResult = await branchManagementUseCase.getBranches()
 
       const mainBranches = branchesResult.success
         ? branchesResult.data.filter((b) => b.type === "main")
         : []
-
-      const mainBranchRequests = requestsResult.success ? requestsResult.data : []
 
       let initialRequest: MainBranchRequest | null = null
       if (initialRequestId) {
@@ -155,7 +151,7 @@ export function useCreateBranchViewModel(
         }
       }
 
-      return { mainBranches, mainBranchRequests, initialRequest }
+      return { mainBranches, initialRequest }
     },
   })
 
@@ -201,13 +197,6 @@ export function useCreateBranchViewModel(
     setForm((currentForm) => ({ ...currentForm, latitude, longitude }))
   }
 
-  function applyMainBranchRequest(requestId: string): void {
-    const request = (prereqs?.mainBranchRequests ?? []).find((item) => item.id === requestId)
-    if (!request) return
-    setForm((currentForm) => requestToFormState(request, currentForm))
-    setAppliedRequestId(requestId)
-  }
-
   function autoGeneratePassword(): void {
     setForm((currentForm) => ({ ...currentForm, password: generatePassword() }))
   }
@@ -244,7 +233,6 @@ export function useCreateBranchViewModel(
     form,
     fieldErrors: showFieldErrors ? fieldErrors : emptyFieldErrors,
     mainBranches: prereqs?.mainBranches ?? [],
-    mainBranchRequests: prereqs?.mainBranchRequests ?? [],
     appliedRequestId,
     savedBranchId,
     error: saveMutation.isError
@@ -261,7 +249,6 @@ export function useCreateBranchViewModel(
     state,
     setField,
     setLocation,
-    applyMainBranchRequest,
     autoGeneratePassword,
     save,
   }

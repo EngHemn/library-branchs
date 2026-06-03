@@ -16,6 +16,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import type { GetAuthorsUseCase } from "@/domain/usecases/authors/GetAuthorsUseCase"
 import { AuthorFormFields } from "@/presentation/components/authors/AuthorFormFields"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
+import { useFormSubmitSuccess } from "@/presentation/hooks/useFormSubmitSuccess"
 import { useEditAuthorViewModel } from "@/presentation/viewmodels/authors/useEditAuthorViewModel"
 
 type EditAuthorScreenProps = {
@@ -60,6 +61,8 @@ export function EditAuthorScreen({ authorId, getAuthorsUseCase }: EditAuthorScre
   ])
 
   const goBack = () => router.back()
+
+  useFormSubmitSuccess(state.isSaved, "Author updated successfully.")
 
   return (
     <>
@@ -119,19 +122,6 @@ export function EditAuthorScreen({ authorId, getAuthorsUseCase }: EditAuthorScre
               Back
             </Button>
           </section>
-
-          {state.isSaved ? (
-            <Card className="rounded-lg border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-950">
-              <CardContent className="flex items-center gap-3 py-3">
-                <p className="text-sm font-medium text-green-800 dark:text-green-200">
-                  Author updated successfully.
-                </p>
-                <Button size="sm" variant="outline" onClick={goBack}>
-                  Back to author
-                </Button>
-              </CardContent>
-            </Card>
-          ) : null}
 
           {state.error && state.isReady ? (
             <Card className="rounded-lg border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950">

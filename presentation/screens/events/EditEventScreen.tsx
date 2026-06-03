@@ -17,6 +17,7 @@ import { dashboardPaths } from "@/lib/dashboardPaths"
 import type { GetEventsUseCase } from "@/domain/usecases/events/GetEventsUseCase"
 import { EventFormFields } from "@/presentation/components/events/EventFormFields"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
+import { useFormSubmitSuccess } from "@/presentation/hooks/useFormSubmitSuccess"
 import { useEditEventViewModel } from "@/presentation/viewmodels/events/useEditEventViewModel"
 
 type EditEventScreenProps = {
@@ -64,6 +65,8 @@ export function EditEventScreen({
   ])
 
   const goBack = () => router.push(dashboardPaths.events.detail(eventId))
+
+  useFormSubmitSuccess(state.isSaved, "Event updated successfully.")
 
   return (
     <>
@@ -125,19 +128,6 @@ export function EditEventScreen({
               Back
             </Button>
           </section>
-
-          {state.isSaved ? (
-            <Card className="rounded-lg border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-950">
-              <CardContent className="flex items-center gap-3 py-3">
-                <p className="text-sm font-medium text-green-800 dark:text-green-200">
-                  Event updated successfully.
-                </p>
-                <Button size="sm" variant="outline" onClick={goBack}>
-                  View event
-                </Button>
-              </CardContent>
-            </Card>
-          ) : null}
 
           {state.error ? (
             <Card className="rounded-lg border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950">
