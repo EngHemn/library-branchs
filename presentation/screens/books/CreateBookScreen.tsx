@@ -1,6 +1,6 @@
 "use client"
 
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { ArrowLeftIcon, Loader2Icon, PlusIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -16,6 +16,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import type { GetBooksUseCase } from "@/domain/usecases/books/GetBooksUseCase"
 import { BookFormFields } from "@/presentation/components/books/BookFormFields"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
+import { useFormSubmitSuccess } from "@/presentation/hooks/useFormSubmitSuccess"
 import { useCreateBookViewModel } from "@/presentation/viewmodels/books/useCreateBookViewModel"
 
 type CreateBookScreenProps = {
@@ -49,6 +50,8 @@ function LoadingState() {
 
 export function CreateBookScreen({ getBooksUseCase }: CreateBookScreenProps) {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const returnTo = searchParams.get("returnTo")
   const viewModel = useCreateBookViewModel(getBooksUseCase)
   const { state, form } = viewModel
 
@@ -58,7 +61,19 @@ export function CreateBookScreen({ getBooksUseCase }: CreateBookScreenProps) {
     { label: "Add Book" },
   ])
 
-  const goBack = () => router.back()
+  const goBack = () => {
+    if (returnTo) {
+      router.push(returnTo)
+      return
+    }
+    router.back()
+  }
+
+  useFormSubmitSuccess(
+    state.isSaved,
+    "Book created successfully.",
+    returnTo ?? undefined
+  )
 
   return (
     <>
@@ -78,19 +93,6 @@ export function CreateBookScreen({ getBooksUseCase }: CreateBookScreenProps) {
               Back
             </Button>
           </section>
-
-          {state.isSaved ? (
-            <Card className="rounded-lg border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-950">
-              <CardContent className="flex items-center gap-3 py-3">
-                <p className="text-sm font-medium text-green-800 dark:text-green-200">
-                  Book created successfully.
-                </p>
-                <Button size="sm" variant="outline" onClick={goBack}>
-                  Back to books
-                </Button>
-              </CardContent>
-            </Card>
-          ) : null}
 
           {state.error ? (
             <Card className="rounded-lg border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950">
