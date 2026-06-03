@@ -46,6 +46,7 @@ export function useCreateEventViewModel(
       endDate: "",
       status: "upcoming",
       branchIds: [],
+      imageUrl: null,
     },
   })
 

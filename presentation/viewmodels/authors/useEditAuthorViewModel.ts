@@ -54,6 +54,7 @@ export function useEditAuthorViewModel(
       dateOfBirth: "",
       status: "active",
       biography: "",
+      imageUrl: null,
     },
   })
 
@@ -74,6 +75,7 @@ export function useEditAuthorViewModel(
         dateOfBirth: data.dateOfBirth,
         status: data.status,
         biography: data.biography,
+        imageUrl: data.imageUrl ?? null,
       })
     }
   }, [data, form])

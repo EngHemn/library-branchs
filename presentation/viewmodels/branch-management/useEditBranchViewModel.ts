@@ -32,6 +32,7 @@ type EditBranchFormState = {
   latitude: number | null
   longitude: number | null
   password: string
+  imageUrl: string | null
 }
 
 type EditBranchViewModelState = {
@@ -68,6 +69,7 @@ const emptyForm: EditBranchFormState = {
   latitude: null,
   longitude: null,
   password: "",
+  imageUrl: null,
 }
 
 const emptyFieldErrors: BranchFormErrors = {
@@ -91,6 +93,7 @@ function branchToFormState(branch: Branch): EditBranchFormState {
     latitude: branch.latitude,
     longitude: branch.longitude,
     password: "",
+    imageUrl: branch.imageUrl ?? null,
   }
 }
 
@@ -105,6 +108,7 @@ function formToUpdateInput(form: EditBranchFormState): UpdateBranchInput {
     latitude: form.latitude,
     longitude: form.longitude,
     password: form.password || undefined,
+    imageUrl: form.imageUrl,
   }
 }
 

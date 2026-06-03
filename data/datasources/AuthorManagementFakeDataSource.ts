@@ -44,6 +44,7 @@ export class AuthorManagementFakeDataSource {
       totalBooks: 0,
       status: input.status,
       branchId: "BR-001",
+      imageUrl: input.imageUrl ?? null,
     }
     this.authors.push(newAuthor)
     return { success: true, data: { ...newAuthor } }
@@ -64,6 +65,7 @@ export class AuthorManagementFakeDataSource {
       dateOfBirth: input.dateOfBirth,
       biography: input.biography,
       status: input.status,
+      imageUrl: input.imageUrl ?? currentAuthor.imageUrl ?? null,
     }
     this.authors[authorIndex] = updatedAuthor
     return { success: true, data: { ...updatedAuthor } }

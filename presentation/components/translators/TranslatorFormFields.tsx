@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
+import { ImageUpload } from "@/components/ui/image-upload"
 import type {
   TranslatorFormInput,
   TranslatorFormValues,
@@ -116,6 +117,25 @@ export function TranslatorFormFields({
                   rows={5}
                   disabled={disabled}
                   {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="imageUrl"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <ImageUpload
+                  label="Translator photo"
+                  previewAlt="Translator photo preview"
+                  value={field.value ?? null}
+                  onChange={field.onChange}
+                  disabled={disabled}
                 />
               </FormControl>
               <FormMessage />

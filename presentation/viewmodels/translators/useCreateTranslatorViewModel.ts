@@ -36,6 +36,7 @@ export function useCreateTranslatorViewModel(
       language: "",
       status: "active",
       biography: "",
+      imageUrl: null,
     },
   })
 

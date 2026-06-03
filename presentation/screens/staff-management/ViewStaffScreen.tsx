@@ -8,9 +8,11 @@ import {
   LanguagesIcon,
   PenLineIcon,
   RefreshCwIcon,
+  UsersRoundIcon,
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
+import { EntityImage } from "@/components/ui/entity-image"
 import {
   Card,
   CardContent,
@@ -136,12 +138,25 @@ export function ViewStaffScreen({ staffId, staffManagementUseCase, branchDetailU
       {state.isLoaded && state.staffMember ? (
         <TooltipProvider>
           <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
-            <section className="flex flex-col gap-3 pt-4 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <h1 className="text-2xl font-semibold tracking-normal">{state.staffMember.staffName}</h1>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  View staff details and assigned branch resources.
-                </p>
+            <section className="flex flex-col gap-4 pt-4 sm:flex-row sm:items-start sm:justify-between">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+                <EntityImage
+                  src={state.staffMember.imageUrl}
+                  alt={state.staffMember.staffName}
+                  fill
+                  sizes="80px"
+                  className="size-20 rounded-lg"
+                  imageClassName="rounded-lg"
+                  fallback={<UsersRoundIcon className="size-10 text-muted-foreground" />}
+                />
+                <div>
+                  <h1 className="text-2xl font-semibold tracking-normal">
+                    {state.staffMember.staffName}
+                  </h1>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    View staff details and assigned branch resources.
+                  </p>
+                </div>
               </div>
               <Button variant="outline" onClick={goBack}>
                 <ArrowLeftIcon />

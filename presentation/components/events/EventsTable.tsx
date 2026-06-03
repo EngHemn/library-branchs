@@ -1,6 +1,7 @@
 "use client"
 
 import {
+  CalendarDaysIcon,
   ChevronDownIcon,
   ChevronRightIcon,
   EyeIcon,
@@ -8,6 +9,7 @@ import {
 } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
+import { EntityImage } from "@/components/ui/entity-image"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -50,7 +52,6 @@ type EventsTableProps = {
 
 type EventColumnKey =
   | "expand"
-  | "id"
   | "name"
   | "branches"
   | "dates"
@@ -201,27 +202,29 @@ export function EventsTable({
       },
     },
     {
-      key: "id",
-      header: "ID",
-      sortable: true,
-      sortValue: (event) => event.id,
-      cell: (event) => (
-        <button
-          type="button"
-          onClick={() => onView(event)}
-          className="font-mono text-xs text-primary underline-offset-4 hover:underline"
-        >
-          {event.id}
-        </button>
-      ),
-    },
-    {
       key: "name",
       header: "Event",
       sortable: true,
       sortValue: (event) => event.name,
       cell: (event) => (
-        <EventLink eventId={event.id} name={event.name} className="font-semibold" />
+        <div className="flex items-center gap-3">
+          <EntityImage
+            src={event.imageUrl}
+            alt={event.name}
+            width={40}
+            height={40}
+            className="size-10 shrink-0 rounded-md"
+            imageClassName="rounded-md"
+            fallback={
+              <CalendarDaysIcon className="size-5 text-muted-foreground" />
+            }
+          />
+          <EventLink
+            eventId={event.id}
+            name={event.name}
+            className="font-semibold"
+          />
+        </div>
       ),
     },
     {

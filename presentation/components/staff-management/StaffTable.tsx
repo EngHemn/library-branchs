@@ -6,9 +6,11 @@ import {
   PowerIcon,
   PowerOffIcon,
   Trash2Icon,
+  UsersRoundIcon,
 } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
+import { EntityImage } from "@/components/ui/entity-image"
 import {
   Card,
   CardContent,
@@ -34,7 +36,6 @@ type StaffTableProps = {
 }
 
 type StaffColumnKey =
-  | "staffId"
   | "staffName"
   | "phone"
   | "role"
@@ -69,23 +70,25 @@ export function StaffTable({
 }: StaffTableProps) {
   const columns: DataTableColumn<StaffMember, StaffColumnKey>[] = [
     {
-      key: "staffId",
-      header: "STAFF ID",
-      sortable: true,
-      sortValue: (member) => member.staffId,
-      cell: (member) => (
-        <span className="font-medium text-muted-foreground">
-          {member.staffId}
-        </span>
-      ),
-    },
-    {
       key: "staffName",
       header: "NAME",
       sortable: true,
       sortValue: (member) => member.staffName,
       cell: (member) => (
-        <span className="font-medium">{member.staffName}</span>
+        <div className="flex items-center gap-3">
+          <EntityImage
+            src={member.imageUrl}
+            alt={member.staffName}
+            width={40}
+            height={40}
+            className="size-10 shrink-0 rounded-full"
+            imageClassName="rounded-full"
+            fallback={
+              <UsersRoundIcon className="size-5 text-muted-foreground" />
+            }
+          />
+          <span className="font-medium">{member.staffName}</span>
+        </div>
       ),
     },
     {

@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import { ImageUpload } from "@/components/ui/image-upload"
 import type { BookFormValues } from "@/domain/schemas/bookFormSchema"
 import {
   BookingSearchCombobox,
@@ -325,6 +326,25 @@ export function BookFormFields({
                   rows={4}
                   disabled={disabled}
                   {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="coverUrl"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <ImageUpload
+                  label="Book cover"
+                  previewAlt="Book cover preview"
+                  value={field.value ?? null}
+                  onChange={field.onChange}
+                  disabled={disabled}
                 />
               </FormControl>
               <FormMessage />

@@ -7,6 +7,7 @@ export type CreateTranslatorInput = {
   language: string
   status: "active" | "inactive"
   biography: string
+  imageUrl?: string | null
 }
 
 export type UpdateTranslatorInput = CreateTranslatorInput & {

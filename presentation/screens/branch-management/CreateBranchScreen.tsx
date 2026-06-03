@@ -21,11 +21,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { ImageUpload } from "@/components/ui/image-upload"
 import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
 import type { BranchManagementUseCase } from "@/domain/usecases/branch/BranchManagementUseCase"
 import { LocationPicker } from "@/presentation/components/branch-management/LocationPicker"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
+import { useFormSubmitSuccess } from "@/presentation/hooks/useFormSubmitSuccess"
 import { useCreateBranchViewModel } from "@/presentation/viewmodels/branch-management/useCreateBranchViewModel"
 
 type CreateBranchScreenProps = {
@@ -74,6 +76,13 @@ export function CreateBranchScreen({ branchManagementUseCase }: CreateBranchScre
 
   const goBack = () => router.push(returnTo)
 
+  useFormSubmitSuccess(
+    state.isSaved,
+    state.appliedRequestId
+      ? "Branch created and main branch request approved."
+      : "Branch created successfully."
+  )
+
   return (
     <>
       {state.isLoading ? <LoadingState /> : null}
@@ -90,31 +99,6 @@ export function CreateBranchScreen({ branchManagementUseCase }: CreateBranchScre
               Back
             </Button>
           </section>
-
-          {state.isSaved ? (
-            <Card className="rounded-lg border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-950">
-              <CardContent className="flex items-center gap-3 py-3">
-                <p className="text-sm font-medium text-green-800 dark:text-green-200">
-                  {state.appliedRequestId
-                    ? "Branch created and main branch request approved."
-                    : "Branch created successfully."}
-                </p>
-                {state.savedBranchId ? (
-                  <Button
-                    size="sm"
-                    onClick={() =>
-                      router.push(`/dashboard/branches/${state.savedBranchId}`)
-                    }
-                  >
-                    View branch
-                  </Button>
-                ) : null}
-                <Button size="sm" variant="outline" onClick={goBack}>
-                  Back to branches
-                </Button>
-              </CardContent>
-            </Card>
-          ) : null}
 
           {state.appliedRequestId ? (
             <Card className="rounded-lg border-blue-200 bg-blue-50 dark:border-blue-900 dark:bg-blue-950">
@@ -181,31 +165,6 @@ export function CreateBranchScreen({ branchManagementUseCase }: CreateBranchScre
                       <p className="text-sm text-destructive">{state.fieldErrors.type}</p>
                     ) : null}
                   </div>
-
-                  {state.form.type === "main" && state.mainBranchRequests.length > 0 ? (
-                    <div className="space-y-2 sm:col-span-2">
-                      <Label htmlFor="mainBranchRequest">Apply Main Branch Request</Label>
-                      <Select
-                        value={state.appliedRequestId ?? ""}
-                        onValueChange={(value) => viewModel.applyMainBranchRequest(value)}
-                        disabled={state.isSaving || state.isSaved}
-                      >
-                        <SelectTrigger id="mainBranchRequest">
-                          <SelectValue placeholder="Select a pending request to prefill the form" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {state.mainBranchRequests.map((request) => (
-                            <SelectItem key={request.id} value={request.id}>
-                              {request.id} — {request.branchName}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <p className="text-xs text-muted-foreground">
-                        Prefills branch name, email, admin, and phone from the selected request.
-                      </p>
-                    </div>
-                  ) : null}
 
                   <div className="space-y-2">
                     <Label htmlFor="email">Email</Label>
@@ -333,6 +292,16 @@ export function CreateBranchScreen({ branchManagementUseCase }: CreateBranchScre
                       longitude={state.form.longitude}
                       locationError={state.fieldErrors.location}
                       onChange={viewModel.setLocation}
+                      disabled={state.isSaving || state.isSaved}
+                    />
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <ImageUpload
+                      label="Branch image"
+                      previewAlt="Branch image preview"
+                      value={state.form.imageUrl}
+                      onChange={(url) => viewModel.setField("imageUrl", url)}
                       disabled={state.isSaving || state.isSaved}
                     />
                   </div>

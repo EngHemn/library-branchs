@@ -53,6 +53,7 @@ export function useEditTranslatorViewModel(
       language: "",
       status: "active",
       biography: "",
+      imageUrl: null,
     },
   })
 
@@ -72,6 +73,7 @@ export function useEditTranslatorViewModel(
         language: data.language,
         status: data.status,
         biography: data.biography,
+        imageUrl: data.imageUrl ?? null,
       })
     }
   }, [data, form])

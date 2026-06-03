@@ -4,6 +4,7 @@ import { ArrowLeftIcon, PencilIcon, UserRoundIcon } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { EntityImage } from "@/components/ui/entity-image"
 import type { Author } from "@/domain/entities/author/Author"
 
 type AuthorDetailHeaderProps = {
@@ -19,9 +20,15 @@ export function AuthorDetailHeader({
 }: AuthorDetailHeaderProps) {
   return (
     <header className="flex flex-col gap-4 sm:flex-row sm:items-start">
-      <div className="flex size-20 shrink-0 items-center justify-center rounded-lg bg-muted sm:size-24">
-        <UserRoundIcon className="size-10 text-muted-foreground" />
-      </div>
+      <EntityImage
+        src={author.imageUrl}
+        alt={author.name}
+        fill
+        sizes="96px"
+        className="size-20 rounded-lg sm:size-24"
+        imageClassName="rounded-lg"
+        fallback={<UserRoundIcon className="size-10 text-muted-foreground" />}
+      />
       <div className="flex flex-1 flex-col gap-3">
         <div>
           <div className="flex flex-wrap items-center gap-2">

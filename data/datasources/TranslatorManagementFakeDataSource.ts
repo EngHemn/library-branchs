@@ -50,6 +50,7 @@ export class TranslatorManagementFakeDataSource {
       totalBooks: 0,
       status: input.status,
       branchId: "BR-001",
+      imageUrl: input.imageUrl ?? null,
     }
     this.translators.push(newTranslator)
     return { success: true, data: { ...newTranslator } }
@@ -71,6 +72,7 @@ export class TranslatorManagementFakeDataSource {
       language: input.language,
       biography: input.biography,
       status: input.status,
+      imageUrl: input.imageUrl ?? currentTranslator.imageUrl ?? null,
     }
     this.translators[translatorIndex] = updatedTranslator
     return { success: true, data: { ...updatedTranslator } }

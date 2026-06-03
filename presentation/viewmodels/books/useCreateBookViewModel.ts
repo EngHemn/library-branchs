@@ -69,6 +69,7 @@ export function useCreateBookViewModel(
       description: "",
       pages: 0,
       publicationDate: "",
+      coverUrl: null,
     },
   })
 
@@ -94,6 +95,7 @@ export function useCreateBookViewModel(
     mutationFn: async (values: BookFormValues) => {
       const result = await getBooksUseCase.createBook({
         ...values,
+        coverUrl: values.coverUrl,
         shelfHint: "",
         price: 0,
         stock: 0,

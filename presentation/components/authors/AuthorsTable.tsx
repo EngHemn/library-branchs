@@ -1,8 +1,9 @@
 "use client"
 
-import { EyeIcon, PencilIcon, Trash2Icon } from "lucide-react"
+import { EyeIcon, PencilIcon, Trash2Icon, UserRoundIcon } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
+import { EntityImage } from "@/components/ui/entity-image"
 import {
   Card,
   CardContent,
@@ -25,7 +26,6 @@ type AuthorsTableProps = {
 }
 
 type AuthorColumnKey =
-  | "id"
   | "name"
   | "nationality"
   | "dateOfBirth"
@@ -46,22 +46,26 @@ export function AuthorsTable({
 }: AuthorsTableProps) {
   const columns: DataTableColumn<Author, AuthorColumnKey>[] = [
     {
-      key: "id",
-      header: "ID",
-      sortable: true,
-      sortValue: (author) => author.id,
-      cell: (author) => (
-        <span className="font-mono text-xs text-muted-foreground">
-          {author.id}
-        </span>
-      ),
-    },
-    {
       key: "name",
       header: "Name",
       sortable: true,
       sortValue: (author) => author.name,
-      cell: (author) => <span className="font-semibold">{author.name}</span>,
+      cell: (author) => (
+        <div className="flex items-center gap-3">
+          <EntityImage
+            src={author.imageUrl}
+            alt={author.name}
+            width={40}
+            height={40}
+            className="size-10 shrink-0 rounded-full"
+            imageClassName="rounded-full"
+            fallback={
+              <UserRoundIcon className="size-5 text-muted-foreground" />
+            }
+          />
+          <span className="font-semibold">{author.name}</span>
+        </div>
+      ),
     },
     {
       key: "nationality",

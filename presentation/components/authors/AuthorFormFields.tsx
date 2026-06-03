@@ -19,10 +19,14 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-import type { AuthorFormValues } from "@/domain/schemas/authorFormSchema"
+import { ImageUpload } from "@/components/ui/image-upload"
+import type {
+  AuthorFormInput,
+  AuthorFormValues,
+} from "@/domain/schemas/authorFormSchema"
 
 type AuthorFormFieldsProps = {
-  form: UseFormReturn<AuthorFormValues>
+  form: UseFormReturn<AuthorFormInput, unknown, AuthorFormValues>
   disabled: boolean
   onSubmit: (values: AuthorFormValues) => void
   children: React.ReactNode
@@ -127,6 +131,25 @@ export function AuthorFormFields({
                   rows={5}
                   disabled={disabled}
                   {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="imageUrl"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <ImageUpload
+                  label="Author photo"
+                  previewAlt="Author photo preview"
+                  value={field.value ?? null}
+                  onChange={field.onChange}
+                  disabled={disabled}
                 />
               </FormControl>
               <FormMessage />

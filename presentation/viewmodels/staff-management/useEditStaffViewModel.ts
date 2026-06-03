@@ -31,6 +31,7 @@ type EditStaffFormState = {
   email: string
   phone: string
   password: string
+  imageUrl: string | null
 }
 
 type EditStaffViewModelState = {
@@ -50,7 +51,10 @@ type EditStaffViewModelState = {
 
 type EditStaffViewModel = {
   state: EditStaffViewModelState
-  setField: (field: keyof EditStaffFormState, value: string) => void
+  setField: <K extends keyof EditStaffFormState>(
+    field: K,
+    value: EditStaffFormState[K]
+  ) => void
   autoGeneratePassword: () => void
   save: () => Promise<void>
 }
@@ -62,6 +66,7 @@ const emptyForm: EditStaffFormState = {
   email: "",
   phone: "",
   password: "",
+  imageUrl: null,
 }
 
 const emptyFieldErrors: EditStaffFormErrors = {
@@ -81,6 +86,7 @@ function staffToFormState(member: StaffMember): EditStaffFormState {
     email: member.email,
     phone: member.phone,
     password: "",
+    imageUrl: member.imageUrl ?? null,
   }
 }
 
@@ -101,6 +107,7 @@ function formToUpdateInput(
     email: form.email,
     phone: form.phone,
     password: form.password || undefined,
+    imageUrl: form.imageUrl,
   }
 }
 
@@ -155,7 +162,10 @@ export function useEditStaffViewModel(
     onError: (err: Error) => setError(err.message),
   })
 
-  function setField(field: keyof EditStaffFormState, value: string): void {
+  function setField<K extends keyof EditStaffFormState>(
+    field: K,
+    value: EditStaffFormState[K]
+  ): void {
     setForm((current) => ({ ...current, [field]: value }))
   }
 

@@ -21,11 +21,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { ImageUpload } from "@/components/ui/image-upload"
 import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
 import type { BranchManagementUseCase } from "@/domain/usecases/branch/BranchManagementUseCase"
 import type { StaffManagementUseCase } from "@/domain/usecases/staff/StaffManagementUseCase"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
+import { useFormSubmitSuccess } from "@/presentation/hooks/useFormSubmitSuccess"
 import { useEditStaffViewModel } from "@/presentation/viewmodels/staff-management/useEditStaffViewModel"
 
 type EditStaffScreenProps = {
@@ -72,6 +74,8 @@ export function EditStaffScreen({ staffId, staffManagementUseCase, branchManagem
   ])
 
   const goBack = () => router.push("/dashboard/staff")
+
+  useFormSubmitSuccess(state.isSaved, "Staff member updated successfully.")
 
   return (
     <>
@@ -128,19 +132,6 @@ export function EditStaffScreen({ staffId, staffManagementUseCase, branchManagem
               Back
             </Button>
           </section>
-
-          {state.isSaved ? (
-            <Card className="rounded-lg border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-950">
-              <CardContent className="flex items-center gap-3 py-3">
-                <p className="text-sm font-medium text-green-800 dark:text-green-200">
-                  Staff member updated successfully.
-                </p>
-                <Button size="sm" variant="outline" onClick={goBack}>
-                  Back to staff
-                </Button>
-              </CardContent>
-            </Card>
-          ) : null}
 
           {state.error && !state.isError ? (
             <Card className="rounded-lg border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950">
@@ -246,6 +237,16 @@ export function EditStaffScreen({ staffId, staffManagementUseCase, branchManagem
                     {state.fieldErrors.branch ? (
                       <p className="text-sm text-destructive">{state.fieldErrors.branch}</p>
                     ) : null}
+                  </div>
+
+                  <div className="space-y-2 sm:col-span-2">
+                    <ImageUpload
+                      label="Profile photo"
+                      previewAlt="Staff profile photo preview"
+                      value={state.form.imageUrl}
+                      onChange={(url) => viewModel.setField("imageUrl", url)}
+                      disabled={state.isSaving}
+                    />
                   </div>
 
                   <div className="space-y-2 sm:col-span-2">

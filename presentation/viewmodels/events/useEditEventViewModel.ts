@@ -57,6 +57,7 @@ export function useEditEventViewModel(
       endDate: "",
       status: "upcoming",
       branchIds: [],
+      imageUrl: null,
     },
   })
 
@@ -90,6 +91,7 @@ export function useEditEventViewModel(
         endDate: event.endDate,
         status: event.status,
         branchIds: event.branches.map((branch) => branch.branchId),
+        imageUrl: event.imageUrl ?? null,
       })
     }
   }, [editQuery.data, form])

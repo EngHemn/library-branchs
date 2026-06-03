@@ -13,6 +13,7 @@ import {
 
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { EntityImage } from "@/components/ui/entity-image"
 import type { BranchDetail } from "@/domain/entities/branch/BranchDetail"
 import { BranchAdminLink } from "@/presentation/components/branch-management/BranchAdminLink"
 
@@ -107,9 +108,19 @@ export function BranchDetailsTab({ branchDetail }: BranchDetailsTabProps) {
       <Card className="rounded-lg">
         <CardHeader>
           <CardTitle className="flex items-center gap-3">
-            <div className="flex size-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
-              <Building2Icon className="size-6" />
-            </div>
+            <EntityImage
+              src={branchDetail.imageUrl ?? branchDetail.logoUrl}
+              alt={branchDetail.branchName}
+              fill
+              sizes="48px"
+              className="size-12 rounded-lg"
+              imageClassName="rounded-lg"
+              fallback={
+                <div className="flex size-full items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <Building2Icon className="size-6" />
+                </div>
+              }
+            />
             <div className="min-w-0">
               <h3 className="text-lg font-semibold">{branchDetail.branchName}</h3>
               <div className="mt-1 flex items-center gap-2">

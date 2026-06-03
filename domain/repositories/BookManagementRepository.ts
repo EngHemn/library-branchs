@@ -16,6 +16,7 @@ export type CreateBookInput = {
   price: number
   stock: number
   branchId: string
+  coverUrl?: string | null
 }
 
 export type UpdateBookInput = CreateBookInput & {

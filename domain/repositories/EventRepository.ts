@@ -15,6 +15,7 @@ export type CreateEventInput = {
   endDate: string
   status: EventStatus
   branchIds: string[]
+  imageUrl?: string | null
 }
 
 export type UpdateEventInput = CreateEventInput & {

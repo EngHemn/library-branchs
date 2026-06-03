@@ -17,6 +17,7 @@ export type CreateBranchInput = {
   latitude: number | null
   longitude: number | null
   password: string
+  imageUrl?: string | null
 }
 
 export type UpdateBranchInput = {
@@ -29,6 +30,7 @@ export type UpdateBranchInput = {
   latitude: number | null
   longitude: number | null
   password?: string
+  imageUrl?: string | null
 }
 
 export type ReplyToBranchRequestInput = {

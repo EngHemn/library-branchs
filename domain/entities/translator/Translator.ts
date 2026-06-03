@@ -8,4 +8,5 @@ export type Translator = {
   totalBooks: number
   status: TranslatorStatus
   branchId: string
+  imageUrl?: string | null
 }

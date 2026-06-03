@@ -8,6 +8,7 @@ export type CreateAuthorInput = {
   dateOfBirth: string
   status: "active" | "inactive"
   biography: string
+  imageUrl?: string | null
 }
 
 export type UpdateAuthorInput = CreateAuthorInput & {
