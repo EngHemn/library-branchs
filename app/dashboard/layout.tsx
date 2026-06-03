@@ -1,6 +1,7 @@
 "use client"
 
 import { AppSidebar } from "@/components/app-sidebar"
+import { Toaster } from "@/components/ui/sonner"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { DashboardHeader } from "@/presentation/components/dashboard/DashboardHeader"
 import { DashboardBreadcrumbProvider } from "@/presentation/hooks/useDashboardBreadcrumbs"
@@ -17,6 +18,7 @@ export default function DashboardLayout({
         <SidebarInset>
           <DashboardHeader />
           {children}
+          <Toaster />
         </SidebarInset>
       </SidebarProvider>
     </DashboardBreadcrumbProvider>

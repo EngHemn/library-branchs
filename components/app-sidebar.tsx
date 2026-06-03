@@ -10,6 +10,7 @@ import {
   Building2Icon,
   CalendarCheckIcon,
   CalendarDaysIcon,
+  FileTextIcon,
   GalleryVerticalEndIcon,
   LanguagesIcon,
   LayoutDashboardIcon,
@@ -134,6 +135,11 @@ const sidebarGroups: SidebarGroup[] = [
         title: "Stock Management",
         href: "/dashboard/stock",
         icon: BoxesIcon,
+      },
+      {
+        title: "Bill Management",
+        href: "/dashboard/bills",
+        icon: FileTextIcon,
       },
       {
         title: "Event Management",
