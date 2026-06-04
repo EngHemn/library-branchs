@@ -13,6 +13,7 @@ import type { User } from "@/domain/entities/User"
 import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { StaffManagementUseCase } from "@/domain/usecases/staff/StaffManagementUseCase"
 import type { StaffBranchFilter, StaffFilterState, StaffManagementDialog, StaffManagementPageStatus, StaffManagementViewModelState, StaffRoleFilter, StaffStatusFilter } from "./StaffManagementViewModelState"
+import { useStaffDeleteDialog } from "./useStaffDeleteDialog"
 
 type StaffManagementViewModel = {
   state: StaffManagementViewModelState
@@ -23,7 +24,9 @@ type StaffManagementViewModel = {
   setBranchFilter: (branchFilter: StaffBranchFilter) => void
   setStatusFilter: (statusFilter: StaffStatusFilter) => void
   closeDialog: () => void
-  deleteStaff: (staffId: string) => Promise<void>
+  openDeleteStaffDialog: (staffId: string, staffName: string) => void
+  closeDeleteStaffDialog: () => void
+  confirmDeleteStaff: () => Promise<void>
   toggleStaffStatus: (staffId: string) => Promise<void>
 }
 
@@ -80,6 +83,7 @@ export function useStaffManagementViewModel(
   const [filters, setFilters] = useState<StaffFilterState>(defaultFilters)
   const [dialog, setDialog] = useState<StaffManagementDialog>(null)
   const [error, setError] = useState<string | null>(null)
+  const deleteDialog = useStaffDeleteDialog({ staffManagementUseCase })
 
   const userQuery = useQuery({
     queryKey: ["currentUser"],
@@ -110,16 +114,6 @@ export function useStaffManagementViewModel(
       void queryClient.invalidateQueries({ queryKey: ["staff"] })
     },
     onError: (err: Error) => setError(err.message),
-  })
-
-  const deleteStaffMutation = useMutation({
-    mutationFn: async (staffId: string) => {
-      const result = await staffManagementUseCase.deleteStaff(staffId)
-      if (!result.success) throw new Error(result.error)
-    },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["staff"] }),
-    onError: (err: Error) =>
-      setDialog({ title: "Staff action unavailable", description: err.message }),
   })
 
   const toggleStatusMutation = useMutation({
@@ -161,10 +155,6 @@ export function useStaffManagementViewModel(
     setDialog(null)
   }
 
-  async function deleteStaff(staffId: string): Promise<void> {
-    await deleteStaffMutation.mutateAsync(staffId).catch(() => undefined)
-  }
-
   async function toggleStaffStatus(staffId: string): Promise<void> {
     await toggleStatusMutation.mutateAsync(staffId).catch(() => undefined)
   }
@@ -204,6 +194,8 @@ export function useStaffManagementViewModel(
   const queryError =
     userQuery.error?.message ?? staffQuery.error?.message ?? null
 
+  const showBranchFilter = user?.branchType !== "sub"
+
   const state: StaffManagementViewModelState = {
     status,
     user,
@@ -213,6 +205,10 @@ export function useStaffManagementViewModel(
     filters,
     stats: calculateStaffStats(staff),
     dialog,
+    deleteStaffDialog: deleteDialog.deleteStaffDialog,
+    deleteStaffError: deleteDialog.deleteStaffError,
+    isDeletingStaff: deleteDialog.isDeletingStaff,
+    showBranchFilter,
     error: status === "error" ? (queryError ?? error) : null,
     isLoading,
     isReady,
@@ -228,7 +224,9 @@ export function useStaffManagementViewModel(
     setBranchFilter,
     setStatusFilter,
     closeDialog,
-    deleteStaff,
+    openDeleteStaffDialog: deleteDialog.openDeleteStaffDialog,
+    closeDeleteStaffDialog: deleteDialog.closeDeleteStaffDialog,
+    confirmDeleteStaff: deleteDialog.confirmDeleteStaff,
     toggleStaffStatus,
   }
 }

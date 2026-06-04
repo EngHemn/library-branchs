@@ -1,13 +1,15 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useMutation, useQuery } from "@tanstack/react-query"
 
 import type { Branch } from "@/domain/entities/branch/Branch"
 import type { StaffRole } from "@/domain/entities/staff/StaffMember"
 import type { CreateStaffInput } from "@/domain/repositories/StaffManagementRepository"
+import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { BranchManagementUseCase } from "@/domain/usecases/branch/BranchManagementUseCase"
 import type { StaffManagementUseCase } from "@/domain/usecases/staff/StaffManagementUseCase"
+import { resolveUserBranchId } from "@/lib/dashboardBranchScope"
 import {
   type CreateStaffFormErrors,
   getCreateStaffFieldErrors,
@@ -67,6 +69,7 @@ function formToCreateInput(
 }
 
 export function useCreateStaffViewModel(
+  authUseCase: AuthUseCase,
   staffManagementUseCase: StaffManagementUseCase,
   branchManagementUseCase: BranchManagementUseCase
 ): CreateStaffViewModel {
@@ -74,6 +77,15 @@ export function useCreateStaffViewModel(
   const [showFieldErrors, setShowFieldErrors] = useState(false)
   const [isSaved, setIsSaved] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  const userQuery = useQuery({
+    queryKey: ["currentUser"],
+    queryFn: async () => {
+      const result = await authUseCase.getCurrentUser()
+      if (!result.success) throw new Error(result.error)
+      return result.data ?? null
+    },
+  })
 
   const branchesQuery = useQuery({
     queryKey: ["branches"],
@@ -120,7 +132,15 @@ export function useCreateStaffViewModel(
     await saveMutation.mutateAsync(validationResult.data).catch(() => undefined)
   }
 
+  const user = userQuery.data ?? null
   const branches = branchesQuery.data ?? []
+  const showBranchField = user?.branchType !== "sub"
+  const userBranchId = user ? resolveUserBranchId(user) : ""
+
+  useEffect(() => {
+    if (!user || user.branchType !== "sub" || form.branchId) return
+    setForm((current) => ({ ...current, branchId: userBranchId }))
+  }, [user, userBranchId, form.branchId])
 
   const fieldErrors: CreateStaffFormErrors = !form.role
     ? {
@@ -129,7 +149,7 @@ export function useCreateStaffViewModel(
       }
     : getCreateStaffFieldErrors(formToCreateInput(form, branches))
 
-  const isLoading = branchesQuery.isPending
+  const isLoading = userQuery.isPending || branchesQuery.isPending
   const isSaving = saveMutation.isPending
 
   const status: CreateStaffStatus = isSaved
@@ -145,6 +165,7 @@ export function useCreateStaffViewModel(
     form,
     fieldErrors: showFieldErrors ? fieldErrors : emptyFieldErrors,
     branches,
+    showBranchField,
     error,
     isLoading,
     isReady: status === "ready",

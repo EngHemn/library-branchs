@@ -31,6 +31,11 @@ export type StaffManagementPageStatus =
   | "unauthenticated"
   | "error"
 
+export type StaffDeleteDialogState = {
+  staffId: string
+  staffName: string
+}
+
 export type StaffManagementViewModelState = {
   status: StaffManagementPageStatus
   user: User | null
@@ -40,6 +45,10 @@ export type StaffManagementViewModelState = {
   filters: StaffFilterState
   stats: StaffStats
   dialog: StaffManagementDialog
+  deleteStaffDialog: StaffDeleteDialogState | null
+  deleteStaffError: string | null
+  isDeletingStaff: boolean
+  showBranchFilter: boolean
   error: string | null
   isLoading: boolean
   isReady: boolean

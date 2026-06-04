@@ -6,6 +6,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import type { Branch } from "@/domain/entities/branch/Branch"
 import type { StaffMember, StaffRole } from "@/domain/entities/staff/StaffMember"
 import type { UpdateStaffInput } from "@/domain/repositories/StaffManagementRepository"
+import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { BranchManagementUseCase } from "@/domain/usecases/branch/BranchManagementUseCase"
 import type { StaffManagementUseCase } from "@/domain/usecases/staff/StaffManagementUseCase"
 import {
@@ -80,6 +81,7 @@ function formToUpdateInput(
 
 export function useEditStaffViewModel(
   staffId: string,
+  authUseCase: AuthUseCase,
   staffManagementUseCase: StaffManagementUseCase,
   branchManagementUseCase: BranchManagementUseCase
 ): EditStaffViewModel {
@@ -88,6 +90,15 @@ export function useEditStaffViewModel(
   const [showFieldErrors, setShowFieldErrors] = useState(false)
   const [isSaved, setIsSaved] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  const userQuery = useQuery({
+    queryKey: ["currentUser"],
+    queryFn: async () => {
+      const result = await authUseCase.getCurrentUser()
+      if (!result.success) throw new Error(result.error)
+      return result.data ?? null
+    },
+  })
 
   const staffQuery = useQuery({
     queryKey: ["staff", staffId],
@@ -159,10 +170,14 @@ export function useEditStaffViewModel(
       .catch(() => undefined)
   }
 
+  const user = userQuery.data ?? null
   const staffMember = staffQuery.data ?? null
   const branches = branchesQuery.data ?? []
+  const showBranchField = user?.branchType !== "sub"
   const isLoading =
-    staffQuery.isPending || (staffQuery.isSuccess && branchesQuery.isPending)
+    userQuery.isPending ||
+    staffQuery.isPending ||
+    (staffQuery.isSuccess && branchesQuery.isPending)
   const isSaving = saveMutation.isPending
   const isNotFound = staffQuery.isSuccess && staffQuery.data === null
   const isError = staffQuery.isError
@@ -199,6 +214,7 @@ export function useEditStaffViewModel(
     form,
     fieldErrors: showFieldErrors ? fieldErrors : emptyFieldErrors,
     branches,
+    showBranchField,
     error,
     isLoading,
     isLoaded: status === "loaded",
