@@ -10,38 +10,7 @@ import type {
 } from "@/domain/entities/event/Event"
 import type { GetEventsUseCase } from "@/domain/usecases/events/GetEventsUseCase"
 import { useEventBranchBooksSheet } from "@/presentation/viewmodels/events/useEventBranchBooksSheet"
-
-type AsyncStatus = "idle" | "loading" | "success" | "error"
-type EventStatusFilter = "all" | EventStatus
-
-type EventsViewModelState = {
-  events: LibraryEvent[]
-  eventsStatus: AsyncStatus
-  eventsError: string | null
-  summary: EventSummary | null
-  summaryStatus: AsyncStatus
-  searchQuery: string
-  statusFilter: EventStatusFilter
-  expandedEventIds: string[]
-  filteredEvents: LibraryEvent[]
-  isLoading: boolean
-  isReady: boolean
-  branchBooksSelection: ReturnType<typeof useEventBranchBooksSheet>["selection"]
-  isBranchBooksSheetOpen: boolean
-  branchBooks: ReturnType<typeof useEventBranchBooksSheet>["books"]
-  filteredBranchBooks: ReturnType<typeof useEventBranchBooksSheet>["books"]
-  branchBooksStatus: ReturnType<typeof useEventBranchBooksSheet>["booksStatus"]
-  branchBooksError: ReturnType<typeof useEventBranchBooksSheet>["booksError"]
-  branchBooksSearchQuery: string
-  branchBooksLanguageFilter: ReturnType<typeof useEventBranchBooksSheet>["languageFilter"]
-  branchBooksCategoryFilter: ReturnType<typeof useEventBranchBooksSheet>["categoryFilter"]
-  branchBooksAuthorFilter: ReturnType<typeof useEventBranchBooksSheet>["authorFilter"]
-  branchBooksTranslatorFilter: ReturnType<typeof useEventBranchBooksSheet>["translatorFilter"]
-  branchBooksLanguages: string[]
-  branchBooksCategories: string[]
-  branchBooksAuthors: string[]
-  branchBooksTranslators: string[]
-}
+import type { AsyncStatus, EventStatusFilter, EventsViewModelState } from "./EventsViewModelState"
 
 export type EventsViewModel = {
   state: EventsViewModelState

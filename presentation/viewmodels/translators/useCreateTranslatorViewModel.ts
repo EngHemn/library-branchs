@@ -10,15 +10,7 @@ import {
   type TranslatorFormValues,
 } from "@/domain/schemas/translatorFormSchema"
 import type { GetTranslatorsUseCase } from "@/domain/usecases/translators/GetTranslatorsUseCase"
-
-type CreateTranslatorStatus = "ready" | "saving" | "saved"
-
-type CreateTranslatorViewModelState = {
-  status: CreateTranslatorStatus
-  error: string | null
-  isSaving: boolean
-  isSaved: boolean
-}
+import type { CreateTranslatorStatus, CreateTranslatorViewModelState } from "./CreateTranslatorViewModelState"
 
 type CreateTranslatorViewModel = {
   state: CreateTranslatorViewModelState

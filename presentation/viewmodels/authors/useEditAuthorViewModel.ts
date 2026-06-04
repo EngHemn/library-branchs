@@ -11,26 +11,7 @@ import {
   type AuthorFormValues,
 } from "@/domain/schemas/authorFormSchema"
 import type { GetAuthorsUseCase } from "@/domain/usecases/authors/GetAuthorsUseCase"
-
-type EditAuthorStatus =
-  | "idle"
-  | "loading"
-  | "ready"
-  | "not-found"
-  | "error"
-  | "saving"
-  | "saved"
-
-type EditAuthorViewModelState = {
-  status: EditAuthorStatus
-  error: string | null
-  isLoading: boolean
-  isReady: boolean
-  isNotFound: boolean
-  isError: boolean
-  isSaving: boolean
-  isSaved: boolean
-}
+import type { EditAuthorStatus, EditAuthorViewModelState } from "./EditAuthorViewModelState"
 
 type EditAuthorViewModel = {
   state: EditAuthorViewModelState

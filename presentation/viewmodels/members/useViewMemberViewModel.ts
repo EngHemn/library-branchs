@@ -5,25 +5,7 @@ import { useQuery } from "@tanstack/react-query"
 
 import type { MemberDetail } from "@/domain/entities/member/MemberDetail"
 import type { MemberManagementUseCase } from "@/domain/usecases/members/MemberManagementUseCase"
-
-type ViewMemberStatus = "idle" | "loading" | "loaded" | "not-found" | "error"
-
-type ViewMemberTabKey =
-  | "details"
-  | "active-bookings"
-  | "late-returns"
-  | "borrowing-history"
-
-type ViewMemberViewModelState = {
-  status: ViewMemberStatus
-  member: MemberDetail | null
-  activeTab: ViewMemberTabKey
-  error: string | null
-  isLoading: boolean
-  isLoaded: boolean
-  isNotFound: boolean
-  isError: boolean
-}
+import type { ViewMemberStatus, ViewMemberTabKey, ViewMemberViewModelState } from "./ViewMemberViewModelState"
 
 type ViewMemberViewModel = {
   state: ViewMemberViewModelState

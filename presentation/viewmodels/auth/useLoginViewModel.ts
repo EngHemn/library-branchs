@@ -5,21 +5,7 @@ import { useMutation } from "@tanstack/react-query"
 
 import type { User } from "@/domain/entities/User"
 import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
-
-type LoginFormState = {
-  username: string
-  password: string
-}
-
-type LoginAsyncStatus = "idle" | "loading" | "success" | "error"
-
-type LoginViewModelState = LoginFormState & {
-  status: LoginAsyncStatus
-  user: User | null
-  error: string | null
-  isLoading: boolean
-  successMessage: string | null
-}
+import type { LoginAsyncStatus, LoginFormState, LoginViewModelState } from "./LoginViewModelState"
 
 type LoginViewModel = {
   state: LoginViewModelState

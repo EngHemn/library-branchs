@@ -15,31 +15,8 @@ import type {
 import type { User } from "@/domain/entities/User"
 import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { GetDashboardSummaryUseCase } from "@/domain/usecases/dashboard/GetDashboardSummaryUseCase"
-
-export type DateRangeFilter = "today" | "week" | "month" | "all"
-
-type DashboardFilterState = {
-  branchId: string
-  dateRange: DateRangeFilter
-}
-
-type DashboardStatus = "idle" | "loading" | "success" | "unauthenticated" | "error"
-
-type DashboardViewModelState = {
-  status: DashboardStatus
-  user: User | null
-  summary: DashboardSummary | null
-  error: string | null
-  isLoading: boolean
-  isReady: boolean
-  isUnauthenticated: boolean
-  filterState: DashboardFilterState
-  filteredBookings: DashboardBooking[]
-  filteredBooks: DashboardBook[]
-  filteredMembers: DashboardMember[]
-  filteredSales: DashboardSale[]
-  filteredStaff: DashboardStaff[]
-}
+import type { DashboardFilterState, DashboardStatus, DashboardViewModelState, DateRangeFilter } from "./DashboardViewModelState"
+export type { DateRangeFilter } from "./DashboardViewModelState"
 
 type DashboardViewModel = {
   state: DashboardViewModelState

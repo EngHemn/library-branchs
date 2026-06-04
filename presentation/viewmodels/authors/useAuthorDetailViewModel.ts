@@ -4,23 +4,7 @@ import { useQuery } from "@tanstack/react-query"
 
 import type { AuthorDetail } from "@/domain/entities/author/AuthorDetail"
 import type { GetAuthorsUseCase } from "@/domain/usecases/authors/GetAuthorsUseCase"
-
-type AuthorDetailStatus =
-  | "idle"
-  | "loading"
-  | "loaded"
-  | "not-found"
-  | "error"
-
-type AuthorDetailViewModelState = {
-  status: AuthorDetailStatus
-  author: AuthorDetail | null
-  error: string | null
-  isLoading: boolean
-  isLoaded: boolean
-  isNotFound: boolean
-  isError: boolean
-}
+import type { AuthorDetailStatus, AuthorDetailViewModelState } from "./AuthorDetailViewModelState"
 
 type AuthorDetailViewModel = {
   state: AuthorDetailViewModelState

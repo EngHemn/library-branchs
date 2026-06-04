@@ -11,16 +11,7 @@ import {
   type AuthorFormValues,
 } from "@/domain/schemas/authorFormSchema"
 import type { GetAuthorsUseCase } from "@/domain/usecases/authors/GetAuthorsUseCase"
-
-type CreateAuthorStatus = "ready" | "saving" | "saved"
-
-type CreateAuthorViewModelState = {
-  status: CreateAuthorStatus
-  error: string | null
-  savedAuthorId: string | null
-  isSaving: boolean
-  isSaved: boolean
-}
+import type { CreateAuthorStatus, CreateAuthorViewModelState } from "./CreateAuthorViewModelState"
 
 type CreateAuthorViewModel = {
   state: CreateAuthorViewModelState

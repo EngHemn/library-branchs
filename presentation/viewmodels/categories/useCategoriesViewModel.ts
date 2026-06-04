@@ -15,29 +15,7 @@ import {
   type ConcatCategoryFormValues,
 } from "@/domain/schemas/concatCategoryFormSchema"
 import type { GetCategoriesUseCase } from "@/domain/usecases/categories/GetCategoriesUseCase"
-
-type CategoriesStatus = "idle" | "loading" | "ready" | "error"
-type CategoryFormMode = "create" | "edit" | null
-
-type CategoriesViewModelState = {
-  status: CategoriesStatus
-  categories: Category[]
-  filteredCategories: Category[]
-  searchQuery: string
-  statusFilter: "all" | "active" | "inactive"
-  formMode: CategoryFormMode
-  editingCategoryId: string | null
-  error: string | null
-  formError: string | null
-  isLoading: boolean
-  isReady: boolean
-  isSaving: boolean
-  isDeleting: boolean
-  isFormOpen: boolean
-  isConcatOpen: boolean
-  isConcating: boolean
-  concatError: string | null
-}
+import type { CategoriesStatus, CategoriesViewModelState, CategoryFormMode } from "./CategoriesViewModelState"
 
 type CategoriesViewModel = {
   state: CategoriesViewModelState

@@ -10,19 +10,7 @@ import {
   type BillFormValues,
 } from "@/domain/schemas/billFormSchema"
 import type { GetBillsUseCase } from "@/domain/usecases/bills/GetBillsUseCase"
-
-type CreateBillStatus = "loading" | "ready" | "saving" | "saved"
-
-type CreateBillViewModelState = {
-  status: CreateBillStatus
-  branchOptions: BillBranchOption[]
-  bookOptions: BillBookOption[]
-  error: string | null
-  isLoading: boolean
-  isReady: boolean
-  isSaving: boolean
-  isSaved: boolean
-}
+import type { CreateBillStatus, CreateBillViewModelState } from "./CreateBillViewModelState"
 
 type CreateBillViewModel = {
   state: CreateBillViewModelState

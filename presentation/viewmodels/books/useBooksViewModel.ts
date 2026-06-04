@@ -7,48 +7,7 @@ import type { Book } from "@/domain/entities/book/Book"
 import type { User } from "@/domain/entities/User"
 import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { GetBooksUseCase } from "@/domain/usecases/books/GetBooksUseCase"
-
-type BookCategoryFilter = "all" | string
-type BookAuthorFilter = "all" | string
-type BookTranslatorFilter = "all" | string
-type BookBranchFilter = "all" | string
-
-type BookFilterState = {
-  searchQuery: string
-  categoryFilter: BookCategoryFilter
-  authorFilter: BookAuthorFilter
-  translatorFilter: BookTranslatorFilter
-  branchFilter: BookBranchFilter
-}
-
-type BooksManagementDialog = {
-  title: string
-  description: string
-} | null
-
-type BooksPageStatus =
-  | "idle"
-  | "loading"
-  | "success"
-  | "unauthenticated"
-  | "error"
-
-type BooksViewModelState = {
-  status: BooksPageStatus
-  user: User | null
-  books: Book[]
-  filteredBooks: Book[]
-  categories: string[]
-  authors: string[]
-  translators: string[]
-  branches: string[]
-  filters: BookFilterState
-  dialog: BooksManagementDialog
-  error: string | null
-  isLoading: boolean
-  isReady: boolean
-  isUnauthenticated: boolean
-}
+import type { BookAuthorFilter, BookBranchFilter, BookCategoryFilter, BookFilterState, BookTranslatorFilter, BooksManagementDialog, BooksPageStatus, BooksViewModelState } from "./BooksViewModelState"
 
 type BooksViewModel = {
   state: BooksViewModelState

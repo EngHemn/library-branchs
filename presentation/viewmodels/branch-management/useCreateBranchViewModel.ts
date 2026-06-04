@@ -16,43 +16,7 @@ import {
   validateCreateBranchForm,
 } from "@/domain/validators/branch/validateCreateBranchForm"
 import { generatePassword } from "@/lib/generatePassword"
-
-type CreateBranchStatus =
-  | "idle"
-  | "loading"
-  | "ready"
-  | "saving"
-  | "saved"
-  | "error"
-
-type CreateBranchFormState = {
-  branchName: string
-  type: BranchType | ""
-  email: string
-  adminName: string
-  parentBranch: string | null
-  address: string
-  phone: string
-  latitude: number | null
-  longitude: number | null
-  password: string
-  imageUrl: string | null
-}
-
-type CreateBranchViewModelState = {
-  status: CreateBranchStatus
-  form: CreateBranchFormState
-  fieldErrors: CreateBranchFormErrors
-  mainBranches: Branch[]
-  appliedRequestId: string | null
-  savedBranchId: string | null
-  error: string | null
-  isLoading: boolean
-  isReady: boolean
-  isSaving: boolean
-  isSaved: boolean
-  isError: boolean
-}
+import type { CreateBranchFormState, CreateBranchStatus, CreateBranchViewModelState } from "./CreateBranchViewModelState"
 
 type CreateBranchViewModel = {
   state: CreateBranchViewModelState

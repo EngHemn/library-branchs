@@ -5,20 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 import type { Author } from "@/domain/entities/author/Author"
 import type { GetAuthorsUseCase } from "@/domain/usecases/authors/GetAuthorsUseCase"
-
-type AuthorsStatus = "idle" | "loading" | "ready" | "error"
-
-type AuthorsViewModelState = {
-  status: AuthorsStatus
-  authors: Author[]
-  filteredAuthors: Author[]
-  searchQuery: string
-  statusFilter: "all" | "active" | "inactive"
-  error: string | null
-  isLoading: boolean
-  isReady: boolean
-  isDeleting: boolean
-}
+import type { AuthorsStatus, AuthorsViewModelState } from "./AuthorsViewModelState"
 
 type AuthorsViewModel = {
   state: AuthorsViewModelState

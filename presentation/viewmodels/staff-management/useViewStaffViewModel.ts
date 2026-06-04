@@ -9,27 +9,7 @@ import type { StaffMember } from "@/domain/entities/staff/StaffMember"
 import type { Translator } from "@/domain/entities/translator/Translator"
 import type { BranchDetailUseCase } from "@/domain/usecases/branch/BranchDetailUseCase"
 import type { StaffManagementUseCase } from "@/domain/usecases/staff/StaffManagementUseCase"
-
-type ViewStaffStatus = "idle" | "loading" | "loaded" | "not-found" | "error"
-
-type ViewStaffTabKey = "details" | "books" | "authors" | "translators"
-
-type ViewStaffViewModelState = {
-  status: ViewStaffStatus
-  staffMember: StaffMember | null
-  books: Book[]
-  authors: Author[]
-  translators: Translator[]
-  branchAuthors: Author[]
-  branchTranslators: Translator[]
-  activeTab: ViewStaffTabKey
-  searchQuery: string
-  error: string | null
-  isLoading: boolean
-  isLoaded: boolean
-  isNotFound: boolean
-  isError: boolean
-}
+import type { ViewStaffStatus, ViewStaffTabKey, ViewStaffViewModelState } from "./ViewStaffViewModelState"
 
 type ViewStaffViewModel = {
   state: ViewStaffViewModelState

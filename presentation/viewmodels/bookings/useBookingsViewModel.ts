@@ -10,32 +10,11 @@ import type {
   BookingType,
 } from "@/domain/entities/booking/Booking"
 import type { BookingManagementUseCase } from "@/domain/usecases/bookings/BookingManagementUseCase"
-
-export type BookingStatusFilter = "all" | BookingStatus
-export type BookingTypeFilter = "all" | BookingType
-export type BookingBranchFilter = "all" | string
-
-export type BookingFilterState = {
-  searchQuery: string
-  statusFilter: BookingStatusFilter
-  typeFilter: BookingTypeFilter
-  branchFilter: BookingBranchFilter
-}
-
-type BookingsPageStatus = "idle" | "loading" | "ready" | "error"
-
-type BookingsViewModelState = {
-  status: BookingsPageStatus
-  bookings: Booking[]
-  filteredBookings: Booking[]
-  stats: BookingStats
-  branches: string[]
-  filters: BookingFilterState
-  error: string | null
-  isLoading: boolean
-  isReady: boolean
-  isActionPending: boolean
-}
+import type { BookingBranchFilter, BookingFilterState, BookingStatusFilter, BookingTypeFilter, BookingsPageStatus, BookingsViewModelState } from "./BookingsViewModelState"
+export type { BookingStatusFilter } from "./BookingsViewModelState"
+export type { BookingTypeFilter } from "./BookingsViewModelState"
+export type { BookingBranchFilter } from "./BookingsViewModelState"
+export type { BookingFilterState } from "./BookingsViewModelState"
 
 type BookingsViewModel = {
   state: BookingsViewModelState

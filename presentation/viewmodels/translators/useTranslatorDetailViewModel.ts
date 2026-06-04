@@ -4,23 +4,7 @@ import { useQuery } from "@tanstack/react-query"
 
 import type { TranslatorDetail } from "@/domain/entities/translator/TranslatorDetail"
 import type { GetTranslatorsUseCase } from "@/domain/usecases/translators/GetTranslatorsUseCase"
-
-type TranslatorDetailStatus =
-  | "idle"
-  | "loading"
-  | "loaded"
-  | "not-found"
-  | "error"
-
-type TranslatorDetailViewModelState = {
-  status: TranslatorDetailStatus
-  translator: TranslatorDetail | null
-  error: string | null
-  isLoading: boolean
-  isLoaded: boolean
-  isNotFound: boolean
-  isError: boolean
-}
+import type { TranslatorDetailStatus, TranslatorDetailViewModelState } from "./TranslatorDetailViewModelState"
 
 type TranslatorDetailViewModel = {
   state: TranslatorDetailViewModelState

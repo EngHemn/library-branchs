@@ -4,17 +4,10 @@ import { useQuery } from "@tanstack/react-query"
 
 import type { Sale } from "@/domain/entities/sales/Sale"
 import type { SalesUseCase } from "@/domain/usecases/sales/SalesUseCase"
-
-type SalesHistoryStatus = "idle" | "loading" | "success" | "error"
-
-type SalesHistoryState = {
-  status: SalesHistoryStatus
-  sales: Sale[]
-  error: string | null
-}
+import type { SalesHistoryStatus, SalesHistoryViewModelState } from "./SalesHistoryViewModelState"
 
 export type SalesHistoryViewModel = {
-  state: SalesHistoryState
+  state: SalesHistoryViewModelState
   reload: () => Promise<void>
 }
 
@@ -42,7 +35,7 @@ export function useSalesHistoryViewModel(
         ? "success"
         : "idle"
 
-  const state: SalesHistoryState = {
+  const state: SalesHistoryViewModelState = {
     status,
     sales: salesHistoryQuery.data ?? [],
     error: salesHistoryQuery.error?.message ?? null,

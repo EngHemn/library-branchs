@@ -11,23 +11,10 @@ import {
 } from "@/domain/schemas/stockFormSchema"
 import type { StockRow } from "@/domain/entities/stock/Stock"
 import type { StockUseCase } from "@/domain/usecases/stock/StockUseCase"
-
-type CreateStockStatus = "idle" | "loading" | "ready" | "saving" | "saved" | "error"
-
-type CreateStockState = {
-  status: CreateStockStatus
-  error: string | null
-  books: { id: string; name: string }[]
-  branches: { id: string; name: string }[]
-  subBranches: { id: string; name: string }[]
-  isLoading: boolean
-  isReady: boolean
-  isSaving: boolean
-  isSaved: boolean
-}
+import type { CreateStockStatus, CreateStockViewModelState } from "./CreateStockViewModelState"
 
 type CreateStockViewModel = {
-  state: CreateStockState
+  state: CreateStockViewModelState
   form: ReturnType<typeof useForm<CreateStockFormValues>>
   save: (values: CreateStockFormValues) => Promise<void>
 }
@@ -126,7 +113,7 @@ export function useCreateStockViewModel(
         ? "loading"
         : "ready"
 
-  const state: CreateStockState = {
+  const state: CreateStockViewModelState = {
     status,
     error,
     books: toUniqueBooks(rows),
