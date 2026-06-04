@@ -3,18 +3,16 @@
 import { useEffect, useState } from "react"
 import { useMutation, useQuery } from "@tanstack/react-query"
 
-import type {
-  Branch,
-  BranchType,
-  MainBranchRequest,
-} from "@/domain/entities/branch/Branch"
 import type { CreateBranchInput } from "@/domain/repositories/BranchManagementRepository"
+import { buildSubBranchCreateInput } from "@/domain/services/buildSubBranchCreateInput"
+import { resolveCreateBranchParentBranchName } from "@/domain/services/resolveCreateBranchParent"
 import type { BranchManagementUseCase } from "@/domain/usecases/branch/BranchManagementUseCase"
 import {
   type CreateBranchFormErrors,
   getCreateBranchFieldErrors,
   validateCreateBranchForm,
 } from "@/domain/validators/branch/validateCreateBranchForm"
+import { readStoredSessionUser } from "@/lib/authSession"
 import { generatePassword } from "@/lib/generatePassword"
 import type { CreateBranchFormState, CreateBranchStatus, CreateBranchViewModelState } from "./CreateBranchViewModelState"
 
@@ -28,10 +26,8 @@ type CreateBranchViewModel = {
 
 const emptyForm: CreateBranchFormState = {
   branchName: "",
-  type: "",
   email: "",
   adminName: "",
-  parentBranch: null,
   address: "",
   phone: "",
   latitude: null,
@@ -42,7 +38,6 @@ const emptyForm: CreateBranchFormState = {
 
 const emptyFieldErrors: CreateBranchFormErrors = {
   branchName: null,
-  type: null,
   email: null,
   adminName: null,
   address: null,
@@ -52,90 +47,60 @@ const emptyFieldErrors: CreateBranchFormErrors = {
   password: null,
 }
 
-function isValidBranchType(value: string): value is BranchType {
-  return value === "main" || value === "sub"
-}
-
-function formToCreateInput(form: CreateBranchFormState): CreateBranchInput {
-  return {
-    branchName: form.branchName,
-    type: isValidBranchType(form.type) ? form.type : "main",
-    email: form.email,
-    adminName: form.adminName,
-    parentBranch: form.type === "sub" ? form.parentBranch : null,
-    address: form.address,
-    phone: form.phone,
-    latitude: form.latitude,
-    longitude: form.longitude,
-    password: form.password,
-    imageUrl: form.imageUrl,
-  }
-}
-
-function requestToFormState(
-  request: MainBranchRequest,
-  currentForm: CreateBranchFormState
-): CreateBranchFormState {
-  return {
-    ...currentForm,
-    type: "main",
-    branchName: request.branchName,
-    email: request.email,
-    adminName: request.adminName,
-    phone: request.phone,
-    parentBranch: null,
-    password: currentForm.password || generatePassword(),
-  }
+function formToCreateInput(
+  form: CreateBranchFormState,
+  parentBranchName: string
+): CreateBranchInput {
+  return buildSubBranchCreateInput(
+    {
+      branchName: form.branchName,
+      email: form.email,
+      adminName: form.adminName,
+      address: form.address,
+      phone: form.phone,
+      latitude: form.latitude,
+      longitude: form.longitude,
+      password: form.password,
+      imageUrl: form.imageUrl,
+    },
+    parentBranchName
+  )
 }
 
 export function useCreateBranchViewModel(
-  branchManagementUseCase: BranchManagementUseCase,
-  initialRequestId?: string | null
+  branchManagementUseCase: BranchManagementUseCase
 ): CreateBranchViewModel {
   const [form, setForm] = useState<CreateBranchFormState>(emptyForm)
-  const [appliedRequestId, setAppliedRequestId] = useState<string | null>(null)
   const [savedBranchId, setSavedBranchId] = useState<string | null>(null)
   const [showFieldErrors, setShowFieldErrors] = useState(false)
-  const [hasAppliedInitialRequest, setHasAppliedInitialRequest] = useState(false)
-
-  const { data: prereqs, isPending: isLoadingPrereqs } = useQuery({
-    queryKey: ["createBranchPrerequisites", initialRequestId ?? ""],
-    queryFn: async () => {
-      const branchesResult = await branchManagementUseCase.getBranches()
-
-      const mainBranches = branchesResult.success
-        ? branchesResult.data.filter((b) => b.type === "main")
-        : []
-
-      let initialRequest: MainBranchRequest | null = null
-      if (initialRequestId) {
-        const requestResult = await branchManagementUseCase.getMainBranchRequestById(initialRequestId)
-        if (requestResult.success && requestResult.data) {
-          initialRequest = requestResult.data
-        }
-      }
-
-      return { mainBranches, initialRequest }
-    },
-  })
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    if (prereqs?.initialRequest && !hasAppliedInitialRequest) {
-      setForm((currentForm) => requestToFormState(prereqs.initialRequest!, currentForm))
-      setAppliedRequestId(prereqs.initialRequest.id)
-      setHasAppliedInitialRequest(true)
-    }
-  }, [prereqs?.initialRequest, hasAppliedInitialRequest])
+    setMounted(true)
+  }, [])
+
+  const { data: prereqs, isPending: isLoadingPrereqs, isError: isPrereqsError, error: prereqsError } = useQuery({
+    queryKey: ["createBranchPrerequisites"],
+    enabled: mounted,
+    queryFn: async () => {
+      const user = readStoredSessionUser()
+      const branchesResult = await branchManagementUseCase.getBranches()
+
+      if (!branchesResult.success) throw new Error(branchesResult.error)
+
+      const parentBranchName = resolveCreateBranchParentBranchName(
+        user,
+        branchesResult.data
+      )
+
+      return { parentBranchName }
+    },
+  })
 
   const saveMutation = useMutation({
     mutationFn: async (input: CreateBranchInput) => {
       const result = await branchManagementUseCase.createBranch(input)
       if (!result.success) throw new Error(result.error)
-
-      if (appliedRequestId) {
-        await branchManagementUseCase.dismissMainBranchRequest(appliedRequestId)
-      }
-
       return result.data
     },
     onSuccess: (branch) => {
@@ -144,17 +109,7 @@ export function useCreateBranchViewModel(
   })
 
   function setField(field: keyof CreateBranchFormState, value: string | null): void {
-    if (field === "type" && value !== "main") {
-      setAppliedRequestId(null)
-    }
-
-    setForm((currentForm) => {
-      const updated = { ...currentForm, [field]: value }
-      if (field === "type" && value !== "sub") {
-        updated.parentBranch = null
-      }
-      return updated
-    })
+    setForm((currentForm) => ({ ...currentForm, [field]: value }))
   }
 
   function setLocation(latitude: number | null, longitude: number | null): void {
@@ -166,26 +121,25 @@ export function useCreateBranchViewModel(
   }
 
   async function save(): Promise<void> {
+    if (!prereqs?.parentBranchName) return
+
     setShowFieldErrors(true)
 
-    if (!isValidBranchType(form.type)) return
-
-    const input = formToCreateInput(form)
+    const input = formToCreateInput(form, prereqs.parentBranchName)
     const validationResult = validateCreateBranchForm(input)
     if (!validationResult.success) return
 
     saveMutation.mutate(validationResult.data)
   }
 
-  const fieldErrors: CreateBranchFormErrors = (() => {
-    if (!isValidBranchType(form.type)) {
-      return { ...emptyFieldErrors, type: showFieldErrors ? "Branch type is required" : null }
-    }
-    return getCreateBranchFieldErrors(formToCreateInput(form))
-  })()
+  const fieldErrors: CreateBranchFormErrors = prereqs?.parentBranchName
+    ? getCreateBranchFieldErrors(formToCreateInput(form, prereqs.parentBranchName))
+    : emptyFieldErrors
 
-  const status: CreateBranchStatus = isLoadingPrereqs
+  const status: CreateBranchStatus = !mounted || isLoadingPrereqs
     ? "loading"
+    : isPrereqsError
+    ? "error"
     : saveMutation.isPending
     ? "saving"
     : savedBranchId !== null
@@ -196,17 +150,17 @@ export function useCreateBranchViewModel(
     status,
     form,
     fieldErrors: showFieldErrors ? fieldErrors : emptyFieldErrors,
-    mainBranches: prereqs?.mainBranches ?? [],
-    appliedRequestId,
     savedBranchId,
-    error: saveMutation.isError
+    error: isPrereqsError
+      ? (prereqsError instanceof Error ? prereqsError.message : "Unknown error")
+      : saveMutation.isError
       ? (saveMutation.error instanceof Error ? saveMutation.error.message : null)
       : null,
     isLoading: status === "loading",
     isReady: status === "ready",
     isSaving: status === "saving",
     isSaved: status === "saved",
-    isError: false,
+    isError: status === "error",
   }
 
   return {

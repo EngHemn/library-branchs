@@ -87,20 +87,12 @@ export function useEditBranchViewModel(
   const { data, isPending, isError, error } = useQuery({
     queryKey: ["editBranchData", branchId],
     queryFn: async () => {
-      const [branchResult, branchesResult] = await Promise.all([
-        branchManagementUseCase.getBranchById(branchId),
-        branchManagementUseCase.getBranches(),
-      ])
+      const branchResult = await branchManagementUseCase.getBranchById(branchId)
 
       if (!branchResult.success) throw new Error(branchResult.error)
       if (!branchResult.data) return null
 
-      const branch = branchResult.data
-      const mainBranches = branchesResult.success
-        ? branchesResult.data.filter((b) => b.type === "main" && b.id !== branchId)
-        : []
-
-      return { branch, mainBranches }
+      return { branch: branchResult.data }
     },
   })
 
@@ -167,7 +159,6 @@ export function useEditBranchViewModel(
     branch: data?.branch ?? null,
     form,
     fieldErrors: showFieldErrors ? fieldErrors : emptyFieldErrors,
-    mainBranches: data?.mainBranches ?? [],
     error: isError
       ? (error instanceof Error ? error.message : "Unknown error")
       : saveMutation.isError
