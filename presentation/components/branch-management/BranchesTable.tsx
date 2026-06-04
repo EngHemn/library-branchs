@@ -28,6 +28,7 @@ import { BranchAdminLink } from "@/presentation/components/branch-management/Bra
 
 type BranchesTableProps = {
   branches: Branch[]
+  hideTypeColumn?: boolean
   onView: (branch: Branch) => void
   onEdit: (branch: Branch) => void
   onDelete: (branch: Branch) => void
@@ -40,7 +41,6 @@ type BranchColumnKey =
   | "branchName"
   | "type"
   | "adminName"
-  | "parentBranch"
   | "bookCount"
   | "status"
   | "actions"
@@ -73,6 +73,7 @@ function BranchStatusBadge({ branch }: { branch: Branch }) {
 
 export function BranchesTable({
   branches,
+  hideTypeColumn = false,
   onView,
   onEdit,
   onDelete,
@@ -110,13 +111,17 @@ export function BranchesTable({
         <span className="font-medium">{branch.branchName}</span>
       ),
     },
-    {
-      key: "type",
-      header: "Type",
-      sortable: true,
-      sortValue: (branch) => branchTypeLabels[branch.type],
-      cell: (branch) => <BranchTypeBadge branch={branch} />,
-    },
+    ...(!hideTypeColumn
+      ? [
+          {
+            key: "type" as const,
+            header: "Type",
+            sortable: true,
+            sortValue: (branch: Branch) => branchTypeLabels[branch.type],
+            cell: (branch: Branch) => <BranchTypeBadge branch={branch} />,
+          },
+        ]
+      : []),
     {
       key: "adminName",
       header: "Admin Name",
@@ -125,14 +130,6 @@ export function BranchesTable({
       cell: (branch) => (
         <BranchAdminLink branchId={branch.id} adminName={branch.adminName} />
       ),
-    },
-    {
-      key: "parentBranch",
-      header: "Parent Branch",
-      sortable: true,
-      sortValue: (branch) => branch.parentBranch ?? "",
-      cell: (branch) =>
-        branch.type === "main" ? "-" : branch.parentBranch ?? "-",
     },
     {
       key: "bookCount",

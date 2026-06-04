@@ -23,11 +23,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { TooltipProvider } from "@/components/ui/tooltip"
-import type {
-  Branch,
-  MainBranchRequest,
-  SubBranchRequest,
-} from "@/domain/entities/branch/Branch"
+import type { Branch, SubBranchRequest } from "@/domain/entities/branch/Branch"
 import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { BranchManagementUseCase } from "@/domain/usecases/branch/BranchManagementUseCase"
 import { ActiveFilters } from "@/presentation/components/branch-management/ActiveFilters"
@@ -50,7 +46,6 @@ import {
 } from "@/presentation/components/branch-management/BranchRequestReplyDialog"
 import { BranchStatsCards } from "@/presentation/components/branch-management/BranchStatsCards"
 import { BranchesTable } from "@/presentation/components/branch-management/BranchesTable"
-import { MainBranchRequestsTable } from "@/presentation/components/branch-management/MainBranchRequestsTable"
 import { SubBranchRequestsTable } from "@/presentation/components/branch-management/SubBranchRequestsTable"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
 import { useBranchManagementViewModel } from "@/presentation/viewmodels/branch-management/useBranchManagementViewModel"
@@ -67,8 +62,8 @@ function LoadingBranchManagementPage() {
         <Skeleton className="h-8 w-64" />
         <Skeleton className="h-4 w-96 max-w-full" />
       </div>
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
-        {Array.from({ length: 5 }).map((_, index) => (
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        {Array.from({ length: 4 }).map((_, index) => (
           <Card key={index} className="rounded-lg">
             <CardHeader>
               <Skeleton className="h-4 w-28" />
@@ -102,6 +97,7 @@ export function BranchManagementPage({
     useState<BranchRequestReplyAction | null>(null)
   const [isSendingReply, setIsSendingReply] = useState(false)
   const [isApprovingRequest, setIsApprovingRequest] = useState(false)
+  const [pendingDeleteBranch, setPendingDeleteBranch] = useState<Branch | null>(null)
 
   useEffect(() => {
     if (state.isUnauthenticated) {
@@ -116,13 +112,13 @@ export function BranchManagementPage({
 
   const user = state.user
 
-  const handleDeleteBranch = (branch: Branch): void => {
-    const confirmed = window.confirm(
-      `Delete ${branch.branchName}? This removes the branch from the mock workspace state.`
-    )
-    if (confirmed) {
-      void viewModel.deleteBranch(branch.id)
+  const handleConfirmDeleteBranch = (): void => {
+    if (!pendingDeleteBranch) {
+      return
     }
+
+    void viewModel.deleteBranch(pendingDeleteBranch.id)
+    setPendingDeleteBranch(null)
   }
 
   const handleConfirmRequestAction = (message?: string): void => {
@@ -131,12 +127,6 @@ export function BranchManagementPage({
     }
 
     switch (pendingRequestAction.kind) {
-      case "reject-main":
-        void viewModel.rejectMainBranchRequest(
-          pendingRequestAction.request.id,
-          message
-        )
-        break
       case "reject-sub":
         void viewModel.rejectSubBranchRequest(
           pendingRequestAction.request.id,
@@ -155,17 +145,10 @@ export function BranchManagementPage({
 
     setIsApprovingRequest(true)
 
-    if (pendingApproveAction.kind === "main") {
-      await viewModel.approveMainBranchRequest(
-        pendingApproveAction.request.id,
-        password
-      )
-    } else {
-      await viewModel.approveSubBranchRequest(
-        pendingApproveAction.request.id,
-        password
-      )
-    }
+    await viewModel.approveSubBranchRequest(
+      pendingApproveAction.request.id,
+      password
+    )
 
     setIsApprovingRequest(false)
     setPendingApproveAction(null)
@@ -178,28 +161,13 @@ export function BranchManagementPage({
 
     setIsSendingReply(true)
 
-    if (pendingReplyAction.kind === "main") {
-      await viewModel.replyToMainBranchRequest(
-        pendingReplyAction.request.id,
-        message
-      )
-    } else {
-      await viewModel.replyToSubBranchRequest(
-        pendingReplyAction.request.id,
-        message
-      )
-    }
+    await viewModel.replyToSubBranchRequest(
+      pendingReplyAction.request.id,
+      message
+    )
 
     setIsSendingReply(false)
     setPendingReplyAction(null)
-  }
-
-  const openMainApproveConfirm = (request: MainBranchRequest): void => {
-    setPendingApproveAction({ kind: "main", request })
-  }
-
-  const openMainRejectConfirm = (request: MainBranchRequest): void => {
-    setPendingRequestAction({ kind: "reject-main", request })
   }
 
   const openSubApproveConfirm = (request: SubBranchRequest): void => {
@@ -208,10 +176,6 @@ export function BranchManagementPage({
 
   const openSubRejectConfirm = (request: SubBranchRequest): void => {
     setPendingRequestAction({ kind: "reject-sub", request })
-  }
-
-  const openMainReply = (request: MainBranchRequest): void => {
-    setPendingReplyAction({ kind: "main", request })
   }
 
   const openSubReply = (request: SubBranchRequest): void => {
@@ -257,7 +221,7 @@ export function BranchManagementPage({
                   Branch Management
                 </h1>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Manage branches, main branch requests, and sub-branch requests.
+                  Manage branches and sub-branch requests.
                 </p>
               </div>
               <Button onClick={() => router.push("/dashboard/branches/create")}>
@@ -267,21 +231,18 @@ export function BranchManagementPage({
             </section>
 
             <Tabs defaultValue="branches" className="gap-4">
-              <TabsList className="grid w-full grid-cols-3 sm:w-fit">
+              <TabsList className="grid w-full grid-cols-2 sm:w-fit">
                 <TabsTrigger value="branches">Branches</TabsTrigger>
-                <TabsTrigger value="main-requests">Main Branch Requests</TabsTrigger>
                 <TabsTrigger value="sub-requests">Sub Branch Requests</TabsTrigger>
               </TabsList>
 
               <TabsContent value="branches" className="space-y-4">
-                <BranchStatsCards stats={state.stats} />
+                <BranchStatsCards stats={state.stats} hideMainBranchCard />
                 <BranchFilters
                   searchQuery={state.filters.searchQuery}
-                  typeFilter={state.filters.typeFilter}
                   statusFilter={state.filters.statusFilter}
                   canResetFilters={state.canResetFilters}
                   onSearchQueryChange={viewModel.setSearchQuery}
-                  onTypeFilterChange={viewModel.setTypeFilter}
                   onStatusFilterChange={viewModel.setStatusFilter}
                   onResetFilters={viewModel.resetFilters}
                 />
@@ -291,29 +252,11 @@ export function BranchManagementPage({
                 />
                 <BranchesTable
                   branches={state.filteredBranches}
+                  hideTypeColumn
                   onView={(branch) => router.push(`/dashboard/branches/${branch.id}`)}
                   onEdit={(branch) => router.push(`/dashboard/branches/${branch.id}/edit`)}
-                  onDelete={handleDeleteBranch}
+                  onDelete={setPendingDeleteBranch}
                   onToggleStatus={(branch) => void viewModel.toggleBranchStatus(branch.id)}
-                />
-              </TabsContent>
-
-              <TabsContent value="main-requests" className="space-y-4">
-                <MainBranchRequestsTable
-                  requests={state.mainBranchRequests}
-                  expandedRequestIds={state.expandedMainRequestIds}
-                  onApprove={openMainApproveConfirm}
-                  onReject={openMainRejectConfirm}
-                  onReply={openMainReply}
-                  onViewLocation={(request) =>
-                    openRequestLocation({
-                      branchName: request.branchName,
-                      address: request.address,
-                      latitude: request.latitude,
-                      longitude: request.longitude,
-                    })
-                  }
-                  onToggleNote={(request) => viewModel.toggleMainRequestNote(request.id)}
                 />
               </TabsContent>
 
@@ -373,6 +316,31 @@ export function BranchManagementPage({
           }
         }}
       />
+
+      <Dialog
+        open={pendingDeleteBranch !== null}
+        onOpenChange={(isOpen) => {
+          if (!isOpen) setPendingDeleteBranch(null)
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Branch</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete &ldquo;{pendingDeleteBranch?.branchName}
+              &rdquo;? This removes the branch from the workspace and cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setPendingDeleteBranch(null)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={handleConfirmDeleteBranch}>
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <Dialog
         open={Boolean(state.dialog)}

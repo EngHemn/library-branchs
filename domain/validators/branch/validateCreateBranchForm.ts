@@ -3,7 +3,6 @@ import type { Result } from "@/domain/result/Result"
 
 export type CreateBranchFormErrors = {
   branchName: string | null
-  type: string | null
   email: string | null
   adminName: string | null
   address: string | null
@@ -77,7 +76,6 @@ export function getCreateBranchFieldErrors(
 ): CreateBranchFormErrors {
   return {
     branchName: input.branchName.trim() ? null : "Branch name is required",
-    type: input.type ? null : "Branch type is required",
     email: validateEmail(input.email),
     adminName: input.adminName.trim() ? null : "Admin name is required",
     address: input.address.trim() ? null : "Address is required",

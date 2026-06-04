@@ -30,7 +30,6 @@ export type EditBranchViewModelState = {
   branch: Branch | null
   form: EditBranchFormState
   fieldErrors: BranchFormErrors
-  mainBranches: Branch[]
   error: string | null
   showFieldErrors: boolean
   isLoading: boolean

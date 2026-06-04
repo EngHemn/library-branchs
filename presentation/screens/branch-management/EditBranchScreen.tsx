@@ -14,13 +14,6 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import { ImageUpload } from "@/components/ui/image-upload"
 import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -143,9 +136,7 @@ export function EditBranchScreen({ branchId, branchManagementUseCase }: EditBran
           <Card className="rounded-lg">
             <CardHeader>
               <CardTitle>Branch Details</CardTitle>
-              <CardDescription>
-                {state.branch.type === "main" ? "Main branch information" : "Sub branch information"}
-              </CardDescription>
+              <CardDescription>Update sub branch information.</CardDescription>
             </CardHeader>
             <CardContent>
               <form
@@ -262,31 +253,6 @@ export function EditBranchScreen({ branchId, branchManagementUseCase }: EditBran
                       <p className="text-sm text-destructive">{state.fieldErrors.address}</p>
                     ) : null}
                   </div>
-
-                  {state.branch.type === "sub" ? (
-                    <div className="space-y-2 sm:col-span-2">
-                      <Label htmlFor="parentBranch">Parent Branch</Label>
-                      <Select
-                        value={state.form.parentBranch ?? ""}
-                        onValueChange={(value) => viewModel.setField("parentBranch", value || null)}
-                        disabled={state.isSaving}
-                      >
-                        <SelectTrigger id="parentBranch">
-                          <SelectValue placeholder="Select a parent branch" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {state.mainBranches.map((branch) => (
-                            <SelectItem key={branch.id} value={branch.id}>
-                              {branch.branchName}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      {state.fieldErrors.parentBranch ? (
-                        <p className="text-sm text-destructive">{state.fieldErrors.parentBranch}</p>
-                      ) : null}
-                    </div>
-                  ) : null}
 
                   <div className="sm:col-span-2">
                     <LocationPicker
