@@ -1,12 +1,19 @@
 "use client"
 
+import { AuthFakeDataSource } from "@/data/datasources/AuthFakeDataSource"
 import { BranchManagementFakeDataSource } from "@/data/datasources/BranchManagementFakeDataSource"
 import { StaffManagementFakeDataSource } from "@/data/datasources/StaffManagementFakeDataSource"
+import { AuthRepositoryImpl } from "@/data/repositories/AuthRepositoryImpl"
 import { BranchManagementRepositoryImpl } from "@/data/repositories/BranchManagementRepositoryImpl"
 import { StaffManagementRepositoryImpl } from "@/data/repositories/StaffManagementRepositoryImpl"
+import { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import { BranchManagementUseCase } from "@/domain/usecases/branch/BranchManagementUseCase"
 import { StaffManagementUseCase } from "@/domain/usecases/staff/StaffManagementUseCase"
 import { CreateStaffScreen } from "@/presentation/screens/staff-management/CreateStaffScreen"
+
+const authFakeDataSource = new AuthFakeDataSource()
+const authRepository = new AuthRepositoryImpl(authFakeDataSource)
+const authUseCase = new AuthUseCase(authRepository)
 
 const staffManagementFakeDataSource = new StaffManagementFakeDataSource()
 const staffManagementRepository = new StaffManagementRepositoryImpl(
@@ -27,6 +34,7 @@ const branchManagementUseCase = new BranchManagementUseCase(
 export default function Page() {
   return (
     <CreateStaffScreen
+      authUseCase={authUseCase}
       staffManagementUseCase={staffManagementUseCase}
       branchManagementUseCase={branchManagementUseCase}
     />
