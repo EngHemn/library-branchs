@@ -2,21 +2,14 @@ import type { LoginCredentials } from "@/domain/entities/LoginCredentials"
 import type { User } from "@/domain/entities/User"
 import type { Result } from "@/domain/result/Result"
 import { fakeUsers } from "@/data/fake/fakeUsers"
-
-const AUTH_SESSION_STORAGE_KEY = "liba.auth.current-user"
-
-type UserShape = { id: string; username: string; fullName: string; role: string }
-
-function isUserShape(value: unknown): value is UserShape {
-  return (
-    typeof value === "object" &&
-    value !== null &&
-    typeof (value as Record<string, unknown>).id === "string" &&
-    typeof (value as Record<string, unknown>).username === "string" &&
-    typeof (value as Record<string, unknown>).fullName === "string" &&
-    typeof (value as Record<string, unknown>).role === "string"
-  )
-}
+import {
+  clearAuthBranchTypeCookie,
+  setAuthBranchTypeCookie,
+} from "@/lib/authSessionCookie"
+import {
+  AUTH_SESSION_STORAGE_KEY,
+  readStoredSessionUser,
+} from "@/lib/authSession"
 
 function delay(ms: number): Promise<void> {
   return new Promise((resolve) => {
@@ -32,28 +25,7 @@ export class AuthFakeDataSource {
       return this.currentUser
     }
 
-    const storedUser = window.localStorage.getItem(AUTH_SESSION_STORAGE_KEY)
-
-    if (!storedUser) {
-      return null
-    }
-
-    try {
-      const parsedUser: unknown = JSON.parse(storedUser)
-
-      if (!isUserShape(parsedUser)) {
-        return null
-      }
-
-      return {
-        id: parsedUser.id,
-        username: parsedUser.username,
-        fullName: parsedUser.fullName,
-        role: parsedUser.role,
-      }
-    } catch {
-      return null
-    }
+    return readStoredSessionUser()
   }
 
   private persistUser(user: User | null): void {
@@ -65,25 +37,40 @@ export class AuthFakeDataSource {
 
     if (user) {
       window.localStorage.setItem(AUTH_SESSION_STORAGE_KEY, JSON.stringify(user))
+      setAuthBranchTypeCookie(user.branchType)
       return
     }
 
     window.localStorage.removeItem(AUTH_SESSION_STORAGE_KEY)
+    clearAuthBranchTypeCookie()
   }
 
   async login(credentials: LoginCredentials): Promise<Result<User>> {
     await delay(700)
 
+    const username = credentials.username.trim().toLowerCase()
+    const password = credentials.password.trim()
+    const branchType = credentials.branchType === "sub" ? "sub" : "main"
+
     const user = fakeUsers.find(
       (fakeUser) =>
-        fakeUser.username === credentials.username &&
-        fakeUser.password === credentials.password
+        fakeUser.username.toLowerCase() === username &&
+        fakeUser.password === password &&
+        fakeUser.branchType === branchType
     )
 
     if (!user) {
+      const accountExists = fakeUsers.some(
+        (fakeUser) =>
+          fakeUser.username.toLowerCase() === username &&
+          fakeUser.password === password
+      )
+
       return {
         success: false,
-        error: "Invalid username or password",
+        error: accountExists
+          ? "Invalid credentials for the selected branch type"
+          : "Invalid username or password",
       }
     }
 
@@ -92,6 +79,8 @@ export class AuthFakeDataSource {
       username: user.username,
       fullName: user.fullName,
       role: user.role,
+      branchType: user.branchType,
+      branchId: user.branchId,
     }
 
     this.persistUser(currentUser)

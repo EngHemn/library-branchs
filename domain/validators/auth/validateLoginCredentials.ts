@@ -11,8 +11,22 @@ export function validateLoginCredentials(
     }
   }
 
+  const branchType =
+    credentials.branchType === "sub" ? "sub" : credentials.branchType === "main" ? "main" : null
+
+  if (!branchType) {
+    return {
+      success: false,
+      error: "Branch type is required",
+    }
+  }
+
   return {
     success: true,
-    data: credentials,
+    data: {
+      username: credentials.username.trim(),
+      password: credentials.password.trim(),
+      branchType,
+    },
   }
 }
