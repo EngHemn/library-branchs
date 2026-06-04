@@ -29,7 +29,9 @@ export function TeamSwitcher({
   }[]
 }) {
   const { isMobile } = useSidebar()
-  const [activeTeam, setActiveTeam] = React.useState(teams[0])
+  const [selectedTeamName, setSelectedTeamName] = React.useState(teams[0]?.name)
+  const activeTeam =
+    teams.find((team) => team.name === selectedTeamName) ?? teams[0]
 
   if (!activeTeam) {
     return null
@@ -49,7 +51,11 @@ export function TeamSwitcher({
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{activeTeam.name}</span>
-                <span className="truncate text-xs">{activeTeam.plan}</span>
+                {activeTeam.plan ? (
+                  <span className="truncate text-xs text-muted-foreground">
+                    {activeTeam.plan}
+                  </span>
+                ) : null}
               </div>
               <ChevronsUpDownIcon className="ml-auto" />
             </SidebarMenuButton>
@@ -66,7 +72,7 @@ export function TeamSwitcher({
             {teams.map((team, index) => (
               <DropdownMenuItem
                 key={team.name}
-                onClick={() => setActiveTeam(team)}
+                onClick={() => setSelectedTeamName(team.name)}
                 className="gap-2 p-2"
               >
                 <div className="flex size-6 items-center justify-center rounded-md border">

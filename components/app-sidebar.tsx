@@ -23,6 +23,8 @@ import {
   UsersRoundIcon,
 } from "lucide-react"
 
+import type { BranchType } from "@/domain/entities/branch/Branch"
+import { getBranchTypeLabel } from "@/lib/branchTypeLabel"
 import { NavMain, type SidebarGroup } from "@/components/nav-main"
 import { NavUser } from "@/components/nav-user"
 import { TeamSwitcher } from "@/components/team-switcher"
@@ -35,6 +37,7 @@ import {
 } from "@/components/ui/sidebar"
 
 type AppSidebarProps = React.ComponentProps<typeof Sidebar> & {
+  branchType?: BranchType
   user?: {
     name: string
     email: string
@@ -49,13 +52,15 @@ const userFallback = {
   avatar: "",
 }
 
-const teams = [
-  {
-    name: "Liba",
-    logo: <GalleryVerticalEndIcon />,
-    plan: "Workspace",
-  },
-]
+function buildTeams(branchType: BranchType | undefined) {
+  return [
+    {
+      name: "Liba",
+      logo: <GalleryVerticalEndIcon />,
+      plan: getBranchTypeLabel(branchType),
+    },
+  ]
+}
 
 const sidebarGroups: SidebarGroup[] = [
   {
@@ -175,14 +180,36 @@ const sidebarGroups: SidebarGroup[] = [
   },
 ]
 
-export function AppSidebar({ user, onLogout, ...props }: AppSidebarProps) {
+const branchManagementHref = "/dashboard/branches"
+
+function buildSidebarGroups(branchType: BranchType | undefined): SidebarGroup[] {
+  const hideBranchManagement = branchType === "sub"
+
+  return sidebarGroups
+    .map((group) => ({
+      ...group,
+      items: group.items.filter(
+        (item) =>
+          !(hideBranchManagement && item.href === branchManagementHref)
+      ),
+    }))
+    .filter((group) => group.items.length > 0)
+}
+
+export function AppSidebar({ branchType, user, onLogout, ...props }: AppSidebarProps) {
+  const teams = React.useMemo(() => buildTeams(branchType), [branchType])
+  const groups = React.useMemo(
+    () => buildSidebarGroups(branchType),
+    [branchType]
+  )
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <TeamSwitcher teams={teams} />
       </SidebarHeader>
       <SidebarContent className="py-1">
-        <NavMain groups={sidebarGroups} />
+        <NavMain groups={groups} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={user ?? userFallback} onLogout={onLogout} />
