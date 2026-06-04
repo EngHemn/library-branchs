@@ -24,6 +24,7 @@ import {
 import { ImageUpload } from "@/components/ui/image-upload"
 import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
+import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { BranchManagementUseCase } from "@/domain/usecases/branch/BranchManagementUseCase"
 import type { StaffManagementUseCase } from "@/domain/usecases/staff/StaffManagementUseCase"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
@@ -31,6 +32,7 @@ import { useFormSubmitSuccess } from "@/presentation/hooks/useFormSubmitSuccess"
 import { useCreateStaffViewModel } from "@/presentation/viewmodels/staff-management/useCreateStaffViewModel"
 
 type CreateStaffScreenProps = {
+  authUseCase: AuthUseCase
   staffManagementUseCase: StaffManagementUseCase
   branchManagementUseCase: BranchManagementUseCase
 }
@@ -60,9 +62,17 @@ function LoadingState() {
   )
 }
 
-export function CreateStaffScreen({ staffManagementUseCase, branchManagementUseCase }: CreateStaffScreenProps) {
+export function CreateStaffScreen({
+  authUseCase,
+  staffManagementUseCase,
+  branchManagementUseCase,
+}: CreateStaffScreenProps) {
   const router = useRouter()
-  const viewModel = useCreateStaffViewModel(staffManagementUseCase, branchManagementUseCase)
+  const viewModel = useCreateStaffViewModel(
+    authUseCase,
+    staffManagementUseCase,
+    branchManagementUseCase
+  )
   const { state } = viewModel
   const [showPassword, setShowPassword] = useState(false)
 
@@ -181,28 +191,30 @@ export function CreateStaffScreen({ staffManagementUseCase, branchManagementUseC
                     ) : null}
                   </div>
 
-                  <div className="space-y-2 sm:col-span-2">
-                    <Label htmlFor="branch">Branch</Label>
-                    <Select
-                      value={state.form.branchId}
-                      onValueChange={(value) => viewModel.setField("branchId", value)}
-                      disabled={state.isSaving || state.isSaved}
-                    >
-                      <SelectTrigger id="branch">
-                        <SelectValue placeholder="Select a branch" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {state.branches.map((branch) => (
-                          <SelectItem key={branch.id} value={branch.id}>
-                            {branch.branchName}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    {state.fieldErrors.branch ? (
-                      <p className="text-sm text-destructive">{state.fieldErrors.branch}</p>
-                    ) : null}
-                  </div>
+                  {state.showBranchField ? (
+                    <div className="space-y-2 sm:col-span-2">
+                      <Label htmlFor="branch">Branch</Label>
+                      <Select
+                        value={state.form.branchId}
+                        onValueChange={(value) => viewModel.setField("branchId", value)}
+                        disabled={state.isSaving || state.isSaved}
+                      >
+                        <SelectTrigger id="branch">
+                          <SelectValue placeholder="Select a branch" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {state.branches.map((branch) => (
+                            <SelectItem key={branch.id} value={branch.id}>
+                              {branch.branchName}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {state.fieldErrors.branch ? (
+                        <p className="text-sm text-destructive">{state.fieldErrors.branch}</p>
+                      ) : null}
+                    </div>
+                  ) : null}
 
                   <div className="space-y-2 sm:col-span-2">
                     <ImageUpload

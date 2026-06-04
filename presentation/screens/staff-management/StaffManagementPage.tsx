@@ -22,9 +22,9 @@ import {
 } from "@/components/ui/dialog"
 import { Skeleton } from "@/components/ui/skeleton"
 import { TooltipProvider } from "@/components/ui/tooltip"
-import type { StaffMember } from "@/domain/entities/staff/StaffMember"
 import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { StaffManagementUseCase } from "@/domain/usecases/staff/StaffManagementUseCase"
+import { StaffDeleteDialog } from "@/presentation/components/staff-management/StaffDeleteDialog"
 import { StaffFilters } from "@/presentation/components/staff-management/StaffFilters"
 import { StaffTable } from "@/presentation/components/staff-management/StaffTable"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
@@ -68,15 +68,6 @@ export function StaffManagementPage({
   ])
 
   const user = state.user
-
-  const handleDeleteStaff = (member: StaffMember): void => {
-    const confirmed = window.confirm(
-      `Delete ${member.staffName}? This removes the staff member from the mock workspace state.`
-    )
-    if (confirmed) {
-      void viewModel.deleteStaff(member.id)
-    }
-  }
 
   return (
     <>
@@ -123,6 +114,7 @@ export function StaffManagementPage({
               branchFilter={state.filters.branchFilter}
               statusFilter={state.filters.statusFilter}
               branches={state.branches}
+              showBranchFilter={state.showBranchFilter}
               onSearchQueryChange={viewModel.setSearchQuery}
               onRoleFilterChange={viewModel.setRoleFilter}
               onBranchFilterChange={viewModel.setBranchFilter}
@@ -131,9 +123,12 @@ export function StaffManagementPage({
 
             <StaffTable
               staff={state.filteredStaff}
+              showBranchColumn={state.showBranchFilter}
               onView={(member) => router.push(`/dashboard/staff/${member.id}`)}
               onEdit={(member) => router.push(`/dashboard/staff/${member.id}/edit`)}
-              onDelete={handleDeleteStaff}
+              onDelete={(member) =>
+                viewModel.openDeleteStaffDialog(member.id, member.staffName)
+              }
               onToggleStatus={(member) => void viewModel.toggleStaffStatus(member.id)}
             />
           </div>
@@ -154,6 +149,17 @@ export function StaffManagementPage({
           <DialogFooter showCloseButton />
         </DialogContent>
       </Dialog>
+
+      <StaffDeleteDialog
+        open={state.deleteStaffDialog !== null}
+        staffName={state.deleteStaffDialog?.staffName ?? ""}
+        error={state.deleteStaffError}
+        isDeleting={state.isDeletingStaff}
+        onClose={viewModel.closeDeleteStaffDialog}
+        onConfirm={() => {
+          void viewModel.confirmDeleteStaff()
+        }}
+      />
     </>
   )
 }

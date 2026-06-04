@@ -24,6 +24,7 @@ import {
 import { ImageUpload } from "@/components/ui/image-upload"
 import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
+import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { BranchManagementUseCase } from "@/domain/usecases/branch/BranchManagementUseCase"
 import type { StaffManagementUseCase } from "@/domain/usecases/staff/StaffManagementUseCase"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
@@ -32,6 +33,7 @@ import { useEditStaffViewModel } from "@/presentation/viewmodels/staff-managemen
 
 type EditStaffScreenProps = {
   staffId: string
+  authUseCase: AuthUseCase
   staffManagementUseCase: StaffManagementUseCase
   branchManagementUseCase: BranchManagementUseCase
 }
@@ -61,9 +63,19 @@ function LoadingState() {
   )
 }
 
-export function EditStaffScreen({ staffId, staffManagementUseCase, branchManagementUseCase }: EditStaffScreenProps) {
+export function EditStaffScreen({
+  staffId,
+  authUseCase,
+  staffManagementUseCase,
+  branchManagementUseCase,
+}: EditStaffScreenProps) {
   const router = useRouter()
-  const viewModel = useEditStaffViewModel(staffId, staffManagementUseCase, branchManagementUseCase)
+  const viewModel = useEditStaffViewModel(
+    staffId,
+    authUseCase,
+    staffManagementUseCase,
+    branchManagementUseCase
+  )
   const { state } = viewModel
   const [showPassword, setShowPassword] = useState(false)
 
@@ -216,28 +228,30 @@ export function EditStaffScreen({ staffId, staffManagementUseCase, branchManagem
                     ) : null}
                   </div>
 
-                  <div className="space-y-2 sm:col-span-2">
-                    <Label htmlFor="branch">Branch</Label>
-                    <Select
-                      value={state.form.branchId}
-                      onValueChange={(value) => viewModel.setField("branchId", value)}
-                      disabled={state.isSaving}
-                    >
-                      <SelectTrigger id="branch">
-                        <SelectValue placeholder="Select a branch" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {state.branches.map((branch) => (
-                          <SelectItem key={branch.id} value={branch.id}>
-                            {branch.branchName}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    {state.fieldErrors.branch ? (
-                      <p className="text-sm text-destructive">{state.fieldErrors.branch}</p>
-                    ) : null}
-                  </div>
+                  {state.showBranchField ? (
+                    <div className="space-y-2 sm:col-span-2">
+                      <Label htmlFor="branch">Branch</Label>
+                      <Select
+                        value={state.form.branchId}
+                        onValueChange={(value) => viewModel.setField("branchId", value)}
+                        disabled={state.isSaving}
+                      >
+                        <SelectTrigger id="branch">
+                          <SelectValue placeholder="Select a branch" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {state.branches.map((branch) => (
+                            <SelectItem key={branch.id} value={branch.id}>
+                              {branch.branchName}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {state.fieldErrors.branch ? (
+                        <p className="text-sm text-destructive">{state.fieldErrors.branch}</p>
+                      ) : null}
+                    </div>
+                  ) : null}
 
                   <div className="space-y-2 sm:col-span-2">
                     <ImageUpload
