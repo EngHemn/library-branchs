@@ -15,8 +15,6 @@ const branchManagementUseCase = new BranchManagementUseCase(
 
 export default function CreateBranchPage() {
   return (
-    <CreateBranchScreen
-      branchManagementUseCase={branchManagementUseCase}
-    />
+    <CreateBranchScreen branchManagementUseCase={branchManagementUseCase} />
   )
 }
