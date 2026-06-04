@@ -14,9 +14,11 @@ import type {
   DashboardStaffRole,
   DashboardStaffStatus,
 } from "@/domain/entities/dashboard/DashboardSummary"
+import { BranchDetailLink } from "@/presentation/components/shared/DashboardEntityLink"
 
 type DashboardStaffTableProps = {
   staff: DashboardStaff[]
+  showBranchColumn?: boolean
 }
 
 const roleLabel: Record<DashboardStaffRole, string> = {
@@ -46,7 +48,10 @@ const statusVariant: Record<
   inactive: "outline",
 }
 
-export function DashboardStaffTable({ staff }: DashboardStaffTableProps) {
+export function DashboardStaffTable({
+  staff,
+  showBranchColumn = false,
+}: DashboardStaffTableProps) {
   return (
     <Table>
       <TableHeader>
@@ -54,8 +59,10 @@ export function DashboardStaffTable({ staff }: DashboardStaffTableProps) {
           <TableHead>Name</TableHead>
           <TableHead className="hidden sm:table-cell">Staff ID</TableHead>
           <TableHead>Role</TableHead>
-          <TableHead className="hidden md:table-cell">Branch</TableHead>
-          <TableHead className="hidden lg:table-cell">Email</TableHead>
+          {showBranchColumn ? (
+            <TableHead className="hidden md:table-cell">Branch</TableHead>
+          ) : null}
+          <TableHead className="hidden md:table-cell">Email</TableHead>
           <TableHead>Status</TableHead>
         </TableRow>
       </TableHeader>
@@ -71,10 +78,16 @@ export function DashboardStaffTable({ staff }: DashboardStaffTableProps) {
                 {roleLabel[member.role]}
               </Badge>
             </TableCell>
+            {showBranchColumn ? (
+              <TableCell className="hidden max-w-[160px] truncate md:table-cell">
+                <BranchDetailLink
+                  branchId={member.branchId}
+                  branchName={member.branchName}
+                  className="block truncate text-sm"
+                />
+              </TableCell>
+            ) : null}
             <TableCell className="hidden text-sm text-muted-foreground md:table-cell">
-              {member.branchName}
-            </TableCell>
-            <TableCell className="hidden text-sm text-muted-foreground lg:table-cell">
               {member.email}
             </TableCell>
             <TableCell>

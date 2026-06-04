@@ -13,9 +13,11 @@ import type {
   DashboardMember,
   DashboardMemberStatus,
 } from "@/domain/entities/dashboard/DashboardSummary"
+import { BranchDetailLink } from "@/presentation/components/shared/DashboardEntityLink"
 
 type DashboardRecentMembersTableProps = {
   members: DashboardMember[]
+  showBranchColumn?: boolean
 }
 
 const statusLabel: Record<DashboardMemberStatus, string> = {
@@ -35,6 +37,7 @@ const statusVariant: Record<
 
 export function DashboardRecentMembersTable({
   members,
+  showBranchColumn = false,
 }: DashboardRecentMembersTableProps) {
   return (
     <Table>
@@ -42,7 +45,9 @@ export function DashboardRecentMembersTable({
         <TableRow>
           <TableHead>Member</TableHead>
           <TableHead className="hidden sm:table-cell">ID</TableHead>
-          <TableHead className="hidden md:table-cell">Branch</TableHead>
+          {showBranchColumn ? (
+            <TableHead className="hidden md:table-cell">Branch</TableHead>
+          ) : null}
           <TableHead className="w-24 text-right">Bookings</TableHead>
           <TableHead className="hidden lg:table-cell">Registered</TableHead>
           <TableHead>Status</TableHead>
@@ -55,9 +60,15 @@ export function DashboardRecentMembersTable({
             <TableCell className="hidden font-mono text-xs text-muted-foreground sm:table-cell">
               {member.membershipNumber}
             </TableCell>
-            <TableCell className="hidden text-sm text-muted-foreground md:table-cell">
-              {member.registerBranch}
-            </TableCell>
+            {showBranchColumn ? (
+              <TableCell className="hidden max-w-[160px] truncate md:table-cell">
+                <BranchDetailLink
+                  branchId={member.branchId}
+                  branchName={member.registerBranch}
+                  className="block truncate text-sm"
+                />
+              </TableCell>
+            ) : null}
             <TableCell className="text-right text-sm">{member.activeBookings}</TableCell>
             <TableCell className="hidden text-sm text-muted-foreground lg:table-cell">
               {member.registrationDate}

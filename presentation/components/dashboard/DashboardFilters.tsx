@@ -24,6 +24,8 @@ type DashboardFiltersProps = {
   branches: DashboardBranch[]
   selectedBranchId: string
   dateRange: DateRangeFilter
+  allowAllBranches?: boolean
+  showBranchFilter?: boolean
   onBranchChange: (branchId: string) => void
   onDateRangeChange: (range: DateRangeFilter) => void
 }
@@ -45,13 +47,15 @@ export function DashboardFilters({
   branches,
   selectedBranchId,
   dateRange,
+  allowAllBranches = true,
+  showBranchFilter = true,
   onBranchChange,
   onDateRangeChange,
 }: DashboardFiltersProps) {
   const [inputValue, setInputValue] = useState("")
 
   const allBranchOptions = [
-    { value: "all", label: "All branches" },
+    ...(allowAllBranches ? [{ value: "all", label: "All branches" }] : []),
     ...branches.map((b) => ({ value: b.id, label: b.name })),
   ]
 
@@ -79,7 +83,7 @@ export function DashboardFilters({
       selectedOption &&
       nextInput.trim().toLowerCase() !== selectedOption.label.trim().toLowerCase()
     ) {
-      onBranchChange("all")
+      onBranchChange(allowAllBranches ? "all" : (branches[0]?.id ?? selectedBranchId))
     }
   }
 
@@ -91,43 +95,45 @@ export function DashboardFilters({
 
   return (
     <div className="flex flex-wrap items-end gap-3">
-      <div className="min-w-[220px] flex-1">
-        <Label
-          htmlFor="dashboard-branch-filter"
-          className="mb-1.5 block text-xs font-medium text-muted-foreground"
-        >
-          Branch
-        </Label>
-        <Combobox
-          value={selectedBranchId}
-          onValueChange={handleValueChange}
-          onInputValueChange={handleInputValueChange}
-          itemToStringLabel={itemToStringLabel}
-          filter={null}
-        >
-          <ComboboxInput
-            id="dashboard-branch-filter"
-            className="h-9 w-full"
-            placeholder="Search branches..."
-            showClear={selectedBranchId !== "all"}
-          />
-          <ComboboxContent>
-            {filteredOptions.length > 0 ? (
-              <ComboboxList>
-                {filteredOptions.map((option) => (
-                  <ComboboxItem key={option.value} value={option.value}>
-                    {option.label}
-                  </ComboboxItem>
-                ))}
-              </ComboboxList>
-            ) : (
-              <div className="px-3 py-6 text-center text-sm text-muted-foreground">
-                No branches found
-              </div>
-            )}
-          </ComboboxContent>
-        </Combobox>
-      </div>
+      {showBranchFilter ? (
+        <div className="min-w-[220px] flex-1">
+          <Label
+            htmlFor="dashboard-branch-filter"
+            className="mb-1.5 block text-xs font-medium text-muted-foreground"
+          >
+            Branch
+          </Label>
+          <Combobox
+            value={selectedBranchId}
+            onValueChange={handleValueChange}
+            onInputValueChange={handleInputValueChange}
+            itemToStringLabel={itemToStringLabel}
+            filter={null}
+          >
+            <ComboboxInput
+              id="dashboard-branch-filter"
+              className="h-9 w-full"
+              placeholder="Search branches..."
+              showClear={allowAllBranches && selectedBranchId !== "all"}
+            />
+            <ComboboxContent>
+              {filteredOptions.length > 0 ? (
+                <ComboboxList>
+                  {filteredOptions.map((option) => (
+                    <ComboboxItem key={option.value} value={option.value}>
+                      {option.label}
+                    </ComboboxItem>
+                  ))}
+                </ComboboxList>
+              ) : (
+                <div className="px-3 py-6 text-center text-sm text-muted-foreground">
+                  No branches found
+                </div>
+              )}
+            </ComboboxContent>
+          </Combobox>
+        </div>
+      ) : null}
 
       <div className="w-40">
         <Label

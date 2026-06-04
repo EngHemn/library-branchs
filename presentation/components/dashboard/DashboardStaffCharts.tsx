@@ -22,7 +22,8 @@ import type { DashboardChartBar } from "@/domain/entities/dashboard/DashboardSum
 
 type DashboardStaffChartsProps = {
   staffByRole: DashboardChartBar[]
-  staffByBranch: DashboardChartBar[]
+  staffByBranch?: DashboardChartBar[]
+  showBranchChart?: boolean
 }
 
 type TooltipPayloadItem = {
@@ -50,7 +51,8 @@ function ChartTooltip({
 
 export function DashboardStaffCharts({
   staffByRole,
-  staffByBranch,
+  staffByBranch = [],
+  showBranchChart = false,
 }: DashboardStaffChartsProps) {
   return (
     <div className="grid gap-4 lg:grid-cols-2">
@@ -94,49 +96,47 @@ export function DashboardStaffCharts({
         </CardContent>
       </Card>
 
-      <Card className="rounded-xl">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-base">Staff by Branch</CardTitle>
-          <CardDescription>
-            Number of staff members assigned per library branch.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <ResponsiveContainer width="100%" height={200}>
-            <BarChart
-              data={staffByBranch}
-              layout="vertical"
-              margin={{ top: 0, right: 24, left: 0, bottom: 0 }}
-            >
-              <CartesianGrid
-                strokeDasharray="3 3"
-                horizontal={false}
-                className="stroke-border"
-              />
-              <XAxis
-                type="number"
-                tick={{ fontSize: 11 }}
-                tickLine={false}
-                axisLine={false}
-              />
-              <YAxis
-                type="category"
-                dataKey="label"
-                tick={{ fontSize: 11 }}
-                tickLine={false}
-                axisLine={false}
-                width={68}
-              />
-              <Tooltip cursor={{ fill: "#f9fafb" }} content={<ChartTooltip />} />
-              <Bar dataKey="value" radius={[0, 4, 4, 0]}>
-                {staffByBranch.map((entry, index) => (
-                  <Cell key={index} fill={entry.color} />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
+      {showBranchChart ? (
+        <Card className="rounded-xl">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Staff by Branch</CardTitle>
+            <CardDescription>
+              Headcount distribution across library branches.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={200}>
+              <BarChart
+                data={staffByBranch}
+                margin={{ top: 4, right: 8, left: -12, bottom: 0 }}
+              >
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  vertical={false}
+                  className="stroke-border"
+                />
+                <XAxis
+                  dataKey="label"
+                  tick={{ fontSize: 11 }}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <YAxis
+                  tick={{ fontSize: 11 }}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <Tooltip cursor={{ fill: "#f9fafb" }} content={<ChartTooltip />} />
+                <Bar dataKey="value" radius={[4, 4, 0, 0]}>
+                  {staffByBranch.map((entry, index) => (
+                    <Cell key={index} fill={entry.color} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      ) : null}
     </div>
   )
 }

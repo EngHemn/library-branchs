@@ -13,9 +13,11 @@ import type {
   DashboardBook,
   DashboardBookStatus,
 } from "@/domain/entities/dashboard/DashboardSummary"
+import { BranchDetailLink } from "@/presentation/components/shared/DashboardEntityLink"
 
 type DashboardRecentBooksTableProps = {
   books: DashboardBook[]
+  showBranchColumn?: boolean
 }
 
 const statusLabel: Record<DashboardBookStatus, string> = {
@@ -35,7 +37,10 @@ const statusVariant: Record<
   unavailable: "destructive",
 }
 
-export function DashboardRecentBooksTable({ books }: DashboardRecentBooksTableProps) {
+export function DashboardRecentBooksTable({
+  books,
+  showBranchColumn = false,
+}: DashboardRecentBooksTableProps) {
   return (
     <Table>
       <TableHeader>
@@ -43,7 +48,9 @@ export function DashboardRecentBooksTable({ books }: DashboardRecentBooksTablePr
           <TableHead>Title</TableHead>
           <TableHead className="hidden sm:table-cell">Author</TableHead>
           <TableHead className="hidden md:table-cell">Category</TableHead>
-          <TableHead className="hidden lg:table-cell">Branch</TableHead>
+          {showBranchColumn ? (
+            <TableHead className="hidden lg:table-cell">Branch</TableHead>
+          ) : null}
           <TableHead className="w-16 text-right">Stock</TableHead>
           <TableHead className="w-20 text-right">Available</TableHead>
           <TableHead>Status</TableHead>
@@ -61,9 +68,15 @@ export function DashboardRecentBooksTable({ books }: DashboardRecentBooksTablePr
             <TableCell className="hidden text-sm text-muted-foreground md:table-cell">
               {book.category}
             </TableCell>
-            <TableCell className="hidden text-sm text-muted-foreground lg:table-cell">
-              {book.branchName}
-            </TableCell>
+            {showBranchColumn ? (
+              <TableCell className="hidden max-w-[160px] truncate lg:table-cell">
+                <BranchDetailLink
+                  branchId={book.branchId}
+                  branchName={book.branchName}
+                  className="block truncate text-sm"
+                />
+              </TableCell>
+            ) : null}
             <TableCell className="text-right text-sm">{book.stock}</TableCell>
             <TableCell className="text-right text-sm font-medium">
               {book.available}

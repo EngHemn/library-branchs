@@ -14,9 +14,11 @@ import type {
   DashboardBookingStatus,
   DashboardBookingType,
 } from "@/domain/entities/dashboard/DashboardSummary"
+import { BranchDetailLink } from "@/presentation/components/shared/DashboardEntityLink"
 
 type DashboardRecentBookingsTableProps = {
   bookings: DashboardBooking[]
+  showBranchColumn?: boolean
 }
 
 const statusLabel: Record<DashboardBookingStatus, string> = {
@@ -45,6 +47,7 @@ const typeLabel: Record<DashboardBookingType, string> = {
 
 export function DashboardRecentBookingsTable({
   bookings,
+  showBranchColumn = false,
 }: DashboardRecentBookingsTableProps) {
   return (
     <Table>
@@ -53,7 +56,9 @@ export function DashboardRecentBookingsTable({
           <TableHead className="w-24">Booking ID</TableHead>
           <TableHead>Book Title</TableHead>
           <TableHead>Member</TableHead>
-          <TableHead className="hidden md:table-cell">Branch</TableHead>
+          {showBranchColumn ? (
+            <TableHead className="hidden md:table-cell">Branch</TableHead>
+          ) : null}
           <TableHead className="hidden lg:table-cell">Type</TableHead>
           <TableHead className="hidden sm:table-cell">Due Date</TableHead>
           <TableHead>Status</TableHead>
@@ -69,9 +74,15 @@ export function DashboardRecentBookingsTable({
               {booking.bookTitle}
             </TableCell>
             <TableCell className="text-sm">{booking.memberName}</TableCell>
-            <TableCell className="hidden text-sm text-muted-foreground md:table-cell">
-              {booking.branchName}
-            </TableCell>
+            {showBranchColumn ? (
+              <TableCell className="hidden max-w-[160px] truncate md:table-cell">
+                <BranchDetailLink
+                  branchId={booking.branchId}
+                  branchName={booking.branchName}
+                  className="block truncate text-sm"
+                />
+              </TableCell>
+            ) : null}
             <TableCell className="hidden lg:table-cell">
               <Badge variant="outline" className="text-xs">
                 {typeLabel[booking.type]}
