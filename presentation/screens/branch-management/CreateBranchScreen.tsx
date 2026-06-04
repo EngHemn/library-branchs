@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { ArrowLeftIcon, EyeIcon, EyeOffIcon, Loader2Icon, PlusIcon, RefreshCwIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -14,13 +14,6 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import { ImageUpload } from "@/components/ui/image-upload"
 import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -59,12 +52,11 @@ function LoadingState() {
   )
 }
 
-export function CreateBranchScreen({ branchManagementUseCase }: CreateBranchScreenProps) {
+export function CreateBranchScreen({
+  branchManagementUseCase,
+}: CreateBranchScreenProps) {
   const router = useRouter()
-  const searchParams = useSearchParams()
-  const requestId = searchParams.get("requestId")
-  const returnTo = searchParams.get("returnTo") ?? "/dashboard/branches"
-  const viewModel = useCreateBranchViewModel(branchManagementUseCase, requestId)
+  const viewModel = useCreateBranchViewModel(branchManagementUseCase)
   const { state } = viewModel
   const [showPassword, setShowPassword] = useState(false)
 
@@ -74,18 +66,30 @@ export function CreateBranchScreen({ branchManagementUseCase }: CreateBranchScre
     { label: "Create Branch" },
   ])
 
-  const goBack = () => router.push(returnTo)
+  const goBack = () => router.push("/dashboard/branches")
 
-  useFormSubmitSuccess(
-    state.isSaved,
-    state.appliedRequestId
-      ? "Branch created and main branch request approved."
-      : "Branch created successfully."
-  )
+  useFormSubmitSuccess(state.isSaved, "Branch created successfully.")
 
   return (
     <>
       {state.isLoading ? <LoadingState /> : null}
+
+      {state.isError ? (
+        <div className="flex flex-1 items-center justify-center p-4">
+          <Card className="w-full max-w-md rounded-lg">
+            <CardHeader>
+              <CardTitle>Unable to create branch</CardTitle>
+              <CardDescription>{state.error}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button variant="outline" onClick={goBack}>
+                <ArrowLeftIcon />
+                Back to branches
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      ) : null}
 
       {(state.isReady || state.isSaving || state.isSaved) ? (
         <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
@@ -99,16 +103,6 @@ export function CreateBranchScreen({ branchManagementUseCase }: CreateBranchScre
               Back
             </Button>
           </section>
-
-          {state.appliedRequestId ? (
-            <Card className="rounded-lg border-blue-200 bg-blue-50 dark:border-blue-900 dark:bg-blue-950">
-              <CardContent className="py-3">
-                <p className="text-sm font-medium text-blue-800 dark:text-blue-200">
-                  Main branch request {state.appliedRequestId} applied. Complete address and location, then create the branch.
-                </p>
-              </CardContent>
-            </Card>
-          ) : null}
 
           {state.error ? (
             <Card className="rounded-lg border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950">
@@ -143,26 +137,6 @@ export function CreateBranchScreen({ branchManagementUseCase }: CreateBranchScre
                     />
                     {state.fieldErrors.branchName ? (
                       <p className="text-sm text-destructive">{state.fieldErrors.branchName}</p>
-                    ) : null}
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="type">Branch Type</Label>
-                    <Select
-                      value={state.form.type}
-                      onValueChange={(value) => viewModel.setField("type", value)}
-                      disabled={state.isSaving || state.isSaved}
-                    >
-                      <SelectTrigger id="type">
-                        <SelectValue placeholder="Select branch type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="main">Main Branch</SelectItem>
-                        <SelectItem value="sub">Sub Branch</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    {state.fieldErrors.type ? (
-                      <p className="text-sm text-destructive">{state.fieldErrors.type}</p>
                     ) : null}
                   </div>
 
@@ -260,31 +234,6 @@ export function CreateBranchScreen({ branchManagementUseCase }: CreateBranchScre
                       <p className="text-sm text-destructive">{state.fieldErrors.address}</p>
                     ) : null}
                   </div>
-
-                  {state.form.type === "sub" ? (
-                    <div className="space-y-2 sm:col-span-2">
-                      <Label htmlFor="parentBranch">Parent Branch</Label>
-                      <Select
-                        value={state.form.parentBranch ?? ""}
-                        onValueChange={(value) => viewModel.setField("parentBranch", value || null)}
-                        disabled={state.isSaving || state.isSaved}
-                      >
-                        <SelectTrigger id="parentBranch">
-                          <SelectValue placeholder="Select a parent branch" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {state.mainBranches.map((branch) => (
-                            <SelectItem key={branch.id} value={branch.id}>
-                              {branch.branchName}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      {state.fieldErrors.parentBranch ? (
-                        <p className="text-sm text-destructive">{state.fieldErrors.parentBranch}</p>
-                      ) : null}
-                    </div>
-                  ) : null}
 
                   <div className="sm:col-span-2">
                     <LocationPicker

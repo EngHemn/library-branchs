@@ -18,8 +18,12 @@ import type { BranchStats } from "@/domain/entities/branch/Branch"
 
 type BranchStatsCardsProps = {
   stats: BranchStats
+  hideMainBranchCard?: boolean
 }
-export function BranchStatsCards({ stats }: BranchStatsCardsProps) {
+export function BranchStatsCards({
+  stats,
+  hideMainBranchCard = false,
+}: BranchStatsCardsProps) {
   const cards = [
     {
       label: "Total Branches",
@@ -27,12 +31,16 @@ export function BranchStatsCards({ stats }: BranchStatsCardsProps) {
       icon: Building2Icon,
       className: "bg-sky-100 text-sky-600",
     },
-    {
-      label: "Main Branches",
-      value: stats.mainBranches,
-      icon: BookOpenIcon,
-      className: "bg-violet-100 text-violet-600",
-    },
+    ...(!hideMainBranchCard
+      ? [
+          {
+            label: "Main Branches",
+            value: stats.mainBranches,
+            icon: BookOpenIcon,
+            className: "bg-violet-100 text-violet-600",
+          },
+        ]
+      : []),
     {
       label: "Sub Branches",
       value: stats.subBranches,
@@ -54,7 +62,9 @@ export function BranchStatsCards({ stats }: BranchStatsCardsProps) {
   ]
 
   return (
-    <section className="grid grid-cols-2 sm:grid-cols-5 gap-4">
+    <section
+      className={`grid grid-cols-2 gap-4 ${hideMainBranchCard ? "sm:grid-cols-4" : "sm:grid-cols-5"}`}
+    >
       {cards.map((card) => {
         const Icon = card.icon
 

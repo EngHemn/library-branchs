@@ -18,27 +18,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import type {
-  BranchStatus,
-  BranchType,
-} from "@/domain/entities/branch/Branch"
+import type { BranchStatus } from "@/domain/entities/branch/Branch"
 
-type BranchTypeFilter = "all" | BranchType
 type BranchStatusFilter = "all" | BranchStatus
 
 type BranchFiltersProps = {
   searchQuery: string
-  typeFilter: BranchTypeFilter
   statusFilter: BranchStatusFilter
   canResetFilters: boolean
   onSearchQueryChange: (searchQuery: string) => void
-  onTypeFilterChange: (typeFilter: BranchTypeFilter) => void
   onStatusFilterChange: (statusFilter: BranchStatusFilter) => void
   onResetFilters: () => void
-}
-
-function isBranchTypeFilter(value: string): value is BranchTypeFilter {
-  return value === "all" || value === "main" || value === "sub"
 }
 
 function isBranchStatusFilter(value: string): value is BranchStatusFilter {
@@ -47,11 +37,9 @@ function isBranchStatusFilter(value: string): value is BranchStatusFilter {
 
 export function BranchFilters({
   searchQuery,
-  typeFilter,
   statusFilter,
   canResetFilters,
   onSearchQueryChange,
-  onTypeFilterChange,
   onStatusFilterChange,
   onResetFilters,
 }: BranchFiltersProps) {
@@ -61,7 +49,7 @@ export function BranchFilters({
         <CardTitle>Filters</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid gap-3 lg:grid-cols-[minmax(240px,1fr)_180px_160px_auto] lg:items-end">
+        <div className="grid gap-3 lg:grid-cols-[minmax(240px,1fr)_160px_auto] lg:items-end">
           <div className="space-y-2">
             <Label htmlFor="branch-search">Search</Label>
             <div className="relative">
@@ -74,26 +62,6 @@ export function BranchFilters({
                 className="pl-8"
               />
             </div>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="branch-type-filter">Branch Type</Label>
-            <Select
-              value={typeFilter}
-              onValueChange={(value) => {
-                if (isBranchTypeFilter(value)) {
-                  onTypeFilterChange(value)
-                }
-              }}
-            >
-              <SelectTrigger id="branch-type-filter" className="w-full">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All</SelectItem>
-                <SelectItem value="main">Main Branch</SelectItem>
-                <SelectItem value="sub">Sub Branch</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
           <div className="space-y-2">
             <Label htmlFor="branch-status-filter">Status</Label>

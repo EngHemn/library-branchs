@@ -29,7 +29,6 @@ type SubBranchRequestsTableProps = {
 
 type SubBranchRequestColumnKey =
   | "id"
-  | "parentBranchName"
   | "branchName"
   | "phone"
   | "branchAdmin"
@@ -82,13 +81,6 @@ export function SubBranchRequestsTable({
       sortable: true,
       sortValue: (request) => request.id,
       cell: (request) => <span className="font-medium">{request.id}</span>,
-    },
-    {
-      key: "parentBranchName",
-      header: "Parent Branch Name",
-      sortable: true,
-      sortValue: (request) => request.parentBranchName,
-      cell: (request) => request.parentBranchName,
     },
     {
       key: "branchName",
@@ -184,7 +176,7 @@ export function SubBranchRequestsTable({
           emptyDescription="New sub branch requests will appear here."
           initialSort={{ key: "submittedDate", direction: "desc" }}
           initialPageSize={5}
-          tableClassName="min-w-[1040px]"
+          tableClassName="min-w-[880px]"
           isRowExpanded={(request) => expandedRequestIds.includes(request.id)}
           renderExpandedRow={(request) => (
             <BranchRequestExpandedDetails
