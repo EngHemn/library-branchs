@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { isAfter, parseISO, startOfMonth, startOfWeek } from "date-fns"
 
@@ -15,6 +15,11 @@ import type {
 import type { User } from "@/domain/entities/User"
 import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { GetDashboardSummaryUseCase } from "@/domain/usecases/dashboard/GetDashboardSummaryUseCase"
+import {
+  getDashboardBranchScope,
+  matchesDashboardBranchFilter,
+  type DashboardBranchScope,
+} from "@/lib/dashboardBranchScope"
 import type { DashboardFilterState, DashboardStatus, DashboardViewModelState, DateRangeFilter } from "./DashboardViewModelState"
 export type { DateRangeFilter } from "./DashboardViewModelState"
 
@@ -31,9 +36,14 @@ type DashboardQueryData = {
   summary: DashboardSummary | null
 }
 
-function filterByBranch<T extends { branchId: string }>(items: T[], branchId: string): T[] {
-  if (branchId === "all") return items
-  return items.filter((item) => item.branchId === branchId)
+function filterByBranch<T extends { branchId: string }>(
+  items: T[],
+  branchId: string,
+  scopedBranchIds: string[]
+): T[] {
+  return items.filter((item) =>
+    matchesDashboardBranchFilter(item.branchId, branchId, scopedBranchIds)
+  )
 }
 
 const defaultFilterState: DashboardFilterState = {
@@ -59,13 +69,31 @@ function isInDateRange(dateStr: string, range: DateRangeFilter): boolean {
 
 function applyFilters<
   T extends { branchId: string; createdAt?: string; addedAt?: string; registeredAt?: string },
->(items: T[], filterState: DashboardFilterState, dateKey: "createdAt" | "addedAt" | "registeredAt"): T[] {
+>(
+  items: T[],
+  filterState: DashboardFilterState,
+  scopedBranchIds: string[],
+  dateKey: "createdAt" | "addedAt" | "registeredAt"
+): T[] {
   return items.filter((item) => {
-    if (filterState.branchId !== "all" && item.branchId !== filterState.branchId) return false
+    if (
+      !matchesDashboardBranchFilter(item.branchId, filterState.branchId, scopedBranchIds)
+    ) {
+      return false
+    }
     const dateValue = item[dateKey]
     if (dateValue && !isInDateRange(dateValue, filterState.dateRange)) return false
     return true
   })
+}
+
+function isBranchSelectionValid(
+  branchId: string,
+  scope: DashboardBranchScope
+): boolean {
+  if (!scope.allowAllBranches && branchId === "all") return false
+  if (branchId === "all") return true
+  return scope.branchIds.includes(branchId)
 }
 
 export function useDashboardViewModel(
@@ -105,16 +133,40 @@ export function useDashboardViewModel(
   const user = data?.user ?? null
   const summary = data?.summary ?? null
 
+  const branchScope: DashboardBranchScope | null =
+    user && summary ? getDashboardBranchScope(user, summary.branches) : null
+
+  const scopedBranchIds = branchScope?.branchIds ?? []
+
+  useEffect(() => {
+    if (!branchScope) return
+
+    setFilterState((prev) => {
+      if (isBranchSelectionValid(prev.branchId, branchScope)) return prev
+      return { ...prev, branchId: branchScope.defaultBranchId }
+    })
+  }, [branchScope?.defaultBranchId, branchScope?.allowAllBranches, branchScope?.branchIds.join(",")])
+
   const filteredBookings: DashboardBooking[] =
-    summary ? applyFilters(summary.recentBookings, filterState, "createdAt") : []
+    summary
+      ? applyFilters(summary.recentBookings, filterState, scopedBranchIds, "createdAt")
+      : []
   const filteredBooks: DashboardBook[] =
-    summary ? applyFilters(summary.recentBooks, filterState, "addedAt") : []
+    summary
+      ? applyFilters(summary.recentBooks, filterState, scopedBranchIds, "addedAt")
+      : []
   const filteredMembers: DashboardMember[] =
-    summary ? applyFilters(summary.recentMembers, filterState, "registeredAt") : []
+    summary
+      ? applyFilters(summary.recentMembers, filterState, scopedBranchIds, "registeredAt")
+      : []
   const filteredSales: DashboardSale[] =
-    summary ? applyFilters(summary.recentSales, filterState, "createdAt") : []
+    summary
+      ? applyFilters(summary.recentSales, filterState, scopedBranchIds, "createdAt")
+      : []
   const filteredStaff: DashboardStaff[] =
-    summary ? filterByBranch(summary.recentStaff, filterState.branchId) : []
+    summary
+      ? filterByBranch(summary.recentStaff, filterState.branchId, scopedBranchIds)
+      : []
 
   async function reload(): Promise<void> {
     await refetch()
@@ -125,6 +177,8 @@ export function useDashboardViewModel(
   }
 
   function setBranchId(branchId: string): void {
+    if (branchScope && !branchScope.showBranchFilter) return
+    if (branchScope && !isBranchSelectionValid(branchId, branchScope)) return
     setFilterState((prev) => ({ ...prev, branchId }))
   }
 
@@ -141,6 +195,7 @@ export function useDashboardViewModel(
     isReady: status === "success",
     isUnauthenticated: status === "unauthenticated",
     filterState,
+    branchScope,
     filteredBookings,
     filteredBooks,
     filteredMembers,

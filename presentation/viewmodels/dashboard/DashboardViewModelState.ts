@@ -9,6 +9,7 @@ import type {
   DashboardSummary,
 } from "@/domain/entities/dashboard/DashboardSummary"
 import type { User } from "@/domain/entities/User"
+import type { DashboardBranchScope } from "@/lib/dashboardBranchScope"
 
 export type DateRangeFilter = "today" | "week" | "month" | "all"
 
@@ -28,6 +29,7 @@ export type DashboardViewModelState = {
   isReady: boolean
   isUnauthenticated: boolean
   filterState: DashboardFilterState
+  branchScope: DashboardBranchScope | null
   filteredBookings: DashboardBooking[]
   filteredBooks: DashboardBook[]
   filteredMembers: DashboardMember[]
