@@ -109,6 +109,7 @@ export function DashboardScreen({
 
   const user = state.user
   const summary = state.summary
+  const showBranchColumn = state.branchScope?.showBranchFilter ?? false
 
   return (
     <>
@@ -152,9 +153,11 @@ export function DashboardScreen({
           </section>
 
           <DashboardFilters
-            branches={summary.branches}
+            branches={state.branchScope?.branches ?? summary.branches}
             selectedBranchId={state.filterState.branchId}
             dateRange={state.filterState.dateRange}
+            allowAllBranches={state.branchScope?.allowAllBranches ?? true}
+            showBranchFilter={state.branchScope?.showBranchFilter ?? false}
             onBranchChange={viewModel.setBranchId}
             onDateRangeChange={viewModel.setDateRange}
           />
@@ -305,7 +308,10 @@ export function DashboardScreen({
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="p-0">
-                    <DashboardRecentBookingsTable bookings={state.filteredBookings} />
+                    <DashboardRecentBookingsTable
+                      bookings={state.filteredBookings}
+                      showBranchColumn={showBranchColumn}
+                    />
                   </CardContent>
                 </Card>
               )}
@@ -327,7 +333,10 @@ export function DashboardScreen({
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="p-0">
-                    <DashboardRecentBooksTable books={state.filteredBooks} />
+                    <DashboardRecentBooksTable
+                      books={state.filteredBooks}
+                      showBranchColumn={showBranchColumn}
+                    />
                   </CardContent>
                 </Card>
               )}
@@ -345,7 +354,10 @@ export function DashboardScreen({
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="p-0">
-                    <DashboardRecentMembersTable members={state.filteredMembers} />
+                    <DashboardRecentMembersTable
+                      members={state.filteredMembers}
+                      showBranchColumn={showBranchColumn}
+                    />
                   </CardContent>
                 </Card>
               )}
@@ -363,7 +375,10 @@ export function DashboardScreen({
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="p-0">
-                    <DashboardRecentSalesTable sales={state.filteredSales} />
+                    <DashboardRecentSalesTable
+                      sales={state.filteredSales}
+                      showBranchColumn={showBranchColumn}
+                    />
                   </CardContent>
                 </Card>
               )}
@@ -373,6 +388,7 @@ export function DashboardScreen({
               <DashboardStaffCharts
                 staffByRole={summary.staffByRole}
                 staffByBranch={summary.staffByBranch}
+                showBranchChart={showBranchColumn}
               />
               {state.filteredStaff.length === 0 ? (
                 <EmptyTabContent label="staff members" />
@@ -385,7 +401,10 @@ export function DashboardScreen({
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="p-0">
-                    <DashboardStaffTable staff={state.filteredStaff} />
+                    <DashboardStaffTable
+                      staff={state.filteredStaff}
+                      showBranchColumn={showBranchColumn}
+                    />
                   </CardContent>
                 </Card>
               )}
