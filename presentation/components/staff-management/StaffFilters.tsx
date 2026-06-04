@@ -35,6 +35,7 @@ type StaffFiltersProps = {
   branchFilter: StaffBranchFilter
   statusFilter: StaffStatusFilter
   branches: string[]
+  showBranchFilter?: boolean
   onSearchQueryChange: (searchQuery: string) => void
   onRoleFilterChange: (roleFilter: StaffRoleFilter) => void
   onBranchFilterChange: (branchFilter: StaffBranchFilter) => void
@@ -58,6 +59,7 @@ export function StaffFilters({
   branchFilter,
   statusFilter,
   branches,
+  showBranchFilter = true,
   onSearchQueryChange,
   onRoleFilterChange,
   onBranchFilterChange,
@@ -90,22 +92,24 @@ export function StaffFilters({
             ))}
           </SelectContent>
         </Select>
-        <Select
-          value={branchFilter}
-          onValueChange={onBranchFilterChange}
-        >
-          <SelectTrigger className="w-[180px]">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Branches</SelectItem>
-            {branches.map((branch) => (
-              <SelectItem key={branch} value={branch}>
-                {branch}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        {showBranchFilter ? (
+          <Select
+            value={branchFilter}
+            onValueChange={onBranchFilterChange}
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Branches</SelectItem>
+              {branches.map((branch) => (
+                <SelectItem key={branch} value={branch}>
+                  {branch}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        ) : null}
         <Select
           value={statusFilter}
           onValueChange={(value) => { if (isStaffStatusFilter(value)) onStatusFilterChange(value) }}

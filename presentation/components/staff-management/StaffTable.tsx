@@ -29,6 +29,7 @@ import { StaffActionButton } from "@/presentation/components/staff-management/St
 
 type StaffTableProps = {
   staff: StaffMember[]
+  showBranchColumn?: boolean
   onView: (member: StaffMember) => void
   onEdit: (member: StaffMember) => void
   onDelete: (member: StaffMember) => void
@@ -63,6 +64,7 @@ function StaffStatusBadge({ status }: { status: string }) {
 
 export function StaffTable({
   staff,
+  showBranchColumn = true,
   onView,
   onEdit,
   onDelete,
@@ -71,7 +73,7 @@ export function StaffTable({
   const columns: DataTableColumn<StaffMember, StaffColumnKey>[] = [
     {
       key: "staffName",
-      header: "NAME",
+      header: "Name",
       sortable: true,
       sortValue: (member) => member.staffName,
       cell: (member) => (
@@ -93,39 +95,43 @@ export function StaffTable({
     },
     {
       key: "phone",
-      header: "PHONE",
+      header: "Phone",
       cell: (member) => member.phone,
     },
     {
       key: "role",
-      header: "ROLE",
+      header: "Role",
       sortable: true,
       sortValue: (member) => getPermissionRoleLabel(member.role),
       cell: (member) => <StaffRoleBadge role={member.role} />,
     },
-    {
-      key: "branch",
-      header: "BRANCH",
-      sortable: true,
-      sortValue: (member) => member.branch,
-      cell: (member) => (
-        <BranchLink
-          branchId={member.branchId}
-          branchName={member.branch}
-          className="block max-w-[180px] truncate font-medium text-primary underline-offset-4 hover:underline"
-        />
-      ),
-    },
+    ...(showBranchColumn
+      ? [
+          {
+            key: "branch" as const,
+            header: "Branch",
+            sortable: true,
+            sortValue: (member: StaffMember) => member.branch,
+            cell: (member: StaffMember) => (
+              <BranchLink
+                branchId={member.branchId}
+                branchName={member.branch}
+                className="block max-w-[180px] truncate font-medium text-primary underline-offset-4 hover:underline"
+              />
+            ),
+          },
+        ]
+      : []),
     {
       key: "status",
-      header: "STATUS",
+      header: "Status",
       sortable: true,
       sortValue: (member) => statusLabels[member.status] ?? member.status,
       cell: (member) => <StaffStatusBadge status={member.status} />,
     },
     {
       key: "actions",
-      header: "ACTIONS",
+      header: "Actions",
       headerClassName: "text-right",
       className: "text-right",
       cell: (member) => {
