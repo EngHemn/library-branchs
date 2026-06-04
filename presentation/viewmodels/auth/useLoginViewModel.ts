@@ -3,36 +3,44 @@
 import { useState } from "react"
 import { useMutation } from "@tanstack/react-query"
 
+import type { BranchType } from "@/domain/entities/branch/Branch"
 import type { User } from "@/domain/entities/User"
 import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
+import type { Result } from "@/domain/result/Result"
 import type { LoginAsyncStatus, LoginFormState, LoginViewModelState } from "./LoginViewModelState"
 
 type LoginViewModel = {
   state: LoginViewModelState
   updateUsername: (value: string) => void
   updatePassword: (value: string) => void
+  updateBranchType: (value: BranchType) => void
   submit: () => Promise<void>
   logout: () => Promise<void>
 }
 
-const emptyForm: LoginFormState = { username: "", password: "" }
+const emptyForm: LoginFormState = { username: "", password: "", branchType: "main" }
 
 export function useLoginViewModel(authUseCase: AuthUseCase): LoginViewModel {
   const [formState, setFormState] = useState<LoginFormState>(emptyForm)
 
   const loginMutation = useMutation({
-    mutationFn: async (credentials: LoginFormState) => {
-      const result = await authUseCase.login(credentials)
-      if (!result.success) throw new Error(result.error)
-      return result.data
+    throwOnError: false,
+    mutationFn: async (credentials: LoginFormState): Promise<Result<User>> => {
+      try {
+        return await authUseCase.login(credentials)
+      } catch (cause) {
+        const message =
+          cause instanceof Error
+            ? cause.message
+            : "Something went wrong. Please try again."
+        return { success: false, error: message }
+      }
     },
   })
 
   const logoutMutation = useMutation({
-    mutationFn: async () => {
-      const result = await authUseCase.logout()
-      if (!result.success) throw new Error(result.error)
-    },
+    throwOnError: false,
+    mutationFn: async (): Promise<Result<null>> => authUseCase.logout(),
   })
 
   function updateUsername(value: string): void {
@@ -45,43 +53,79 @@ export function useLoginViewModel(authUseCase: AuthUseCase): LoginViewModel {
     loginMutation.reset()
   }
 
-  async function submit(): Promise<void> {
-    await loginMutation.mutateAsync(formState)
+  function updateBranchType(value: BranchType): void {
+    setFormState((prev) => ({ ...prev, branchType: value }))
+    loginMutation.reset()
+  }
+
+  function submit(): Promise<void> {
+    return new Promise((resolve) => {
+      loginMutation.mutate(
+        {
+          username: formState.username,
+          password: formState.password,
+          branchType: formState.branchType,
+        },
+        { onSettled: () => resolve() }
+      )
+    })
   }
 
   async function logout(): Promise<void> {
-    await logoutMutation.mutateAsync()
+    const result = await logoutMutation.mutateAsync()
+    if (!result.success) return
     setFormState(emptyForm)
     loginMutation.reset()
     logoutMutation.reset()
   }
 
+  const loginResult = loginMutation.data
+  const loginSucceeded =
+    loginMutation.isSuccess && loginResult !== undefined && loginResult.success
+  const loggedInUser: User | null = loginSucceeded ? loginResult.data : null
+
   const status: LoginAsyncStatus = (() => {
     if (loginMutation.isPending || logoutMutation.isPending) return "loading"
-    if (loginMutation.isSuccess) return "success"
-    if (loginMutation.isError || logoutMutation.isError) return "error"
+    if (loginSucceeded) return "success"
+    if (
+      (loginMutation.isSuccess && loginResult !== undefined && !loginResult.success) ||
+      loginMutation.isError ||
+      (logoutMutation.isSuccess &&
+        logoutMutation.data !== undefined &&
+        !logoutMutation.data.success) ||
+      logoutMutation.isError
+    ) {
+      return "error"
+    }
     return "idle"
   })()
 
   const loginError =
-    loginMutation.isError && loginMutation.error instanceof Error
-      ? loginMutation.error.message
-      : null
+    loginMutation.isSuccess && loginResult !== undefined && !loginResult.success
+      ? loginResult.error
+      : loginMutation.isError
+        ? "Something went wrong. Please try again."
+        : null
   const logoutError =
-    logoutMutation.isError && logoutMutation.error instanceof Error
-      ? logoutMutation.error.message
-      : null
+    logoutMutation.isSuccess &&
+    logoutMutation.data !== undefined &&
+    !logoutMutation.data.success
+      ? logoutMutation.data.error
+      : logoutMutation.isError
+        ? "Something went wrong. Please try again."
+        : null
 
   const state: LoginViewModelState = {
     ...formState,
     status,
-    user: loginMutation.isSuccess ? loginMutation.data : null,
+    user: loggedInUser,
     error: loginError ?? logoutError,
     isLoading: loginMutation.isPending || logoutMutation.isPending,
-    successMessage: loginMutation.isSuccess
-      ? `Welcome back, ${loginMutation.data.fullName}`
-      : null,
+    successMessage:
+      loginSucceeded && loggedInUser
+        ? `Welcome back, ${loggedInUser.fullName}`
+        : null,
   }
 
-  return { state, updateUsername, updatePassword, submit, logout }
+  return { state, updateUsername, updatePassword, updateBranchType, submit, logout }
 }
