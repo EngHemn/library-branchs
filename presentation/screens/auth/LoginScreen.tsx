@@ -47,7 +47,12 @@ export function LoginScreen({ authUseCase }: LoginScreenProps) {
           <Card className="w-full max-w-sm rounded-lg">
             <CardHeader>
               <CardTitle>Sign in</CardTitle>
-              <CardDescription>Access your account</CardDescription>
+              <CardDescription>
+                Access your account. Demo: username{" "}
+                <span className="font-medium text-foreground">hemn</span>, password{" "}
+                <span className="font-medium text-foreground">1234</span> — match the
+                branch type you select.
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {viewModel.state.status === "loading" && (
@@ -71,10 +76,12 @@ export function LoginScreen({ authUseCase }: LoginScreenProps) {
               <LoginForm
                 username={viewModel.state.username}
                 password={viewModel.state.password}
+                branchType={viewModel.state.branchType}
                 isLoading={viewModel.state.isLoading}
                 canLogout={viewModel.state.user !== null}
                 onUsernameChange={viewModel.updateUsername}
                 onPasswordChange={viewModel.updatePassword}
+                onBranchTypeChange={viewModel.updateBranchType}
                 onSubmit={viewModel.submit}
                 onLogout={viewModel.logout}
               />
