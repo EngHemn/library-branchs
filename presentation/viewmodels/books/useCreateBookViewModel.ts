@@ -10,21 +10,7 @@ import {
   type BookFormValues,
 } from "@/domain/schemas/bookFormSchema"
 import type { GetBooksUseCase } from "@/domain/usecases/books/GetBooksUseCase"
-
-type CreateBookStatus = "idle" | "loading" | "ready" | "saving" | "saved"
-
-type CreateBookViewModelState = {
-  status: CreateBookStatus
-  authors: string[]
-  translators: string[]
-  categories: string[]
-  languages: string[]
-  error: string | null
-  isLoading: boolean
-  isReady: boolean
-  isSaving: boolean
-  isSaved: boolean
-}
+import type { CreateBookStatus, CreateBookViewModelState } from "./CreateBookViewModelState"
 
 type CreateBookViewModel = {
   state: CreateBookViewModelState

@@ -5,23 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 import type { Translator } from "@/domain/entities/translator/Translator"
 import type { GetTranslatorsUseCase } from "@/domain/usecases/translators/GetTranslatorsUseCase"
-
-type TranslatorsStatus = "idle" | "loading" | "ready" | "error"
-type TranslatorLanguageFilter = "all" | string
-
-type TranslatorsViewModelState = {
-  status: TranslatorsStatus
-  translators: Translator[]
-  filteredTranslators: Translator[]
-  languages: string[]
-  searchQuery: string
-  statusFilter: "all" | "active" | "inactive"
-  languageFilter: TranslatorLanguageFilter
-  error: string | null
-  isLoading: boolean
-  isReady: boolean
-  isDeleting: boolean
-}
+import type { TranslatorLanguageFilter, TranslatorsStatus, TranslatorsViewModelState } from "./TranslatorsViewModelState"
 
 type TranslatorsViewModel = {
   state: TranslatorsViewModelState

@@ -13,24 +13,7 @@ import {
 } from "@/domain/schemas/memberFormSchema"
 import type { BranchManagementUseCase } from "@/domain/usecases/branch/BranchManagementUseCase"
 import type { MemberManagementUseCase } from "@/domain/usecases/members/MemberManagementUseCase"
-
-type CreateMemberStatus =
-  | "idle"
-  | "loading"
-  | "ready"
-  | "saving"
-  | "saved"
-  | "error"
-
-type CreateMemberViewModelState = {
-  status: CreateMemberStatus
-  branches: Branch[]
-  error: string | null
-  isLoading: boolean
-  isReady: boolean
-  isSaving: boolean
-  isSaved: boolean
-}
+import type { CreateMemberStatus, CreateMemberViewModelState } from "./CreateMemberViewModelState"
 
 type CreateMemberViewModel = {
   state: CreateMemberViewModelState

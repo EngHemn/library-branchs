@@ -11,27 +11,7 @@ import {
   type BillFormValues,
 } from "@/domain/schemas/billFormSchema"
 import type { GetBillsUseCase } from "@/domain/usecases/bills/GetBillsUseCase"
-
-type EditBillStatus =
-  | "loading"
-  | "ready"
-  | "not-found"
-  | "error"
-  | "saving"
-  | "saved"
-
-type EditBillViewModelState = {
-  status: EditBillStatus
-  branchOptions: BillBranchOption[]
-  bookOptions: BillBookOption[]
-  error: string | null
-  isLoading: boolean
-  isReady: boolean
-  isNotFound: boolean
-  isError: boolean
-  isSaving: boolean
-  isSaved: boolean
-}
+import type { EditBillStatus, EditBillViewModelState } from "./EditBillViewModelState"
 
 type EditBillViewModel = {
   state: EditBillViewModelState

@@ -16,54 +16,7 @@ import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { BranchManagementUseCase } from "@/domain/usecases/branch/BranchManagementUseCase"
 
 import { useBranchRequestActionsHook } from "./useBranchRequestActionsHook"
-
-type BranchTypeFilter = "all" | BranchType
-type BranchStatusFilter = "all" | BranchStatus
-type ActiveBranchFilterId = "search" | "type" | "status"
-
-type BranchFilterState = {
-  searchQuery: string
-  typeFilter: BranchTypeFilter
-  statusFilter: BranchStatusFilter
-}
-
-type ActiveBranchFilter = {
-  id: ActiveBranchFilterId
-  label: string
-  value: string
-}
-
-type BranchManagementDialog = {
-  title: string
-  description: string
-} | null
-
-type BranchManagementStatus =
-  | "idle"
-  | "loading"
-  | "success"
-  | "unauthenticated"
-  | "error"
-
-type BranchManagementViewModelState = {
-  status: BranchManagementStatus
-  user: User | null
-  branches: Branch[]
-  filteredBranches: Branch[]
-  mainBranchRequests: MainBranchRequest[]
-  subBranchRequests: SubBranchRequest[]
-  filters: BranchFilterState
-  activeFilters: ActiveBranchFilter[]
-  stats: BranchStats
-  expandedMainRequestIds: string[]
-  expandedSubRequestIds: string[]
-  dialog: BranchManagementDialog
-  error: string | null
-  canResetFilters: boolean
-  isLoading: boolean
-  isReady: boolean
-  isUnauthenticated: boolean
-}
+import type { ActiveBranchFilter, ActiveBranchFilterId, BranchFilterState, BranchManagementDialog, BranchManagementStatus, BranchManagementViewModelState, BranchStatusFilter, BranchTypeFilter } from "./BranchManagementViewModelState"
 
 type BranchManagementViewModel = {
   state: BranchManagementViewModelState

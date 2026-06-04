@@ -12,44 +12,7 @@ import type {
 import type { User } from "@/domain/entities/User"
 import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { StaffManagementUseCase } from "@/domain/usecases/staff/StaffManagementUseCase"
-
-type StaffRoleFilter = "all" | StaffRole
-type StaffStatusFilter = "all" | StaffStatus
-type StaffBranchFilter = "all" | string
-
-type StaffFilterState = {
-  searchQuery: string
-  roleFilter: StaffRoleFilter
-  branchFilter: StaffBranchFilter
-  statusFilter: StaffStatusFilter
-}
-
-type StaffManagementDialog = {
-  title: string
-  description: string
-} | null
-
-type StaffManagementPageStatus =
-  | "idle"
-  | "loading"
-  | "success"
-  | "unauthenticated"
-  | "error"
-
-type StaffManagementViewModelState = {
-  status: StaffManagementPageStatus
-  user: User | null
-  staff: StaffMember[]
-  filteredStaff: StaffMember[]
-  branches: string[]
-  filters: StaffFilterState
-  stats: StaffStats
-  dialog: StaffManagementDialog
-  error: string | null
-  isLoading: boolean
-  isReady: boolean
-  isUnauthenticated: boolean
-}
+import type { StaffBranchFilter, StaffFilterState, StaffManagementDialog, StaffManagementPageStatus, StaffManagementViewModelState, StaffRoleFilter, StaffStatusFilter } from "./StaffManagementViewModelState"
 
 type StaffManagementViewModel = {
   state: StaffManagementViewModelState

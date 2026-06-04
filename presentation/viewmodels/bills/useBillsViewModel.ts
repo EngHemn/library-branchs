@@ -5,20 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 import type { Bill } from "@/domain/entities/bill/Bill"
 import type { GetBillsUseCase } from "@/domain/usecases/bills/GetBillsUseCase"
-
-type BillsStatus = "idle" | "loading" | "ready" | "error"
-
-type BillsViewModelState = {
-  status: BillsStatus
-  bills: Bill[]
-  filteredBills: Bill[]
-  searchQuery: string
-  branchFilter: string
-  error: string | null
-  isLoading: boolean
-  isReady: boolean
-  isDeleting: boolean
-}
+import type { BillsStatus, BillsViewModelState } from "./BillsViewModelState"
 
 type BillsViewModel = {
   state: BillsViewModelState

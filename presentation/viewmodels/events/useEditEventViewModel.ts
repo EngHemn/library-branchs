@@ -11,27 +11,7 @@ import {
   type EventFormValues,
 } from "@/domain/schemas/eventFormSchema"
 import type { GetEventsUseCase } from "@/domain/usecases/events/GetEventsUseCase"
-
-type EditEventStatus =
-  | "idle"
-  | "loading"
-  | "ready"
-  | "not-found"
-  | "error"
-  | "saving"
-  | "saved"
-
-type EditEventViewModelState = {
-  status: EditEventStatus
-  branchOptions: EventBranchOption[]
-  error: string | null
-  isLoading: boolean
-  isReady: boolean
-  isNotFound: boolean
-  isError: boolean
-  isSaving: boolean
-  isSaved: boolean
-}
+import type { EditEventStatus, EditEventViewModelState } from "./EditEventViewModelState"
 
 type EditEventViewModel = {
   state: EditEventViewModelState

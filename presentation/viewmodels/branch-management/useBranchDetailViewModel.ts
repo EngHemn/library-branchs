@@ -14,39 +14,7 @@ import type { Translator } from "@/domain/entities/translator/Translator"
 import type { BranchDetailUseCase } from "@/domain/usecases/branch/BranchDetailUseCase"
 
 import { useBranchDetailActionsHook } from "./useBranchDetailActionsHook"
-
-type BranchDetailStatus = "idle" | "loading" | "loaded" | "not-found" | "error"
-
-type TabKey =
-  | "details"
-  | "location"
-  | "sub-branches"
-  | "books"
-  | "authors"
-  | "translators"
-  | "staff"
-  | "members"
-
-type BranchDetailViewModelState = {
-  status: BranchDetailStatus
-  branchDetail: BranchDetail | null
-  permissions: BranchPermissions | null
-  subBranches: Branch[]
-  books: Book[]
-  authors: Author[]
-  translators: Translator[]
-  branchAuthors: Author[]
-  branchTranslators: Translator[]
-  staff: StaffMember[]
-  members: Member[]
-  activeTab: TabKey
-  searchQuery: string
-  error: string | null
-  isLoading: boolean
-  isLoaded: boolean
-  isNotFound: boolean
-  isError: boolean
-}
+import type { BranchDetailStatus, BranchDetailViewModelState, TabKey } from "./BranchDetailViewModelState"
 
 type BranchDetailViewModel = {
   state: BranchDetailViewModelState

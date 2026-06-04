@@ -2,19 +2,8 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
-import type { Notification } from "@/domain/entities/notification/Notification"
 import type { NotificationsUseCase } from "@/domain/usecases/notifications/NotificationsUseCase"
-
-type NotificationsViewModelState = {
-  notifications: Notification[]
-  unreadNotifications: Notification[]
-  readNotifications: Notification[]
-  unreadCount: number
-  readCount: number
-  isLoading: boolean
-  isError: boolean
-  error: string | null
-}
+import type { NotificationsViewModelState } from "./NotificationsViewModelState"
 
 type NotificationsViewModel = {
   state: NotificationsViewModelState

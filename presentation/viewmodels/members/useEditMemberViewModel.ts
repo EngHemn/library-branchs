@@ -14,27 +14,7 @@ import {
 } from "@/domain/schemas/memberFormSchema"
 import type { BranchManagementUseCase } from "@/domain/usecases/branch/BranchManagementUseCase"
 import type { MemberManagementUseCase } from "@/domain/usecases/members/MemberManagementUseCase"
-
-type EditMemberStatus =
-  | "idle"
-  | "loading"
-  | "ready"
-  | "not-found"
-  | "error"
-  | "saving"
-  | "saved"
-
-type EditMemberViewModelState = {
-  status: EditMemberStatus
-  branches: Branch[]
-  error: string | null
-  isLoading: boolean
-  isReady: boolean
-  isNotFound: boolean
-  isError: boolean
-  isSaving: boolean
-  isSaved: boolean
-}
+import type { EditMemberStatus, EditMemberViewModelState } from "./EditMemberViewModelState"
 
 type EditMemberViewModel = {
   state: EditMemberViewModelState

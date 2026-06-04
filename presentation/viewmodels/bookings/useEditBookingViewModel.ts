@@ -13,30 +13,7 @@ import {
 } from "@/domain/schemas/bookingFormSchema"
 import type { BookingManagementUseCase } from "@/domain/usecases/bookings/BookingManagementUseCase"
 import type { BookingComboboxOption } from "@/presentation/components/bookings/BookingSearchCombobox"
-
-type EditBookingStatus =
-  | "idle"
-  | "loading"
-  | "ready"
-  | "not-found"
-  | "error"
-  | "saving"
-  | "saved"
-
-type EditBookingViewModelState = {
-  status: EditBookingStatus
-  booking: Booking | null
-  bookOptions: BookingComboboxOption[]
-  branchOptions: BookingComboboxOption[]
-  memberFormOptions: BookingFormOption[]
-  error: string | null
-  isLoading: boolean
-  isReady: boolean
-  isNotFound: boolean
-  isError: boolean
-  isSaving: boolean
-  isSaved: boolean
-}
+import type { EditBookingStatus, EditBookingViewModelState } from "./EditBookingViewModelState"
 
 type EditBookingViewModel = {
   state: EditBookingViewModelState

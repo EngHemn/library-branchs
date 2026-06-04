@@ -4,18 +4,7 @@ import { useQuery } from "@tanstack/react-query"
 
 import type { BillDetail } from "@/domain/entities/bill/BillDetail"
 import type { GetBillsUseCase } from "@/domain/usecases/bills/GetBillsUseCase"
-
-type BillDetailStatus = "loading" | "loaded" | "not-found" | "error"
-
-type BillDetailViewModelState = {
-  status: BillDetailStatus
-  bill: BillDetail | null
-  error: string | null
-  isLoading: boolean
-  isLoaded: boolean
-  isNotFound: boolean
-  isError: boolean
-}
+import type { BillDetailStatus, BillDetailViewModelState } from "./BillDetailViewModelState"
 
 type BillDetailViewModel = {
   state: BillDetailViewModelState

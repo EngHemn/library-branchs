@@ -16,25 +16,7 @@ import type {
 } from "@/domain/entities/reports/Reports"
 import { REPORT_CHARTS_PER_TAB } from "@/domain/entities/reports/Reports"
 import type { GetReportsUseCase } from "@/domain/usecases/reports/GetReportsUseCase"
-
-type AsyncStatus = "idle" | "loading" | "success" | "error"
-
-type ReportsViewModelState = {
-  reports: ReportsBundle | null
-  status: AsyncStatus
-  error: string | null
-  period: ReportPeriod
-  branchId: string
-  dateFrom: string
-  dateTo: string
-  branches: ReportBranchOption[]
-  category: ReportCategory
-  isLoading: boolean
-  isReady: boolean
-  kpis: ReportKpi[]
-  charts: ReportChart[]
-  tables: ReportTable[]
-}
+import type { AsyncStatus, ReportsViewModelState } from "./ReportsViewModelState"
 
 export type ReportsViewModel = {
   state: ReportsViewModelState

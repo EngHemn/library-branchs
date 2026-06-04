@@ -4,18 +4,7 @@ import { useQuery } from "@tanstack/react-query"
 
 import type { BookDetail } from "@/domain/entities/book/BookDetail"
 import type { GetBooksUseCase } from "@/domain/usecases/books/GetBooksUseCase"
-
-type BookDetailStatus = "idle" | "loading" | "loaded" | "not-found" | "error"
-
-type BookDetailViewModelState = {
-  status: BookDetailStatus
-  bookDetail: BookDetail | null
-  error: string | null
-  isLoading: boolean
-  isLoaded: boolean
-  isNotFound: boolean
-  isError: boolean
-}
+import type { BookDetailStatus, BookDetailViewModelState } from "./BookDetailViewModelState"
 
 type BookDetailViewModel = {
   state: BookDetailViewModelState

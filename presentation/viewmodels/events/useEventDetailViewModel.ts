@@ -4,18 +4,7 @@ import { useQuery } from "@tanstack/react-query"
 
 import type { LibraryEvent } from "@/domain/entities/event/Event"
 import type { GetEventsUseCase } from "@/domain/usecases/events/GetEventsUseCase"
-
-type EventDetailStatus = "idle" | "loading" | "loaded" | "not-found" | "error"
-
-type EventDetailViewModelState = {
-  status: EventDetailStatus
-  event: LibraryEvent | null
-  error: string | null
-  isLoading: boolean
-  isLoaded: boolean
-  isNotFound: boolean
-  isError: boolean
-}
+import type { EventDetailStatus, EventDetailViewModelState } from "./EventDetailViewModelState"
 
 type EventDetailViewModel = {
   state: EventDetailViewModelState

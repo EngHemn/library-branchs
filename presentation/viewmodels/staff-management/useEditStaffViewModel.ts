@@ -14,40 +14,7 @@ import {
   validateEditStaffForm,
 } from "@/domain/validators/staff/validateEditStaffForm"
 import { generatePassword } from "@/lib/generatePassword"
-
-type EditStaffStatus =
-  | "idle"
-  | "loading"
-  | "loaded"
-  | "not-found"
-  | "saving"
-  | "saved"
-  | "error"
-
-type EditStaffFormState = {
-  staffName: string
-  role: StaffRole | ""
-  branchId: string
-  email: string
-  phone: string
-  password: string
-  imageUrl: string | null
-}
-
-type EditStaffViewModelState = {
-  status: EditStaffStatus
-  staffMember: StaffMember | null
-  form: EditStaffFormState
-  fieldErrors: EditStaffFormErrors
-  branches: Branch[]
-  error: string | null
-  isLoading: boolean
-  isLoaded: boolean
-  isSaving: boolean
-  isSaved: boolean
-  isNotFound: boolean
-  isError: boolean
-}
+import type { EditStaffFormState, EditStaffStatus, EditStaffViewModelState } from "./EditStaffViewModelState"
 
 type EditStaffViewModel = {
   state: EditStaffViewModelState

@@ -17,22 +17,7 @@ import {
 } from "@/domain/schemas/settingsFormSchema"
 import type { SettingsUseCase } from "@/domain/usecases/settings/SettingsUseCase"
 import { useSettingsLoader, type SettingsLoadStatus } from "./useSettingsLoader"
-
-type SettingsViewModelState = {
-  loadStatus: SettingsLoadStatus
-  loadError: string | null
-  isLoading: boolean
-  settings: Settings | null
-  libraryInfoSaving: boolean
-  libraryInfoError: string | null
-  libraryInfoSuccess: boolean
-  borrowingRulesSaving: boolean
-  borrowingRulesError: string | null
-  borrowingRulesSuccess: boolean
-  notificationsSaving: boolean
-  notificationsError: string | null
-  notificationsSuccess: boolean
-}
+import type { SettingsViewModelState } from "./SettingsViewModelState"
 
 export type SettingsViewModel = {
   state: SettingsViewModelState

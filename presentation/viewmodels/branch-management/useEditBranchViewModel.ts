@@ -12,44 +12,7 @@ import {
   validateBranchForm,
 } from "@/domain/validators/branch/validateBranchForm"
 import { generatePassword } from "@/lib/generatePassword"
-
-type EditBranchStatus =
-  | "idle"
-  | "loading"
-  | "loaded"
-  | "not-found"
-  | "saving"
-  | "saved"
-  | "error"
-
-type EditBranchFormState = {
-  branchName: string
-  email: string
-  adminName: string
-  parentBranch: string | null
-  address: string
-  phone: string
-  latitude: number | null
-  longitude: number | null
-  password: string
-  imageUrl: string | null
-}
-
-type EditBranchViewModelState = {
-  status: EditBranchStatus
-  branch: Branch | null
-  form: EditBranchFormState
-  fieldErrors: BranchFormErrors
-  mainBranches: Branch[]
-  error: string | null
-  showFieldErrors: boolean
-  isLoading: boolean
-  isLoaded: boolean
-  isSaving: boolean
-  isSaved: boolean
-  isNotFound: boolean
-  isError: boolean
-}
+import type { EditBranchFormState, EditBranchStatus, EditBranchViewModelState } from "./EditBranchViewModelState"
 
 type EditBranchViewModel = {
   state: EditBranchViewModelState

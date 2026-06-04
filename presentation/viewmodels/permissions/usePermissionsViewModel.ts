@@ -10,36 +10,7 @@ import type { PermissionManagementUseCase } from "@/domain/usecases/permission/P
 import { usePermissionsData } from "./usePermissionsData"
 import { usePermissionsRoleDialog, type RoleDialogMode, type RoleFormState } from "./usePermissionsRoleDialog"
 import { usePermissionsDeleteDialog } from "./usePermissionsDeleteDialog"
-
-type PermissionsPageStatus = "idle" | "loading" | "success" | "unauthenticated" | "error"
-
-type PermissionsViewModelState = {
-  status: PermissionsPageStatus
-  user: User | null
-  roles: PermissionRole[]
-  filteredRoles: PermissionRole[]
-  config: PermissionConfig | null
-  selectedRoleId: string | null
-  selectedRole: PermissionRole | null
-  draftPermissions: PermissionCode[]
-  searchQuery: string
-  isSaving: boolean
-  isSavingRole: boolean
-  isDeletingRole: boolean
-  roleDialogMode: RoleDialogMode | null
-  roleForm: RoleFormState
-  roleFormNameError: string | null
-  roleFormError: string | null
-  deleteRoleDialog: { roleId: string; roleName: string; isSystem: boolean } | null
-  deleteRoleError: string | null
-  error: string | null
-  isLoading: boolean
-  isReady: boolean
-  isUnauthenticated: boolean
-  isDirty: boolean
-  selectedCount: number
-  totalCount: number
-}
+import type { PermissionsPageStatus, PermissionsViewModelState } from "./PermissionsViewModelState"
 
 type PermissionsViewModel = {
   state: PermissionsViewModelState

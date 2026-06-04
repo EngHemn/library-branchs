@@ -13,54 +13,7 @@ import type { StockMovement } from "@/domain/entities/stock/StockMovement"
 import type { MovementType } from "@/domain/entities/stock/StockMovement"
 import type { StockUseCase } from "@/domain/usecases/stock/StockUseCase"
 import { useStockQueries } from "./useStockQueries"
-
-type AsyncStatus = "idle" | "loading" | "success" | "error"
-
-type StockViewModelState = {
-  stockRows: StockRow[]
-  stockStatus: AsyncStatus
-  stockError: string | null
-
-  summary: StockSummary | null
-  summaryStatus: AsyncStatus
-
-  movements: StockMovement[]
-  movementsStatus: AsyncStatus
-  movementsError: string | null
-
-  searchQuery: string
-  selectedMainBranchId: string | null
-  selectedSubBranchId: string | null
-  selectedCategory: string | null
-  showLowStock: boolean
-  showOutOfStock: boolean
-
-  movementSearchQuery: string
-  movementTypeFilter: MovementType | null
-  movementBranchFilter: string | null
-  movementDateFrom: string | null
-  movementDateTo: string | null
-  movementUserFilter: string | null
-
-  isAddStockDialogOpen: boolean
-  isReduceStockDialogOpen: boolean
-  isTransferDialogOpen: boolean
-  selectedStockRow: StockRow | null
-
-  isSubmitting: boolean
-  submitError: string | null
-
-  expandedStockGroupIds: string[]
-
-  filteredStockRows: StockRow[]
-  filteredMovements: StockMovement[]
-
-  availableMainBranches: { id: string; name: string }[]
-  availableSubBranches: { id: string; name: string }[]
-  availableCategories: string[]
-  availableUsers: string[]
-  availableMovementBranches: { id: string; name: string }[]
-}
+import type { AsyncStatus, StockViewModelState } from "./StockViewModelState"
 
 export type StockViewModel = {
   state: StockViewModelState

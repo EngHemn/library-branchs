@@ -11,26 +11,7 @@ import {
   type TranslatorFormValues,
 } from "@/domain/schemas/translatorFormSchema"
 import type { GetTranslatorsUseCase } from "@/domain/usecases/translators/GetTranslatorsUseCase"
-
-type EditTranslatorStatus =
-  | "idle"
-  | "loading"
-  | "ready"
-  | "not-found"
-  | "error"
-  | "saving"
-  | "saved"
-
-type EditTranslatorViewModelState = {
-  status: EditTranslatorStatus
-  error: string | null
-  isLoading: boolean
-  isReady: boolean
-  isNotFound: boolean
-  isError: boolean
-  isSaving: boolean
-  isSaved: boolean
-}
+import type { EditTranslatorStatus, EditTranslatorViewModelState } from "./EditTranslatorViewModelState"
 
 type EditTranslatorViewModel = {
   state: EditTranslatorViewModelState

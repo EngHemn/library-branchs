@@ -10,26 +10,7 @@ import type {
   ActivityLogStaffOption,
 } from "@/domain/entities/activity-log/ActivityLog"
 import type { GetActivityLogsUseCase } from "@/domain/usecases/activityLogs/GetActivityLogsUseCase"
-
-type AsyncStatus = "idle" | "loading" | "success" | "error"
-type ActivityActionFilter = "all" | ActivityLogAction
-type ActivityBranchFilter = "all" | string
-type ActivityStaffFilter = "all" | string
-
-type ActivityLogsViewModelState = {
-  logs: ActivityLog[]
-  status: AsyncStatus
-  error: string | null
-  searchQuery: string
-  actionFilter: ActivityActionFilter
-  branchFilter: ActivityBranchFilter
-  staffFilter: ActivityStaffFilter
-  branchOptions: ActivityLogBranchOption[]
-  staffOptions: ActivityLogStaffOption[]
-  filteredLogs: ActivityLog[]
-  isLoading: boolean
-  isReady: boolean
-}
+import type { ActivityActionFilter, ActivityBranchFilter, ActivityLogsViewModelState, ActivityStaffFilter, AsyncStatus } from "./ActivityLogsViewModelState"
 
 export type ActivityLogsViewModel = {
   state: ActivityLogsViewModelState

@@ -14,36 +14,7 @@ import {
   validateCreateStaffForm,
 } from "@/domain/validators/staff/validateCreateStaffForm"
 import { generatePassword } from "@/lib/generatePassword"
-
-type CreateStaffStatus =
-  | "idle"
-  | "loading"
-  | "ready"
-  | "saving"
-  | "saved"
-  | "error"
-
-type CreateStaffFormState = {
-  staffName: string
-  role: StaffRole | ""
-  branchId: string
-  email: string
-  phone: string
-  password: string
-  imageUrl: string | null
-}
-
-type CreateStaffViewModelState = {
-  status: CreateStaffStatus
-  form: CreateStaffFormState
-  fieldErrors: CreateStaffFormErrors
-  branches: Branch[]
-  error: string | null
-  isLoading: boolean
-  isReady: boolean
-  isSaving: boolean
-  isSaved: boolean
-}
+import type { CreateStaffFormState, CreateStaffStatus, CreateStaffViewModelState } from "./CreateStaffViewModelState"
 
 type CreateStaffViewModel = {
   state: CreateStaffViewModelState

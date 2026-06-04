@@ -11,22 +11,10 @@ import {
 } from "@/domain/schemas/stockFormSchema"
 import type { StockRow } from "@/domain/entities/stock/Stock"
 import type { StockUseCase } from "@/domain/usecases/stock/StockUseCase"
-
-type EditStockStatus = "idle" | "loading" | "ready" | "saving" | "saved" | "error"
-
-type EditStockState = {
-  status: EditStockStatus
-  stockRow: StockRow | null
-  error: string | null
-  isNotFound: boolean
-  isLoading: boolean
-  isReady: boolean
-  isSaving: boolean
-  isSaved: boolean
-}
+import type { EditStockStatus, EditStockViewModelState } from "./EditStockViewModelState"
 
 type EditStockViewModel = {
-  state: EditStockState
+  state: EditStockViewModelState
   form: ReturnType<typeof useForm<EditStockFormValues>>
   save: (values: EditStockFormValues) => Promise<void>
 }
@@ -107,7 +95,7 @@ export function useEditStockViewModel(
           ? "loading"
           : "ready"
 
-  const state: EditStockState = {
+  const state: EditStockViewModelState = {
     status,
     stockRow,
     error,
