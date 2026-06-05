@@ -1,4 +1,5 @@
 import type { CartItem } from "./CartItem"
+import type { SaleStatus } from "./SaleStatus"
 
 export type Sale = {
   id: string
@@ -8,5 +9,6 @@ export type Sale = {
   subtotal: number
   discountAmount: number
   total: number
+  status: SaleStatus
   createdAt: string
 }

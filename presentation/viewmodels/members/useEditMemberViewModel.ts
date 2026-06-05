@@ -5,14 +5,13 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 
-import type { Branch } from "@/domain/entities/branch/Branch"
+import type { MemberDetail } from "@/domain/entities/member/MemberDetail"
 import type { UpdateMemberInput } from "@/domain/repositories/MemberManagementRepository"
 import {
   memberFormSchema,
   type MemberFormInput,
   type MemberFormValues,
 } from "@/domain/schemas/memberFormSchema"
-import type { BranchManagementUseCase } from "@/domain/usecases/branch/BranchManagementUseCase"
 import type { MemberManagementUseCase } from "@/domain/usecases/members/MemberManagementUseCase"
 import type { EditMemberStatus, EditMemberViewModelState } from "./EditMemberViewModelState"
 
@@ -25,17 +24,15 @@ type EditMemberViewModel = {
 function formToUpdateInput(
   memberId: string,
   values: MemberFormValues,
-  branches: Branch[]
+  member: MemberDetail
 ): UpdateMemberInput {
-  const branch = branches.find((item) => item.id === values.branchId)
-
   return {
     id: memberId,
     memberName: values.memberName,
     email: values.email,
     phone: values.phone,
-    branchId: values.branchId,
-    registerBranch: branch?.branchName ?? "",
+    branchId: member.branchId,
+    registerBranch: member.registerBranch,
     address: values.address,
     status: values.status,
   }
@@ -43,8 +40,7 @@ function formToUpdateInput(
 
 export function useEditMemberViewModel(
   memberId: string,
-  memberManagementUseCase: MemberManagementUseCase,
-  branchManagementUseCase: BranchManagementUseCase
+  memberManagementUseCase: MemberManagementUseCase
 ): EditMemberViewModel {
   const queryClient = useQueryClient()
 
@@ -54,18 +50,8 @@ export function useEditMemberViewModel(
       memberName: "",
       email: "",
       phone: "",
-      branchId: "",
       address: "",
       status: "active",
-    },
-  })
-
-  const branchesQuery = useQuery({
-    queryKey: ["branches"],
-    queryFn: async () => {
-      const result = await branchManagementUseCase.getBranches()
-      if (!result.success) throw new Error(result.error)
-      return result.data
     },
   })
 
@@ -85,19 +71,19 @@ export function useEditMemberViewModel(
         memberName: member.memberName,
         email: member.email,
         phone: member.phone,
-        branchId: member.branchId,
         address: member.address,
         status: member.status,
       })
     }
   }, [memberQuery.data, form])
 
-  const branches = branchesQuery.data ?? []
-
   const updateMutation = useMutation({
     mutationFn: async (values: MemberFormValues) => {
+      const member = memberQuery.data
+      if (!member) throw new Error("Member not found.")
+
       const result = await memberManagementUseCase.updateMember(
-        formToUpdateInput(memberId, values, branches)
+        formToUpdateInput(memberId, values, member)
       )
       if (!result.success) throw new Error(result.error)
       return result.data
@@ -108,12 +94,9 @@ export function useEditMemberViewModel(
     },
   })
 
-  const isDataLoading = branchesQuery.isPending || memberQuery.isPending
-  const isDataError = branchesQuery.isError || memberQuery.isError
-
-  const status: EditMemberStatus = isDataLoading
+  const status: EditMemberStatus = memberQuery.isPending
     ? "loading"
-    : isDataError
+    : memberQuery.isError
       ? "error"
       : memberQuery.isSuccess && !memberQuery.data
         ? "not-found"
@@ -123,19 +106,15 @@ export function useEditMemberViewModel(
             ? "saved"
             : "ready"
 
-  const error = branchesQuery.isError
-    ? branchesQuery.error instanceof Error
-      ? branchesQuery.error.message
-      : String(branchesQuery.error)
-    : memberQuery.isError
-      ? memberQuery.error instanceof Error
-        ? memberQuery.error.message
-        : String(memberQuery.error)
-      : updateMutation.isError
-        ? updateMutation.error instanceof Error
-          ? updateMutation.error.message
-          : String(updateMutation.error)
-        : null
+  const error = memberQuery.isError
+    ? memberQuery.error instanceof Error
+      ? memberQuery.error.message
+      : String(memberQuery.error)
+    : updateMutation.isError
+      ? updateMutation.error instanceof Error
+        ? updateMutation.error.message
+        : String(updateMutation.error)
+      : null
 
   async function save(values: MemberFormValues): Promise<void> {
     await updateMutation.mutateAsync(values)
@@ -143,7 +122,6 @@ export function useEditMemberViewModel(
 
   const state: EditMemberViewModelState = {
     status,
-    branches,
     error,
     isLoading: status === "loading",
     isReady: status === "ready",

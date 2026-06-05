@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
+import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { BranchManagementUseCase } from "@/domain/usecases/branch/BranchManagementUseCase"
 import type { MemberManagementUseCase } from "@/domain/usecases/members/MemberManagementUseCase"
 import { MemberFormFields } from "@/presentation/components/members/MemberFormFields"
@@ -20,6 +21,7 @@ import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadc
 import { useCreateMemberViewModel } from "@/presentation/viewmodels/members/useCreateMemberViewModel"
 
 type CreateMemberScreenProps = {
+  authUseCase: AuthUseCase
   memberManagementUseCase: MemberManagementUseCase
   branchManagementUseCase: BranchManagementUseCase
 }
@@ -50,13 +52,18 @@ function LoadingState() {
 }
 
 export function CreateMemberScreen({
+  authUseCase,
   memberManagementUseCase,
   branchManagementUseCase,
 }: CreateMemberScreenProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const returnTo = searchParams.get("returnTo") ?? "/dashboard/members"
-  const viewModel = useCreateMemberViewModel(memberManagementUseCase, branchManagementUseCase)
+  const viewModel = useCreateMemberViewModel(
+    authUseCase,
+    memberManagementUseCase,
+    branchManagementUseCase
+  )
   const { state, form } = viewModel
 
   useDashboardBreadcrumbs([
@@ -134,7 +141,6 @@ export function CreateMemberScreen({
             <CardContent>
               <MemberFormFields
                 form={form}
-                branches={state.branches}
                 disabled={state.isSaving || state.isSaved}
                 onSubmit={viewModel.save}
               >

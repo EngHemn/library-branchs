@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { EyeIcon } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
@@ -32,9 +32,11 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import type { Sale } from "@/domain/entities/sales/Sale"
+import type { SaleStatus } from "@/domain/entities/sales/SaleStatus"
 
 type SalesHistoryTableProps = {
   sales: Sale[]
+  showBranchColumn?: boolean
 }
 
 type SalesHistoryColumnKey =
@@ -60,94 +62,121 @@ function countBooks(sale: Sale): number {
   return sale.items.reduce((sum, item) => sum + item.quantity, 0)
 }
 
-export function SalesHistoryTable({ sales }: SalesHistoryTableProps) {
+function getStatusBadgeVariant(
+  status: SaleStatus
+): "default" | "secondary" | "destructive" {
+  if (status === "voided") {
+    return "destructive"
+  }
+
+  return "secondary"
+}
+
+function getStatusLabel(status: SaleStatus): string {
+  return status === "voided" ? "Voided" : "Completed"
+}
+
+export function SalesHistoryTable({
+  sales,
+  showBranchColumn = true,
+}: SalesHistoryTableProps) {
   const [selectedSale, setSelectedSale] = useState<Sale | null>(null)
 
-  const columns: DataTableColumn<Sale, SalesHistoryColumnKey>[] = [
-    {
-      key: "id",
-      header: "Sale ID",
-      sortable: true,
-      sortValue: (sale) => sale.id,
-      cell: (sale) => <span className="font-mono text-xs">{sale.id}</span>,
-    },
-    {
-      key: "createdAt",
-      header: "Date",
-      sortable: true,
-      sortValue: (sale) => sale.createdAt,
-      cell: (sale) => formatDate(sale.createdAt),
-    },
-    {
-      key: "branchName",
-      header: "Branch",
-      sortable: true,
-      sortValue: (sale) => sale.branchName,
-      cell: (sale) => sale.branchName,
-    },
-    {
-      key: "books",
-      header: "Books",
-      sortable: true,
-      sortValue: (sale) => countBooks(sale),
-      cell: (sale) => <span className="text-right">{countBooks(sale)}</span>,
-      headerClassName: "text-right",
-      className: "text-right",
-    },
-    {
-      key: "subtotal",
-      header: "Subtotal",
-      sortable: true,
-      sortValue: (sale) => sale.subtotal,
-      cell: (sale) => formatCurrency(sale.subtotal),
-      headerClassName: "text-right",
-      className: "text-right",
-    },
-    {
-      key: "discountAmount",
-      header: "Discount",
-      sortable: true,
-      sortValue: (sale) => sale.discountAmount,
-      cell: (sale) => formatCurrency(sale.discountAmount),
-      headerClassName: "text-right",
-      className: "text-right",
-    },
-    {
-      key: "total",
-      header: "Total",
-      sortable: true,
-      sortValue: (sale) => sale.total,
-      cell: (sale) => (
-        <span className="font-semibold">{formatCurrency(sale.total)}</span>
-      ),
-      headerClassName: "text-right",
-      className: "text-right",
-    },
-    {
-      key: "status",
-      header: "Status",
-      sortable: true,
-      sortValue: () => "Completed",
-      cell: () => <Badge variant="secondary">Completed</Badge>,
-    },
-    {
-      key: "actions",
-      header: "Actions",
-      headerClassName: "text-right",
-      className: "text-right",
-      cell: (sale) => (
-        <Button
-          variant="outline"
-          size="sm"
-          className="gap-1.5"
-          onClick={() => setSelectedSale(sale)}
-        >
-          <EyeIcon className="size-4" />
-          View
-        </Button>
-      ),
-    },
-  ]
+  const columns = useMemo(() => {
+    const allColumns: DataTableColumn<Sale, SalesHistoryColumnKey>[] = [
+      {
+        key: "id",
+        header: "Sale ID",
+        sortable: true,
+        sortValue: (sale) => sale.id,
+        cell: (sale) => <span className="font-mono text-xs">{sale.id}</span>,
+      },
+      {
+        key: "createdAt",
+        header: "Date",
+        sortable: true,
+        sortValue: (sale) => sale.createdAt,
+        cell: (sale) => formatDate(sale.createdAt),
+      },
+      {
+        key: "branchName",
+        header: "Branch",
+        sortable: true,
+        sortValue: (sale) => sale.branchName,
+        cell: (sale) => sale.branchName,
+      },
+      {
+        key: "books",
+        header: "Books",
+        sortable: true,
+        sortValue: (sale) => countBooks(sale),
+        cell: (sale) => <span className="text-right">{countBooks(sale)}</span>,
+        headerClassName: "text-right",
+        className: "text-right",
+      },
+      {
+        key: "subtotal",
+        header: "Subtotal",
+        sortable: true,
+        sortValue: (sale) => sale.subtotal,
+        cell: (sale) => formatCurrency(sale.subtotal),
+        headerClassName: "text-right",
+        className: "text-right",
+      },
+      {
+        key: "discountAmount",
+        header: "Discount",
+        sortable: true,
+        sortValue: (sale) => sale.discountAmount,
+        cell: (sale) => formatCurrency(sale.discountAmount),
+        headerClassName: "text-right",
+        className: "text-right",
+      },
+      {
+        key: "total",
+        header: "Total",
+        sortable: true,
+        sortValue: (sale) => sale.total,
+        cell: (sale) => (
+          <span className="font-semibold">{formatCurrency(sale.total)}</span>
+        ),
+        headerClassName: "text-right",
+        className: "text-right",
+      },
+      {
+        key: "status",
+        header: "Status",
+        sortable: true,
+        sortValue: (sale) => sale.status,
+        cell: (sale) => (
+          <Badge variant={getStatusBadgeVariant(sale.status)}>
+            {getStatusLabel(sale.status)}
+          </Badge>
+        ),
+      },
+      {
+        key: "actions",
+        header: "Actions",
+        headerClassName: "text-right",
+        className: "text-right",
+        cell: (sale) => (
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-1.5"
+            onClick={() => setSelectedSale(sale)}
+          >
+            <EyeIcon className="size-4" />
+            View
+          </Button>
+        ),
+      },
+    ]
+
+    return showBranchColumn
+      ? allColumns
+      : allColumns.filter((column) => column.key !== "branchName")
+  }, [showBranchColumn])
 
   return (
     <>
@@ -162,7 +191,7 @@ export function SalesHistoryTable({ sales }: SalesHistoryTableProps) {
             columns={columns}
             getRowId={(sale) => sale.id}
             emptyTitle="No sales found"
-            emptyDescription="No sales have been registered yet."
+            emptyDescription="No sales match the current filters."
             initialSort={{ key: "createdAt", direction: "desc" }}
             initialPageSize={10}
           />
@@ -189,6 +218,12 @@ export function SalesHistoryTable({ sales }: SalesHistoryTableProps) {
 
           {selectedSale ? (
             <div className="space-y-4 p-4">
+              <div className="flex items-center gap-2">
+                <Badge variant={getStatusBadgeVariant(selectedSale.status)}>
+                  {getStatusLabel(selectedSale.status)}
+                </Badge>
+              </div>
+
               <div className="grid grid-cols-2 gap-3 text-sm">
                 <Card className="rounded-lg">
                   <CardContent className="space-y-1 p-3">

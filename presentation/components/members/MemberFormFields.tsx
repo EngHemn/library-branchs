@@ -18,12 +18,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import type { Branch } from "@/domain/entities/branch/Branch"
 import type { MemberFormValues } from "@/domain/schemas/memberFormSchema"
 
 type MemberFormFieldsProps = {
   form: UseFormReturn<MemberFormValues>
-  branches: Branch[]
   disabled: boolean
   onSubmit: (values: MemberFormValues) => void
   children: React.ReactNode
@@ -31,7 +29,6 @@ type MemberFormFieldsProps = {
 
 export function MemberFormFields({
   form,
-  branches,
   disabled,
   onSubmit,
   children,
@@ -90,35 +87,6 @@ export function MemberFormFields({
                     {...field}
                   />
                 </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="branchId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Register Branch</FormLabel>
-                <Select
-                  value={field.value}
-                  onValueChange={field.onChange}
-                  disabled={disabled}
-                >
-                  <FormControl>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select branch" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {branches.map((branch) => (
-                      <SelectItem key={branch.id} value={branch.id}>
-                        {branch.branchName}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
                 <FormMessage />
               </FormItem>
             )}

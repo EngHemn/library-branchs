@@ -31,6 +31,7 @@ type BillFormFieldsProps = {
   branchOptions: BillBranchOption[]
   bookOptions: BillBookOption[]
   createBookHref: string
+  showBranchField?: boolean
   disabled: boolean
   onSubmit: (values: BillFormValues) => void
   children: React.ReactNode
@@ -41,6 +42,7 @@ export function BillFormFields({
   branchOptions,
   bookOptions,
   createBookHref,
+  showBranchField = true,
   disabled,
   onSubmit,
   children,
@@ -49,34 +51,36 @@ export function BillFormFields({
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <div className="grid gap-6 sm:grid-cols-2">
-          <FormField
-            control={form.control}
-            name="branchId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Branch</FormLabel>
-                <Select
-                  value={field.value}
-                  onValueChange={field.onChange}
-                  disabled={disabled}
-                >
-                  <FormControl>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select branch to import products" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {branchOptions.map((branch) => (
-                      <SelectItem key={branch.id} value={branch.id}>
-                        {branch.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {showBranchField ? (
+            <FormField
+              control={form.control}
+              name="branchId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Branch</FormLabel>
+                  <Select
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    disabled={disabled}
+                  >
+                    <FormControl>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select branch to import products" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {branchOptions.map((branch) => (
+                        <SelectItem key={branch.id} value={branch.id}>
+                          {branch.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          ) : null}
 
           <FormField
             control={form.control}

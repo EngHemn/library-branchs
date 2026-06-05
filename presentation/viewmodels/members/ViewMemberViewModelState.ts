@@ -15,6 +15,8 @@ export type ViewMemberViewModelState = {
   status: ViewMemberStatus
   member: MemberDetail | null
   activeTab: ViewMemberTabKey
+  showBranchesUsedSection: boolean
+  showBranchColumn: boolean
   error: string | null
   isLoading: boolean
   isLoaded: boolean

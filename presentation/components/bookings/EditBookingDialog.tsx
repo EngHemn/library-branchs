@@ -99,6 +99,7 @@ function EditBookingDialogContent({
         form={form}
         bookOptions={state.bookOptions}
         memberFormOptions={state.memberFormOptions}
+        showBranchField={false}
         disabled={state.isSaving || state.isSaved}
         onSubmit={save}
       >

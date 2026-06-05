@@ -11,6 +11,8 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import type {
+  BookingBranchFilter,
+  BookingBranchFilterOption,
   BookingStatusFilter,
   BookingTypeFilter,
 } from "@/presentation/viewmodels/bookings/useBookingsViewModel"
@@ -19,9 +21,13 @@ type BookingsFiltersProps = {
   searchQuery: string
   statusFilter: BookingStatusFilter
   typeFilter: BookingTypeFilter
+  branchFilter: BookingBranchFilter
+  branchFilterOptions: BookingBranchFilterOption[]
+  showBranchFilter?: boolean
   onSearchQueryChange: (searchQuery: string) => void
   onStatusFilterChange: (statusFilter: BookingStatusFilter) => void
   onTypeFilterChange: (typeFilter: BookingTypeFilter) => void
+  onBranchFilterChange: (branchFilter: BookingBranchFilter) => void
 }
 
 const statusOptions: { value: BookingStatusFilter; label: string }[] = [
@@ -58,9 +64,13 @@ export function BookingsFilters({
   searchQuery,
   statusFilter,
   typeFilter,
+  branchFilter,
+  branchFilterOptions,
+  showBranchFilter = false,
   onSearchQueryChange,
   onStatusFilterChange,
   onTypeFilterChange,
+  onBranchFilterChange,
 }: BookingsFiltersProps) {
   return (
     <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
@@ -112,6 +122,20 @@ export function BookingsFilters({
             ))}
           </SelectContent>
         </Select>
+        {showBranchFilter ? (
+          <Select value={branchFilter} onValueChange={onBranchFilterChange}>
+            <SelectTrigger className="w-full sm:w-[200px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {branchFilterOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        ) : null}
       </div>
     </div>
   )

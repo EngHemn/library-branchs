@@ -85,17 +85,6 @@ export function AddStockDialog({
               <p className="text-xs text-slate-500">Book</p>
               <p className="font-semibold text-slate-900">{stockRow.bookTitle}</p>
               <p className="text-xs text-slate-400">{stockRow.isbn}</p>
-              <div className="mt-2 flex items-center gap-4 text-xs text-slate-600">
-                <span>
-                  Branch:{" "}
-                  <span className="font-medium">{stockRow.branchName}</span>
-                </span>
-                {stockRow.subBranchName && (
-                  <span>
-                    Sub: <span className="font-medium">{stockRow.subBranchName}</span>
-                  </span>
-                )}
-              </div>
             </div>
 
             <div className="grid grid-cols-3 gap-3 rounded-xl border border-slate-100 bg-white p-3 text-center">

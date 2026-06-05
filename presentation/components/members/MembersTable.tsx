@@ -36,6 +36,8 @@ import { MemberActionButton } from "@/presentation/components/members/MemberActi
 type MembersTableProps = {
   members: Member[]
   branchNameToId?: Record<string, string>
+  showRegisterBranchColumn?: boolean
+  showBranchUsedColumn?: boolean
   onView: (member: Member) => void
   onEdit: (member: Member) => void
   onDelete: (member: Member) => void
@@ -188,6 +190,8 @@ function MemberBranchesUsedDropdown({
 export function MembersTable({
   members,
   branchNameToId,
+  showRegisterBranchColumn = true,
+  showBranchUsedColumn = true,
   onView,
   onEdit,
   onDelete,
@@ -202,31 +206,39 @@ export function MembersTable({
         <span className="font-semibold">{member.memberName}</span>
       ),
     },
-    {
-      key: "registerBranch",
-      header: "Registered Branch",
-      sortable: true,
-      sortValue: (member) => member.registerBranch,
-      cell: (member) => (
-        <BranchLink
-          branchId={member.branchId}
-          branchName={member.registerBranch}
-          className="block max-w-[180px] truncate font-medium text-primary underline-offset-4 hover:underline"
-        />
-      ),
-    },
-    {
-      key: "allBranchesUsed",
-      header: "Branches Used",
-      sortable: true,
-      sortValue: (member) => member.allBranchesUsed.length,
-      cell: (member) => (
-        <MemberBranchesUsedDropdown
-          branches={member.allBranchesUsed}
-          branchNameToId={branchNameToId}
-        />
-      ),
-    },
+    ...(showRegisterBranchColumn
+      ? [
+          {
+            key: "registerBranch" as const,
+            header: "Registered Branch",
+            sortable: true,
+            sortValue: (member: Member) => member.registerBranch,
+            cell: (member: Member) => (
+              <BranchLink
+                branchId={member.branchId}
+                branchName={member.registerBranch}
+                className="block max-w-[180px] truncate font-medium text-primary underline-offset-4 hover:underline"
+              />
+            ),
+          },
+        ]
+      : []),
+    ...(showBranchUsedColumn
+      ? [
+          {
+            key: "allBranchesUsed" as const,
+            header: "Branches Used",
+            sortable: true,
+            sortValue: (member: Member) => member.allBranchesUsed.length,
+            cell: (member: Member) => (
+              <MemberBranchesUsedDropdown
+                branches={member.allBranchesUsed}
+                branchNameToId={branchNameToId}
+              />
+            ),
+          },
+        ]
+      : []),
     {
       key: "registrationDate",
       header: "Registration",

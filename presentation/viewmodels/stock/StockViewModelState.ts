@@ -21,7 +21,6 @@ export type StockViewModelState = {
   movementsError: string | null
 
   searchQuery: string
-  selectedMainBranchId: string | null
   selectedSubBranchId: string | null
   selectedCategory: string | null
   showLowStock: boolean
@@ -47,9 +46,14 @@ export type StockViewModelState = {
   filteredStockRows: StockRow[]
   filteredMovements: StockMovement[]
 
-  availableMainBranches: { id: string; name: string }[]
   availableSubBranches: { id: string; name: string }[]
   availableCategories: string[]
   availableUsers: string[]
   availableMovementBranches: { id: string; name: string }[]
+
+  isSubBranchUser: boolean
+  showSubBranchColumn: boolean
+  showSubBranchFilter: boolean
+  showStockGroupAccordion: boolean
+  showMovementBranchFilter: boolean
 }

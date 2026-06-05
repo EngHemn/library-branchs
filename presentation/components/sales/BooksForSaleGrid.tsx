@@ -20,6 +20,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import type { Branch } from "@/domain/entities/branch/Branch"
 import type { CartItem } from "@/domain/entities/sales/CartItem"
 import type { SaleBook } from "@/domain/entities/sales/SaleBook"
+import { cn } from "@/lib/utils"
 import { BookSaleCard } from "./BookSaleCard"
 
 type BooksForSaleGridProps = {
@@ -47,11 +48,21 @@ type BooksForSaleGridProps = {
   onAddToCart: (book: SaleBook) => void
   onUpdateQuantity: (bookId: string, qty: number) => void
   onRequestShopFromDisplayedBranch: () => void
+  isSubBranchUser?: boolean
 }
 
-function LoadingGrid() {
+function getBookGridClassName(isSubBranchUser: boolean): string {
+  return cn(
+    "grid gap-3 p-4",
+    isSubBranchUser
+      ? "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4"
+      : "grid-cols-2 sm:grid-cols-3"
+  )
+}
+
+function LoadingGrid({ isSubBranchUser = false }: { isSubBranchUser?: boolean }) {
   return (
-    <div className="grid grid-cols-2 gap-3 p-4 sm:grid-cols-3 xl:grid-cols-4">
+    <div className={getBookGridClassName(isSubBranchUser)}>
       {Array.from({ length: 8 }).map((_, i) => (
         <Skeleton key={i} className="h-64 rounded-xl" />
       ))}
@@ -136,6 +147,7 @@ export function BooksForSaleGrid({
   onAddToCart,
   onUpdateQuantity,
   onRequestShopFromDisplayedBranch,
+  isSubBranchUser = false,
 }: BooksForSaleGridProps) {
   function getCartQuantity(bookId: string): number {
     return cart.find((item) => item.book.id === bookId)?.quantity ?? 0
@@ -238,7 +250,9 @@ export function BooksForSaleGrid({
         </div>
       </div>
 
-      {booksStatus === "loading" && <LoadingGrid />}
+      {booksStatus === "loading" && (
+        <LoadingGrid isSubBranchUser={isSubBranchUser} />
+      )}
 
       {booksStatus === "error" && booksError && (
         <div className="m-4 flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
@@ -252,7 +266,7 @@ export function BooksForSaleGrid({
       )}
 
       {booksStatus === "success" && books.length > 0 && (
-        <div className="grid grid-cols-2 gap-3 p-4 sm:grid-cols-3">
+        <div className={getBookGridClassName(isSubBranchUser)}>
           {books.map((book) => {
             const qty = getCartQuantity(book.id)
             return (

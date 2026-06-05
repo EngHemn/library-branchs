@@ -15,6 +15,8 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { cn } from "@/lib/utils"
+import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { SalesUseCase } from "@/domain/usecases/sales/SalesUseCase"
 import { BranchChangeDialog } from "@/presentation/components/sales/BranchChangeDialog"
 import { BranchSelector } from "@/presentation/components/sales/BranchSelector"
@@ -24,11 +26,12 @@ import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadc
 import { useSalesViewModel } from "@/presentation/viewmodels/sales/useSalesViewModel"
 
 type SalesScreenProps = {
+  authUseCase: AuthUseCase
   salesUseCase: SalesUseCase
 }
 
-export function SalesScreen({ salesUseCase }: SalesScreenProps) {
-  const viewModel = useSalesViewModel(salesUseCase)
+export function SalesScreen({ authUseCase, salesUseCase }: SalesScreenProps) {
+  const viewModel = useSalesViewModel(authUseCase, salesUseCase)
   const { state } = viewModel
   const [isCartOpen, setIsCartOpen] = useState(false)
 
@@ -80,6 +83,7 @@ export function SalesScreen({ salesUseCase }: SalesScreenProps) {
           viewModel.requestSetShoppingBranch(state.displayedBranchId)
         }
       }}
+      isSubBranchUser={state.isSubBranchUser}
     />
   )
 
@@ -132,15 +136,22 @@ export function SalesScreen({ salesUseCase }: SalesScreenProps) {
           </Sheet>
         </div>
 
-        <div className="hidden flex-1 lg:flex">
-          <aside className="flex w-1/4 shrink-0 flex-col border-r">
-            <div className="border-b px-4 py-3">
-              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Branches
-              </p>
-            </div>
-            <ScrollArea className="flex-1">{branchSelectorPanel}</ScrollArea>
-          </aside>
+        <div
+          className={cn(
+            "hidden flex-1 lg:flex",
+            !state.showBranchSidebar && "flex-col"
+          )}
+        >
+          {state.showBranchSidebar ? (
+            <aside className="flex w-1/4 shrink-0 flex-col border-r">
+              <div className="border-b px-4 py-3">
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Branches
+                </p>
+              </div>
+              <ScrollArea className="flex-1">{branchSelectorPanel}</ScrollArea>
+            </aside>
+          ) : null}
 
           <main className="flex flex-1 flex-col">
             <ScrollArea className="flex-1">{booksGridPanel}</ScrollArea>
@@ -148,24 +159,28 @@ export function SalesScreen({ salesUseCase }: SalesScreenProps) {
         </div>
 
         <div className="flex flex-1 flex-col overflow-hidden lg:hidden">
-          <Tabs defaultValue="books" className="flex flex-1 flex-col">
-            <TabsList className="mx-4 mt-3 w-auto justify-start rounded-lg">
-              <TabsTrigger value="branches" className="text-xs">
-                Branches
-              </TabsTrigger>
-              <TabsTrigger value="books" className="text-xs">
-                Books
-              </TabsTrigger>
-            </TabsList>
+          {state.showBranchSidebar ? (
+            <Tabs defaultValue="books" className="flex flex-1 flex-col">
+              <TabsList className="mx-4 mt-3 w-auto justify-start rounded-lg">
+                <TabsTrigger value="branches" className="text-xs">
+                  Branches
+                </TabsTrigger>
+                <TabsTrigger value="books" className="text-xs">
+                  Books
+                </TabsTrigger>
+              </TabsList>
 
-            <TabsContent value="branches" className="flex-1 overflow-hidden mt-0 pt-2">
-              <ScrollArea className="h-full">{branchSelectorPanel}</ScrollArea>
-            </TabsContent>
+              <TabsContent value="branches" className="mt-0 flex-1 overflow-hidden pt-2">
+                <ScrollArea className="h-full">{branchSelectorPanel}</ScrollArea>
+              </TabsContent>
 
-            <TabsContent value="books" className="flex-1 overflow-hidden mt-0">
-              <ScrollArea className="h-full">{booksGridPanel}</ScrollArea>
-            </TabsContent>
-          </Tabs>
+              <TabsContent value="books" className="mt-0 flex-1 overflow-hidden">
+                <ScrollArea className="h-full">{booksGridPanel}</ScrollArea>
+              </TabsContent>
+            </Tabs>
+          ) : (
+            <ScrollArea className="flex-1">{booksGridPanel}</ScrollArea>
+          )}
         </div>
       </div>
 

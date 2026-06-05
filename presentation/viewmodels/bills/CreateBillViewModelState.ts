@@ -8,6 +8,7 @@ export type CreateBillViewModelState = {
   status: CreateBillStatus
   branchOptions: BillBranchOption[]
   bookOptions: BillBookOption[]
+  showBranchField: boolean
   error: string | null
   isLoading: boolean
   isReady: boolean

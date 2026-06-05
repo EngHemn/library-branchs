@@ -27,6 +27,7 @@ type MemberBookingsTableProps = {
   title: string
   bookings: MemberBooking[]
   emptyMessage: string
+  showBranchColumn?: boolean
   showDaysOverdue?: boolean
   showReturnedDate?: boolean
 }
@@ -57,6 +58,7 @@ export function MemberBookingsTable({
   title,
   bookings,
   emptyMessage,
+  showBranchColumn = true,
   showDaysOverdue = false,
   showReturnedDate = false,
 }: MemberBookingsTableProps) {
@@ -72,12 +74,12 @@ export function MemberBookingsTable({
           </p>
         ) : (
           <div className="overflow-x-auto">
-            <Table className="min-w-[860px]">
+            <Table className={showBranchColumn ? "min-w-[860px]" : "min-w-[720px]"}>
               <TableHeader>
                 <TableRow>
                   <TableHead>Booking ID</TableHead>
                   <TableHead>Book Title</TableHead>
-                  <TableHead>Branch</TableHead>
+                  {showBranchColumn ? <TableHead>Branch</TableHead> : null}
                   <TableHead>Type</TableHead>
                   <TableHead>Borrowed</TableHead>
                   <TableHead>Due</TableHead>
@@ -106,16 +108,18 @@ export function MemberBookingsTable({
                         booking.bookTitle
                       )}
                     </TableCell>
-                    <TableCell>
-                      {booking.branchId ? (
-                        <BranchLink
-                          branchId={booking.branchId}
-                          branchName={booking.branchName}
-                        />
-                      ) : (
-                        booking.branchName
-                      )}
-                    </TableCell>
+                    {showBranchColumn ? (
+                      <TableCell>
+                        {booking.branchId ? (
+                          <BranchLink
+                            branchId={booking.branchId}
+                            branchName={booking.branchName}
+                          />
+                        ) : (
+                          booking.branchName
+                        )}
+                      </TableCell>
+                    ) : null}
                     <TableCell>{typeLabels[booking.type]}</TableCell>
                     <TableCell>{booking.borrowedDate}</TableCell>
                     <TableCell>{booking.dueDate}</TableCell>

@@ -22,6 +22,10 @@ import type {
   CreateStockFormValues,
   EditStockFormValues,
 } from "@/domain/schemas/stockFormSchema"
+import {
+  StockBookSearchCombobox,
+  type StockBookOption,
+} from "@/presentation/components/stock/StockBookSearchCombobox"
 
 type SelectOption = {
   id: string
@@ -30,9 +34,9 @@ type SelectOption = {
 
 type CreateStockFormFieldsProps = {
   form: UseFormReturn<CreateStockFormValues>
-  books: SelectOption[]
-  branches: SelectOption[]
+  books: StockBookOption[]
   subBranches: SelectOption[]
+  showSubBranchField: boolean
   disabled: boolean
   onSubmit: (values: CreateStockFormValues) => void
   children: React.ReactNode
@@ -48,8 +52,8 @@ type EditStockFormFieldsProps = {
 export function CreateStockFormFields({
   form,
   books,
-  branches,
   subBranches,
+  showSubBranchField,
   disabled,
   onSubmit,
   children,
@@ -62,89 +66,52 @@ export function CreateStockFormFields({
             control={form.control}
             name="bookId"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="sm:col-span-2">
                 <FormLabel>Book</FormLabel>
-                <Select
-                  disabled={disabled}
-                  value={field.value}
-                  onValueChange={field.onChange}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a book" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {books.map((book) => (
-                      <SelectItem key={book.id} value={book.id}>
-                        {book.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <FormControl>
+                  <StockBookSearchCombobox
+                    books={books}
+                    value={field.value}
+                    onChange={field.onChange}
+                    disabled={disabled}
+                  />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
 
-          <FormField
-            control={form.control}
-            name="branchId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Main Branch</FormLabel>
-                <Select
-                  disabled={disabled}
-                  value={field.value}
-                  onValueChange={field.onChange}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a branch" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {branches.map((branch) => (
-                      <SelectItem key={branch.id} value={branch.id}>
-                        {branch.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="subBranchId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Sub Branch (optional)</FormLabel>
-                <Select
-                  disabled={disabled}
-                  value={field.value}
-                  onValueChange={field.onChange}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="No sub branch" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="none">No sub branch</SelectItem>
-                    {subBranches.map((subBranch) => (
-                      <SelectItem key={subBranch.id} value={subBranch.id}>
-                        {subBranch.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {showSubBranchField ? (
+            <FormField
+              control={form.control}
+              name="subBranchId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Sub Branch (optional)</FormLabel>
+                  <Select
+                    disabled={disabled}
+                    value={field.value}
+                    onValueChange={field.onChange}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="No sub branch" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="none">No sub branch</SelectItem>
+                      {subBranches.map((subBranch) => (
+                        <SelectItem key={subBranch.id} value={subBranch.id}>
+                          {subBranch.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          ) : null}
 
           <FormField
             control={form.control}

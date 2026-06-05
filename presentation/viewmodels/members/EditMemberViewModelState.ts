@@ -1,10 +1,5 @@
 "use client"
 
-import type { Branch } from "@/domain/entities/branch/Branch"
-import type { UpdateMemberInput } from "@/domain/repositories/MemberManagementRepository"
-import type { BranchManagementUseCase } from "@/domain/usecases/branch/BranchManagementUseCase"
-import type { MemberManagementUseCase } from "@/domain/usecases/members/MemberManagementUseCase"
-
 export type EditMemberStatus =
   | "idle"
   | "loading"
@@ -16,7 +11,6 @@ export type EditMemberStatus =
 
 export type EditMemberViewModelState = {
   status: EditMemberStatus
-  branches: Branch[]
   error: string | null
   isLoading: boolean
   isReady: boolean

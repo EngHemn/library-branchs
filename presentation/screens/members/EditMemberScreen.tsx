@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
-import type { BranchManagementUseCase } from "@/domain/usecases/branch/BranchManagementUseCase"
 import type { MemberManagementUseCase } from "@/domain/usecases/members/MemberManagementUseCase"
 import { MemberFormFields } from "@/presentation/components/members/MemberFormFields"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
@@ -22,7 +21,6 @@ import { useEditMemberViewModel } from "@/presentation/viewmodels/members/useEdi
 type EditMemberScreenProps = {
   memberId: string
   memberManagementUseCase: MemberManagementUseCase
-  branchManagementUseCase: BranchManagementUseCase
 }
 
 function LoadingState() {
@@ -53,10 +51,9 @@ function LoadingState() {
 export function EditMemberScreen({
   memberId,
   memberManagementUseCase,
-  branchManagementUseCase,
 }: EditMemberScreenProps) {
   const router = useRouter()
-  const viewModel = useEditMemberViewModel(memberId, memberManagementUseCase, branchManagementUseCase)
+  const viewModel = useEditMemberViewModel(memberId, memberManagementUseCase)
   const { state, form } = viewModel
 
   useDashboardBreadcrumbs([
@@ -153,7 +150,6 @@ export function EditMemberScreen({
             <CardContent>
               <MemberFormFields
                 form={form}
-                branches={state.branches}
                 disabled={state.isSaving || state.isSaved}
                 onSubmit={viewModel.save}
               >

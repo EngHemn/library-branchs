@@ -47,4 +47,6 @@ export type SalesViewModelState = {
   categories: string[]
   authors: string[]
   translators: string[]
+  showBranchSidebar: boolean
+  isSubBranchUser: boolean
 }

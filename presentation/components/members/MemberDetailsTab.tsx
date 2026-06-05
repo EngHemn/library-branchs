@@ -22,6 +22,7 @@ import { BranchLink } from "@/presentation/components/branch-management/BranchLi
 type MemberDetailsTabProps = {
   member: MemberDetail
   branchNameToId?: Record<string, string>
+  showBranchesUsedSection?: boolean
 }
 
 const statusLabels: Record<MemberStatus, string> = {
@@ -108,7 +109,11 @@ function InfoRow({
   )
 }
 
-export function MemberDetailsTab({ member, branchNameToId }: MemberDetailsTabProps) {
+export function MemberDetailsTab({
+  member,
+  branchNameToId,
+  showBranchesUsedSection = true,
+}: MemberDetailsTabProps) {
   return (
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -163,35 +168,37 @@ export function MemberDetailsTab({ member, branchNameToId }: MemberDetailsTabPro
                 branchName={member.registerBranch}
               />
             </InfoRow>
-            <InfoRow icon={Building2Icon} label="Branches Used">
-              <div className="flex flex-wrap gap-1">
-                {member.allBranchesUsed.map((branch) => {
-                  const branchId = branchNameToId?.[branch]
+            {showBranchesUsedSection ? (
+              <InfoRow icon={Building2Icon} label="Branches Used">
+                <div className="flex flex-wrap gap-1">
+                  {member.allBranchesUsed.map((branch) => {
+                    const branchId = branchNameToId?.[branch]
 
-                  if (branchId) {
+                    if (branchId) {
+                      return (
+                        <Link
+                          key={branch}
+                          href={`/dashboard/branches/${branchId}`}
+                          className="inline-flex items-center rounded-md bg-sky-100 px-2.5 py-0.5 text-xs font-medium text-sky-700 transition-colors hover:bg-sky-200 dark:bg-sky-950 dark:text-sky-300 dark:hover:bg-sky-900"
+                        >
+                          {branch}
+                        </Link>
+                      )
+                    }
+
                     return (
-                      <Link
+                      <Badge
                         key={branch}
-                        href={`/dashboard/branches/${branchId}`}
-                        className="inline-flex items-center rounded-md bg-sky-100 px-2.5 py-0.5 text-xs font-medium text-sky-700 transition-colors hover:bg-sky-200 dark:bg-sky-950 dark:text-sky-300 dark:hover:bg-sky-900"
+                        variant="secondary"
+                        className="bg-sky-100 text-sky-700 dark:bg-sky-950 dark:text-sky-300"
                       >
                         {branch}
-                      </Link>
+                      </Badge>
                     )
-                  }
-
-                  return (
-                    <Badge
-                      key={branch}
-                      variant="secondary"
-                      className="bg-sky-100 text-sky-700 dark:bg-sky-950 dark:text-sky-300"
-                    >
-                      {branch}
-                    </Badge>
-                  )
-                })}
-              </div>
-            </InfoRow>
+                  })}
+                </div>
+              </InfoRow>
+            ) : null}
             <InfoRow icon={MapPinIcon} label="Address">
               {member.address}
             </InfoRow>

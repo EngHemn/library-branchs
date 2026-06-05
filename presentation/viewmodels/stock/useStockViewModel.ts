@@ -1,24 +1,26 @@
 "use client"
 
 import { useState } from "react"
+import { useQuery } from "@tanstack/react-query"
 
 import type {
   AddStockInput,
   ReduceStockInput,
   StockRow,
-  StockSummary,
   TransferStockInput,
 } from "@/domain/entities/stock/Stock"
 import type { StockMovement } from "@/domain/entities/stock/StockMovement"
 import type { MovementType } from "@/domain/entities/stock/StockMovement"
+import type { User } from "@/domain/entities/User"
+import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { StockUseCase } from "@/domain/usecases/stock/StockUseCase"
+import { resolveUserBranchId } from "@/lib/dashboardBranchScope"
 import { useStockQueries } from "./useStockQueries"
-import type { AsyncStatus, StockViewModelState } from "./StockViewModelState"
+import type { StockViewModelState } from "./StockViewModelState"
 
 export type StockViewModel = {
   state: StockViewModelState
   setSearchQuery: (q: string) => void
-  setSelectedMainBranchId: (id: string | null) => void
   setSelectedSubBranchId: (id: string | null) => void
   setSelectedCategory: (cat: string | null) => void
   setShowLowStock: (val: boolean) => void
@@ -40,25 +42,10 @@ export type StockViewModel = {
   reload: () => Promise<void>
 }
 
-function getMainBranches(rows: StockRow[]): { id: string; name: string }[] {
+function getSubBranches(rows: StockRow[]): { id: string; name: string }[] {
   const seen = new Map<string, string>()
   for (const row of rows) {
-    if (!seen.has(row.branchId)) seen.set(row.branchId, row.branchName)
-  }
-  return Array.from(seen.entries()).map(([id, name]) => ({ id, name }))
-}
-
-function getSubBranches(
-  rows: StockRow[],
-  mainBranchId: string | null
-): { id: string; name: string }[] {
-  const seen = new Map<string, string>()
-  for (const row of rows) {
-    if (
-      row.subBranchId &&
-      row.subBranchName &&
-      (mainBranchId === null || row.branchId === mainBranchId)
-    ) {
+    if (row.subBranchId && row.subBranchName) {
       if (!seen.has(row.subBranchId)) seen.set(row.subBranchId, row.subBranchName)
     }
   }
@@ -85,10 +72,36 @@ function getMovementBranches(
   return Array.from(seen.entries()).map(([id, name]) => ({ id, name }))
 }
 
+function scopeStockRowsForUser(rows: StockRow[], user: User | null): StockRow[] {
+  if (!user) return rows
+
+  const userBranchId = resolveUserBranchId(user)
+
+  if (user.branchType === "sub") {
+    return rows.filter((row) => row.subBranchId === userBranchId)
+  }
+
+  return rows.filter((row) => row.branchId === userBranchId)
+}
+
+function scopeMovementsForUser(
+  movements: StockMovement[],
+  user: User | null
+): StockMovement[] {
+  if (!user || user.branchType !== "sub") return movements
+
+  const userBranchId = resolveUserBranchId(user)
+
+  return movements.filter(
+    (movement) =>
+      movement.fromBranchId === userBranchId ||
+      movement.toBranchId === userBranchId
+  )
+}
+
 function filterStockRows(
   rows: StockRow[],
   searchQuery: string,
-  mainBranchId: string | null,
   subBranchId: string | null,
   category: string | null,
   showLowStock: boolean,
@@ -102,7 +115,6 @@ function filterStockRows(
     ) {
       return false
     }
-    if (mainBranchId && row.branchId !== mainBranchId) return false
     if (subBranchId && row.subBranchId !== subBranchId) return false
     if (category && row.category !== category) return false
     if (showLowStock && row.status !== "low_stock") return false
@@ -146,11 +158,22 @@ function filterMovements(
   })
 }
 
-export function useStockViewModel(stockUseCase: StockUseCase): StockViewModel {
+export function useStockViewModel(
+  authUseCase: AuthUseCase,
+  stockUseCase: StockUseCase
+): StockViewModel {
   const stockData = useStockQueries(stockUseCase)
 
+  const userQuery = useQuery({
+    queryKey: ["currentUser"],
+    queryFn: async () => {
+      const result = await authUseCase.getCurrentUser()
+      if (!result.success) throw new Error(result.error)
+      return result.data ?? null
+    },
+  })
+
   const [searchQuery, setSearchQuery] = useState("")
-  const [selectedMainBranchId, setSelectedMainBranchIdState] = useState<string | null>(null)
   const [selectedSubBranchId, setSelectedSubBranchId] = useState<string | null>(null)
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [showLowStock, setShowLowStock] = useState(false)
@@ -168,11 +191,6 @@ export function useStockViewModel(stockUseCase: StockUseCase): StockViewModel {
   const [isTransferDialogOpen, setIsTransferDialogOpen] = useState(false)
   const [selectedStockRow, setSelectedStockRow] = useState<StockRow | null>(null)
   const [expandedStockGroupIds, setExpandedStockGroupIds] = useState<string[]>([])
-
-  function setSelectedMainBranchId(id: string | null): void {
-    setSelectedMainBranchIdState(id)
-    setSelectedSubBranchId(null)
-  }
 
   function openAddStockDialog(row: StockRow): void {
     setSelectedStockRow(row)
@@ -206,7 +224,6 @@ export function useStockViewModel(stockUseCase: StockUseCase): StockViewModel {
       setIsAddStockDialogOpen(false)
       setSelectedStockRow(null)
     } catch {
-      // submitError set via onError in useStockQueries
     }
   }
 
@@ -216,7 +233,6 @@ export function useStockViewModel(stockUseCase: StockUseCase): StockViewModel {
       setIsReduceStockDialogOpen(false)
       setSelectedStockRow(null)
     } catch {
-      // submitError set via onError in useStockQueries
     }
   }
 
@@ -226,7 +242,6 @@ export function useStockViewModel(stockUseCase: StockUseCase): StockViewModel {
       setIsTransferDialogOpen(false)
       setSelectedStockRow(null)
     } catch {
-      // submitError set via onError in useStockQueries
     }
   }
 
@@ -238,12 +253,19 @@ export function useStockViewModel(stockUseCase: StockUseCase): StockViewModel {
     )
   }
 
-  const { stockRows, movements } = stockData
+  const user = userQuery.data ?? null
+  const isSubBranchUser = user?.branchType === "sub"
+  const showSubBranchColumn = !isSubBranchUser
+  const showSubBranchFilter = !isSubBranchUser
+  const showStockGroupAccordion = !isSubBranchUser
+  const showMovementBranchFilter = !isSubBranchUser
+
+  const scopedStockRows = scopeStockRowsForUser(stockData.stockRows, user)
+  const scopedMovements = scopeMovementsForUser(stockData.movements, user)
 
   const filteredStockRows = filterStockRows(
-    stockRows,
+    scopedStockRows,
     searchQuery,
-    selectedMainBranchId,
     selectedSubBranchId,
     selectedCategory,
     showLowStock,
@@ -251,7 +273,7 @@ export function useStockViewModel(stockUseCase: StockUseCase): StockViewModel {
   )
 
   const filteredMovements = filterMovements(
-    movements,
+    scopedMovements,
     movementSearchQuery,
     movementTypeFilter,
     movementBranchFilter,
@@ -261,16 +283,15 @@ export function useStockViewModel(stockUseCase: StockUseCase): StockViewModel {
   )
 
   const state: StockViewModelState = {
-    stockRows,
+    stockRows: scopedStockRows,
     stockStatus: stockData.stockStatus,
     stockError: stockData.stockError,
     summary: stockData.summary,
     summaryStatus: stockData.summaryStatus,
-    movements,
+    movements: scopedMovements,
     movementsStatus: stockData.movementsStatus,
     movementsError: stockData.movementsError,
     searchQuery,
-    selectedMainBranchId,
     selectedSubBranchId,
     selectedCategory,
     showLowStock,
@@ -290,17 +311,20 @@ export function useStockViewModel(stockUseCase: StockUseCase): StockViewModel {
     expandedStockGroupIds,
     filteredStockRows,
     filteredMovements,
-    availableMainBranches: getMainBranches(stockRows),
-    availableSubBranches: getSubBranches(stockRows, selectedMainBranchId),
-    availableCategories: getCategories(stockRows),
-    availableUsers: getMovementUsers(movements),
-    availableMovementBranches: getMovementBranches(movements),
+    availableSubBranches: getSubBranches(scopedStockRows),
+    availableCategories: getCategories(scopedStockRows),
+    availableUsers: getMovementUsers(scopedMovements),
+    availableMovementBranches: getMovementBranches(scopedMovements),
+    isSubBranchUser,
+    showSubBranchColumn,
+    showSubBranchFilter,
+    showStockGroupAccordion,
+    showMovementBranchFilter,
   }
 
   return {
     state,
     setSearchQuery,
-    setSelectedMainBranchId,
     setSelectedSubBranchId,
     setSelectedCategory,
     setShowLowStock,

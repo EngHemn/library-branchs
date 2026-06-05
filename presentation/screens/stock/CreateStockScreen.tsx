@@ -13,12 +13,16 @@ import {
 } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
+import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
+import type { GetBooksUseCase } from "@/domain/usecases/books/GetBooksUseCase"
 import type { StockUseCase } from "@/domain/usecases/stock/StockUseCase"
 import { CreateStockFormFields } from "@/presentation/components/stock/StockFormFields"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
 import { useCreateStockViewModel } from "@/presentation/viewmodels/stock/useCreateStockViewModel"
 
 type CreateStockScreenProps = {
+  authUseCase: AuthUseCase
+  getBooksUseCase: GetBooksUseCase
   stockUseCase: StockUseCase
 }
 
@@ -47,9 +51,17 @@ function LoadingState() {
   )
 }
 
-export function CreateStockScreen({ stockUseCase }: CreateStockScreenProps) {
+export function CreateStockScreen({
+  authUseCase,
+  getBooksUseCase,
+  stockUseCase,
+}: CreateStockScreenProps) {
   const router = useRouter()
-  const viewModel = useCreateStockViewModel(stockUseCase)
+  const viewModel = useCreateStockViewModel(
+    authUseCase,
+    getBooksUseCase,
+    stockUseCase
+  )
   const { state, form } = viewModel
 
   useDashboardBreadcrumbs([
@@ -109,8 +121,8 @@ export function CreateStockScreen({ stockUseCase }: CreateStockScreenProps) {
               <CreateStockFormFields
                 form={form}
                 books={state.books}
-                branches={state.branches}
                 subBranches={state.subBranches}
+                showSubBranchField={state.showSubBranchField}
                 disabled={state.isSaving || state.isSaved}
                 onSubmit={viewModel.save}
               >

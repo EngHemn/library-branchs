@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
 import { PlusIcon, RefreshCwIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -29,6 +28,7 @@ import { BookingStatsCards } from "@/presentation/components/bookings/BookingSta
 import { BookingsFilters } from "@/presentation/components/bookings/BookingsFilters"
 import { BookingsTable } from "@/presentation/components/bookings/BookingsTable"
 import { CreateBookingDialog } from "@/presentation/components/bookings/CreateBookingDialog"
+import { EditBookingDialog } from "@/presentation/components/bookings/EditBookingDialog"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
 import { useBookingsViewModel } from "@/presentation/viewmodels/bookings/useBookingsViewModel"
 
@@ -59,11 +59,11 @@ export function BookingsScreen({
   authUseCase,
   bookingManagementUseCase,
 }: BookingsScreenProps) {
-  const router = useRouter()
-  const viewModel = useBookingsViewModel(bookingManagementUseCase)
+  const viewModel = useBookingsViewModel(authUseCase, bookingManagementUseCase)
   const { state } = viewModel
   const [deleteBooking, setDeleteBooking] = useState<Booking | null>(null)
   const [cancelBooking, setCancelBooking] = useState<Booking | null>(null)
+  const [editBookingId, setEditBookingId] = useState<string | null>(null)
   const [createBookingOpen, setCreateBookingOpen] = useState(false)
 
   useDashboardBreadcrumbs([
@@ -138,20 +138,23 @@ export function BookingsScreen({
               searchQuery={state.filters.searchQuery}
               statusFilter={state.filters.statusFilter}
               typeFilter={state.filters.typeFilter}
+              branchFilter={state.filters.branchFilter}
+              branchFilterOptions={state.branchFilterOptions}
+              showBranchFilter={state.showBranchFilter}
               onSearchQueryChange={viewModel.setSearchQuery}
               onStatusFilterChange={viewModel.setStatusFilter}
               onTypeFilterChange={viewModel.setTypeFilter}
+              onBranchFilterChange={viewModel.setBranchFilter}
             />
 
             <BookingsTable
               bookings={state.filteredBookings}
               isActionPending={state.isActionPending}
+              showBranchColumn={state.showBranchColumn}
               onReturn={(booking) => void viewModel.returnBooking(booking.id)}
               onExtend={(booking) => void viewModel.extendBooking(booking.id)}
               onCancel={(booking) => setCancelBooking(booking)}
-              onEdit={(booking) =>
-                router.push(`/dashboard/bookings/${booking.id}/edit`)
-              }
+              onEdit={(booking) => setEditBookingId(booking.id)}
               onDelete={(booking) => setDeleteBooking(booking)}
             />
           </div>
@@ -223,6 +226,15 @@ export function BookingsScreen({
         open={createBookingOpen}
         onOpenChange={setCreateBookingOpen}
         authUseCase={authUseCase}
+        bookingManagementUseCase={bookingManagementUseCase}
+      />
+
+      <EditBookingDialog
+        open={editBookingId !== null}
+        onOpenChange={(isOpen) => {
+          if (!isOpen) setEditBookingId(null)
+        }}
+        bookingId={editBookingId ?? ""}
         bookingManagementUseCase={bookingManagementUseCase}
       />
     </>

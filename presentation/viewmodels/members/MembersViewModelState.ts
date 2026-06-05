@@ -11,21 +11,6 @@ export type MemberFilterState = {
   statusFilter: MemberStatusFilter
   branchRegisteredFilter: MemberBranchFilter
   branchUsedFilter: MemberBranchFilter
-  startDate: string
-  endDate: string
-}
-
-export type MemberActiveFilterId =
-  | "search"
-  | "status"
-  | "branchRegistered"
-  | "branchUsed"
-  | "registrationDate"
-
-export type MemberActiveFilter = {
-  id: MemberActiveFilterId
-  label: string
-  value: string
 }
 
 export type MembersPageStatus = "idle" | "loading" | "ready" | "error"
@@ -36,8 +21,11 @@ export type MembersViewModelState = {
   filteredMembers: Member[]
   registeredBranches: string[]
   usedBranches: string[]
-  appliedFilters: MemberFilterState
-  activeFilters: MemberActiveFilter[]
+  filters: MemberFilterState
+  showRegisterBranchColumn: boolean
+  showRegisterBranchFilter: boolean
+  showBranchUsedColumn: boolean
+  showBranchUsedFilter: boolean
   error: string | null
   isLoading: boolean
   isReady: boolean

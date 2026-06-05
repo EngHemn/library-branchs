@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQuery } from "@tanstack/react-query"
@@ -9,7 +10,9 @@ import {
   billFormSchema,
   type BillFormValues,
 } from "@/domain/schemas/billFormSchema"
+import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { GetBillsUseCase } from "@/domain/usecases/bills/GetBillsUseCase"
+import { resolveUserBranchId } from "@/lib/dashboardBranchScope"
 import type { CreateBillStatus, CreateBillViewModelState } from "./CreateBillViewModelState"
 
 type CreateBillViewModel = {
@@ -19,6 +22,7 @@ type CreateBillViewModel = {
 }
 
 export function useCreateBillViewModel(
+  authUseCase: AuthUseCase,
   getBillsUseCase: GetBillsUseCase
 ): CreateBillViewModel {
   const form = useForm<BillFormValues>({
@@ -34,6 +38,15 @@ export function useCreateBillViewModel(
     },
   })
 
+  const userQuery = useQuery({
+    queryKey: ["currentUser"],
+    queryFn: async () => {
+      const result = await authUseCase.getCurrentUser()
+      if (!result.success) throw new Error(result.error)
+      return result.data ?? null
+    },
+  })
+
   const optionsQuery = useQuery({
     queryKey: ["bill-form-options"],
     queryFn: async () => {
@@ -42,6 +55,7 @@ export function useCreateBillViewModel(
       return result.data
     },
     refetchOnMount: "always",
+    enabled: userQuery.isSuccess,
   })
 
   const {
@@ -65,19 +79,30 @@ export function useCreateBillViewModel(
     }
   }
 
-  const status: CreateBillStatus = optionsQuery.isPending
-    ? "loading"
-    : isSaved
-      ? "saved"
-      : isSaving
-        ? "saving"
-        : "ready"
+  const user = userQuery.data ?? null
+  const showBranchField = user?.branchType !== "sub"
+  const userBranchId = user ? resolveUserBranchId(user) : ""
+
+  useEffect(() => {
+    if (!user || user.branchType !== "sub" || form.getValues("branchId")) return
+    form.setValue("branchId", userBranchId)
+  }, [user, userBranchId, form])
+
+  const status: CreateBillStatus =
+    userQuery.isPending || optionsQuery.isPending
+      ? "loading"
+      : isSaved
+        ? "saved"
+        : isSaving
+          ? "saving"
+          : "ready"
 
   const state: CreateBillViewModelState = {
     status,
     branchOptions: optionsQuery.data?.branches ?? [],
     bookOptions: optionsQuery.data?.books ?? [],
-    error: mutationError?.message ?? optionsQuery.error?.message ?? null,
+    showBranchField,
+    error: mutationError?.message ?? optionsQuery.error?.message ?? userQuery.error?.message ?? null,
     isLoading: status === "loading",
     isReady: status === "ready",
     isSaving,

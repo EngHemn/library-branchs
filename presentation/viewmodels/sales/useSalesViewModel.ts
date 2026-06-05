@@ -1,14 +1,22 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
+import { useQuery } from "@tanstack/react-query"
 
 import type { Branch } from "@/domain/entities/branch/Branch"
 import type { CartItem } from "@/domain/entities/sales/CartItem"
-import type { Sale } from "@/domain/entities/sales/Sale"
 import type { SaleBook } from "@/domain/entities/sales/SaleBook"
+import type { User } from "@/domain/entities/User"
+import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { SalesUseCase } from "@/domain/usecases/sales/SalesUseCase"
+import {
+  clearStoredSalesCart,
+  readStoredSalesCart,
+  writeStoredSalesCart,
+} from "@/lib/salesCartStorage"
+import { resolveUserBranchId } from "@/lib/dashboardBranchScope"
 import { useSalesData } from "./useSalesData"
-import type { AsyncStatus, BranchNode, SalesFilter, SalesViewModelState } from "./SalesViewModelState"
+import type { BranchNode, SalesFilter, SalesViewModelState } from "./SalesViewModelState"
 export type { BranchNode } from "./SalesViewModelState"
 
 export type SalesViewModel = {
@@ -42,12 +50,29 @@ function getUniqueValues(
   return Array.from(values).sort()
 }
 
-function buildBranchNodes(branches: Branch[]): BranchNode[] {
-  const mainBranches = branches.filter((b) => b.type === "main")
-  return mainBranches.map((main) => ({
-    branch: main,
-    subBranches: branches.filter((b) => b.parentBranch === main.branchName),
-  }))
+function buildScopedBranchNodes(
+  branches: Branch[],
+  user: User | null
+): BranchNode[] {
+  if (!user || user.branchType === "sub") {
+    return []
+  }
+
+  const userBranchId = resolveUserBranchId(user)
+  const mainBranch = branches.find(
+    (branch) => branch.id === userBranchId && branch.type === "main"
+  )
+
+  if (!mainBranch) {
+    return []
+  }
+
+  const subBranches = branches.filter(
+    (branch) =>
+      branch.type === "sub" && branch.parentBranch === mainBranch.branchName
+  )
+
+  return [{ branch: mainBranch, subBranches }]
 }
 
 function computeCartTotals(cart: CartItem[]): {
@@ -68,8 +93,26 @@ function computeCartTotals(cart: CartItem[]): {
   return { subtotal, discountAmount, total: subtotal - discountAmount, itemCount }
 }
 
-export function useSalesViewModel(salesUseCase: SalesUseCase): SalesViewModel {
+export function useSalesViewModel(
+  authUseCase: AuthUseCase,
+  salesUseCase: SalesUseCase
+): SalesViewModel {
   const salesData = useSalesData(salesUseCase)
+  const { setDisplayedBranch, displayedBranchId } = salesData
+
+  const userQuery = useQuery({
+    queryKey: ["currentUser"],
+    queryFn: async () => {
+      const result = await authUseCase.getCurrentUser()
+      if (!result.success) throw new Error(result.error)
+      return result.data ?? null
+    },
+  })
+
+  const user = userQuery.data ?? null
+  const userId = user?.id ?? null
+  const userBranchId = user ? resolveUserBranchId(user) : null
+  const isSubBranch = user?.branchType === "sub"
 
   const [shoppingBranchId, setShoppingBranchId] = useState<string | null>(null)
   const [cart, setCart] = useState<CartItem[]>([])
@@ -80,6 +123,50 @@ export function useSalesViewModel(salesUseCase: SalesUseCase): SalesViewModel {
   const [categoryFilter, setCategoryFilter] = useState<SalesFilter>("all")
   const [authorFilter, setAuthorFilter] = useState<SalesFilter>("all")
   const [translatorFilter, setTranslatorFilter] = useState<SalesFilter>("all")
+
+  const hydratedUserIdRef = useRef<string | null>(null)
+
+  useEffect(() => {
+    if (!userId) {
+      hydratedUserIdRef.current = null
+      return
+    }
+
+    if (hydratedUserIdRef.current !== userId) {
+      hydratedUserIdRef.current = userId
+      const storedCart = readStoredSalesCart(userId)
+      setCart(storedCart.cart)
+
+      if (isSubBranch && userBranchId) {
+        setShoppingBranchId(userBranchId)
+        setDisplayedBranch(userBranchId)
+        return
+      }
+
+      if (storedCart.shoppingBranchId) {
+        setShoppingBranchId(storedCart.shoppingBranchId)
+      }
+
+      if (storedCart.displayedBranchId) {
+        setDisplayedBranch(storedCart.displayedBranchId)
+      }
+      return
+    }
+
+    writeStoredSalesCart(userId, {
+      cart,
+      shoppingBranchId,
+      displayedBranchId,
+    })
+  }, [
+    userId,
+    cart,
+    shoppingBranchId,
+    displayedBranchId,
+    isSubBranch,
+    userBranchId,
+    setDisplayedBranch,
+  ])
 
   function resetFilters(): void {
     setSearchQuery("")
@@ -111,6 +198,9 @@ export function useSalesViewModel(salesUseCase: SalesUseCase): SalesViewModel {
   function confirmBranchChange(): void {
     if (!pendingBranchId) return
     setCart([])
+    if (userId) {
+      clearStoredSalesCart(userId)
+    }
     setShoppingBranchId(pendingBranchId)
     viewBranchBooks(pendingBranchId)
     setPendingBranchId(null)
@@ -159,6 +249,9 @@ export function useSalesViewModel(salesUseCase: SalesUseCase): SalesViewModel {
 
   function clearCart(): void {
     setCart([])
+    if (userId) {
+      clearStoredSalesCart(userId)
+    }
   }
 
   async function placeSale(): Promise<void> {
@@ -166,17 +259,23 @@ export function useSalesViewModel(salesUseCase: SalesUseCase): SalesViewModel {
     try {
       await salesData.placeSale(shoppingBranchId, cart)
       setCart([])
+      if (userId) {
+        clearStoredSalesCart(userId)
+      }
     } catch {
-      // saleError set via onError in useSalesData
     }
   }
 
-  const { branches, books, displayedBranchId } = salesData
+  const { branches, books } = salesData
   const { subtotal, discountAmount, total, itemCount } = computeCartTotals(cart)
 
   const shoppingBranch = branches.find((b) => b.id === shoppingBranchId) ?? null
   const displayedBranch = branches.find((b) => b.id === displayedBranchId) ?? null
   const pendingBranch = branches.find((b) => b.id === pendingBranchId) ?? null
+
+  const branchNodes = buildScopedBranchNodes(branches, user)
+  const hasSubBranches = branchNodes.some((node) => node.subBranches.length > 0)
+  const showBranchSidebar = !isSubBranch && hasSubBranches
 
   const q = searchQuery.trim().toLowerCase()
   const filteredBooks = books.filter(
@@ -192,7 +291,7 @@ export function useSalesViewModel(salesUseCase: SalesUseCase): SalesViewModel {
   )
 
   const state: SalesViewModelState = {
-    branchNodes: buildBranchNodes(branches),
+    branchNodes,
     branchesStatus: salesData.branchesStatus,
     branchesError: salesData.branchesError,
     shoppingBranchId,
@@ -227,6 +326,8 @@ export function useSalesViewModel(salesUseCase: SalesUseCase): SalesViewModel {
     categories: getUniqueValues(books, (b) => b.category),
     authors: getUniqueValues(books, (b) => b.author),
     translators: getUniqueValues(books, (b) => b.translator ?? null),
+    showBranchSidebar,
+    isSubBranchUser: isSubBranch,
   }
 
   return {

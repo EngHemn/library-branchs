@@ -46,6 +46,7 @@ import type {
 type BookingsTableProps = {
   bookings: Booking[]
   isActionPending: boolean
+  showBranchColumn?: boolean
   onReturn: (booking: Booking) => void
   onExtend: (booking: Booking) => void
   onCancel: (booking: Booking) => void
@@ -173,6 +174,7 @@ function BookingActionsMenu({
 export function BookingsTable({
   bookings,
   isActionPending,
+  showBranchColumn = false,
   onReturn,
   onExtend,
   onCancel,
@@ -194,12 +196,12 @@ export function BookingsTable({
           </p>
         ) : (
           <div className="overflow-x-auto">
-            <Table className="min-w-[980px]">
+            <Table className={showBranchColumn ? "min-w-[980px]" : "min-w-[820px]"}>
               <TableHeader>
                 <TableRow>
                   <TableHead>Book</TableHead>
                   <TableHead>Member</TableHead>
-                  <TableHead>Branch</TableHead>
+                  {showBranchColumn ? <TableHead>Branch</TableHead> : null}
                   <TableHead>Type</TableHead>
                   <TableHead>Booking Date</TableHead>
                   <TableHead>Due Date</TableHead>
@@ -224,13 +226,15 @@ export function BookingsTable({
                         name={booking.memberName}
                       />
                     </TableCell>
-                    <TableCell className="max-w-[160px] truncate">
-                      <BranchLink
-                        branchId={booking.branchId}
-                        branchName={booking.branchName}
-                        className="block truncate"
-                      />
-                    </TableCell>
+                    {showBranchColumn ? (
+                      <TableCell className="max-w-[160px] truncate">
+                        <BranchLink
+                          branchId={booking.branchId}
+                          branchName={booking.branchName}
+                          className="block truncate"
+                        />
+                      </TableCell>
+                    ) : null}
                     <TableCell>
                       <BookingTypeBadge type={booking.type} />
                     </TableCell>

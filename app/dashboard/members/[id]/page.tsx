@@ -2,13 +2,20 @@
 
 import { use } from "react"
 
+import { AuthFakeDataSource } from "@/data/datasources/AuthFakeDataSource"
 import { BranchManagementFakeDataSource } from "@/data/datasources/BranchManagementFakeDataSource"
 import { MemberManagementFakeDataSource } from "@/data/datasources/MemberManagementFakeDataSource"
+import { AuthRepositoryImpl } from "@/data/repositories/AuthRepositoryImpl"
 import { BranchManagementRepositoryImpl } from "@/data/repositories/BranchManagementRepositoryImpl"
 import { MemberManagementRepositoryImpl } from "@/data/repositories/MemberManagementRepositoryImpl"
+import { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import { BranchManagementUseCase } from "@/domain/usecases/branch/BranchManagementUseCase"
 import { MemberManagementUseCase } from "@/domain/usecases/members/MemberManagementUseCase"
 import { ViewMemberScreen } from "@/presentation/screens/members/ViewMemberScreen"
+
+const authFakeDataSource = new AuthFakeDataSource()
+const authRepository = new AuthRepositoryImpl(authFakeDataSource)
+const authUseCase = new AuthUseCase(authRepository)
 
 type ViewMemberPageProps = {
   params: Promise<{
@@ -38,6 +45,7 @@ export default function ViewMemberPage({ params }: ViewMemberPageProps) {
   return (
     <ViewMemberScreen
       memberId={id}
+      authUseCase={authUseCase}
       memberManagementUseCase={memberManagementUseCase}
       branchManagementUseCase={branchManagementUseCase}
     />

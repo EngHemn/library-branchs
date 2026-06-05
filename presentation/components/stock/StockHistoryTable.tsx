@@ -101,6 +101,7 @@ type StockHistoryTableProps = {
   onUserFilterChange: (u: string | null) => void
   availableBranches: { id: string; name: string }[]
   availableUsers: string[]
+  showBranchFilter: boolean
 }
 
 function HistoryTableSkeleton() {
@@ -130,6 +131,7 @@ export function StockHistoryTable({
   onUserFilterChange,
   availableBranches,
   availableUsers,
+  showBranchFilter,
 }: StockHistoryTableProps) {
   const [sorting, setSorting] = useState<SortingState>([
     { id: "createdAt", desc: true },
@@ -150,7 +152,7 @@ export function StockHistoryTable({
 
   const activeFilterCount = [
     typeFilter,
-    branchFilter,
+    showBranchFilter ? branchFilter : null,
     dateFrom,
     dateTo,
     userFilter,
@@ -169,7 +171,7 @@ export function StockHistoryTable({
       onRemove: () => onTypeFilterChange(null),
     })
   }
-  if (selectedBranch) {
+  if (showBranchFilter && selectedBranch) {
     activeFilterChips.push({
       key: `branch-${selectedBranch.id}`,
       label: `Branch: ${selectedBranch.name}`,
@@ -505,27 +507,29 @@ export function StockHistoryTable({
                 </Select>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="history-branch-filter">Branch</Label>
-                <Select
-                  value={draftBranchFilter ?? "all"}
-                  onValueChange={(value) =>
-                    setDraftBranchFilter(value === "all" ? null : value)
-                  }
-                >
-                  <SelectTrigger id="history-branch-filter" className="w-full">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All</SelectItem>
-                    {availableBranches.map((b) => (
-                      <SelectItem key={b.id} value={b.id}>
-                        {b.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+              {showBranchFilter ? (
+                <div className="space-y-2">
+                  <Label htmlFor="history-branch-filter">Branch</Label>
+                  <Select
+                    value={draftBranchFilter ?? "all"}
+                    onValueChange={(value) =>
+                      setDraftBranchFilter(value === "all" ? null : value)
+                    }
+                  >
+                    <SelectTrigger id="history-branch-filter" className="w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All</SelectItem>
+                      {availableBranches.map((b) => (
+                        <SelectItem key={b.id} value={b.id}>
+                          {b.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              ) : null}
 
               <div className="space-y-2">
                 <Label htmlFor="history-user-filter">User</Label>

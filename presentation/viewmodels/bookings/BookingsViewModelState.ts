@@ -9,11 +9,18 @@ import type {
 
 export type BookingStatusFilter = "all" | BookingStatus
 export type BookingTypeFilter = "all" | BookingType
+export type BookingBranchFilter = "current" | string
+
+export type BookingBranchFilterOption = {
+  value: string
+  label: string
+}
 
 export type BookingFilterState = {
   searchQuery: string
   statusFilter: BookingStatusFilter
   typeFilter: BookingTypeFilter
+  branchFilter: BookingBranchFilter
 }
 
 export type BookingsPageStatus = "idle" | "loading" | "ready" | "error"
@@ -24,6 +31,9 @@ export type BookingsViewModelState = {
   filteredBookings: Booking[]
   stats: BookingStats
   filters: BookingFilterState
+  branchFilterOptions: BookingBranchFilterOption[]
+  showBranchFilter: boolean
+  showBranchColumn: boolean
   error: string | null
   isLoading: boolean
   isReady: boolean

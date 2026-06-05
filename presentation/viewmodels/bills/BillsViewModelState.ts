@@ -1,16 +1,31 @@
 "use client"
 
 import type { Bill } from "@/domain/entities/bill/Bill"
-import type { GetBillsUseCase } from "@/domain/usecases/bills/GetBillsUseCase"
 
 export type BillsStatus = "idle" | "loading" | "ready" | "error"
+
+export type BillBranchFilter = "current" | string
+
+export type BillBranchFilterOption = {
+  value: string
+  label: string
+}
+
+export type BillsFilterState = {
+  searchQuery: string
+  branchFilter: BillBranchFilter
+  dateFrom: string | null
+  dateTo: string | null
+}
 
 export type BillsViewModelState = {
   status: BillsStatus
   bills: Bill[]
   filteredBills: Bill[]
-  searchQuery: string
-  branchFilter: string
+  filters: BillsFilterState
+  branchFilterOptions: BillBranchFilterOption[]
+  showBranchFilter: boolean
+  showBranchColumn: boolean
   error: string | null
   isLoading: boolean
   isReady: boolean
