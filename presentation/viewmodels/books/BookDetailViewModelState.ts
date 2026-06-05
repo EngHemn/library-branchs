@@ -13,4 +13,8 @@ export type BookDetailViewModelState = {
   isLoaded: boolean
   isNotFound: boolean
   isError: boolean
+  /** Hide branch column in booking history for sub-branch users. */
+  showBranchColumn: boolean
+  /** Hide multi-branch stock table for sub-branch users (they only see their branch). */
+  showBranchesTable: boolean
 }

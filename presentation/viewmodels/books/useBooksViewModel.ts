@@ -171,6 +171,8 @@ export function useBooksViewModel(
         book.firstAddedBranch === filters.branchFilter)
   )
 
+  const showBranchFilter = user?.branchType !== "sub"
+
   const state: BooksViewModelState = {
     status,
     user,
@@ -181,6 +183,7 @@ export function useBooksViewModel(
     translators,
     branches,
     filters,
+    showBranchFilter,
     dialog,
     error: isError
       ? (userQuery.error?.message ?? booksQuery.error?.message ?? null)

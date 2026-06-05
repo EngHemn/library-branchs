@@ -57,8 +57,16 @@ type BookColumnKey =
   | "isbn"
   | "stock"
   | "available"
+  | "price"
   | "status"
   | "actions"
+
+function formatPrice(price: number): string {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  }).format(price)
+}
 
 type BookFilter = "all" | string
 
@@ -308,6 +316,15 @@ export function BooksTab({
       sortable: true,
       sortValue: (b) => b.available,
       cell: (b) => b.available.toLocaleString(),
+    },
+    {
+      key: "price",
+      header: "Price",
+      sortable: true,
+      sortValue: (b) => b.price,
+      headerClassName: "text-center",
+      className: "text-center tabular-nums",
+      cell: (b) => formatPrice(b.price),
     },
     {
       key: "status",

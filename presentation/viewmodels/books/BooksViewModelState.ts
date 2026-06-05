@@ -38,6 +38,7 @@ export type BooksViewModelState = {
   translators: string[]
   branches: string[]
   filters: BookFilterState
+  showBranchFilter: boolean
   dialog: BooksManagementDialog
   error: string | null
   isLoading: boolean

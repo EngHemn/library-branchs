@@ -141,6 +141,7 @@ export function EditBookScreen({ bookId, getBooksUseCase }: EditBookScreenProps)
             <CardContent>
               <BookFormFields
                 form={form}
+                books={state.books}
                 authors={state.authors}
                 translators={state.translators}
                 categories={state.categories}
@@ -148,6 +149,8 @@ export function EditBookScreen({ bookId, getBooksUseCase }: EditBookScreenProps)
                 disabled={state.isSaving || state.isSaved}
                 onSubmit={viewModel.save}
                 onAddLanguage={viewModel.addLanguage}
+                onBookSelect={viewModel.populateFromBook}
+                excludeBookId={bookId}
               >
                 <Separator />
                 <div className="flex justify-end gap-3">

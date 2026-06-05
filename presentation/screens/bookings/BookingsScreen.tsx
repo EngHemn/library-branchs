@@ -23,14 +23,17 @@ import {
 import { Skeleton } from "@/components/ui/skeleton"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import type { Booking } from "@/domain/entities/booking/Booking"
+import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { BookingManagementUseCase } from "@/domain/usecases/bookings/BookingManagementUseCase"
 import { BookingStatsCards } from "@/presentation/components/bookings/BookingStatsCards"
 import { BookingsFilters } from "@/presentation/components/bookings/BookingsFilters"
 import { BookingsTable } from "@/presentation/components/bookings/BookingsTable"
+import { CreateBookingDialog } from "@/presentation/components/bookings/CreateBookingDialog"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
 import { useBookingsViewModel } from "@/presentation/viewmodels/bookings/useBookingsViewModel"
 
 type BookingsScreenProps = {
+  authUseCase: AuthUseCase
   bookingManagementUseCase: BookingManagementUseCase
 }
 
@@ -52,12 +55,16 @@ function LoadingBookingsScreen() {
   )
 }
 
-export function BookingsScreen({ bookingManagementUseCase }: BookingsScreenProps) {
+export function BookingsScreen({
+  authUseCase,
+  bookingManagementUseCase,
+}: BookingsScreenProps) {
   const router = useRouter()
   const viewModel = useBookingsViewModel(bookingManagementUseCase)
   const { state } = viewModel
   const [deleteBooking, setDeleteBooking] = useState<Booking | null>(null)
   const [cancelBooking, setCancelBooking] = useState<Booking | null>(null)
+  const [createBookingOpen, setCreateBookingOpen] = useState(false)
 
   useDashboardBreadcrumbs([
     { label: "Workspace", href: "/dashboard" },
@@ -111,7 +118,7 @@ export function BookingsScreen({ bookingManagementUseCase }: BookingsScreenProps
                   Track reservations, borrows, returns and overdue books.
                 </p>
               </div>
-              <Button onClick={() => router.push("/dashboard/bookings/create")}>
+              <Button onClick={() => setCreateBookingOpen(true)}>
                 <PlusIcon />
                 Create Booking
               </Button>
@@ -131,12 +138,9 @@ export function BookingsScreen({ bookingManagementUseCase }: BookingsScreenProps
               searchQuery={state.filters.searchQuery}
               statusFilter={state.filters.statusFilter}
               typeFilter={state.filters.typeFilter}
-              branchFilter={state.filters.branchFilter}
-              branches={state.branches}
               onSearchQueryChange={viewModel.setSearchQuery}
               onStatusFilterChange={viewModel.setStatusFilter}
               onTypeFilterChange={viewModel.setTypeFilter}
-              onBranchFilterChange={viewModel.setBranchFilter}
             />
 
             <BookingsTable
@@ -214,6 +218,13 @@ export function BookingsScreen({ bookingManagementUseCase }: BookingsScreenProps
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <CreateBookingDialog
+        open={createBookingOpen}
+        onOpenChange={setCreateBookingOpen}
+        authUseCase={authUseCase}
+        bookingManagementUseCase={bookingManagementUseCase}
+      />
     </>
   )
 }

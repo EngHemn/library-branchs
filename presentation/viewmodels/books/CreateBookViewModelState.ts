@@ -1,11 +1,12 @@
 "use client"
 
-import type { GetBooksUseCase } from "@/domain/usecases/books/GetBooksUseCase"
+import type { Book } from "@/domain/entities/book/Book"
 
 export type CreateBookStatus = "idle" | "loading" | "ready" | "saving" | "saved"
 
 export type CreateBookViewModelState = {
   status: CreateBookStatus
+  books: Book[]
   authors: string[]
   translators: string[]
   categories: string[]

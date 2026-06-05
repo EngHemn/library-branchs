@@ -112,6 +112,7 @@ export function CreateBookScreen({ getBooksUseCase }: CreateBookScreenProps) {
             <CardContent>
               <BookFormFields
                 form={form}
+                books={state.books}
                 authors={state.authors}
                 translators={state.translators}
                 categories={state.categories}
@@ -119,6 +120,7 @@ export function CreateBookScreen({ getBooksUseCase }: CreateBookScreenProps) {
                 disabled={state.isSaving || state.isSaved}
                 onSubmit={viewModel.save}
                 onAddLanguage={viewModel.addLanguage}
+                onBookSelect={viewModel.populateFromBook}
               >
                 <Separator />
                 <div className="flex justify-end gap-3">

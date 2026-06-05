@@ -24,20 +24,18 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import type { Book } from "@/domain/entities/book/Book"
 import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
+import type { BookingManagementUseCase } from "@/domain/usecases/bookings/BookingManagementUseCase"
 import type { GetBooksUseCase } from "@/domain/usecases/books/GetBooksUseCase"
 import { BooksFilters } from "@/presentation/components/books/BooksFilters"
 import { BooksTable } from "@/presentation/components/books/BooksTable"
+import { CreateBookingDialog } from "@/presentation/components/bookings/CreateBookingDialog"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
 import { useBooksViewModel } from "@/presentation/viewmodels/books/useBooksViewModel"
-
-function getCreateBookingHref(bookId: string, returnTo: string) {
-  const params = new URLSearchParams({ bookId, returnTo })
-  return `/dashboard/bookings/create?${params.toString()}`
-}
 
 type BooksScreenProps = {
   authUseCase: AuthUseCase
   getBooksUseCase: GetBooksUseCase
+  bookingManagementUseCase: BookingManagementUseCase
 }
 
 function LoadingBooksScreen() {
@@ -53,11 +51,17 @@ function LoadingBooksScreen() {
   )
 }
 
-export function BooksScreen({ authUseCase, getBooksUseCase }: BooksScreenProps) {
+export function BooksScreen({
+  authUseCase,
+  getBooksUseCase,
+  bookingManagementUseCase,
+}: BooksScreenProps) {
   const router = useRouter()
   const viewModel = useBooksViewModel(authUseCase, getBooksUseCase)
   const { state } = viewModel
   const [deleteBook, setDeleteBook] = useState<Book | null>(null)
+  const [createBookingOpen, setCreateBookingOpen] = useState(false)
+  const [createBookingBookId, setCreateBookingBookId] = useState("")
 
   useEffect(() => {
     if (state.isUnauthenticated) {
@@ -127,6 +131,7 @@ export function BooksScreen({ authUseCase, getBooksUseCase }: BooksScreenProps) 
               authors={state.authors}
               translators={state.translators}
               branches={state.branches}
+              showBranchFilter={state.showBranchFilter}
               onSearchQueryChange={viewModel.setSearchQuery}
               onCategoryFilterChange={viewModel.setCategoryFilter}
               onAuthorFilterChange={viewModel.setAuthorFilter}
@@ -137,9 +142,10 @@ export function BooksScreen({ authUseCase, getBooksUseCase }: BooksScreenProps) 
             <BooksTable
               books={state.filteredBooks}
               onView={(book) => router.push(`/dashboard/books/${book.id}`)}
-              onBooking={(book) =>
-                router.push(getCreateBookingHref(book.id, "/dashboard/books"))
-              }
+              onBooking={(book) => {
+                setCreateBookingBookId(book.id)
+                setCreateBookingOpen(true)
+              }}
               onEdit={(book) => router.push(`/dashboard/books/${book.id}/edit`)}
               onDelete={(book) => setDeleteBook(book)}
             />
@@ -185,6 +191,18 @@ export function BooksScreen({ authUseCase, getBooksUseCase }: BooksScreenProps) 
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <CreateBookingDialog
+        open={createBookingOpen}
+        onOpenChange={(isOpen) => {
+          setCreateBookingOpen(isOpen)
+          if (!isOpen) setCreateBookingBookId("")
+        }}
+        authUseCase={authUseCase}
+        bookingManagementUseCase={bookingManagementUseCase}
+        initialBookId={createBookingBookId}
+        isBookLocked={Boolean(createBookingBookId)}
+      />
     </>
   )
 }

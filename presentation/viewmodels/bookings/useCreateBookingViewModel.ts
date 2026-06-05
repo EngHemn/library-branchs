@@ -1,16 +1,16 @@
 "use client"
 
+import { useEffect } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useRouter } from "next/navigation"
-
 import {
   bookingFormSchema,
   type BookingFormValues,
 } from "@/domain/schemas/bookingFormSchema"
-import type { BookingFormOption } from "@/domain/entities/booking/BookingFormOptions"
 import type { BookingManagementUseCase } from "@/domain/usecases/bookings/BookingManagementUseCase"
+import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
+import { resolveUserBranchId } from "@/lib/dashboardBranchScope"
 import type { CreateBookingViewModelState } from "./CreateBookingViewModelState"
 
 type CreateBookingViewModel = {
@@ -19,11 +19,17 @@ type CreateBookingViewModel = {
   save: (values: BookingFormValues) => void
 }
 
+type CreateBookingViewModelOptions = {
+  initialBookId?: string
+  onSuccess?: () => void
+}
+
 export function useCreateBookingViewModel(
+  authUseCase: AuthUseCase,
   bookingManagementUseCase: BookingManagementUseCase,
-  returnTo: string = "/dashboard/bookings"
+  options: CreateBookingViewModelOptions = {}
 ): CreateBookingViewModel {
-  const router = useRouter()
+  const { initialBookId = "", onSuccess } = options
   const queryClient = useQueryClient()
 
   const form = useForm<BookingFormValues>({
@@ -39,7 +45,16 @@ export function useCreateBookingViewModel(
     },
   })
 
-  const { data: formOptions, isLoading, isError, error } = useQuery({
+  const userQuery = useQuery({
+    queryKey: ["currentUser"],
+    queryFn: async () => {
+      const result = await authUseCase.getCurrentUser()
+      if (!result.success) throw new Error(result.error)
+      return result.data
+    },
+  })
+
+  const formOptionsQuery = useQuery({
     queryKey: ["bookingFormOptions"],
     queryFn: async () => {
       const result = await bookingManagementUseCase.getBookingFormOptions()
@@ -54,29 +69,46 @@ export function useCreateBookingViewModel(
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["bookings"] })
-      router.push(returnTo)
+      onSuccess?.()
     },
   })
 
-  const bookOptions = formOptions?.books ?? []
-  const branchOptions = formOptions?.branches ?? []
-  const allMembers = formOptions?.members ?? []
+  const user = userQuery.data ?? null
+  const userBranchId = user ? resolveUserBranchId(user) : ""
+  const bookOptions = formOptionsQuery.data?.books ?? []
+  const allMembers = formOptionsQuery.data?.members ?? []
+  const memberOptions = userBranchId
+    ? allMembers.filter((member) => member.branchId === userBranchId)
+    : []
 
-  function memberOptions(branchId: string): BookingFormOption[] {
-    if (!branchId) return allMembers
-    return allMembers.filter((m) => m.branchId === branchId)
-  }
+  useEffect(() => {
+    if (!userBranchId) return
+    if (form.getValues("branchId") === userBranchId) return
+    form.setValue("branchId", userBranchId, { shouldValidate: true })
+    form.setValue("memberId", "")
+  }, [userBranchId, form])
+
+  useEffect(() => {
+    if (!initialBookId) return
+    if (form.getValues("bookId") === initialBookId) return
+    form.setValue("bookId", initialBookId, { shouldValidate: true })
+  }, [initialBookId, form])
+
+  const isLoading = userQuery.isLoading || formOptionsQuery.isLoading
+  const isError = userQuery.isError || formOptionsQuery.isError
+  const error = isError
+    ? (userQuery.error?.message ?? formOptionsQuery.error?.message ?? null)
+    : null
 
   return {
     state: {
       bookOptions,
-      branchOptions,
       memberOptions,
       isLoading,
       isError,
       isSaving,
       isSaved,
-      error: isError ? (error as Error).message : null,
+      error,
     },
     form,
     save: createBooking,

@@ -23,11 +23,13 @@ import {
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { ImageUpload } from "@/components/ui/image-upload"
+import type { Book } from "@/domain/entities/book/Book"
 import type { BookFormValues } from "@/domain/schemas/bookFormSchema"
 import {
   BookingSearchCombobox,
   type BookingComboboxOption,
 } from "@/presentation/components/bookings/BookingSearchCombobox"
+import { BookTitleSearchCombobox } from "@/presentation/components/books/BookTitleSearchCombobox"
 
 const CREATE_AUTHOR_HREF = "/dashboard/authors/create"
 const CREATE_TRANSLATOR_HREF = "/dashboard/translators/create"
@@ -35,6 +37,7 @@ const CREATE_CATEGORY_HREF = "/dashboard/categories?create=true"
 
 type BookFormFieldsProps = {
   form: UseFormReturn<BookFormValues>
+  books: Book[]
   authors: string[]
   translators: string[]
   categories: string[]
@@ -42,6 +45,8 @@ type BookFormFieldsProps = {
   disabled: boolean
   onSubmit: (values: BookFormValues) => void
   onAddLanguage: (name: string) => void
+  onBookSelect: (bookId: string) => void
+  excludeBookId?: string
   children: React.ReactNode
 }
 
@@ -141,6 +146,7 @@ function SearchableCombobox({
 
 export function BookFormFields({
   form,
+  books,
   authors,
   translators,
   categories,
@@ -148,6 +154,8 @@ export function BookFormFields({
   disabled,
   onSubmit,
   onAddLanguage,
+  onBookSelect,
+  excludeBookId,
   children,
 }: BookFormFieldsProps) {
   const authorOptions = toComboboxOptions(authors)
@@ -166,12 +174,16 @@ export function BookFormFields({
             name="title"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Title</FormLabel>
+                <FormLabel>Title *</FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder="Enter book title"
+                  <BookTitleSearchCombobox
+                    books={books}
+                    title={field.value ?? ""}
+                    onTitleChange={field.onChange}
+                    onBookSelect={onBookSelect}
+                    excludeBookId={excludeBookId}
                     disabled={disabled}
-                    {...field}
+                    placeholder="Search or enter book title"
                   />
                 </FormControl>
                 <FormMessage />
@@ -202,7 +214,7 @@ export function BookFormFields({
             name="author"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Author</FormLabel>
+                <FormLabel>Author *</FormLabel>
                 <BookingSearchCombobox
                   options={authorOptions}
                   value={field.value}
@@ -261,7 +273,7 @@ export function BookFormFields({
             name="category"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Category</FormLabel>
+                <FormLabel>Category *</FormLabel>
                 <BookingSearchCombobox
                   options={categoryOptions}
                   value={field.value}
@@ -300,10 +312,112 @@ export function BookFormFields({
             name="publicationDate"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Publication Date</FormLabel>
+                <FormLabel>Publication Date *</FormLabel>
                 <FormControl>
                   <Input
                     type="date"
+                    disabled={disabled}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="stock"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Stock</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    min={0}
+                    placeholder="0"
+                    disabled={disabled}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="available"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Availability</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    min={0}
+                    placeholder="0"
+                    disabled={disabled}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="minAlert"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Min Alert</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    min={0}
+                    placeholder="0"
+                    disabled={disabled}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="initialPrice"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Initial Price</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    min={0}
+                    step="0.01"
+                    placeholder="0.00"
+                    disabled={disabled}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="finalPrice"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Final Price</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    min={0}
+                    step="0.01"
+                    placeholder="0.00"
                     disabled={disabled}
                     {...field}
                   />

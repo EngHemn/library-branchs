@@ -10,10 +10,9 @@ import type {
   BookingType,
 } from "@/domain/entities/booking/Booking"
 import type { BookingManagementUseCase } from "@/domain/usecases/bookings/BookingManagementUseCase"
-import type { BookingBranchFilter, BookingFilterState, BookingStatusFilter, BookingTypeFilter, BookingsPageStatus, BookingsViewModelState } from "./BookingsViewModelState"
+import type { BookingFilterState, BookingStatusFilter, BookingTypeFilter, BookingsPageStatus, BookingsViewModelState } from "./BookingsViewModelState"
 export type { BookingStatusFilter } from "./BookingsViewModelState"
 export type { BookingTypeFilter } from "./BookingsViewModelState"
-export type { BookingBranchFilter } from "./BookingsViewModelState"
 export type { BookingFilterState } from "./BookingsViewModelState"
 
 type BookingsViewModel = {
@@ -21,7 +20,6 @@ type BookingsViewModel = {
   setSearchQuery: (searchQuery: string) => void
   setStatusFilter: (statusFilter: BookingStatusFilter) => void
   setTypeFilter: (typeFilter: BookingTypeFilter) => void
-  setBranchFilter: (branchFilter: BookingBranchFilter) => void
   returnBooking: (bookingId: string) => Promise<void>
   extendBooking: (bookingId: string) => Promise<void>
   cancelBooking: (bookingId: string) => Promise<void>
@@ -33,7 +31,6 @@ const defaultFilters: BookingFilterState = {
   searchQuery: "",
   statusFilter: "all",
   typeFilter: "all",
-  branchFilter: "all",
 }
 
 const emptyStats: BookingStats = {
@@ -70,15 +67,8 @@ function filterBookings(
       matchesBookingSearch(booking, filters.searchQuery) &&
       (filters.statusFilter === "all" ||
         booking.status === filters.statusFilter) &&
-      (filters.typeFilter === "all" || booking.type === filters.typeFilter) &&
-      (filters.branchFilter === "all" ||
-        booking.branchName === filters.branchFilter)
+      (filters.typeFilter === "all" || booking.type === filters.typeFilter)
   )
-}
-
-function getUniqueBranches(bookings: Booking[]): string[] {
-  const branchSet = new Set(bookings.map((booking) => booking.branchName))
-  return Array.from(branchSet).sort()
 }
 
 export function useBookingsViewModel(
@@ -144,7 +134,6 @@ export function useBookingsViewModel(
   const bookings = bookingsQuery.data?.bookings ?? []
   const stats = bookingsQuery.data?.stats ?? emptyStats
   const filteredBookings = filterBookings(bookings, filters)
-  const branches = getUniqueBranches(bookings)
   const isActionPending = isReturning || isExtending || isCancelling || isDeleting
 
   const status: BookingsPageStatus = bookingsQuery.isPending
@@ -171,10 +160,6 @@ export function useBookingsViewModel(
 
   function setTypeFilter(typeFilter: BookingTypeFilter): void {
     setFilters((current) => ({ ...current, typeFilter }))
-  }
-
-  function setBranchFilter(branchFilter: BookingBranchFilter): void {
-    setFilters((current) => ({ ...current, branchFilter }))
   }
 
   async function returnBooking(bookingId: string): Promise<void> {
@@ -206,7 +191,6 @@ export function useBookingsViewModel(
     bookings,
     filteredBookings,
     stats,
-    branches,
     filters,
     error: queryError ?? actionError,
     isLoading: bookingsQuery.isPending,
@@ -219,7 +203,6 @@ export function useBookingsViewModel(
     setSearchQuery,
     setStatusFilter,
     setTypeFilter,
-    setBranchFilter,
     returnBooking,
     extendBooking,
     cancelBooking,

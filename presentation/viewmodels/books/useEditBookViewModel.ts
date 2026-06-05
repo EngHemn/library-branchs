@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { useForm } from "react-hook-form"
+import { useForm, type Resolver } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
@@ -17,6 +17,7 @@ type EditBookViewModel = {
   form: ReturnType<typeof useForm<BookFormValues>>
   save: (values: BookFormValues) => Promise<void>
   addLanguage: (name: string) => void
+  populateFromBook: (bookId: string) => Promise<void>
 }
 
 const DEFAULT_CATEGORIES = [
@@ -45,13 +46,11 @@ export function useEditBookViewModel(
   const [error, setError] = useState<string | null>(null)
   const originalBookRef = useRef<{
     branchId: string
-    price: number
-    stock: number
     shelfHint: string
   } | null>(null)
 
   const form = useForm<BookFormValues>({
-    resolver: zodResolver(bookFormSchema),
+    resolver: zodResolver(bookFormSchema) as Resolver<BookFormValues>,
     defaultValues: {
       title: "",
       language: "",
@@ -62,6 +61,11 @@ export function useEditBookViewModel(
       description: "",
       pages: 0,
       publicationDate: "",
+      stock: 0,
+      available: 0,
+      minAlert: 0,
+      initialPrice: 0,
+      finalPrice: 0,
       coverUrl: null,
     },
   })
@@ -93,14 +97,21 @@ export function useEditBookViewModel(
     },
   })
 
+  const booksQuery = useQuery({
+    queryKey: ["books"],
+    queryFn: async () => {
+      const result = await getBooksUseCase.getBooks()
+      if (!result.success) throw new Error(result.error)
+      return result.data
+    },
+  })
+
   useEffect(() => {
     const book = bookQuery.data
     if (!book) return
 
     originalBookRef.current = {
       branchId: book.branchId,
-      price: book.price,
-      stock: book.stock,
       shelfHint: book.shelfHint,
     }
 
@@ -114,6 +125,11 @@ export function useEditBookViewModel(
       description: book.description,
       pages: book.pages,
       publicationDate: book.publicationDate,
+      stock: book.stock,
+      available: book.available,
+      minAlert: book.minAlert ?? 0,
+      initialPrice: book.initialPrice ?? book.price,
+      finalPrice: book.price,
       coverUrl: book.coverUrl ?? null,
     })
   }, [bookQuery.data, form])
@@ -121,14 +137,14 @@ export function useEditBookViewModel(
   const updateBookMutation = useMutation({
     mutationFn: async (values: BookFormValues) => {
       const original = originalBookRef.current
+      const { finalPrice, ...rest } = values
       const result = await getBooksUseCase.updateBook({
         id: bookId,
-        ...values,
+        ...rest,
         coverUrl: values.coverUrl,
         branchId: original?.branchId ?? "",
-        price: original?.price ?? 0,
-        stock: original?.stock ?? 0,
         shelfHint: original?.shelfHint ?? "",
+        price: finalPrice,
       })
       if (!result.success) throw new Error(result.error)
       return result.data
@@ -153,10 +169,32 @@ export function useEditBookViewModel(
     setLanguages((prev) => (prev.includes(name) ? prev : [...prev, name]))
   }
 
+  async function populateFromBook(selectedBookId: string): Promise<void> {
+    const result = await getBooksUseCase.getBookById(selectedBookId)
+    if (!result.success || !result.data) return
+
+    const book = result.data
+    form.setValue("title", book.title)
+    form.setValue("author", book.author)
+    form.setValue("translator", book.translator ?? "")
+    form.setValue("isbn", book.isbn)
+    form.setValue("language", book.language)
+    form.setValue("category", book.category)
+    form.setValue("publicationDate", book.publicationDate)
+    form.setValue("description", book.description)
+    form.setValue("pages", book.pages)
+    form.setValue("coverUrl", book.coverUrl ?? null)
+
+    if (book.language && !languages.includes(book.language)) {
+      setLanguages((prev) => [...prev, book.language])
+    }
+  }
+
   const isLoading =
     bookQuery.isPending ||
     authorNamesQuery.isPending ||
-    translatorNamesQuery.isPending
+    translatorNamesQuery.isPending ||
+    booksQuery.isPending
   const isError = bookQuery.isError
   const isNotFound = bookQuery.isSuccess && bookQuery.data === null
   const isSaving = updateBookMutation.isPending
@@ -176,6 +214,7 @@ export function useEditBookViewModel(
 
   const state: EditBookViewModelState = {
     status,
+    books: booksQuery.data ?? [],
     authors: authorNamesQuery.data ?? [],
     translators: translatorNamesQuery.data ?? [],
     categories: DEFAULT_CATEGORIES,
@@ -189,5 +228,5 @@ export function useEditBookViewModel(
     isSaved,
   }
 
-  return { state, form, save, addLanguage }
+  return { state, form, save, addLanguage, populateFromBook }
 }

@@ -9,7 +9,6 @@ import {
   Trash2Icon,
 } from "lucide-react"
 
-import { Badge } from "@/components/ui/badge"
 import { EntityImage } from "@/components/ui/entity-image"
 import {
   Card,
@@ -24,7 +23,6 @@ import {
 } from "@/components/ui/data-table"
 import type { Book } from "@/domain/entities/book/Book"
 import { getAuthorViewHref } from "@/lib/authorLink"
-import { getTranslatorViewHref } from "@/lib/translatorLink"
 import { BookActionButton } from "@/presentation/components/books/BookActionButton"
 
 function PersonNameButton({
@@ -51,6 +49,13 @@ function PersonNameButton({
   )
 }
 
+function formatPrice(price: number): string {
+  const formatted = new Intl.NumberFormat("en-US", {
+    maximumFractionDigits: 0,
+  }).format(price)
+  return `${formatted} IQD`
+}
+
 type BooksTableProps = {
   books: Book[]
   onView: (book: Book) => void
@@ -62,9 +67,10 @@ type BooksTableProps = {
 type BookColumnKey =
   | "title"
   | "author"
-  | "translator"
   | "category"
-  | "branches"
+  | "stock"
+  | "available"
+  | "price"
   | "actions"
 
 export function BooksTable({
@@ -120,20 +126,6 @@ export function BooksTable({
       ),
     },
     {
-      key: "translator",
-      header: "Translator",
-      cell: (book) =>
-        book.translator ? (
-          <PersonNameButton
-            name={book.translator}
-            href={getTranslatorViewHref(book.translator)}
-            onNavigate={navigateTo}
-          />
-        ) : (
-          <span className="text-muted-foreground">—</span>
-        ),
-    },
-    {
       key: "category",
       header: "Category",
       sortable: true,
@@ -141,18 +133,31 @@ export function BooksTable({
       cell: (book) => book.category,
     },
     {
-      key: "branches",
-      header: "Branches",
+      key: "stock",
+      header: "Stock",
       sortable: true,
-      sortValue: (book) => book.branchCount,
-      cell: (book) => (
-        <Badge
-          variant="secondary"
-          className="size-6 justify-center rounded-full p-0 text-xs"
-        >
-          {book.branchCount}
-        </Badge>
-      ),
+      sortValue: (book) => book.stock,
+      headerClassName: "text-center",
+      className: "text-center tabular-nums",
+      cell: (book) => book.stock.toLocaleString(),
+    },
+    {
+      key: "available",
+      header: "Available",
+      sortable: true,
+      sortValue: (book) => book.available,
+      headerClassName: "text-center",
+      className: "text-center tabular-nums",
+      cell: (book) => book.available.toLocaleString(),
+    },
+    {
+      key: "price",
+      header: "Price",
+      sortable: true,
+      sortValue: (book) => book.price,
+      headerClassName: "text-center",
+      className: "text-center tabular-nums",
+      cell: (book) => formatPrice(book.price),
     },
     {
       key: "actions",

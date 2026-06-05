@@ -1,5 +1,6 @@
 "use client"
 
+import { dashboardAuthUseCase } from "@/app/dashboard/dashboardAuthDependencies"
 import { BookingManagementFakeDataSource } from "@/data/datasources/BookingManagementFakeDataSource"
 import { BookingManagementRepositoryImpl } from "@/data/repositories/BookingManagementRepositoryImpl"
 import { BookingManagementUseCase } from "@/domain/usecases/bookings/BookingManagementUseCase"
@@ -14,5 +15,10 @@ const bookingManagementUseCase = new BookingManagementUseCase(
 )
 
 export default function Page() {
-  return <BookingsScreen bookingManagementUseCase={bookingManagementUseCase} />
+  return (
+    <BookingsScreen
+      authUseCase={dashboardAuthUseCase}
+      bookingManagementUseCase={bookingManagementUseCase}
+    />
+  )
 }
