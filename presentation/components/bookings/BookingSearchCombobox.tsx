@@ -74,7 +74,9 @@ export function BookingSearchCombobox({
   }
 
   function handleValueChange(nextValue: string | null): void {
-    onValueChange(nextValue ?? "")
+    const selected = nextValue ?? ""
+    onValueChange(selected)
+    setInputValue(selected ? (optionMap.get(selected)?.label ?? "") : "")
   }
 
   function handleInputValueChange(nextInput: string, eventDetails?: { reason?: string }): void {

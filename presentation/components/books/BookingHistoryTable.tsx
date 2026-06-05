@@ -21,6 +21,7 @@ import { MemberLink } from "@/presentation/components/shared/DashboardEntityLink
 
 type BookingHistoryTableProps = {
   bookings: BookingRecord[]
+  showBranchColumn?: boolean
 }
 
 const statusVariants: Record<BookingStatus, "default" | "secondary" | "outline" | "destructive"> = {
@@ -42,7 +43,10 @@ const typeLabels: Record<string, string> = {
   reserve: "Reserve",
 }
 
-export function BookingHistoryTable({ bookings }: BookingHistoryTableProps) {
+export function BookingHistoryTable({
+  bookings,
+  showBranchColumn = true,
+}: BookingHistoryTableProps) {
   return (
     <Card className="rounded-lg">
       <CardHeader>
@@ -55,12 +59,12 @@ export function BookingHistoryTable({ bookings }: BookingHistoryTableProps) {
           </p>
         ) : (
           <div className="overflow-x-auto">
-            <Table className="min-w-[900px]">
+            <Table className={showBranchColumn ? "min-w-[900px]" : "min-w-[760px]"}>
               <TableHeader>
                 <TableRow>
                   <TableHead>Booking ID</TableHead>
                   <TableHead>Member</TableHead>
-                  <TableHead>Branch</TableHead>
+                  {showBranchColumn ? <TableHead>Branch</TableHead> : null}
                   <TableHead>Type</TableHead>
                   <TableHead>Date</TableHead>
                   <TableHead>Due</TableHead>
@@ -84,16 +88,18 @@ export function BookingHistoryTable({ bookings }: BookingHistoryTableProps) {
                         booking.memberName
                       )}
                     </TableCell>
-                    <TableCell>
-                      {booking.branchId ? (
-                        <BranchLink
-                          branchId={booking.branchId}
-                          branchName={booking.branchName}
-                        />
-                      ) : (
-                        booking.branchName
-                      )}
-                    </TableCell>
+                    {showBranchColumn ? (
+                      <TableCell>
+                        {booking.branchId ? (
+                          <BranchLink
+                            branchId={booking.branchId}
+                            branchName={booking.branchName}
+                          />
+                        ) : (
+                          booking.branchName
+                        )}
+                      </TableCell>
+                    ) : null}
                     <TableCell>
                       {typeLabels[booking.type] ?? booking.type}
                     </TableCell>

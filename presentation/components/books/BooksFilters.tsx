@@ -21,6 +21,7 @@ type BooksFiltersProps = {
   authors: string[]
   translators: string[]
   branches: string[]
+  showBranchFilter?: boolean
   onSearchQueryChange: (searchQuery: string) => void
   onCategoryFilterChange: (categoryFilter: string) => void
   onAuthorFilterChange: (authorFilter: string) => void
@@ -38,6 +39,7 @@ export function BooksFilters({
   authors,
   translators,
   branches,
+  showBranchFilter = true,
   onSearchQueryChange,
   onCategoryFilterChange,
   onAuthorFilterChange,
@@ -104,22 +106,24 @@ export function BooksFilters({
             ))}
           </SelectContent>
         </Select>
-        <Select
-          value={branchFilter}
-          onValueChange={onBranchFilterChange}
-        >
-          <SelectTrigger className="w-[220px]">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Branches (has stock)</SelectItem>
-            {branches.map((branch) => (
-              <SelectItem key={branch} value={branch}>
-                {branch}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        {showBranchFilter ? (
+          <Select
+            value={branchFilter}
+            onValueChange={onBranchFilterChange}
+          >
+            <SelectTrigger className="w-[220px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Branches (has stock)</SelectItem>
+              {branches.map((branch) => (
+                <SelectItem key={branch} value={branch}>
+                  {branch}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        ) : null}
       </div>
     </div>
   )

@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { ArrowLeftIcon, RefreshCwIcon } from "lucide-react"
 
@@ -12,23 +13,23 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
+import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
+import type { BookingManagementUseCase } from "@/domain/usecases/bookings/BookingManagementUseCase"
 import type { GetBooksUseCase } from "@/domain/usecases/books/GetBooksUseCase"
 import { BookBranchesTable } from "@/presentation/components/books/BookBranchesTable"
 import { BookDetailHeader } from "@/presentation/components/books/BookDetailHeader"
 import { BookingHistoryTable } from "@/presentation/components/books/BookingHistoryTable"
 import { BookProfileCard } from "@/presentation/components/books/BookProfileCard"
 import { BookSummaryCards } from "@/presentation/components/books/BookSummaryCards"
+import { CreateBookingDialog } from "@/presentation/components/bookings/CreateBookingDialog"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
 import { useBookDetailViewModel } from "@/presentation/viewmodels/books/useBookDetailViewModel"
 
-function getCreateBookingHref(bookId: string, returnTo: string) {
-  const params = new URLSearchParams({ bookId, returnTo })
-  return `/dashboard/bookings/create?${params.toString()}`
-}
-
 type ViewBookScreenProps = {
   bookId: string
+  authUseCase: AuthUseCase
   getBooksUseCase: GetBooksUseCase
+  bookingManagementUseCase: BookingManagementUseCase
 }
 
 function LoadingState() {
@@ -68,10 +69,16 @@ function LoadingState() {
   )
 }
 
-export function ViewBookScreen({ bookId, getBooksUseCase }: ViewBookScreenProps) {
+export function ViewBookScreen({
+  bookId,
+  authUseCase,
+  getBooksUseCase,
+  bookingManagementUseCase,
+}: ViewBookScreenProps) {
   const router = useRouter()
-  const viewModel = useBookDetailViewModel(bookId, getBooksUseCase)
+  const viewModel = useBookDetailViewModel(bookId, authUseCase, getBooksUseCase)
   const { state } = viewModel
+  const [createBookingOpen, setCreateBookingOpen] = useState(false)
 
   useDashboardBreadcrumbs([
     { label: "Workspace", href: "/dashboard" },
@@ -131,29 +138,42 @@ export function ViewBookScreen({ bookId, getBooksUseCase }: ViewBookScreenProps)
             <BookDetailHeader
               book={state.bookDetail}
               onBack={goBack}
-              onCreateBooking={() =>
-                router.push(getCreateBookingHref(bookId, `/dashboard/books/${bookId}`))
-              }
+              onCreateBooking={() => setCreateBookingOpen(true)}
               onEdit={() => router.push(`/dashboard/books/${bookId}/edit`)}
             />
           </section>
 
           <BookSummaryCards book={state.bookDetail} />
 
-          <section className="grid gap-5 grid-cols-1 lg:grid-cols-3">
+          <section className="grid grid-cols-1 gap-5 lg:grid-cols-3">
             <div className="lg:col-span-1">
               <BookProfileCard book={state.bookDetail} />
             </div>
             <div className="lg:col-span-2">
-              <BookBranchesTable branchStocks={state.bookDetail.branchStocks} />
+              <BookBranchesTable
+                branchStocks={state.bookDetail.branchStocks}
+                variant={state.showBranchesTable ? "table" : "summary"}
+              />
             </div>
           </section>
 
           <section>
-            <BookingHistoryTable bookings={state.bookDetail.bookingHistory} />
+            <BookingHistoryTable
+              bookings={state.bookDetail.bookingHistory}
+              showBranchColumn={state.showBranchColumn}
+            />
           </section>
         </main>
       ) : null}
+
+      <CreateBookingDialog
+        open={createBookingOpen}
+        onOpenChange={setCreateBookingOpen}
+        authUseCase={authUseCase}
+        bookingManagementUseCase={bookingManagementUseCase}
+        initialBookId={bookId}
+        isBookLocked
+      />
     </>
   )
 }
