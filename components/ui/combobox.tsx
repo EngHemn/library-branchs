@@ -27,11 +27,11 @@ function ComboboxTrigger({
   return (
     <ComboboxPrimitive.Trigger
       data-slot="combobox-trigger"
-      className={cn("[&_svg:not([class*='size-'])]:size-4", className)}
+      className={cn(className, "[&_svg:not([class*='size-'])]:size-4 bg-transparent")}
       {...props}
     >
       {children}
-      <ChevronDownIcon className="pointer-events-none size-4 text-muted-foreground" />
+      <ChevronDownIcon className="pointer-events-none size-4" />
     </ComboboxPrimitive.Trigger>
   )
 }
@@ -40,11 +40,12 @@ function ComboboxClear({ className, ...props }: ComboboxPrimitive.Clear.Props) {
   return (
     <ComboboxPrimitive.Clear
       data-slot="combobox-clear"
+
       render={<InputGroupButton variant="ghost" size="icon-xs" />}
-      className={cn(className)}
+      className={cn("bg-transparent", className)}
       {...props}
     >
-      <XIcon className="pointer-events-none" />
+      <XIcon className="pointer-events-none text-gray-500" />
     </ComboboxPrimitive.Clear>
   )
 }
@@ -61,7 +62,12 @@ function ComboboxInput({
   showClear?: boolean
 }) {
   return (
-    <InputGroup className={cn("w-auto", className)}>
+    <InputGroup
+      className={cn(
+        "w-full bg-gray-50 focus-within:bg-gray-100 has-[[data-slot=input-group-control]:focus-visible]:ring-0 dark:bg-input/30",
+        className
+      )}
+    >
       <ComboboxPrimitive.Input
         render={<InputGroupInput disabled={disabled} />}
         {...props}
@@ -102,12 +108,13 @@ function ComboboxContent({
   return (
     <ComboboxPrimitive.Portal>
       <ComboboxPrimitive.Positioner
+        data-slot="combobox-positioner"
         side={side}
         sideOffset={sideOffset}
         align={align}
         alignOffset={alignOffset}
         anchor={anchor}
-        className="isolate z-50"
+        className="isolate z-[100]"
       >
         <ComboboxPrimitive.Popup
           data-slot="combobox-content"
@@ -136,6 +143,7 @@ function ComboboxList({ className, ...props }: ComboboxPrimitive.List.Props) {
 function ComboboxItem({
   className,
   children,
+  onMouseDown,
   ...props
 }: ComboboxPrimitive.Item.Props) {
   return (
@@ -145,6 +153,11 @@ function ComboboxItem({
         "relative flex w-full cursor-default items-center gap-2 rounded-md py-1 pr-8 pl-1.5 text-sm outline-hidden select-none data-highlighted:bg-accent data-highlighted:text-accent-foreground not-data-[variant=destructive]:data-highlighted:**:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className
       )}
+      onMouseDown={(event) => {
+        // Keep focus on the input so the popup stays open until selection completes.
+        event.preventDefault()
+        onMouseDown?.(event)
+      }}
       {...props}
     >
       {children}
