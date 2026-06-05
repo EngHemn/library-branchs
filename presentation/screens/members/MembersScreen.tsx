@@ -23,8 +23,9 @@ import {
 import { Skeleton } from "@/components/ui/skeleton"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import type { Member } from "@/domain/entities/member/Member"
-import type { MemberManagementUseCase } from "@/domain/usecases/members/MemberManagementUseCase"
+import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { BranchManagementUseCase } from "@/domain/usecases/branch/BranchManagementUseCase"
+import type { MemberManagementUseCase } from "@/domain/usecases/members/MemberManagementUseCase"
 import { MembersFilters } from "@/presentation/components/members/MembersFilters"
 import { MembersTable } from "@/presentation/components/members/MembersTable"
 import { useBranchNameLookup } from "@/presentation/hooks/useBranchNameLookup"
@@ -32,6 +33,7 @@ import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadc
 import { useMembersViewModel } from "@/presentation/viewmodels/members/useMembersViewModel"
 
 type MembersScreenProps = {
+  authUseCase: AuthUseCase
   memberManagementUseCase: MemberManagementUseCase
   branchManagementUseCase: BranchManagementUseCase
 }
@@ -50,11 +52,12 @@ function LoadingMembersScreen() {
 }
 
 export function MembersScreen({
+  authUseCase,
   memberManagementUseCase,
   branchManagementUseCase,
 }: MembersScreenProps) {
   const router = useRouter()
-  const viewModel = useMembersViewModel(memberManagementUseCase)
+  const viewModel = useMembersViewModel(authUseCase, memberManagementUseCase)
   const branchNameToId = useBranchNameLookup(branchManagementUseCase)
   const { state } = viewModel
   const [deleteMember, setDeleteMember] = useState<Member | null>(null)
@@ -110,19 +113,25 @@ export function MembersScreen({
             </section>
 
             <MembersFilters
-              appliedFilters={state.appliedFilters}
-              activeFilters={state.activeFilters}
+              searchQuery={state.filters.searchQuery}
+              statusFilter={state.filters.statusFilter}
+              branchRegisteredFilter={state.filters.branchRegisteredFilter}
+              branchUsedFilter={state.filters.branchUsedFilter}
               registeredBranches={state.registeredBranches}
               usedBranches={state.usedBranches}
+              showRegisterBranchFilter={state.showRegisterBranchFilter}
+              showBranchUsedFilter={state.showBranchUsedFilter}
               onSearchQueryChange={viewModel.setSearchQuery}
-              onApply={viewModel.applyFilters}
-              onClearFilter={viewModel.clearFilter}
-              onResetFilters={viewModel.resetFilters}
+              onStatusFilterChange={viewModel.setStatusFilter}
+              onBranchRegisteredFilterChange={viewModel.setBranchRegisteredFilter}
+              onBranchUsedFilterChange={viewModel.setBranchUsedFilter}
             />
 
             <MembersTable
               members={state.filteredMembers}
               branchNameToId={branchNameToId}
+              showRegisterBranchColumn={state.showRegisterBranchColumn}
+              showBranchUsedColumn={state.showBranchUsedColumn}
               onView={(member) => router.push(`/dashboard/members/${member.id}`)}
               onEdit={(member) => router.push(`/dashboard/members/${member.id}/edit`)}
               onDelete={(member) => setDeleteMember(member)}
