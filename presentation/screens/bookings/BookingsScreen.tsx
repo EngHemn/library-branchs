@@ -1,6 +1,10 @@
 "use client"
 
 import { useState } from "react"
+<<<<<<< HEAD
+=======
+import { useRouter } from "next/navigation"
+>>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
 import { PlusIcon, RefreshCwIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -28,7 +32,10 @@ import { BookingStatsCards } from "@/presentation/components/bookings/BookingSta
 import { BookingsFilters } from "@/presentation/components/bookings/BookingsFilters"
 import { BookingsTable } from "@/presentation/components/bookings/BookingsTable"
 import { CreateBookingDialog } from "@/presentation/components/bookings/CreateBookingDialog"
+<<<<<<< HEAD
 import { EditBookingDialog } from "@/presentation/components/bookings/EditBookingDialog"
+=======
+>>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
 import { useBookingsViewModel } from "@/presentation/viewmodels/bookings/useBookingsViewModel"
 
@@ -59,12 +66,20 @@ export function BookingsScreen({
   authUseCase,
   bookingManagementUseCase,
 }: BookingsScreenProps) {
+<<<<<<< HEAD
   const viewModel = useBookingsViewModel(authUseCase, bookingManagementUseCase)
+=======
+  const router = useRouter()
+  const viewModel = useBookingsViewModel(bookingManagementUseCase)
+>>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
   const { state } = viewModel
   const [deleteBooking, setDeleteBooking] = useState<Booking | null>(null)
   const [cancelBooking, setCancelBooking] = useState<Booking | null>(null)
   const [createBookingOpen, setCreateBookingOpen] = useState(false)
+<<<<<<< HEAD
   const [editBookingId, setEditBookingId] = useState<string | null>(null)
+=======
+>>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
 
   useDashboardBreadcrumbs([
     { label: "Workspace", href: "/dashboard" },
@@ -138,6 +153,7 @@ export function BookingsScreen({
               searchQuery={state.filters.searchQuery}
               statusFilter={state.filters.statusFilter}
               typeFilter={state.filters.typeFilter}
+<<<<<<< HEAD
               branchFilter={state.filters.branchFilter}
               branches={state.branches}
               currentBranchName={state.currentBranchName}
@@ -146,16 +162,30 @@ export function BookingsScreen({
               onStatusFilterChange={viewModel.setStatusFilter}
               onTypeFilterChange={viewModel.setTypeFilter}
               onBranchFilterChange={viewModel.setBranchFilter}
+=======
+              onSearchQueryChange={viewModel.setSearchQuery}
+              onStatusFilterChange={viewModel.setStatusFilter}
+              onTypeFilterChange={viewModel.setTypeFilter}
+>>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
             />
 
             <BookingsTable
               bookings={state.filteredBookings}
               isActionPending={state.isActionPending}
+<<<<<<< HEAD
               showBranchColumn={state.showBranchColumn}
               onReturn={(booking) => void viewModel.returnBooking(booking.id)}
               onExtend={(booking) => void viewModel.extendBooking(booking.id)}
               onCancel={(booking) => setCancelBooking(booking)}
               onEdit={(booking) => setEditBookingId(booking.id)}
+=======
+              onReturn={(booking) => void viewModel.returnBooking(booking.id)}
+              onExtend={(booking) => void viewModel.extendBooking(booking.id)}
+              onCancel={(booking) => setCancelBooking(booking)}
+              onEdit={(booking) =>
+                router.push(`/dashboard/bookings/${booking.id}/edit`)
+              }
+>>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
               onDelete={(booking) => setDeleteBooking(booking)}
             />
           </div>
@@ -229,6 +259,7 @@ export function BookingsScreen({
         authUseCase={authUseCase}
         bookingManagementUseCase={bookingManagementUseCase}
       />
+<<<<<<< HEAD
 
       <EditBookingDialog
         open={editBookingId !== null}
@@ -238,6 +269,8 @@ export function BookingsScreen({
         bookingId={editBookingId ?? ""}
         bookingManagementUseCase={bookingManagementUseCase}
       />
+=======
+>>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
     </>
   )
 }

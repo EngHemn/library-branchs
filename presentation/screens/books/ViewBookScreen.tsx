@@ -21,7 +21,10 @@ import { BookDetailHeader } from "@/presentation/components/books/BookDetailHead
 import { BookingHistoryTable } from "@/presentation/components/books/BookingHistoryTable"
 import { BookProfileCard } from "@/presentation/components/books/BookProfileCard"
 import { BookSummaryCards } from "@/presentation/components/books/BookSummaryCards"
+<<<<<<< HEAD
 import { EditBookDialog } from "@/presentation/components/books/EditBookDialog"
+=======
+>>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
 import { CreateBookingDialog } from "@/presentation/components/bookings/CreateBookingDialog"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
 import { useBookDetailViewModel } from "@/presentation/viewmodels/books/useBookDetailViewModel"
@@ -80,7 +83,10 @@ export function ViewBookScreen({
   const viewModel = useBookDetailViewModel(bookId, authUseCase, getBooksUseCase)
   const { state } = viewModel
   const [createBookingOpen, setCreateBookingOpen] = useState(false)
+<<<<<<< HEAD
   const [editBookOpen, setEditBookOpen] = useState(false)
+=======
+>>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
 
   useDashboardBreadcrumbs([
     { label: "Workspace", href: "/dashboard" },
@@ -141,7 +147,11 @@ export function ViewBookScreen({
               book={state.bookDetail}
               onBack={goBack}
               onCreateBooking={() => setCreateBookingOpen(true)}
+<<<<<<< HEAD
               onEdit={() => setEditBookOpen(true)}
+=======
+              onEdit={() => router.push(`/dashboard/books/${bookId}/edit`)}
+>>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
             />
           </section>
 
@@ -176,6 +186,7 @@ export function ViewBookScreen({
         initialBookId={bookId}
         isBookLocked
       />
+<<<<<<< HEAD
 
       <EditBookDialog
         open={editBookOpen}
@@ -184,6 +195,8 @@ export function ViewBookScreen({
         getBooksUseCase={getBooksUseCase}
         onSaved={viewModel.reload}
       />
+=======
+>>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
     </>
   )
 }

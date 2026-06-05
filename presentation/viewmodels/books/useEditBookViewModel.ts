@@ -10,7 +10,10 @@ import {
   type BookFormValues,
 } from "@/domain/schemas/bookFormSchema"
 import type { GetBooksUseCase } from "@/domain/usecases/books/GetBooksUseCase"
+<<<<<<< HEAD
 import { BUILT_IN_LANGUAGES } from "@/lib/builtInLanguages"
+=======
+>>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
 import type { EditBookStatus, EditBookViewModelState } from "./EditBookViewModelState"
 
 type EditBookViewModel = {
@@ -36,7 +39,11 @@ const DEFAULT_CATEGORIES = [
   "Biography",
 ]
 
+<<<<<<< HEAD
 const DEFAULT_LANGUAGES = [...BUILT_IN_LANGUAGES]
+=======
+const DEFAULT_LANGUAGES = ["English", "Kurdish", "Arabic", "Persian", "Turkish"]
+>>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
 
 export function useEditBookViewModel(
   bookId: string,

@@ -28,7 +28,10 @@ import type { BookingManagementUseCase } from "@/domain/usecases/bookings/Bookin
 import type { GetBooksUseCase } from "@/domain/usecases/books/GetBooksUseCase"
 import { BooksFilters } from "@/presentation/components/books/BooksFilters"
 import { BooksTable } from "@/presentation/components/books/BooksTable"
+<<<<<<< HEAD
 import { EditBookDialog } from "@/presentation/components/books/EditBookDialog"
+=======
+>>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
 import { CreateBookingDialog } from "@/presentation/components/bookings/CreateBookingDialog"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
 import { useBooksViewModel } from "@/presentation/viewmodels/books/useBooksViewModel"
@@ -63,7 +66,10 @@ export function BooksScreen({
   const [deleteBook, setDeleteBook] = useState<Book | null>(null)
   const [createBookingOpen, setCreateBookingOpen] = useState(false)
   const [createBookingBookId, setCreateBookingBookId] = useState("")
+<<<<<<< HEAD
   const [editBookId, setEditBookId] = useState<string | null>(null)
+=======
+>>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
 
   useEffect(() => {
     if (state.isUnauthenticated) {
@@ -148,7 +154,11 @@ export function BooksScreen({
                 setCreateBookingBookId(book.id)
                 setCreateBookingOpen(true)
               }}
+<<<<<<< HEAD
               onEdit={(book) => setEditBookId(book.id)}
+=======
+              onEdit={(book) => router.push(`/dashboard/books/${book.id}/edit`)}
+>>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
               onDelete={(book) => setDeleteBook(book)}
             />
           </div>
@@ -205,6 +215,7 @@ export function BooksScreen({
         initialBookId={createBookingBookId}
         isBookLocked={Boolean(createBookingBookId)}
       />
+<<<<<<< HEAD
 
       <EditBookDialog
         open={editBookId !== null}
@@ -214,6 +225,8 @@ export function BooksScreen({
         bookId={editBookId ?? ""}
         getBooksUseCase={getBooksUseCase}
       />
+=======
+>>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
     </>
   )
 }

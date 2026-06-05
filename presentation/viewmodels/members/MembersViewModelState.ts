@@ -42,5 +42,8 @@ export type MembersViewModelState = {
   isLoading: boolean
   isReady: boolean
   isDeleting: boolean
+<<<<<<< HEAD
   showBranchesUsedColumn: boolean
+=======
+>>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
 }

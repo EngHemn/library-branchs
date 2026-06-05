@@ -20,6 +20,9 @@ export type ViewMemberViewModelState = {
   isLoaded: boolean
   isNotFound: boolean
   isError: boolean
+<<<<<<< HEAD
   showBranchColumn: boolean
   showBranchesUsed: boolean
+=======
+>>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
 }

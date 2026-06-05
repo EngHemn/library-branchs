@@ -3,7 +3,11 @@
 import { useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 
+<<<<<<< HEAD
 import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
+=======
+import type { MemberDetail } from "@/domain/entities/member/MemberDetail"
+>>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
 import type { MemberManagementUseCase } from "@/domain/usecases/members/MemberManagementUseCase"
 import type { ViewMemberStatus, ViewMemberTabKey, ViewMemberViewModelState } from "./ViewMemberViewModelState"
 
@@ -14,6 +18,7 @@ type ViewMemberViewModel = {
 
 export function useViewMemberViewModel(
   memberId: string,
+<<<<<<< HEAD
   memberManagementUseCase: MemberManagementUseCase,
   authUseCase: AuthUseCase
 ): ViewMemberViewModel {
@@ -28,6 +33,12 @@ export function useViewMemberViewModel(
     },
   })
 
+=======
+  memberManagementUseCase: MemberManagementUseCase
+): ViewMemberViewModel {
+  const [activeTab, setActiveTab] = useState<ViewMemberTabKey>("details")
+
+>>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
   const memberQuery = useQuery({
     queryKey: ["member", memberId],
     queryFn: async () => {
@@ -37,6 +48,7 @@ export function useViewMemberViewModel(
     },
   })
 
+<<<<<<< HEAD
   const user = userQuery.data ?? null
   const isSubBranch = user?.branchType === "sub"
   const showBranchColumn = !isSubBranch
@@ -48,6 +60,11 @@ export function useViewMemberViewModel(
   const status: ViewMemberStatus = isLoading
     ? "loading"
     : isError
+=======
+  const status: ViewMemberStatus = memberQuery.isPending
+    ? "loading"
+    : memberQuery.isError
+>>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
       ? "error"
       : memberQuery.isSuccess && !memberQuery.data
         ? "not-found"
@@ -55,12 +72,19 @@ export function useViewMemberViewModel(
           ? "loaded"
           : "idle"
 
+<<<<<<< HEAD
   const error = isError
     ? memberQuery.error instanceof Error
       ? memberQuery.error.message
       : userQuery.error instanceof Error
         ? userQuery.error.message
         : String(memberQuery.error ?? userQuery.error)
+=======
+  const error = memberQuery.isError
+    ? memberQuery.error instanceof Error
+      ? memberQuery.error.message
+      : String(memberQuery.error)
+>>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
     : null
 
   const state: ViewMemberViewModelState = {
@@ -68,12 +92,19 @@ export function useViewMemberViewModel(
     member: memberQuery.data ?? null,
     activeTab,
     error,
+<<<<<<< HEAD
     isLoading,
     isLoaded: memberQuery.isSuccess && !!memberQuery.data,
     isNotFound: memberQuery.isSuccess && !memberQuery.data,
     isError,
     showBranchColumn,
     showBranchesUsed,
+=======
+    isLoading: memberQuery.isPending,
+    isLoaded: memberQuery.isSuccess && !!memberQuery.data,
+    isNotFound: memberQuery.isSuccess && !memberQuery.data,
+    isError: memberQuery.isError,
+>>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
   }
 
   function handleSetActiveTab(tab: ViewMemberTabKey): void {

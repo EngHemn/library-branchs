@@ -23,9 +23,14 @@ import {
 import { Skeleton } from "@/components/ui/skeleton"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import type { Member } from "@/domain/entities/member/Member"
+<<<<<<< HEAD
 import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { BranchManagementUseCase } from "@/domain/usecases/branch/BranchManagementUseCase"
 import type { MemberManagementUseCase } from "@/domain/usecases/members/MemberManagementUseCase"
+=======
+import type { MemberManagementUseCase } from "@/domain/usecases/members/MemberManagementUseCase"
+import type { BranchManagementUseCase } from "@/domain/usecases/branch/BranchManagementUseCase"
+>>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
 import { MembersFilters } from "@/presentation/components/members/MembersFilters"
 import { MembersTable } from "@/presentation/components/members/MembersTable"
 import { useBranchNameLookup } from "@/presentation/hooks/useBranchNameLookup"
@@ -33,7 +38,10 @@ import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadc
 import { useMembersViewModel } from "@/presentation/viewmodels/members/useMembersViewModel"
 
 type MembersScreenProps = {
+<<<<<<< HEAD
   authUseCase: AuthUseCase
+=======
+>>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
   memberManagementUseCase: MemberManagementUseCase
   branchManagementUseCase: BranchManagementUseCase
 }
@@ -52,12 +60,19 @@ function LoadingMembersScreen() {
 }
 
 export function MembersScreen({
+<<<<<<< HEAD
   authUseCase,
+=======
+>>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
   memberManagementUseCase,
   branchManagementUseCase,
 }: MembersScreenProps) {
   const router = useRouter()
+<<<<<<< HEAD
   const viewModel = useMembersViewModel(authUseCase, memberManagementUseCase)
+=======
+  const viewModel = useMembersViewModel(memberManagementUseCase)
+>>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
   const branchNameToId = useBranchNameLookup(branchManagementUseCase)
   const { state } = viewModel
   const [deleteMember, setDeleteMember] = useState<Member | null>(null)
@@ -126,7 +141,10 @@ export function MembersScreen({
             <MembersTable
               members={state.filteredMembers}
               branchNameToId={branchNameToId}
+<<<<<<< HEAD
               showBranchesUsedColumn={state.showBranchesUsedColumn}
+=======
+>>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
               onView={(member) => router.push(`/dashboard/members/${member.id}`)}
               onEdit={(member) => router.push(`/dashboard/members/${member.id}/edit`)}
               onDelete={(member) => setDeleteMember(member)}

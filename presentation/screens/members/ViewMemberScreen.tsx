@@ -21,9 +21,14 @@ import {
 import { Skeleton } from "@/components/ui/skeleton"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { TooltipProvider } from "@/components/ui/tooltip"
+<<<<<<< HEAD
 import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { BranchManagementUseCase } from "@/domain/usecases/branch/BranchManagementUseCase"
 import type { MemberManagementUseCase } from "@/domain/usecases/members/MemberManagementUseCase"
+=======
+import type { MemberManagementUseCase } from "@/domain/usecases/members/MemberManagementUseCase"
+import type { BranchManagementUseCase } from "@/domain/usecases/branch/BranchManagementUseCase"
+>>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
 import { MemberBookingsTable } from "@/presentation/components/members/MemberBookingsTable"
 import { MemberDetailsTab } from "@/presentation/components/members/MemberDetailsTab"
 import { useBranchNameLookup } from "@/presentation/hooks/useBranchNameLookup"
@@ -34,7 +39,10 @@ type ViewMemberScreenProps = {
   memberId: string
   memberManagementUseCase: MemberManagementUseCase
   branchManagementUseCase: BranchManagementUseCase
+<<<<<<< HEAD
   authUseCase: AuthUseCase
+=======
+>>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
 }
 
 function LoadingState() {
@@ -67,6 +75,7 @@ export function ViewMemberScreen({
   memberId,
   memberManagementUseCase,
   branchManagementUseCase,
+<<<<<<< HEAD
   authUseCase,
 }: ViewMemberScreenProps) {
   const router = useRouter()
@@ -75,6 +84,11 @@ export function ViewMemberScreen({
     memberManagementUseCase,
     authUseCase
   )
+=======
+}: ViewMemberScreenProps) {
+  const router = useRouter()
+  const viewModel = useViewMemberViewModel(memberId, memberManagementUseCase)
+>>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
   const branchNameToId = useBranchNameLookup(branchManagementUseCase)
   const { state } = viewModel
 
@@ -179,7 +193,10 @@ export function ViewMemberScreen({
                 <MemberDetailsTab
                   member={state.member}
                   branchNameToId={branchNameToId}
+<<<<<<< HEAD
                   showBranchesUsed={state.showBranchesUsed}
+=======
+>>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
                 />
               </TabsContent>
 
@@ -188,7 +205,10 @@ export function ViewMemberScreen({
                   title="Active Bookings"
                   bookings={state.member.bookings.active}
                   emptyMessage="This member has no active bookings."
+<<<<<<< HEAD
                   showBranchColumn={state.showBranchColumn}
+=======
+>>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
                 />
               </TabsContent>
 
@@ -198,7 +218,10 @@ export function ViewMemberScreen({
                   bookings={state.member.bookings.lateReturns}
                   emptyMessage="This member has no late returns."
                   showDaysOverdue
+<<<<<<< HEAD
                   showBranchColumn={state.showBranchColumn}
+=======
+>>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
                 />
               </TabsContent>
 
@@ -208,7 +231,10 @@ export function ViewMemberScreen({
                   bookings={state.member.bookings.history}
                   emptyMessage="This member has no borrowing history."
                   showReturnedDate
+<<<<<<< HEAD
                   showBranchColumn={state.showBranchColumn}
+=======
+>>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
                 />
               </TabsContent>
             </Tabs>

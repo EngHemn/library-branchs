@@ -11,16 +11,23 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import type {
+<<<<<<< HEAD
   BookingBranchFilter,
   BookingStatusFilter,
   BookingTypeFilter,
 } from "@/presentation/viewmodels/bookings/useBookingsViewModel"
 import type { BookingBranchOption } from "@/presentation/viewmodels/bookings/BookingsViewModelState"
+=======
+  BookingStatusFilter,
+  BookingTypeFilter,
+} from "@/presentation/viewmodels/bookings/useBookingsViewModel"
+>>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
 
 type BookingsFiltersProps = {
   searchQuery: string
   statusFilter: BookingStatusFilter
   typeFilter: BookingTypeFilter
+<<<<<<< HEAD
   branchFilter: BookingBranchFilter
   branches: BookingBranchOption[]
   currentBranchName?: string
@@ -29,6 +36,11 @@ type BookingsFiltersProps = {
   onStatusFilterChange: (statusFilter: BookingStatusFilter) => void
   onTypeFilterChange: (typeFilter: BookingTypeFilter) => void
   onBranchFilterChange: (branchFilter: BookingBranchFilter) => void
+=======
+  onSearchQueryChange: (searchQuery: string) => void
+  onStatusFilterChange: (statusFilter: BookingStatusFilter) => void
+  onTypeFilterChange: (typeFilter: BookingTypeFilter) => void
+>>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
 }
 
 const statusOptions: { value: BookingStatusFilter; label: string }[] = [
@@ -61,6 +73,7 @@ function isBookingTypeFilter(value: string): value is BookingTypeFilter {
   return value === "all" || value === "inside" || value === "outside"
 }
 
+<<<<<<< HEAD
 function isBookingBranchFilter(
   value: string,
   branches: BookingBranchOption[]
@@ -72,10 +85,13 @@ function isBookingBranchFilter(
   )
 }
 
+=======
+>>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
 export function BookingsFilters({
   searchQuery,
   statusFilter,
   typeFilter,
+<<<<<<< HEAD
   branchFilter,
   branches,
   currentBranchName,
@@ -84,6 +100,11 @@ export function BookingsFilters({
   onStatusFilterChange,
   onTypeFilterChange,
   onBranchFilterChange,
+=======
+  onSearchQueryChange,
+  onStatusFilterChange,
+  onTypeFilterChange,
+>>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
 }: BookingsFiltersProps) {
   return (
     <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
@@ -135,6 +156,7 @@ export function BookingsFilters({
             ))}
           </SelectContent>
         </Select>
+<<<<<<< HEAD
         {showBranchFilter ? (
           <Select
             value={branchFilter}
@@ -162,6 +184,8 @@ export function BookingsFilters({
             </SelectContent>
           </Select>
         ) : null}
+=======
+>>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
       </div>
     </div>
   )
