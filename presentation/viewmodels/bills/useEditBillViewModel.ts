@@ -10,7 +10,9 @@ import {
   billFormSchema,
   type BillFormValues,
 } from "@/domain/schemas/billFormSchema"
+import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { GetBillsUseCase } from "@/domain/usecases/bills/GetBillsUseCase"
+import { resolveUserBranchId } from "@/lib/dashboardBranchScope"
 import type { EditBillStatus, EditBillViewModelState } from "./EditBillViewModelState"
 
 type EditBillViewModel = {
@@ -21,6 +23,7 @@ type EditBillViewModel = {
 
 export function useEditBillViewModel(
   billId: string,
+  authUseCase: AuthUseCase,
   getBillsUseCase: GetBillsUseCase
 ): EditBillViewModel {
   const queryClient = useQueryClient()
@@ -38,6 +41,15 @@ export function useEditBillViewModel(
     },
   })
 
+  const userQuery = useQuery({
+    queryKey: ["currentUser"],
+    queryFn: async () => {
+      const result = await authUseCase.getCurrentUser()
+      if (!result.success) throw new Error(result.error)
+      return result.data ?? null
+    },
+  })
+
   const detailQuery = useQuery({
     queryKey: ["bills", billId],
     queryFn: async () => {
@@ -45,6 +57,7 @@ export function useEditBillViewModel(
       if (!result.success) throw new Error(result.error)
       return result.data ?? null
     },
+    enabled: userQuery.isSuccess,
   })
 
   const optionsQuery = useQuery({
@@ -55,21 +68,31 @@ export function useEditBillViewModel(
       return result.data
     },
     refetchOnMount: "always",
+    enabled: userQuery.isSuccess,
   })
 
+  const user = userQuery.data ?? null
+  const showBranchField = user?.branchType !== "sub"
+  const userBranchId = user ? resolveUserBranchId(user) : ""
+
   useEffect(() => {
-    if (detailQuery.data) {
-      form.reset({
-        branchId: detailQuery.data.branchId,
-        companyName: detailQuery.data.companyName,
-        billDate: detailQuery.data.billDate,
-        phoneNumber: detailQuery.data.phoneNumber,
-        price: detailQuery.data.price,
-        imageUrl: detailQuery.data.imageUrl ?? null,
-        bookIds: [...detailQuery.data.bookIds],
-      })
-    }
+    if (!detailQuery.data) return
+
+    form.reset({
+      branchId: detailQuery.data.branchId,
+      companyName: detailQuery.data.companyName,
+      billDate: detailQuery.data.billDate,
+      phoneNumber: detailQuery.data.phoneNumber,
+      price: detailQuery.data.price,
+      imageUrl: detailQuery.data.imageUrl ?? null,
+      bookIds: [...detailQuery.data.bookIds],
+    })
   }, [detailQuery.data, form])
+
+  useEffect(() => {
+    if (!user || user.branchType !== "sub" || form.getValues("branchId")) return
+    form.setValue("branchId", userBranchId)
+  }, [user, userBranchId, form])
 
   const {
     mutateAsync,
@@ -96,15 +119,15 @@ export function useEditBillViewModel(
     }
   }
 
-  const queryError = detailQuery.error ?? optionsQuery.error
+  const queryError = detailQuery.error ?? optionsQuery.error ?? userQuery.error
 
   const status: EditBillStatus = isSaved
     ? "saved"
     : isSaving
       ? "saving"
-      : detailQuery.isError || optionsQuery.isError
+      : detailQuery.isError || optionsQuery.isError || userQuery.isError
         ? "error"
-        : detailQuery.isPending || optionsQuery.isPending
+        : detailQuery.isPending || optionsQuery.isPending || userQuery.isPending
           ? "loading"
           : detailQuery.data === null
             ? "not-found"
@@ -114,6 +137,7 @@ export function useEditBillViewModel(
     status,
     branchOptions: optionsQuery.data?.branches ?? [],
     bookOptions: optionsQuery.data?.books ?? [],
+    showBranchField,
     error: mutationError?.message ?? queryError?.message ?? null,
     isLoading: status === "loading",
     isReady: status === "ready",

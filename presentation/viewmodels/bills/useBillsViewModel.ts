@@ -3,22 +3,153 @@
 import { useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
+import { fakeBranches } from "@/data/fake/fakeBranches"
 import type { Bill } from "@/domain/entities/bill/Bill"
+import type { User } from "@/domain/entities/User"
+import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { GetBillsUseCase } from "@/domain/usecases/bills/GetBillsUseCase"
-import type { BillsStatus, BillsViewModelState } from "./BillsViewModelState"
+import {
+  getDashboardBranchScope,
+  resolveUserBranchId,
+} from "@/lib/dashboardBranchScope"
+import type {
+  BillBranchFilter,
+  BillBranchFilterOption,
+  BillsFilterState,
+  BillsStatus,
+  BillsViewModelState,
+} from "./BillsViewModelState"
+export type { BillBranchFilter } from "./BillsViewModelState"
+export type { BillBranchFilterOption } from "./BillsViewModelState"
+export type { BillsFilterState } from "./BillsViewModelState"
 
 type BillsViewModel = {
   state: BillsViewModelState
   setSearchQuery: (value: string) => void
-  setBranchFilter: (value: string) => void
+  setBranchFilter: (value: BillBranchFilter) => void
+  setDateFrom: (dateFrom: string | null) => void
+  setDateTo: (dateTo: string | null) => void
   deleteBill: (billId: string) => Promise<boolean>
   reload: () => Promise<void>
 }
 
-export function useBillsViewModel(getBillsUseCase: GetBillsUseCase): BillsViewModel {
+const defaultFilters: BillsFilterState = {
+  searchQuery: "",
+  branchFilter: "current",
+  dateFrom: null,
+  dateTo: null,
+}
+
+const allDashboardBranches = fakeBranches.map((branch) => ({
+  id: branch.id,
+  name: branch.branchName,
+}))
+
+function resolveBranchFilterId(
+  branchFilter: BillBranchFilter,
+  userBranchId: string
+): string {
+  return branchFilter === "current" ? userBranchId : branchFilter
+}
+
+function getScopedBranchIds(user: User): string[] {
+  return getDashboardBranchScope(user, allDashboardBranches).branchIds
+}
+
+function getBranchFilterOptions(user: User): BillBranchFilterOption[] {
+  if (user.branchType === "sub") {
+    return []
+  }
+
+  const userBranchId = resolveUserBranchId(user)
+  const branchScope = getDashboardBranchScope(user, allDashboardBranches)
+
+  const otherBranches = branchScope.branches
+    .filter((branch) => branch.id !== userBranchId)
+    .map((branch) => ({ value: branch.id, label: branch.name }))
+    .sort((left, right) => left.label.localeCompare(right.label))
+
+  return [{ value: "current", label: "Current Branch" }, ...otherBranches]
+}
+
+function matchesDateRange(
+  bill: Bill,
+  dateFrom: string | null,
+  dateTo: string | null
+): boolean {
+  const billDate = new Date(bill.billDate)
+
+  if (dateFrom) {
+    const from = new Date(dateFrom)
+    from.setHours(0, 0, 0, 0)
+    if (billDate < from) {
+      return false
+    }
+  }
+
+  if (dateTo) {
+    const to = new Date(dateTo)
+    to.setHours(23, 59, 59, 999)
+    if (billDate > to) {
+      return false
+    }
+  }
+
+  return true
+}
+
+function filterBills(
+  bills: Bill[],
+  filters: BillsFilterState,
+  scopedBranchIds: string[],
+  isSubBranch: boolean,
+  userBranchId: string
+): Bill[] {
+  const effectiveBranchId = isSubBranch
+    ? userBranchId
+    : resolveBranchFilterId(filters.branchFilter, userBranchId)
+
+  const normalizedSearch = filters.searchQuery.trim().toLowerCase()
+
+  return bills.filter((bill) => {
+    if (!scopedBranchIds.includes(bill.branchId)) {
+      return false
+    }
+
+    if (bill.branchId !== effectiveBranchId) {
+      return false
+    }
+
+    const matchesSearch =
+      normalizedSearch.length === 0 ||
+      bill.companyName.toLowerCase().includes(normalizedSearch) ||
+      bill.branchName.toLowerCase().includes(normalizedSearch) ||
+      bill.id.toLowerCase().includes(normalizedSearch) ||
+      bill.phoneNumber.toLowerCase().includes(normalizedSearch)
+
+    if (!matchesSearch) {
+      return false
+    }
+
+    return matchesDateRange(bill, filters.dateFrom, filters.dateTo)
+  })
+}
+
+export function useBillsViewModel(
+  authUseCase: AuthUseCase,
+  getBillsUseCase: GetBillsUseCase
+): BillsViewModel {
   const queryClient = useQueryClient()
-  const [searchQuery, setSearchQuery] = useState("")
-  const [branchFilter, setBranchFilter] = useState("all")
+  const [filters, setFilters] = useState<BillsFilterState>(defaultFilters)
+
+  const userQuery = useQuery({
+    queryKey: ["currentUser"],
+    queryFn: async () => {
+      const result = await authUseCase.getCurrentUser()
+      if (!result.success) throw new Error(result.error)
+      return result.data ?? null
+    },
+  })
 
   const {
     data: bills,
@@ -32,6 +163,7 @@ export function useBillsViewModel(getBillsUseCase: GetBillsUseCase): BillsViewMo
       if (!result.success) throw new Error(result.error)
       return result.data
     },
+    enabled: userQuery.isSuccess,
   })
 
   const {
@@ -57,40 +189,59 @@ export function useBillsViewModel(getBillsUseCase: GetBillsUseCase): BillsViewMo
   }
 
   async function reload(): Promise<void> {
-    await refetch()
+    await Promise.all([userQuery.refetch(), refetch()])
   }
 
+  const user = userQuery.data ?? null
+  const userBranchId = user ? resolveUserBranchId(user) : ""
+  const isSubBranch = user?.branchType === "sub"
+  const showBranchFilter = !isSubBranch
+  const showBranchColumn = !isSubBranch && filters.branchFilter !== "current"
+  const branchFilterOptions = user ? getBranchFilterOptions(user) : []
+  const scopedBranchIds = user ? getScopedBranchIds(user) : []
+
   const allBills = bills ?? []
-
-  const filteredBills = allBills.filter((bill) => {
-    const normalizedSearch = searchQuery.trim().toLowerCase()
-    const matchesSearch =
-      normalizedSearch.length === 0 ||
-      bill.companyName.toLowerCase().includes(normalizedSearch) ||
-      bill.branchName.toLowerCase().includes(normalizedSearch) ||
-      bill.id.toLowerCase().includes(normalizedSearch) ||
-      bill.phoneNumber.toLowerCase().includes(normalizedSearch)
-
-    const matchesBranch =
-      branchFilter === "all" ? true : bill.branchId === branchFilter
-
-    return matchesSearch && matchesBranch
-  })
+  const filteredBills =
+    user && userBranchId
+      ? filterBills(allBills, filters, scopedBranchIds, isSubBranch, userBranchId)
+      : []
 
   const status: BillsStatus =
-    queryStatus === "success" ? "ready" :
-    queryStatus === "error" ? "error" :
-    "loading"
+    userQuery.isPending || queryStatus === "pending"
+      ? "loading"
+      : userQuery.isError || queryStatus === "error"
+        ? "error"
+        : userQuery.isSuccess && queryStatus === "success"
+          ? "ready"
+          : "idle"
+
+  function setSearchQuery(searchQuery: string): void {
+    setFilters((current) => ({ ...current, searchQuery }))
+  }
+
+  function setBranchFilter(branchFilter: BillBranchFilter): void {
+    setFilters((current) => ({ ...current, branchFilter }))
+  }
+
+  function setDateFrom(dateFrom: string | null): void {
+    setFilters((current) => ({ ...current, dateFrom }))
+  }
+
+  function setDateTo(dateTo: string | null): void {
+    setFilters((current) => ({ ...current, dateTo }))
+  }
 
   const state: BillsViewModelState = {
     status,
     bills: allBills,
     filteredBills,
-    searchQuery,
-    branchFilter,
+    filters,
+    branchFilterOptions,
+    showBranchFilter,
+    showBranchColumn,
     error: deleteError?.message ?? queryError?.message ?? null,
-    isLoading: queryStatus === "pending",
-    isReady: queryStatus === "success",
+    isLoading: userQuery.isPending || queryStatus === "pending",
+    isReady: userQuery.isSuccess && queryStatus === "success",
     isDeleting,
   }
 
@@ -98,6 +249,8 @@ export function useBillsViewModel(getBillsUseCase: GetBillsUseCase): BillsViewMo
     state,
     setSearchQuery,
     setBranchFilter,
+    setDateFrom,
+    setDateTo,
     deleteBill,
     reload,
   }

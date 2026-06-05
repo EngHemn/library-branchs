@@ -23,7 +23,6 @@ import {
 import { Skeleton } from "@/components/ui/skeleton"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import type { StockRow } from "@/domain/entities/stock/Stock"
-import { BranchLink } from "@/presentation/components/branch-management/BranchLink"
 import { BookLink } from "@/presentation/components/shared/DashboardEntityLink"
 import {
   StockRowActionsMenu,
@@ -45,15 +44,15 @@ type StockTableProps = {
   onAddStock: (row: StockRow) => void
   onReduceStock: (row: StockRow) => void
   onTransfer: (row: StockRow) => void
-  onViewHistory: (row: StockRow) => void
   onEditStock: (row: StockRow) => void
+  showSubBranchColumn: boolean
+  showStockGroupAccordion: boolean
 }
 
 type StockColumnKey =
   | "expand"
   | "book"
   | "category"
-  | "branch"
   | "subBranch"
   | "currentStock"
   | "reservedStock"
@@ -93,19 +92,20 @@ export function StockTable({
   onAddStock,
   onReduceStock,
   onTransfer,
-  onViewHistory,
   onEditStock,
+  showSubBranchColumn,
+  showStockGroupAccordion,
 }: StockTableProps) {
   const groups = groupStockRows(rows)
 
-  const columns: DataTableColumn<StockTableGroup, StockColumnKey>[] = [
+  const allColumns: DataTableColumn<StockTableGroup, StockColumnKey>[] = [
     {
       key: "expand",
       header: "",
       className: "w-10",
       headerClassName: "w-10",
       cell: (group) => {
-        const expandable = hasSubBranches(group)
+        const expandable = showStockGroupAccordion && hasSubBranches(group)
         const isExpanded = expandedGroupIds.includes(group.id)
 
         if (!expandable) {
@@ -120,8 +120,8 @@ export function StockTable({
             onClick={() => onToggleGroupExpanded(group.id)}
             aria-label={
               isExpanded
-                ? `Hide sub branches for ${group.bookTitle} at ${group.branchName}`
-                : `Show sub branches for ${group.bookTitle} at ${group.branchName}`
+                ? `Hide sub branches for ${group.bookTitle}`
+                : `Show sub branches for ${group.bookTitle}`
             }
             aria-expanded={isExpanded}
           >
@@ -176,19 +176,6 @@ export function StockTable({
         <Badge variant="secondary" className="text-xs">
           {group.category}
         </Badge>
-      ),
-    },
-    {
-      key: "branch",
-      header: "Main Branch",
-      sortable: true,
-      sortValue: (group) => group.branchName,
-      cell: (group) => (
-        <BranchLink
-          branchId={group.branchId}
-          branchName={group.branchName}
-          className="block max-w-[160px] truncate text-sm"
-        />
       ),
     },
     {
@@ -259,13 +246,22 @@ export function StockTable({
             onAddStock={onAddStock}
             onReduceStock={onReduceStock}
             onTransfer={onTransfer}
-            onViewHistory={onViewHistory}
             onEditStock={onEditStock}
           />
         )
       },
     },
   ]
+
+  const hiddenColumnKeys = new Set<StockColumnKey>()
+  if (!showStockGroupAccordion) {
+    hiddenColumnKeys.add("expand")
+  }
+  if (!showSubBranchColumn) {
+    hiddenColumnKeys.add("subBranch")
+  }
+
+  const columns = allColumns.filter((column) => !hiddenColumnKeys.has(column.key))
 
   if (isLoading) {
     return (
@@ -291,16 +287,16 @@ export function StockTable({
     )
   }
 
+  const cardDescription = showStockGroupAccordion
+    ? `${groups.length.toLocaleString()} location${groups.length === 1 ? "" : "s"} — expand rows with sub-branches to manage stock per sub branch`
+    : `${groups.length.toLocaleString()} stock record${groups.length === 1 ? "" : "s"}`
+
   return (
     <TooltipProvider>
       <Card className="rounded-lg">
         <CardHeader>
           <CardTitle>Inventory</CardTitle>
-          <CardDescription>
-            {groups.length.toLocaleString()} location
-            {groups.length === 1 ? "" : "s"} — expand rows with sub-branches to
-            manage stock per sub branch
-          </CardDescription>
+          <CardDescription>{cardDescription}</CardDescription>
         </CardHeader>
         <CardContent>
           <DataTable
@@ -312,22 +308,28 @@ export function StockTable({
             initialSort={{ key: "book", direction: "asc" }}
             initialPageSize={10}
             pageSizeOptions={[10, 20, 50]}
-            tableClassName="min-w-[1040px]"
-            isRowExpanded={(group) =>
-              hasSubBranches(group) && expandedGroupIds.includes(group.id)
+            tableClassName="min-w-[900px]"
+            isRowExpanded={
+              showStockGroupAccordion
+                ? (group) =>
+                    hasSubBranches(group) && expandedGroupIds.includes(group.id)
+                : undefined
             }
-            renderExpandedRow={(group) => (
-              <StockSubBranchesPanel
-                bookTitle={group.bookTitle}
-                branchName={group.branchName}
-                subBranchRows={group.subBranchRows}
-                onAddStock={onAddStock}
-                onReduceStock={onReduceStock}
-                onTransfer={onTransfer}
-                onViewHistory={onViewHistory}
-                onEditStock={onEditStock}
-              />
-            )}
+            renderExpandedRow={
+              showStockGroupAccordion
+                ? (group) => (
+                    <StockSubBranchesPanel
+                      bookTitle={group.bookTitle}
+                      branchName={group.branchName}
+                      subBranchRows={group.subBranchRows}
+                      onAddStock={onAddStock}
+                      onReduceStock={onReduceStock}
+                      onTransfer={onTransfer}
+                      onEditStock={onEditStock}
+                    />
+                  )
+                : undefined
+            }
           />
         </CardContent>
       </Card>

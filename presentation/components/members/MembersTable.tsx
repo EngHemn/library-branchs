@@ -36,10 +36,8 @@ import { MemberActionButton } from "@/presentation/components/members/MemberActi
 type MembersTableProps = {
   members: Member[]
   branchNameToId?: Record<string, string>
-<<<<<<< HEAD
-  showBranchesUsedColumn?: boolean
-=======
->>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
+  showRegisterBranchColumn?: boolean
+  showBranchUsedColumn?: boolean
   onView: (member: Member) => void
   onEdit: (member: Member) => void
   onDelete: (member: Member) => void
@@ -192,10 +190,8 @@ function MemberBranchesUsedDropdown({
 export function MembersTable({
   members,
   branchNameToId,
-<<<<<<< HEAD
-  showBranchesUsedColumn = true,
-=======
->>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
+  showRegisterBranchColumn = true,
+  showBranchUsedColumn = true,
   onView,
   onEdit,
   onDelete,
@@ -210,21 +206,24 @@ export function MembersTable({
         <span className="font-semibold">{member.memberName}</span>
       ),
     },
-    {
-      key: "registerBranch",
-      header: "Registered Branch",
-      sortable: true,
-      sortValue: (member) => member.registerBranch,
-      cell: (member) => (
-        <BranchLink
-          branchId={member.branchId}
-          branchName={member.registerBranch}
-          className="block max-w-[180px] truncate font-medium text-primary underline-offset-4 hover:underline"
-        />
-      ),
-    },
-<<<<<<< HEAD
-    ...(showBranchesUsedColumn
+    ...(showRegisterBranchColumn
+      ? [
+          {
+            key: "registerBranch" as const,
+            header: "Registered Branch",
+            sortable: true,
+            sortValue: (member: Member) => member.registerBranch,
+            cell: (member: Member) => (
+              <BranchLink
+                branchId={member.branchId}
+                branchName={member.registerBranch}
+                className="block max-w-[180px] truncate font-medium text-primary underline-offset-4 hover:underline"
+              />
+            ),
+          },
+        ]
+      : []),
+    ...(showBranchUsedColumn
       ? [
           {
             key: "allBranchesUsed" as const,
@@ -240,20 +239,6 @@ export function MembersTable({
           },
         ]
       : []),
-=======
-    {
-      key: "allBranchesUsed",
-      header: "Branches Used",
-      sortable: true,
-      sortValue: (member) => member.allBranchesUsed.length,
-      cell: (member) => (
-        <MemberBranchesUsedDropdown
-          branches={member.allBranchesUsed}
-          branchNameToId={branchNameToId}
-        />
-      ),
-    },
->>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
     {
       key: "registrationDate",
       header: "Registration",
@@ -329,13 +314,7 @@ export function MembersTable({
           emptyDescription="Try changing or clearing the active filters."
           initialSort={{ key: "memberName", direction: "asc" }}
           initialPageSize={10}
-<<<<<<< HEAD
-          tableClassName={
-            showBranchesUsedColumn ? "min-w-[1100px]" : "min-w-[900px]"
-          }
-=======
           tableClassName="min-w-[1100px]"
->>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
         />
       </CardContent>
     </Card>

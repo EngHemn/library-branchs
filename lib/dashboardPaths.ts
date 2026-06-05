@@ -12,10 +12,7 @@ export const dashboardPaths = {
     list: "/dashboard/books",
     create: "/dashboard/books/create",
     detail: (bookId: string) => `/dashboard/books/${bookId}`,
-<<<<<<< HEAD
-=======
     edit: (bookId: string) => `/dashboard/books/${bookId}/edit`,
->>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
   },
   members: {
     list: "/dashboard/members",

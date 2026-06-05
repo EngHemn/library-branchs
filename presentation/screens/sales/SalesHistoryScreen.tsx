@@ -12,12 +12,15 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
+import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { SalesUseCase } from "@/domain/usecases/sales/SalesUseCase"
+import { SalesHistoryFilters } from "@/presentation/components/sales/SalesHistoryFilters"
 import { SalesHistoryTable } from "@/presentation/components/sales/SalesHistoryTable"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
 import { useSalesHistoryViewModel } from "@/presentation/viewmodels/sales/useSalesHistoryViewModel"
 
 type SalesHistoryScreenProps = {
+  authUseCase: AuthUseCase
   salesUseCase: SalesUseCase
 }
 
@@ -28,13 +31,17 @@ function LoadingSalesHistory() {
         <Skeleton className="h-8 w-52" />
         <Skeleton className="h-4 w-96 max-w-full" />
       </div>
+      <Skeleton className="h-32 rounded-lg" />
       <Skeleton className="min-h-96 rounded-lg" />
     </div>
   )
 }
 
-export function SalesHistoryScreen({ salesUseCase }: SalesHistoryScreenProps) {
-  const viewModel = useSalesHistoryViewModel(salesUseCase)
+export function SalesHistoryScreen({
+  authUseCase,
+  salesUseCase,
+}: SalesHistoryScreenProps) {
+  const viewModel = useSalesHistoryViewModel(authUseCase, salesUseCase)
   const { state } = viewModel
 
   useDashboardBreadcrumbs([
@@ -89,7 +96,35 @@ export function SalesHistoryScreen({ salesUseCase }: SalesHistoryScreenProps) {
         </div>
       </section>
 
-      <SalesHistoryTable sales={state.sales} />
+      <Card className="rounded-lg">
+        <CardHeader>
+          <CardTitle>Filters</CardTitle>
+          <CardDescription>
+            Search by book name and narrow results by status, branch, or date range.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <SalesHistoryFilters
+            searchQuery={state.filters.searchQuery}
+            statusFilter={state.filters.statusFilter}
+            branchFilter={state.filters.branchFilter}
+            dateFrom={state.filters.dateFrom}
+            dateTo={state.filters.dateTo}
+            branchFilterOptions={state.branchFilterOptions}
+            showBranchFilter={state.showBranchFilter}
+            onSearchQueryChange={viewModel.setSearchQuery}
+            onStatusFilterChange={viewModel.setStatusFilter}
+            onBranchFilterChange={viewModel.setBranchFilter}
+            onDateFromChange={viewModel.setDateFrom}
+            onDateToChange={viewModel.setDateTo}
+          />
+        </CardContent>
+      </Card>
+
+      <SalesHistoryTable
+        sales={state.filteredSales}
+        showBranchColumn={state.showBranchColumn}
+      />
     </div>
   )
 }

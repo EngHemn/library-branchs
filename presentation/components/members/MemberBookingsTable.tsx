@@ -27,12 +27,9 @@ type MemberBookingsTableProps = {
   title: string
   bookings: MemberBooking[]
   emptyMessage: string
+  showBranchColumn?: boolean
   showDaysOverdue?: boolean
   showReturnedDate?: boolean
-<<<<<<< HEAD
-  showBranchColumn?: boolean
-=======
->>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
 }
 
 const statusVariants: Record<
@@ -61,12 +58,9 @@ export function MemberBookingsTable({
   title,
   bookings,
   emptyMessage,
+  showBranchColumn = true,
   showDaysOverdue = false,
   showReturnedDate = false,
-<<<<<<< HEAD
-  showBranchColumn = true,
-=======
->>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
 }: MemberBookingsTableProps) {
   return (
     <Card className="rounded-lg">
@@ -80,24 +74,12 @@ export function MemberBookingsTable({
           </p>
         ) : (
           <div className="overflow-x-auto">
-<<<<<<< HEAD
-            <Table
-              className={
-                showBranchColumn ? "min-w-[860px]" : "min-w-[720px]"
-              }
-            >
-=======
-            <Table className="min-w-[860px]">
->>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
+            <Table className={showBranchColumn ? "min-w-[860px]" : "min-w-[720px]"}>
               <TableHeader>
                 <TableRow>
                   <TableHead>Booking ID</TableHead>
                   <TableHead>Book Title</TableHead>
-<<<<<<< HEAD
                   {showBranchColumn ? <TableHead>Branch</TableHead> : null}
-=======
-                  <TableHead>Branch</TableHead>
->>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
                   <TableHead>Type</TableHead>
                   <TableHead>Borrowed</TableHead>
                   <TableHead>Due</TableHead>
@@ -126,7 +108,6 @@ export function MemberBookingsTable({
                         booking.bookTitle
                       )}
                     </TableCell>
-<<<<<<< HEAD
                     {showBranchColumn ? (
                       <TableCell>
                         {booking.branchId ? (
@@ -139,18 +120,6 @@ export function MemberBookingsTable({
                         )}
                       </TableCell>
                     ) : null}
-=======
-                    <TableCell>
-                      {booking.branchId ? (
-                        <BranchLink
-                          branchId={booking.branchId}
-                          branchName={booking.branchName}
-                        />
-                      ) : (
-                        booking.branchName
-                      )}
-                    </TableCell>
->>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
                     <TableCell>{typeLabels[booking.type]}</TableCell>
                     <TableCell>{booking.borrowedDate}</TableCell>
                     <TableCell>{booking.dueDate}</TableCell>

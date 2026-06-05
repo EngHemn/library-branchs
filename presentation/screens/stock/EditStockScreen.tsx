@@ -150,8 +150,7 @@ export function EditStockScreen({ stockId, stockUseCase }: EditStockScreenProps)
             <CardHeader>
               <CardTitle>Stock Details</CardTitle>
               <CardDescription>
-                Branch: {state.stockRow.branchName}
-                {state.stockRow.subBranchName ? ` / ${state.stockRow.subBranchName}` : ""}
+                Update quantity and alert settings for this stock record.
               </CardDescription>
             </CardHeader>
             <CardContent>

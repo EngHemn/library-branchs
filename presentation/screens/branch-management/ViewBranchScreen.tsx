@@ -2,10 +2,6 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-<<<<<<< HEAD
-import { useQueryClient } from "@tanstack/react-query"
-=======
->>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
 import {
   ArrowLeftIcon,
   BookOpenIcon,
@@ -43,10 +39,6 @@ import type { Author } from "@/domain/entities/author/Author"
 import type { Book } from "@/domain/entities/book/Book"
 import type { Branch } from "@/domain/entities/branch/Branch"
 import type { BranchDetailUseCase } from "@/domain/usecases/branch/BranchDetailUseCase"
-<<<<<<< HEAD
-import type { GetBooksUseCase } from "@/domain/usecases/books/GetBooksUseCase"
-=======
->>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
 import type { Member } from "@/domain/entities/member/Member"
 import type { StaffMember } from "@/domain/entities/staff/StaffMember"
 import type { Translator } from "@/domain/entities/translator/Translator"
@@ -58,20 +50,12 @@ import { MembersTab } from "@/presentation/components/branch-detail/MembersTab"
 import { StaffTab } from "@/presentation/components/branch-detail/StaffTab"
 import { SubBranchesTab } from "@/presentation/components/branch-detail/SubBranchesTab"
 import { TranslatorsTab } from "@/presentation/components/branch-detail/TranslatorsTab"
-<<<<<<< HEAD
-import { EditBookDialog } from "@/presentation/components/books/EditBookDialog"
-=======
->>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
 import { useBranchDetailViewModel } from "@/presentation/viewmodels/branch-management/useBranchDetailViewModel"
 
 type ViewBranchScreenProps = {
   branchId: string
   branchDetailUseCase: BranchDetailUseCase
-<<<<<<< HEAD
-  getBooksUseCase: GetBooksUseCase
-=======
->>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
 }
 
 type PendingDelete =
@@ -147,25 +131,11 @@ function LoadingState() {
   )
 }
 
-<<<<<<< HEAD
-export function ViewBranchScreen({
-  branchId,
-  branchDetailUseCase,
-  getBooksUseCase,
-}: ViewBranchScreenProps) {
-  const router = useRouter()
-  const queryClient = useQueryClient()
-  const viewModel = useBranchDetailViewModel(branchId, branchDetailUseCase)
-  const { state } = viewModel
-  const [pendingDelete, setPendingDelete] = useState<PendingDelete | null>(null)
-  const [editBookId, setEditBookId] = useState<string | null>(null)
-=======
 export function ViewBranchScreen({ branchId, branchDetailUseCase }: ViewBranchScreenProps) {
   const router = useRouter()
   const viewModel = useBranchDetailViewModel(branchId, branchDetailUseCase)
   const { state } = viewModel
   const [pendingDelete, setPendingDelete] = useState<PendingDelete | null>(null)
->>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
   const deleteDialog = getDeleteDialogContent(pendingDelete)
 
   const handleConfirmDelete = () => {
@@ -353,11 +323,7 @@ export function ViewBranchScreen({ branchId, branchDetailUseCase }: ViewBranchSc
                   searchQuery={state.searchQuery}
                   onSearchQueryChange={viewModel.setSearchQuery}
                   onView={(book) => router.push(`/dashboard/books/${book.id}`)}
-<<<<<<< HEAD
-                  onEdit={(book) => setEditBookId(book.id)}
-=======
                   onEdit={(book) => router.push(`/dashboard/books/${book.id}/edit`)}
->>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
                   onDelete={(book) => setPendingDelete({ kind: "book", item: book })}
                   onToggleStatus={(book) => void viewModel.toggleBookStatus(book.id)}
                 />
@@ -448,21 +414,6 @@ export function ViewBranchScreen({ branchId, branchDetailUseCase }: ViewBranchSc
           </DialogFooter>
         </DialogContent>
       </Dialog>
-<<<<<<< HEAD
-
-      <EditBookDialog
-        open={editBookId !== null}
-        onOpenChange={(isOpen) => {
-          if (!isOpen) setEditBookId(null)
-        }}
-        bookId={editBookId ?? ""}
-        getBooksUseCase={getBooksUseCase}
-        onSaved={() => {
-          void queryClient.invalidateQueries({ queryKey: ["branchDetail", branchId] })
-        }}
-      />
-=======
->>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
     </>
   )
 }

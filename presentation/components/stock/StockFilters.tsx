@@ -21,8 +21,6 @@ import {
 type StockFiltersProps = {
   searchQuery: string
   onSearchChange: (q: string) => void
-  selectedMainBranchId: string | null
-  onMainBranchChange: (id: string | null) => void
   selectedSubBranchId: string | null
   onSubBranchChange: (id: string | null) => void
   selectedCategory: string | null
@@ -31,9 +29,9 @@ type StockFiltersProps = {
   onShowLowStockChange: (val: boolean) => void
   showOutOfStock: boolean
   onShowOutOfStockChange: (val: boolean) => void
-  availableMainBranches: { id: string; name: string }[]
   availableSubBranches: { id: string; name: string }[]
   availableCategories: string[]
+  showSubBranchFilter: boolean
 }
 
 type StockStatusFilter = "all" | "low_stock" | "out_of_stock"
@@ -46,8 +44,6 @@ function isStockStatusFilter(value: string): value is StockStatusFilter {
 export function StockFilters({
   searchQuery,
   onSearchChange,
-  selectedMainBranchId,
-  onMainBranchChange,
   selectedSubBranchId,
   onSubBranchChange,
   selectedCategory,
@@ -56,9 +52,9 @@ export function StockFilters({
   onShowLowStockChange,
   showOutOfStock,
   onShowOutOfStockChange,
-  availableMainBranches,
   availableSubBranches,
   availableCategories,
+  showSubBranchFilter,
 }: StockFiltersProps) {
   const statusFilterValue: StockStatusFilter = showOutOfStock
     ? "out_of_stock"
@@ -73,7 +69,6 @@ export function StockFilters({
 
   const canReset =
     searchQuery !== "" ||
-    selectedMainBranchId !== null ||
     selectedSubBranchId !== null ||
     selectedCategory !== null ||
     showLowStock ||
@@ -81,12 +76,15 @@ export function StockFilters({
 
   function handleReset() {
     onSearchChange("")
-    onMainBranchChange(null)
     onSubBranchChange(null)
     onCategoryChange(null)
     onShowLowStockChange(false)
     onShowOutOfStockChange(false)
   }
+
+  const gridClassName = showSubBranchFilter
+    ? "grid gap-3 lg:grid-cols-[minmax(200px,1fr)_180px_160px_160px_auto] lg:items-end"
+    : "grid gap-3 lg:grid-cols-[minmax(200px,1fr)_160px_160px_auto] lg:items-end"
 
   return (
     <Card className="rounded-lg">
@@ -94,7 +92,7 @@ export function StockFilters({
         <CardTitle>Filters</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid gap-3 lg:grid-cols-[minmax(200px,1fr)_180px_180px_160px_160px_auto] lg:items-end">
+        <div className={gridClassName}>
           <div className="space-y-2">
             <Label htmlFor="stock-search">Search</Label>
             <div className="relative">
@@ -109,46 +107,28 @@ export function StockFilters({
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="main-branch-filter">Main Branch</Label>
-            <Select
-              value={selectedMainBranchId ?? "all"}
-              onValueChange={(v) => onMainBranchChange(v === "all" ? null : v)}
-            >
-              <SelectTrigger id="main-branch-filter" className="w-full">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All</SelectItem>
-                {availableMainBranches.map((b) => (
-                  <SelectItem key={b.id} value={b.id}>
-                    {b.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="sub-branch-filter">Sub Branch</Label>
-            <Select
-              value={selectedSubBranchId ?? "all"}
-              onValueChange={(v) => onSubBranchChange(v === "all" ? null : v)}
-              disabled={availableSubBranches.length === 0}
-            >
-              <SelectTrigger id="sub-branch-filter" className="w-full">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All</SelectItem>
-                {availableSubBranches.map((b) => (
-                  <SelectItem key={b.id} value={b.id}>
-                    {b.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          {showSubBranchFilter ? (
+            <div className="space-y-2">
+              <Label htmlFor="sub-branch-filter">Sub Branch</Label>
+              <Select
+                value={selectedSubBranchId ?? "all"}
+                onValueChange={(v) => onSubBranchChange(v === "all" ? null : v)}
+                disabled={availableSubBranches.length === 0}
+              >
+                <SelectTrigger id="sub-branch-filter" className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  {availableSubBranches.map((b) => (
+                    <SelectItem key={b.id} value={b.id}>
+                      {b.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          ) : null}
 
           <div className="space-y-2">
             <Label htmlFor="category-filter">Category</Label>

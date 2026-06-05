@@ -54,6 +54,7 @@ function generateInitialSalesHistory(): Sale[] {
       subtotal,
       discountAmount,
       total: subtotal - discountAmount,
+      status: index % 11 === 0 ? "voided" : "completed",
       createdAt: createdAt.toISOString(),
     })
   }
@@ -116,6 +117,7 @@ export class SalesFakeDataSource {
       subtotal,
       discountAmount,
       total: subtotal - discountAmount,
+      status: "completed",
       createdAt: new Date().toISOString(),
     }
 

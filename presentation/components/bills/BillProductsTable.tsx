@@ -1,5 +1,8 @@
 "use client"
 
+import { useMemo } from "react"
+import { EyeIcon } from "lucide-react"
+
 import {
   Card,
   CardContent,
@@ -12,15 +15,18 @@ import {
   type DataTableColumn,
 } from "@/components/ui/data-table"
 import type { BillProduct } from "@/domain/entities/bill/BillDetail"
+import { BillActionButton } from "@/presentation/components/bills/BillActionButton"
 
 type BillProductsTableProps = {
   products: BillProduct[]
+  onView: (product: BillProduct) => void
 }
 
-type ProductColumnKey = "title" | "isbn" | "bookId"
+type ProductColumnKey = "title" | "isbn" | "bookId" | "actions"
 
-export function BillProductsTable({ products }: BillProductsTableProps) {
-  const columns: DataTableColumn<BillProduct, ProductColumnKey>[] = [
+export function BillProductsTable({ products, onView }: BillProductsTableProps) {
+  const columns = useMemo(() => {
+    const allColumns: DataTableColumn<BillProduct, ProductColumnKey>[] = [
     {
       key: "title",
       header: "Book",
@@ -46,7 +52,26 @@ export function BillProductsTable({ products }: BillProductsTableProps) {
         <span className="font-mono text-xs text-muted-foreground">{product.bookId}</span>
       ),
     },
-  ]
+    {
+      key: "actions",
+      header: "Actions",
+      headerClassName: "text-right",
+      className: "text-right",
+      cell: (product) => (
+        <div className="flex justify-end">
+          <BillActionButton
+            icon={EyeIcon}
+            label="View Book"
+            variant="outline"
+            onClick={() => onView(product)}
+          />
+        </div>
+      ),
+    },
+    ]
+
+    return allColumns
+  }, [onView])
 
   return (
     <Card className="rounded-lg">

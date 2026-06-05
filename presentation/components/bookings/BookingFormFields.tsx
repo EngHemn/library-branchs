@@ -36,20 +36,15 @@ import {
 } from "@/presentation/components/bookings/BookingSearchCombobox"
 
 const CREATE_BOOK_HREF = "/dashboard/books/create"
-<<<<<<< HEAD
-=======
 const CREATE_BRANCH_HREF = "/dashboard/branches/create"
->>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
 const CREATE_MEMBER_HREF = "/dashboard/members/create"
 
 type BookingFormFieldsProps = {
   form: UseFormReturn<BookingFormValues>
   bookOptions: BookingComboboxOption[]
-<<<<<<< HEAD
-=======
-  branchOptions: BookingComboboxOption[]
->>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
+  branchOptions?: BookingComboboxOption[]
   memberFormOptions: BookingFormOption[]
+  showBranchField?: boolean
   disabled: boolean
   onSubmit: (values: BookingFormValues) => void
   children: React.ReactNode
@@ -58,11 +53,9 @@ type BookingFormFieldsProps = {
 export function BookingFormFields({
   form,
   bookOptions,
-<<<<<<< HEAD
-=======
-  branchOptions,
->>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
+  branchOptions = [],
   memberFormOptions,
+  showBranchField = true,
   disabled,
   onSubmit,
   children,
@@ -78,7 +71,11 @@ export function BookingFormFields({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 py-2">
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div
+          className={
+            showBranchField ? "grid gap-4 sm:grid-cols-2" : "grid gap-4"
+          }
+        >
           <FormField
             control={form.control}
             name="bookId"
@@ -102,39 +99,38 @@ export function BookingFormFields({
             )}
           />
 
-          <FormField
-            control={form.control}
-<<<<<<< HEAD
-=======
-            name="branchId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Branch *</FormLabel>
-                <FormControl>
-                  <BookingSearchCombobox
-                    id="booking-branch"
-                    options={branchOptions}
-                    value={field.value}
-                    onValueChange={(value) => {
-                      field.onChange(value)
-                      form.setValue("memberId", "")
-                    }}
-                    placeholder="Search branch..."
-                    disabled={disabled}
-                    createHref={CREATE_BRANCH_HREF}
-                    addLabel="Add branch"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {showBranchField ? (
+            <FormField
+              control={form.control}
+              name="branchId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Branch *</FormLabel>
+                  <FormControl>
+                    <BookingSearchCombobox
+                      id="booking-branch"
+                      options={branchOptions}
+                      value={field.value}
+                      onValueChange={(value) => {
+                        field.onChange(value)
+                        form.setValue("memberId", "")
+                      }}
+                      placeholder="Search branch..."
+                      disabled={disabled}
+                      createHref={CREATE_BRANCH_HREF}
+                      addLabel="Add branch"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          ) : null}
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
           <FormField
             control={form.control}
->>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
             name="memberId"
             render={({ field }) => (
               <FormItem>

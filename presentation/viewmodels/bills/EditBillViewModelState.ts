@@ -15,6 +15,7 @@ export type EditBillViewModelState = {
   status: EditBillStatus
   branchOptions: BillBranchOption[]
   bookOptions: BillBookOption[]
+  showBranchField: boolean
   error: string | null
   isLoading: boolean
   isReady: boolean

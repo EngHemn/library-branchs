@@ -73,10 +73,6 @@ export function StockManagementScreen({ viewModel }: StockManagementScreenProps)
     viewModel.openReduceStockDialog(row)
   }
 
-  function handleViewHistory(row: StockRow) {
-    viewModel.setMovementSearchQuery(row.bookTitle)
-  }
-
   const isLoading = state.stockStatus === "idle" || state.stockStatus === "loading"
   const isHistoryLoading =
     state.movementsStatus === "idle" || state.movementsStatus === "loading"
@@ -150,8 +146,6 @@ export function StockManagementScreen({ viewModel }: StockManagementScreenProps)
               <StockFilters
                 searchQuery={state.searchQuery}
                 onSearchChange={viewModel.setSearchQuery}
-                selectedMainBranchId={state.selectedMainBranchId}
-                onMainBranchChange={viewModel.setSelectedMainBranchId}
                 selectedSubBranchId={state.selectedSubBranchId}
                 onSubBranchChange={viewModel.setSelectedSubBranchId}
                 selectedCategory={state.selectedCategory}
@@ -160,9 +154,9 @@ export function StockManagementScreen({ viewModel }: StockManagementScreenProps)
                 onShowLowStockChange={viewModel.setShowLowStock}
                 showOutOfStock={state.showOutOfStock}
                 onShowOutOfStockChange={viewModel.setShowOutOfStock}
-                availableMainBranches={state.availableMainBranches}
                 availableSubBranches={state.availableSubBranches}
                 availableCategories={state.availableCategories}
+                showSubBranchFilter={state.showSubBranchFilter}
               />
               <StockTable
                 rows={state.filteredStockRows}
@@ -172,8 +166,9 @@ export function StockManagementScreen({ viewModel }: StockManagementScreenProps)
                 onAddStock={handleAddStock}
                 onReduceStock={handleReduceStock}
                 onTransfer={(row) => viewModel.openTransferDialog(row)}
-                onViewHistory={handleViewHistory}
                 onEditStock={(row) => router.push(`/dashboard/stock/${row.id}/edit`)}
+                showSubBranchColumn={state.showSubBranchColumn}
+                showStockGroupAccordion={state.showStockGroupAccordion}
               />
             </TabsContent>
 
@@ -210,6 +205,7 @@ export function StockManagementScreen({ viewModel }: StockManagementScreenProps)
                   onUserFilterChange={viewModel.setMovementUserFilter}
                   availableBranches={state.availableMovementBranches}
                   availableUsers={state.availableUsers}
+                  showBranchFilter={state.showMovementBranchFilter}
                 />
               )}
             </TabsContent>

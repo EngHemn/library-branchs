@@ -11,36 +11,23 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import type {
-<<<<<<< HEAD
   BookingBranchFilter,
+  BookingBranchFilterOption,
   BookingStatusFilter,
   BookingTypeFilter,
 } from "@/presentation/viewmodels/bookings/useBookingsViewModel"
-import type { BookingBranchOption } from "@/presentation/viewmodels/bookings/BookingsViewModelState"
-=======
-  BookingStatusFilter,
-  BookingTypeFilter,
-} from "@/presentation/viewmodels/bookings/useBookingsViewModel"
->>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
 
 type BookingsFiltersProps = {
   searchQuery: string
   statusFilter: BookingStatusFilter
   typeFilter: BookingTypeFilter
-<<<<<<< HEAD
   branchFilter: BookingBranchFilter
-  branches: BookingBranchOption[]
-  currentBranchName?: string
+  branchFilterOptions: BookingBranchFilterOption[]
   showBranchFilter?: boolean
   onSearchQueryChange: (searchQuery: string) => void
   onStatusFilterChange: (statusFilter: BookingStatusFilter) => void
   onTypeFilterChange: (typeFilter: BookingTypeFilter) => void
   onBranchFilterChange: (branchFilter: BookingBranchFilter) => void
-=======
-  onSearchQueryChange: (searchQuery: string) => void
-  onStatusFilterChange: (statusFilter: BookingStatusFilter) => void
-  onTypeFilterChange: (typeFilter: BookingTypeFilter) => void
->>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
 }
 
 const statusOptions: { value: BookingStatusFilter; label: string }[] = [
@@ -73,38 +60,17 @@ function isBookingTypeFilter(value: string): value is BookingTypeFilter {
   return value === "all" || value === "inside" || value === "outside"
 }
 
-<<<<<<< HEAD
-function isBookingBranchFilter(
-  value: string,
-  branches: BookingBranchOption[]
-): value is BookingBranchFilter {
-  return (
-    value === "current" ||
-    value === "all" ||
-    branches.some((branch) => branch.id === value)
-  )
-}
-
-=======
->>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
 export function BookingsFilters({
   searchQuery,
   statusFilter,
   typeFilter,
-<<<<<<< HEAD
   branchFilter,
-  branches,
-  currentBranchName,
+  branchFilterOptions,
   showBranchFilter = false,
   onSearchQueryChange,
   onStatusFilterChange,
   onTypeFilterChange,
   onBranchFilterChange,
-=======
-  onSearchQueryChange,
-  onStatusFilterChange,
-  onTypeFilterChange,
->>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
 }: BookingsFiltersProps) {
   return (
     <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
@@ -156,36 +122,20 @@ export function BookingsFilters({
             ))}
           </SelectContent>
         </Select>
-<<<<<<< HEAD
         {showBranchFilter ? (
-          <Select
-            value={branchFilter}
-            onValueChange={(value) => {
-              if (isBookingBranchFilter(value, branches)) {
-                onBranchFilterChange(value)
-              }
-            }}
-          >
-            <SelectTrigger className="w-full sm:w-[180px]">
+          <Select value={branchFilter} onValueChange={onBranchFilterChange}>
+            <SelectTrigger className="w-full sm:w-[200px]">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="current">
-                {currentBranchName
-                  ? `Current (${currentBranchName})`
-                  : "Current branch"}
-              </SelectItem>
-              <SelectItem value="all">All branches</SelectItem>
-              {branches.map((branch) => (
-                <SelectItem key={branch.id} value={branch.id}>
-                  {branch.name}
+              {branchFilterOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
         ) : null}
-=======
->>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
       </div>
     </div>
   )

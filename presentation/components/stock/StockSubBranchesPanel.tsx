@@ -2,7 +2,6 @@
 
 import {
   ArrowRightLeft,
-  HistoryIcon,
   MinusIcon,
   PencilIcon,
   PlusIcon,
@@ -34,7 +33,6 @@ type StockSubBranchesPanelProps = {
   onAddStock: (row: StockRow) => void
   onReduceStock: (row: StockRow) => void
   onTransfer: (row: StockRow) => void
-  onViewHistory: (row: StockRow) => void
   onEditStock: (row: StockRow) => void
 }
 
@@ -52,14 +50,12 @@ export function StockRowActionsMenu({
   onAddStock,
   onReduceStock,
   onTransfer,
-  onViewHistory,
   onEditStock,
 }: {
   row: StockRow
   onAddStock: (row: StockRow) => void
   onReduceStock: (row: StockRow) => void
   onTransfer: (row: StockRow) => void
-  onViewHistory: (row: StockRow) => void
   onEditStock: (row: StockRow) => void
 }) {
   return (
@@ -91,10 +87,6 @@ export function StockRowActionsMenu({
           Transfer
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => onViewHistory(row)}>
-          <HistoryIcon className="mr-2 h-4 w-4 text-muted-foreground" />
-          View History
-        </DropdownMenuItem>
         <DropdownMenuItem onClick={() => onEditStock(row)}>
           <PencilIcon className="mr-2 h-4 w-4 text-muted-foreground" />
           Edit Stock
@@ -111,7 +103,6 @@ export function StockSubBranchesPanel({
   onAddStock,
   onReduceStock,
   onTransfer,
-  onViewHistory,
   onEditStock,
 }: StockSubBranchesPanelProps) {
   const columns: DataTableColumn<StockRow, SubBranchColumnKey>[] = [
@@ -185,7 +176,6 @@ export function StockSubBranchesPanel({
           onAddStock={onAddStock}
           onReduceStock={onReduceStock}
           onTransfer={onTransfer}
-          onViewHistory={onViewHistory}
           onEditStock={onEditStock}
         />
       ),

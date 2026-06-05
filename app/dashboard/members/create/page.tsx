@@ -1,12 +1,19 @@
 "use client"
 
+import { AuthFakeDataSource } from "@/data/datasources/AuthFakeDataSource"
 import { BranchManagementFakeDataSource } from "@/data/datasources/BranchManagementFakeDataSource"
 import { MemberManagementFakeDataSource } from "@/data/datasources/MemberManagementFakeDataSource"
+import { AuthRepositoryImpl } from "@/data/repositories/AuthRepositoryImpl"
 import { BranchManagementRepositoryImpl } from "@/data/repositories/BranchManagementRepositoryImpl"
 import { MemberManagementRepositoryImpl } from "@/data/repositories/MemberManagementRepositoryImpl"
+import { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import { BranchManagementUseCase } from "@/domain/usecases/branch/BranchManagementUseCase"
 import { MemberManagementUseCase } from "@/domain/usecases/members/MemberManagementUseCase"
 import { CreateMemberScreen } from "@/presentation/screens/members/CreateMemberScreen"
+
+const authFakeDataSource = new AuthFakeDataSource()
+const authRepository = new AuthRepositoryImpl(authFakeDataSource)
+const authUseCase = new AuthUseCase(authRepository)
 
 const memberManagementFakeDataSource = new MemberManagementFakeDataSource()
 const memberManagementRepository = new MemberManagementRepositoryImpl(
@@ -27,6 +34,7 @@ const branchManagementUseCase = new BranchManagementUseCase(
 export default function CreateMemberPage() {
   return (
     <CreateMemberScreen
+      authUseCase={authUseCase}
       memberManagementUseCase={memberManagementUseCase}
       branchManagementUseCase={branchManagementUseCase}
     />
