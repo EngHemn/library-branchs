@@ -14,7 +14,10 @@ export type CreateBookInput = {
   publicationDate: string
   shelfHint: string
   price: number
+  initialPrice: number
   stock: number
+  available: number
+  minAlert: number
   branchId: string
   coverUrl?: string | null
 }

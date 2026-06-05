@@ -11,7 +11,9 @@ export type Book = {
   isbn: string
   stock: number
   available: number
+  minAlert?: number
   status: BookStatus
+  initialPrice?: number
   price: number
   branchId: string
   firstAddedBranch: string

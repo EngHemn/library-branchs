@@ -127,8 +127,10 @@ export class BookManagementFakeDataSource {
       translator: input.translator || null,
       isbn: input.isbn,
       stock: input.stock,
-      available: input.stock,
-      status: input.stock > 0 ? "available" : "unavailable",
+      available: input.available,
+      minAlert: input.minAlert,
+      status: input.available > 0 ? "available" : "unavailable",
+      initialPrice: input.initialPrice,
       price: input.price,
       branchId: input.branchId,
       firstAddedBranch: branch?.branchName ?? "Unknown Branch",
@@ -152,7 +154,7 @@ export class BookManagementFakeDataSource {
         {
           branchId: input.branchId,
           branchName: branch?.branchName ?? "Unknown Branch",
-          available: input.stock,
+          available: input.available,
           reserved: 0,
           borrowed: 0,
           event: 0,
@@ -191,7 +193,11 @@ export class BookManagementFakeDataSource {
       translator: input.translator || null,
       isbn: input.isbn,
       stock: input.stock,
+      available: input.available,
+      minAlert: input.minAlert,
+      initialPrice: input.initialPrice,
       price: input.price,
+      status: input.available > 0 ? "available" : existing.status,
       branchId: input.branchId,
       firstAddedBranch: branch?.branchName ?? existing.firstAddedBranch,
     }
@@ -209,6 +215,11 @@ export class BookManagementFakeDataSource {
         pages: input.pages,
         publicationDate: input.publicationDate,
         shelfHint: input.shelfHint,
+      }
+
+      const primaryBranchStock = this.bookDetails[detailIndex].branchStocks[0]
+      if (primaryBranchStock) {
+        primaryBranchStock.available = input.available
       }
     }
 
