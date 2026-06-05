@@ -1,0 +1,37 @@
+import * as z from "zod"
+
+import { optionalImageUrlSchema } from "@/domain/schemas/optionalImageSchema"
+
+const optionalString = z.preprocess(
+  (value) => (value === null || value === undefined ? "" : value),
+  z.string()
+)
+
+const optionalNonNegativeNumber = z.preprocess(
+  (value) => {
+    if (value === "" || value === null || value === undefined) return 0
+    return value
+  },
+  z.coerce.number().min(0)
+)
+
+export const bookFormSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  author: z.string().min(1, "Author is required"),
+  category: z.string().min(1, "Category is required"),
+  publicationDate: z.string().min(1, "Publication date is required"),
+  language: optionalString,
+  translator: optionalString,
+  isbn: optionalString,
+  description: optionalString,
+  pages: optionalNonNegativeNumber,
+  stock: optionalNonNegativeNumber,
+  available: optionalNonNegativeNumber,
+  minAlert: optionalNonNegativeNumber,
+  initialPrice: optionalNonNegativeNumber,
+  finalPrice: optionalNonNegativeNumber,
+  coverUrl: optionalImageUrlSchema,
+})
+
+export type BookFormInput = z.input<typeof bookFormSchema>
+export type BookFormValues = z.output<typeof bookFormSchema>
