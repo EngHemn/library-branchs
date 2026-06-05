@@ -5,8 +5,7 @@ import type { BookingManagementUseCase } from "@/domain/usecases/bookings/Bookin
 
 export type CreateBookingViewModelState = {
   bookOptions: BookingFormOption[]
-  branchOptions: BookingFormOption[]
-  memberOptions: (branchId: string) => BookingFormOption[]
+  memberOptions: BookingFormOption[]
   isLoading: boolean
   isError: boolean
   isSaving: boolean

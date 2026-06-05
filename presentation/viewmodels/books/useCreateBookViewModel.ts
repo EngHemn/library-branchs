@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { useForm } from "react-hook-form"
+import { useForm, type Resolver } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
@@ -17,6 +17,7 @@ type CreateBookViewModel = {
   form: ReturnType<typeof useForm<BookFormValues>>
   save: (values: BookFormValues) => Promise<void>
   addLanguage: (name: string) => void
+  populateFromBook: (bookId: string) => Promise<void>
 }
 
 const DEFAULT_CATEGORIES = [
@@ -44,7 +45,7 @@ export function useCreateBookViewModel(
   const [error, setError] = useState<string | null>(null)
 
   const form = useForm<BookFormValues>({
-    resolver: zodResolver(bookFormSchema),
+    resolver: zodResolver(bookFormSchema) as Resolver<BookFormValues>,
     defaultValues: {
       title: "",
       language: "",
@@ -55,6 +56,11 @@ export function useCreateBookViewModel(
       description: "",
       pages: 0,
       publicationDate: "",
+      stock: 0,
+      available: 0,
+      minAlert: 0,
+      initialPrice: 0,
+      finalPrice: 0,
       coverUrl: null,
     },
   })
@@ -63,6 +69,15 @@ export function useCreateBookViewModel(
     queryKey: ["authorNames"],
     queryFn: async () => {
       const result = await getBooksUseCase.getAuthorNames()
+      if (!result.success) throw new Error(result.error)
+      return result.data
+    },
+  })
+
+  const booksQuery = useQuery({
+    queryKey: ["books"],
+    queryFn: async () => {
+      const result = await getBooksUseCase.getBooks()
       if (!result.success) throw new Error(result.error)
       return result.data
     },
@@ -79,12 +94,12 @@ export function useCreateBookViewModel(
 
   const createBookMutation = useMutation({
     mutationFn: async (values: BookFormValues) => {
+      const { finalPrice, ...rest } = values
       const result = await getBooksUseCase.createBook({
-        ...values,
+        ...rest,
         coverUrl: values.coverUrl,
         shelfHint: "",
-        price: 0,
-        stock: 0,
+        price: finalPrice,
         branchId: "",
       })
       if (!result.success) throw new Error(result.error)
@@ -107,7 +122,31 @@ export function useCreateBookViewModel(
     setLanguages((prev) => (prev.includes(name) ? prev : [...prev, name]))
   }
 
-  const isLoading = authorNamesQuery.isPending || translatorNamesQuery.isPending
+  async function populateFromBook(selectedBookId: string): Promise<void> {
+    const result = await getBooksUseCase.getBookById(selectedBookId)
+    if (!result.success || !result.data) return
+
+    const book = result.data
+    form.setValue("title", book.title)
+    form.setValue("author", book.author)
+    form.setValue("translator", book.translator ?? "")
+    form.setValue("isbn", book.isbn)
+    form.setValue("language", book.language)
+    form.setValue("category", book.category)
+    form.setValue("publicationDate", book.publicationDate)
+    form.setValue("description", book.description)
+    form.setValue("pages", book.pages)
+    form.setValue("coverUrl", book.coverUrl ?? null)
+
+    if (book.language && !languages.includes(book.language)) {
+      setLanguages((prev) => [...prev, book.language])
+    }
+  }
+
+  const isLoading =
+    authorNamesQuery.isPending ||
+    translatorNamesQuery.isPending ||
+    booksQuery.isPending
   const isSaving = createBookMutation.isPending
   const isSaved = createBookMutation.isSuccess
 
@@ -121,6 +160,7 @@ export function useCreateBookViewModel(
 
   const state: CreateBookViewModelState = {
     status,
+    books: booksQuery.data ?? [],
     authors: authorNamesQuery.data ?? [],
     translators: translatorNamesQuery.data ?? [],
     categories: DEFAULT_CATEGORIES,
@@ -132,5 +172,5 @@ export function useCreateBookViewModel(
     isSaved,
   }
 
-  return { state, form, save, addLanguage }
+  return { state, form, save, addLanguage, populateFromBook }
 }
