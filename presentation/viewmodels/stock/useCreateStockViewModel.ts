@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useForm } from "react-hook-form"
+import { useForm, type Resolver } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQuery } from "@tanstack/react-query"
 
@@ -69,7 +69,7 @@ export function useCreateStockViewModel(
   const [error, setError] = useState<string | null>(null)
 
   const form = useForm<CreateStockFormValues>({
-    resolver: zodResolver(createStockFormSchema),
+    resolver: zodResolver(createStockFormSchema) as Resolver<CreateStockFormValues>,
     defaultValues: {
       bookId: "",
       branchId: "",

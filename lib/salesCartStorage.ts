@@ -35,23 +35,36 @@ function isSaleBook(value: Record<string, string | number | null>): value is Sal
   )
 }
 
-function isStoredCartItem(value: Record<string, StoredCartItemShape | number>): value is StoredCartItemShape {
-  const book = value.book as Record<string, string | number | null> | undefined
-  return (
-    book !== undefined &&
-    isSaleBook(book) &&
-    typeof value.quantity === "number" &&
-    value.quantity > 0
-  )
-}
-
-function isStoredSalesCart(value: Record<string, StoredCartItemShape[] | string | null>): value is StoredSalesCartShape {
-  if (!Array.isArray(value.cart)) {
+function isStoredCartItem(value: unknown): value is StoredCartItemShape {
+  if (typeof value !== "object" || value === null) {
     return false
   }
 
-  const shoppingBranchId = value.shoppingBranchId
-  const displayedBranchId = value.displayedBranchId
+  const record = value as Record<string, unknown>
+  const book = record.book
+
+  return (
+    typeof book === "object" &&
+    book !== null &&
+    isSaleBook(book as Record<string, string | number | null>) &&
+    typeof record.quantity === "number" &&
+    record.quantity > 0
+  )
+}
+
+function isStoredSalesCart(value: unknown): value is StoredSalesCartShape {
+  if (typeof value !== "object" || value === null) {
+    return false
+  }
+
+  const record = value as Record<string, unknown>
+
+  if (!Array.isArray(record.cart)) {
+    return false
+  }
+
+  const shoppingBranchId = record.shoppingBranchId
+  const displayedBranchId = record.displayedBranchId
 
   if (shoppingBranchId !== null && typeof shoppingBranchId !== "string") {
     return false
@@ -61,9 +74,7 @@ function isStoredSalesCart(value: Record<string, StoredCartItemShape[] | string 
     return false
   }
 
-  return value.cart.every((item) =>
-    isStoredCartItem(item as Record<string, StoredCartItemShape | number>)
-  )
+  return record.cart.every((item) => isStoredCartItem(item))
 }
 
 function getStorageKey(userId: string): string {
@@ -82,7 +93,7 @@ export function readStoredSalesCart(userId: string): StoredSalesCart {
   }
 
   try {
-    const parsed = JSON.parse(raw) as Record<string, StoredCartItemShape[] | string | null>
+    const parsed: unknown = JSON.parse(raw)
 
     if (!isStoredSalesCart(parsed)) {
       return { cart: [], shoppingBranchId: null, displayedBranchId: null }

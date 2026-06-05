@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useForm } from "react-hook-form"
+import { useForm, type Resolver } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
@@ -28,7 +28,7 @@ export function useEditStockViewModel(
   const [error, setError] = useState<string | null>(null)
 
   const form = useForm<EditStockFormValues>({
-    resolver: zodResolver(editStockFormSchema),
+    resolver: zodResolver(editStockFormSchema) as Resolver<EditStockFormValues>,
     defaultValues: {
       quantity: 0,
       minStock: 1,
