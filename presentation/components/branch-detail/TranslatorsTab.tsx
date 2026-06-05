@@ -19,11 +19,6 @@ import { Input } from "@/components/ui/input"
 import type { BranchPermissions } from "@/domain/entities/permission/BranchPermissions"
 import type { Translator } from "@/domain/entities/translator/Translator"
 import { BranchActionButton } from "@/presentation/components/branch-management/BranchActionButton"
-<<<<<<< HEAD
-import { LanguageBadge } from "@/presentation/components/translators/LanguageBadge"
-import { TranslatorLink } from "@/presentation/components/translators/TranslatorLink"
-=======
->>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
 
 type TranslatorsTabProps = {
   translators: Translator[]
@@ -61,28 +56,14 @@ export function TranslatorsTab({
       header: "Name",
       sortable: true,
       sortValue: (t) => t.name,
-<<<<<<< HEAD
-      cell: (t) => (
-        <TranslatorLink
-          translatorId={t.id}
-          translatorName={t.name}
-          className="font-medium text-primary underline-offset-4 hover:underline"
-        />
-      ),
-=======
       cell: (t) => <span className="font-medium">{t.name}</span>,
->>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
     },
     {
       key: "language",
       header: "Language",
       sortable: true,
       sortValue: (t) => t.language,
-<<<<<<< HEAD
-      cell: (t) => <LanguageBadge language={t.language} />,
-=======
       cell: (t) => t.language,
->>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
     },
     {
       key: "totalBooks",

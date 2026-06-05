@@ -4,10 +4,6 @@ import { useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 import type { Member, MemberStatus } from "@/domain/entities/member/Member"
-<<<<<<< HEAD
-import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
-=======
->>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
 import type { MemberManagementUseCase } from "@/domain/usecases/members/MemberManagementUseCase"
 import type { MemberActiveFilter, MemberActiveFilterId, MemberBranchFilter, MemberFilterState, MemberStatusFilter, MembersPageStatus, MembersViewModelState } from "./MembersViewModelState"
 export type { MemberStatusFilter } from "./MembersViewModelState"
@@ -158,28 +154,12 @@ function filterMembers(members: Member[], filters: MemberFilterState): Member[] 
 }
 
 export function useMembersViewModel(
-<<<<<<< HEAD
-  authUseCase: AuthUseCase,
-=======
->>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
   memberManagementUseCase: MemberManagementUseCase
 ): MembersViewModel {
   const queryClient = useQueryClient()
   const [appliedFilters, setAppliedFilters] =
     useState<MemberFilterState>(defaultFilters)
 
-<<<<<<< HEAD
-  const userQuery = useQuery({
-    queryKey: ["currentUser"],
-    queryFn: async () => {
-      const result = await authUseCase.getCurrentUser()
-      if (!result.success) throw new Error(result.error)
-      return result.data
-    },
-  })
-
-=======
->>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
   const membersQuery = useQuery({
     queryKey: ["members"],
     queryFn: async () => {
@@ -204,28 +184,6 @@ export function useMembersViewModel(
   const usedBranches = getUniqueUsedBranches(members)
   const activeFilters = buildActiveFilters(appliedFilters)
 
-<<<<<<< HEAD
-  const user = userQuery.data ?? null
-  const showBranchesUsedColumn = user?.branchType !== "sub"
-
-  const status: MembersPageStatus =
-    userQuery.isPending || membersQuery.isPending
-      ? "loading"
-      : userQuery.isError || membersQuery.isError
-        ? "error"
-        : userQuery.isSuccess && membersQuery.isSuccess
-          ? "ready"
-          : "idle"
-
-  const queryError =
-    userQuery.isError || membersQuery.isError
-      ? userQuery.error instanceof Error
-        ? userQuery.error.message
-        : membersQuery.error instanceof Error
-          ? membersQuery.error.message
-          : String(userQuery.error ?? membersQuery.error)
-      : null
-=======
   const status: MembersPageStatus = membersQuery.isPending
     ? "loading"
     : membersQuery.isError
@@ -239,7 +197,6 @@ export function useMembersViewModel(
       ? membersQuery.error.message
       : String(membersQuery.error)
     : null
->>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
 
   function setSearchQuery(searchQuery: string): void {
     setAppliedFilters((current) => ({ ...current, searchQuery }))
@@ -277,11 +234,7 @@ export function useMembersViewModel(
   }
 
   async function reload(): Promise<void> {
-<<<<<<< HEAD
-    await Promise.all([userQuery.refetch(), membersQuery.refetch()])
-=======
     await membersQuery.refetch()
->>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
   }
 
   const state: MembersViewModelState = {
@@ -296,10 +249,6 @@ export function useMembersViewModel(
     isLoading: membersQuery.isPending,
     isReady: membersQuery.isSuccess,
     isDeleting,
-<<<<<<< HEAD
-    showBranchesUsedColumn,
-=======
->>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
   }
 
   return {

@@ -16,13 +16,7 @@ import {
   type DataTableColumn,
 } from "@/components/ui/data-table"
 import type { Translator } from "@/domain/entities/translator/Translator"
-<<<<<<< HEAD
-import { LanguageBadge } from "@/presentation/components/translators/LanguageBadge"
 import { TranslatorActionButton } from "@/presentation/components/translators/TranslatorActionButton"
-import { TranslatorLink } from "@/presentation/components/translators/TranslatorLink"
-=======
-import { TranslatorActionButton } from "@/presentation/components/translators/TranslatorActionButton"
->>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
 
 type TranslatorsTableProps = {
   translators: Translator[]
@@ -68,14 +62,7 @@ export function TranslatorsTable({
               <LanguagesIcon className="size-5 text-muted-foreground" />
             }
           />
-<<<<<<< HEAD
-          <TranslatorLink
-            translatorId={translator.id}
-            translatorName={translator.name}
-          />
-=======
           <span className="font-semibold">{translator.name}</span>
->>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
         </div>
       ),
     },
@@ -84,11 +71,7 @@ export function TranslatorsTable({
       header: "Language",
       sortable: true,
       sortValue: (translator) => translator.language,
-<<<<<<< HEAD
-      cell: (translator) => <LanguageBadge language={translator.language} />,
-=======
       cell: (translator) => translator.language,
->>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
     },
     {
       key: "totalBooks",

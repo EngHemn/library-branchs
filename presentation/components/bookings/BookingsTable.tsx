@@ -46,10 +46,6 @@ import type {
 type BookingsTableProps = {
   bookings: Booking[]
   isActionPending: boolean
-<<<<<<< HEAD
-  showBranchColumn?: boolean
-=======
->>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
   onReturn: (booking: Booking) => void
   onExtend: (booking: Booking) => void
   onCancel: (booking: Booking) => void
@@ -177,10 +173,6 @@ function BookingActionsMenu({
 export function BookingsTable({
   bookings,
   isActionPending,
-<<<<<<< HEAD
-  showBranchColumn = true,
-=======
->>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
   onReturn,
   onExtend,
   onCancel,
@@ -202,24 +194,12 @@ export function BookingsTable({
           </p>
         ) : (
           <div className="overflow-x-auto">
-<<<<<<< HEAD
-            <Table
-              className={
-                showBranchColumn ? "min-w-[980px]" : "min-w-[820px]"
-              }
-            >
-=======
             <Table className="min-w-[980px]">
->>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
               <TableHeader>
                 <TableRow>
                   <TableHead>Book</TableHead>
                   <TableHead>Member</TableHead>
-<<<<<<< HEAD
-                  {showBranchColumn ? <TableHead>Branch</TableHead> : null}
-=======
                   <TableHead>Branch</TableHead>
->>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
                   <TableHead>Type</TableHead>
                   <TableHead>Booking Date</TableHead>
                   <TableHead>Due Date</TableHead>
@@ -244,17 +224,6 @@ export function BookingsTable({
                         name={booking.memberName}
                       />
                     </TableCell>
-<<<<<<< HEAD
-                    {showBranchColumn ? (
-                      <TableCell className="max-w-[160px] truncate">
-                        <BranchLink
-                          branchId={booking.branchId}
-                          branchName={booking.branchName}
-                          className="block truncate"
-                        />
-                      </TableCell>
-                    ) : null}
-=======
                     <TableCell className="max-w-[160px] truncate">
                       <BranchLink
                         branchId={booking.branchId}
@@ -262,7 +231,6 @@ export function BookingsTable({
                         className="block truncate"
                       />
                     </TableCell>
->>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
                     <TableCell>
                       <BookingTypeBadge type={booking.type} />
                     </TableCell>

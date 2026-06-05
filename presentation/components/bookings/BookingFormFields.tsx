@@ -36,19 +36,13 @@ import {
 } from "@/presentation/components/bookings/BookingSearchCombobox"
 
 const CREATE_BOOK_HREF = "/dashboard/books/create"
-<<<<<<< HEAD
-=======
 const CREATE_BRANCH_HREF = "/dashboard/branches/create"
->>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
 const CREATE_MEMBER_HREF = "/dashboard/members/create"
 
 type BookingFormFieldsProps = {
   form: UseFormReturn<BookingFormValues>
   bookOptions: BookingComboboxOption[]
-<<<<<<< HEAD
-=======
   branchOptions: BookingComboboxOption[]
->>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
   memberFormOptions: BookingFormOption[]
   disabled: boolean
   onSubmit: (values: BookingFormValues) => void
@@ -58,10 +52,7 @@ type BookingFormFieldsProps = {
 export function BookingFormFields({
   form,
   bookOptions,
-<<<<<<< HEAD
-=======
   branchOptions,
->>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
   memberFormOptions,
   disabled,
   onSubmit,
@@ -104,8 +95,6 @@ export function BookingFormFields({
 
           <FormField
             control={form.control}
-<<<<<<< HEAD
-=======
             name="branchId"
             render={({ field }) => (
               <FormItem>
@@ -134,7 +123,6 @@ export function BookingFormFields({
         <div className="grid gap-4 sm:grid-cols-2">
           <FormField
             control={form.control}
->>>>>>> 33f2422d67e1849f7e306e3181ce5ea148a85013
             name="memberId"
             render={({ field }) => (
               <FormItem>
