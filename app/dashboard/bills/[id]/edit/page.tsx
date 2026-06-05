@@ -1,7 +1,8 @@
 "use client"
 
-import { use } from "react"
+import { Suspense, use } from "react"
 
+import { Skeleton } from "@/components/ui/skeleton"
 import { dashboardAuthUseCase } from "@/app/dashboard/dashboardAuthDependencies"
 import { BillManagementFakeDataSource } from "@/data/datasources/BillManagementFakeDataSource"
 import { BillManagementRepositoryImpl } from "@/data/repositories/BillManagementRepositoryImpl"
@@ -21,10 +22,19 @@ type PageProps = {
 export default function Page({ params }: PageProps) {
   const { id } = use(params)
   return (
-    <EditBillScreen
-      billId={id}
-      authUseCase={dashboardAuthUseCase}
-      getBillsUseCase={getBillsUseCase}
-    />
+    <Suspense
+      fallback={
+        <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
+          <Skeleton className="mt-4 h-8 w-48" />
+          <Skeleton className="h-4 w-96 max-w-full" />
+        </div>
+      }
+    >
+      <EditBillScreen
+        billId={id}
+        authUseCase={dashboardAuthUseCase}
+        getBillsUseCase={getBillsUseCase}
+      />
+    </Suspense>
   )
 }

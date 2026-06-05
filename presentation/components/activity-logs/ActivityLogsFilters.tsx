@@ -55,17 +55,17 @@ const ACTION_OPTIONS: FilterOption[] = [
   { value: "import", label: "Import" },
 ]
 
-type FilterOptionComboboxProps = {
+type FilterOptionComboboxProps<T extends string> = {
   id: string
   label: string
-  value: string
-  onValueChange: (value: string) => void
+  value: T
+  onValueChange: (value: T) => void
   placeholder: string
   allLabel: string
   options: FilterOption[]
 }
 
-function FilterOptionCombobox({
+function FilterOptionCombobox<T extends string>({
   id,
   label,
   value,
@@ -73,7 +73,7 @@ function FilterOptionCombobox({
   placeholder,
   allLabel,
   options,
-}: FilterOptionComboboxProps) {
+}: FilterOptionComboboxProps<T>) {
   const [inputValue, setInputValue] = useState("")
 
   const allOptions = [{ value: "all", label: allLabel }, ...options]
@@ -90,7 +90,7 @@ function FilterOptionCombobox({
   }
 
   function handleValueChange(nextValue: string | null): void {
-    onValueChange(nextValue ?? "all")
+    onValueChange((nextValue ?? "all") as T)
   }
 
   function handleInputValueChange(nextInput: string, eventDetails?: { reason?: string }): void {
@@ -101,7 +101,7 @@ function FilterOptionCombobox({
       selectedOption &&
       nextInput.trim().toLowerCase() !== selectedOption.label.trim().toLowerCase()
     ) {
-      onValueChange("all")
+      onValueChange("all" as T)
     }
   }
 
@@ -170,7 +170,7 @@ export function ActivityLogsFilters({
       </div>
 
       <div className="grid gap-3 sm:grid-cols-3">
-        <FilterOptionCombobox
+        <FilterOptionCombobox<ActivityActionFilter>
           id="activity-action-filter"
           label="Action"
           value={actionFilter}

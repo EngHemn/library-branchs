@@ -1,5 +1,8 @@
 "use client"
 
+import { Suspense } from "react"
+
+import { Skeleton } from "@/components/ui/skeleton"
 import { AuthFakeDataSource } from "@/data/datasources/AuthFakeDataSource"
 import { BranchManagementFakeDataSource } from "@/data/datasources/BranchManagementFakeDataSource"
 import { MemberManagementFakeDataSource } from "@/data/datasources/MemberManagementFakeDataSource"
@@ -33,10 +36,19 @@ const branchManagementUseCase = new BranchManagementUseCase(
 
 export default function CreateMemberPage() {
   return (
-    <CreateMemberScreen
-      authUseCase={authUseCase}
-      memberManagementUseCase={memberManagementUseCase}
-      branchManagementUseCase={branchManagementUseCase}
-    />
+    <Suspense
+      fallback={
+        <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
+          <Skeleton className="mt-4 h-8 w-48" />
+          <Skeleton className="h-4 w-96 max-w-full" />
+        </div>
+      }
+    >
+      <CreateMemberScreen
+        authUseCase={authUseCase}
+        memberManagementUseCase={memberManagementUseCase}
+        branchManagementUseCase={branchManagementUseCase}
+      />
+    </Suspense>
   )
 }
