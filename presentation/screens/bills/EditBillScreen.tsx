@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
+import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { GetBillsUseCase } from "@/domain/usecases/bills/GetBillsUseCase"
 import { BillFormFields } from "@/presentation/components/bills/BillFormFields"
 import { buildCreateHrefWithReturn } from "@/presentation/components/shared/DashboardEntityLink"
@@ -24,6 +25,7 @@ const CREATE_BOOK_PATH = "/dashboard/books/create"
 
 type EditBillScreenProps = {
   billId: string
+  authUseCase: AuthUseCase
   getBillsUseCase: GetBillsUseCase
 }
 
@@ -45,13 +47,17 @@ function LoadingState() {
   )
 }
 
-export function EditBillScreen({ billId, getBillsUseCase }: EditBillScreenProps) {
+export function EditBillScreen({
+  billId,
+  authUseCase,
+  getBillsUseCase,
+}: EditBillScreenProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const returnTo = searchParams.get("returnTo") ?? `/dashboard/bills/${billId}`
   const currentPath = `/dashboard/bills/${billId}/edit?returnTo=${encodeURIComponent(returnTo)}`
   const createBookHref = buildCreateHrefWithReturn(CREATE_BOOK_PATH, currentPath)
-  const viewModel = useEditBillViewModel(billId, getBillsUseCase)
+  const viewModel = useEditBillViewModel(billId, authUseCase, getBillsUseCase)
   const { state, form } = viewModel
 
   useDashboardBreadcrumbs([
@@ -140,6 +146,7 @@ export function EditBillScreen({ billId, getBillsUseCase }: EditBillScreenProps)
                 branchOptions={state.branchOptions}
                 bookOptions={state.bookOptions}
                 createBookHref={createBookHref}
+                showBranchField={state.showBranchField}
                 disabled={state.isSaving || state.isSaved}
                 onSubmit={viewModel.save}
               >

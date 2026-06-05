@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/card"
 import { EntityImage } from "@/components/ui/entity-image"
 import { Skeleton } from "@/components/ui/skeleton"
+import { TooltipProvider } from "@/components/ui/tooltip"
 import type { GetBillsUseCase } from "@/domain/usecases/bills/GetBillsUseCase"
 import { BillDetailHeader } from "@/presentation/components/bills/BillDetailHeader"
 import { BillProductsTable } from "@/presentation/components/bills/BillProductsTable"
@@ -133,7 +134,14 @@ export function ViewBillScreen({ billId, getBillsUseCase }: ViewBillScreenProps)
           ) : null}
 
           <BillSummaryCards bill={state.bill} />
-          <BillProductsTable products={state.bill.products} />
+          <TooltipProvider>
+            <BillProductsTable
+              products={state.bill.products}
+              onView={(product) =>
+                router.push(`/dashboard/books/${product.bookId}`)
+              }
+            />
+          </TooltipProvider>
         </div>
       ) : null}
     </>
