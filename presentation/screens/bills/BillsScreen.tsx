@@ -24,6 +24,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import type { Bill } from "@/domain/entities/bill/Bill"
+import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { GetBillsUseCase } from "@/domain/usecases/bills/GetBillsUseCase"
 import { BillsFilters } from "@/presentation/components/bills/BillsFilters"
 import { BillsTable } from "@/presentation/components/bills/BillsTable"
@@ -31,6 +32,7 @@ import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadc
 import { useBillsViewModel } from "@/presentation/viewmodels/bills/useBillsViewModel"
 
 type BillsScreenProps = {
+  authUseCase: AuthUseCase
   getBillsUseCase: GetBillsUseCase
 }
 
@@ -47,9 +49,9 @@ function LoadingBillsScreen() {
   )
 }
 
-export function BillsScreen({ getBillsUseCase }: BillsScreenProps) {
+export function BillsScreen({ authUseCase, getBillsUseCase }: BillsScreenProps) {
   const router = useRouter()
-  const viewModel = useBillsViewModel(getBillsUseCase)
+  const viewModel = useBillsViewModel(authUseCase, getBillsUseCase)
   const { state } = viewModel
   const [deleteBill, setDeleteBill] = useState<Bill | null>(null)
 
@@ -107,15 +109,21 @@ export function BillsScreen({ getBillsUseCase }: BillsScreenProps) {
             </section>
 
             <BillsFilters
-              bills={state.bills}
-              searchQuery={state.searchQuery}
-              branchFilter={state.branchFilter}
+              searchQuery={state.filters.searchQuery}
+              branchFilter={state.filters.branchFilter}
+              dateFrom={state.filters.dateFrom}
+              dateTo={state.filters.dateTo}
+              branchFilterOptions={state.branchFilterOptions}
+              showBranchFilter={state.showBranchFilter}
               onSearchQueryChange={viewModel.setSearchQuery}
               onBranchFilterChange={viewModel.setBranchFilter}
+              onDateFromChange={viewModel.setDateFrom}
+              onDateToChange={viewModel.setDateTo}
             />
 
             <BillsTable
               bills={state.filteredBills}
+              showBranchColumn={state.showBranchColumn}
               onView={(bill) => router.push(`/dashboard/bills/${bill.id}`)}
               onEdit={(bill) => router.push(`/dashboard/bills/${bill.id}/edit`)}
               onDelete={(bill) => setDeleteBill(bill)}
