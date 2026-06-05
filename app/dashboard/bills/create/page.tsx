@@ -1,5 +1,6 @@
 "use client"
 
+import { dashboardAuthUseCase } from "@/app/dashboard/dashboardAuthDependencies"
 import { BillManagementFakeDataSource } from "@/data/datasources/BillManagementFakeDataSource"
 import { BillManagementRepositoryImpl } from "@/data/repositories/BillManagementRepositoryImpl"
 import { GetBillsUseCase } from "@/domain/usecases/bills/GetBillsUseCase"
@@ -12,5 +13,10 @@ const billManagementRepository = new BillManagementRepositoryImpl(
 const getBillsUseCase = new GetBillsUseCase(billManagementRepository)
 
 export default function Page() {
-  return <CreateBillScreen getBillsUseCase={getBillsUseCase} />
+  return (
+    <CreateBillScreen
+      authUseCase={dashboardAuthUseCase}
+      getBillsUseCase={getBillsUseCase}
+    />
+  )
 }
