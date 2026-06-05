@@ -2,6 +2,7 @@
 
 import { use } from "react"
 
+import { dashboardAuthUseCase } from "@/app/dashboard/dashboardAuthDependencies"
 import { BillManagementFakeDataSource } from "@/data/datasources/BillManagementFakeDataSource"
 import { BillManagementRepositoryImpl } from "@/data/repositories/BillManagementRepositoryImpl"
 import { GetBillsUseCase } from "@/domain/usecases/bills/GetBillsUseCase"
@@ -19,5 +20,11 @@ type PageProps = {
 
 export default function Page({ params }: PageProps) {
   const { id } = use(params)
-  return <EditBillScreen billId={id} getBillsUseCase={getBillsUseCase} />
+  return (
+    <EditBillScreen
+      billId={id}
+      authUseCase={dashboardAuthUseCase}
+      getBillsUseCase={getBillsUseCase}
+    />
+  )
 }
