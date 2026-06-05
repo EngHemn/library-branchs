@@ -21,8 +21,9 @@ import {
 import { Skeleton } from "@/components/ui/skeleton"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { TooltipProvider } from "@/components/ui/tooltip"
-import type { MemberManagementUseCase } from "@/domain/usecases/members/MemberManagementUseCase"
+import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { BranchManagementUseCase } from "@/domain/usecases/branch/BranchManagementUseCase"
+import type { MemberManagementUseCase } from "@/domain/usecases/members/MemberManagementUseCase"
 import { MemberBookingsTable } from "@/presentation/components/members/MemberBookingsTable"
 import { MemberDetailsTab } from "@/presentation/components/members/MemberDetailsTab"
 import { useBranchNameLookup } from "@/presentation/hooks/useBranchNameLookup"
@@ -31,6 +32,7 @@ import { useViewMemberViewModel } from "@/presentation/viewmodels/members/useVie
 
 type ViewMemberScreenProps = {
   memberId: string
+  authUseCase: AuthUseCase
   memberManagementUseCase: MemberManagementUseCase
   branchManagementUseCase: BranchManagementUseCase
 }
@@ -63,11 +65,16 @@ function LoadingState() {
 
 export function ViewMemberScreen({
   memberId,
+  authUseCase,
   memberManagementUseCase,
   branchManagementUseCase,
 }: ViewMemberScreenProps) {
   const router = useRouter()
-  const viewModel = useViewMemberViewModel(memberId, memberManagementUseCase)
+  const viewModel = useViewMemberViewModel(
+    memberId,
+    authUseCase,
+    memberManagementUseCase
+  )
   const branchNameToId = useBranchNameLookup(branchManagementUseCase)
   const { state } = viewModel
 
@@ -172,6 +179,7 @@ export function ViewMemberScreen({
                 <MemberDetailsTab
                   member={state.member}
                   branchNameToId={branchNameToId}
+                  showBranchesUsedSection={state.showBranchesUsedSection}
                 />
               </TabsContent>
 
@@ -180,6 +188,7 @@ export function ViewMemberScreen({
                   title="Active Bookings"
                   bookings={state.member.bookings.active}
                   emptyMessage="This member has no active bookings."
+                  showBranchColumn={state.showBranchColumn}
                 />
               </TabsContent>
 
@@ -188,6 +197,7 @@ export function ViewMemberScreen({
                   title="Late Returns"
                   bookings={state.member.bookings.lateReturns}
                   emptyMessage="This member has no late returns."
+                  showBranchColumn={state.showBranchColumn}
                   showDaysOverdue
                 />
               </TabsContent>
@@ -197,6 +207,7 @@ export function ViewMemberScreen({
                   title="Borrowing History"
                   bookings={state.member.bookings.history}
                   emptyMessage="This member has no borrowing history."
+                  showBranchColumn={state.showBranchColumn}
                   showReturnedDate
                 />
               </TabsContent>
