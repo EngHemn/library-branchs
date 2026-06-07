@@ -8,6 +8,19 @@ export const dashboardPaths = {
     detail: getEventViewHref,
     edit: getEventEditHref,
   },
+  shelves: {
+    list: "/dashboard/shelves",
+    create: "/dashboard/shelves/create",
+    detail: (shelfId: string) => `/dashboard/shelves/${shelfId}`,
+    edit: (shelfId: string) => `/dashboard/shelves/${shelfId}/edit`,
+    shelfBook: {
+      add: (shelfId: string) => `/dashboard/shelves/${shelfId}/books/add`,
+      detail: (shelfId: string, shelfBookId: string) =>
+        `/dashboard/shelves/${shelfId}/books/${shelfBookId}`,
+      edit: (shelfId: string, shelfBookId: string) =>
+        `/dashboard/shelves/${shelfId}/books/${shelfBookId}/edit`,
+    },
+  },
   books: {
     list: "/dashboard/books",
     create: "/dashboard/books/create",
