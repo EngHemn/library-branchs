@@ -88,3 +88,30 @@ export function matchesDashboardBranchFilter(
 
   return scopedBranchIds.includes(itemBranchId)
 }
+
+export function getSubBranchNetworkBranchIds(userBranchId: string): string[] {
+  const userBranch = fakeBranches.find((item) => item.id === userBranchId)
+
+  if (!userBranch || userBranch.type !== "sub") {
+    return [userBranchId]
+  }
+
+  const parentName = userBranch.parentBranch
+  if (!parentName) {
+    return [userBranchId]
+  }
+
+  const networkIds = new Set<string>([userBranchId])
+
+  for (const branch of fakeBranches) {
+    if (branch.type === "main" && branch.branchName === parentName) {
+      networkIds.add(branch.id)
+    }
+
+    if (branch.type === "sub" && branch.parentBranch === parentName) {
+      networkIds.add(branch.id)
+    }
+  }
+
+  return Array.from(networkIds)
+}

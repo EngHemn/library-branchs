@@ -46,6 +46,17 @@ export const fakePermissionCategories: PermissionCategory[] = [
     ],
   },
   {
+    name: "Groups",
+    permissions: [
+      "group.view",
+      "group.create",
+      "group.update",
+      "group.delete",
+      "group.assign.books",
+      "group.assign.staff",
+    ],
+  },
+  {
     name: "Bookings",
     permissions: [
       "booking.view",
@@ -56,6 +67,21 @@ export const fakePermissionCategories: PermissionCategory[] = [
       "booking.extend",
       "booking.cancel",
     ],
+  },
+  {
+    name: "Needs",
+    permissions: [
+      "needs.view",
+      "needs.create",
+      "needs.update",
+      "needs.delete",
+      "needs.approve",
+      "needs.reject",
+    ],
+  },
+  {
+    name: "Alerts",
+    permissions: ["alerts.view", "alerts.manage"],
   },
 ]
 
@@ -90,7 +116,12 @@ export const fakePermissionRoles: PermissionRole[] = [
     id: "staff",
     name: "Staff",
     description: "Standard staff access for day-to-day library operations.",
-    assignedPermissions: ["book.view", "member.view", "booking.view"],
+    assignedPermissions: [
+      "book.view",
+      "member.view",
+      "booking.view",
+      "group.view",
+    ],
     isSystem: true,
   },
 ]

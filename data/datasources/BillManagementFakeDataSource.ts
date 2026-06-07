@@ -13,6 +13,7 @@ import type {
   UpdateBillInput,
 } from "@/domain/repositories/BillManagementRepository"
 import type { Result } from "@/domain/result/Result"
+import { toBillDateTime } from "@/presentation/components/bills/billDisplay"
 
 function delay(ms: number): Promise<void> {
   return new Promise((resolve) => {
@@ -95,7 +96,7 @@ export class BillManagementFakeDataSource {
       branchId: branch.id,
       branchName: branch.branchName,
       companyName: input.companyName.trim(),
-      billDate: input.billDate,
+      billDate: toBillDateTime(input.billDate),
       phoneNumber: input.phoneNumber.trim(),
       price: input.price,
       productCount: uniqueBookIds.length,
@@ -132,7 +133,7 @@ export class BillManagementFakeDataSource {
       branchId: branch.id,
       branchName: branch.branchName,
       companyName: input.companyName.trim(),
-      billDate: input.billDate,
+      billDate: toBillDateTime(input.billDate, currentBill.billDate),
       phoneNumber: input.phoneNumber.trim(),
       price: input.price,
       productCount: uniqueBookIds.length,

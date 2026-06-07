@@ -26,6 +26,7 @@ import type { Book } from "@/domain/entities/book/Book"
 import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { BookingManagementUseCase } from "@/domain/usecases/bookings/BookingManagementUseCase"
 import type { GetBooksUseCase } from "@/domain/usecases/books/GetBooksUseCase"
+import type { ShelfManagementUseCase } from "@/domain/usecases/shelves/ShelfManagementUseCase"
 import { BooksFilters } from "@/presentation/components/books/BooksFilters"
 import { BooksTable } from "@/presentation/components/books/BooksTable"
 import { CreateBookingDialog } from "@/presentation/components/bookings/CreateBookingDialog"
@@ -35,6 +36,7 @@ import { useBooksViewModel } from "@/presentation/viewmodels/books/useBooksViewM
 type BooksScreenProps = {
   authUseCase: AuthUseCase
   getBooksUseCase: GetBooksUseCase
+  shelfManagementUseCase: ShelfManagementUseCase
   bookingManagementUseCase: BookingManagementUseCase
 }
 
@@ -54,10 +56,15 @@ function LoadingBooksScreen() {
 export function BooksScreen({
   authUseCase,
   getBooksUseCase,
+  shelfManagementUseCase,
   bookingManagementUseCase,
 }: BooksScreenProps) {
   const router = useRouter()
-  const viewModel = useBooksViewModel(authUseCase, getBooksUseCase)
+  const viewModel = useBooksViewModel(
+    authUseCase,
+    getBooksUseCase,
+    shelfManagementUseCase
+  )
   const { state } = viewModel
   const [deleteBook, setDeleteBook] = useState<Book | null>(null)
   const [createBookingOpen, setCreateBookingOpen] = useState(false)
@@ -127,16 +134,28 @@ export function BooksScreen({
               authorFilter={state.filters.authorFilter}
               translatorFilter={state.filters.translatorFilter}
               branchFilter={state.filters.branchFilter}
+              locationValues={state.filters.locationValues}
               categories={state.categories}
               authors={state.authors}
               translators={state.translators}
-              branches={state.branches}
+              branchFilterOptions={state.branchFilterOptions}
+              locationOptions={state.locationOptions}
+              locationManageError={state.locationManageError}
+              isManagingLocation={state.isManagingLocation}
               showBranchFilter={state.showBranchFilter}
               onSearchQueryChange={viewModel.setSearchQuery}
               onCategoryFilterChange={viewModel.setCategoryFilter}
               onAuthorFilterChange={viewModel.setAuthorFilter}
               onTranslatorFilterChange={viewModel.setTranslatorFilter}
               onBranchFilterChange={viewModel.setBranchFilter}
+              onLocationFilterChange={viewModel.setLocationFilter}
+              onClearFilters={viewModel.clearFilters}
+              onAddLocationValue={viewModel.addLocationValue}
+              onUpdateLocationValue={viewModel.updateLocationValue}
+              onDeleteLocationValue={viewModel.deleteLocationValue}
+              onAddLocationStep={viewModel.addLocationStep}
+              onUpdateLocationStep={viewModel.updateLocationStep}
+              onDeleteLocationStep={viewModel.deleteLocationStep}
             />
 
             <BooksTable

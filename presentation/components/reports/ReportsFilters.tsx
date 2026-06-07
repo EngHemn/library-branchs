@@ -20,16 +20,20 @@ import {
 } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
 import type {
-  ReportBranchOption,
   ReportPeriod,
 } from "@/domain/entities/reports/Reports"
+import type {
+  ReportBranchFilter,
+  ReportBranchFilterOption,
+} from "@/presentation/viewmodels/reports/ReportsViewModelState"
 
 type ReportsFiltersProps = {
   period: ReportPeriod
   onPeriodChange: (period: ReportPeriod) => void
-  branchId: string
-  onBranchChange: (branchId: string) => void
-  branches: ReportBranchOption[]
+  branchId: ReportBranchFilter
+  onBranchChange: (branchId: ReportBranchFilter) => void
+  branchFilterOptions: ReportBranchFilterOption[]
+  showBranchFilter?: boolean
   dateFrom: string
   dateTo: string
   onDateFromChange: (value: string) => void
@@ -126,7 +130,8 @@ export function ReportsFilters({
   onPeriodChange,
   branchId,
   onBranchChange,
-  branches,
+  branchFilterOptions,
+  showBranchFilter = true,
   dateFrom,
   dateTo,
   onDateFromChange,
@@ -137,10 +142,6 @@ export function ReportsFilters({
 }: ReportsFiltersProps) {
   const dateToMax = new Date()
   const dateToMin = dateFrom ? parseISO(dateFrom) : undefined
-  const branchOptions =
-    branches.length > 0
-      ? branches
-      : [{ id: "all", name: "All branches" }]
 
   return (
     <div className="flex flex-col gap-4">
@@ -155,7 +156,12 @@ export function ReportsFilters({
         </p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+      <div
+        className={cn(
+          "grid gap-4 sm:grid-cols-2",
+          showBranchFilter ? "lg:grid-cols-5" : "lg:grid-cols-4"
+        )}
+      >
         <div className="w-full">
           <Label htmlFor="report-period" className="mb-1.5 block text-sm">
             Quick period
@@ -177,23 +183,25 @@ export function ReportsFilters({
           </Select>
         </div>
 
-        <div className="w-full">
-          <Label htmlFor="report-branch" className="mb-1.5 block text-sm">
-            Branch
-          </Label>
-          <Select value={branchId} onValueChange={onBranchChange}>
-            <SelectTrigger id="report-branch" className="w-full">
-              <SelectValue placeholder="Select branch" />
-            </SelectTrigger>
-            <SelectContent>
-              {branchOptions.map((branch) => (
-                <SelectItem key={branch.id} value={branch.id}>
-                  {branch.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        {showBranchFilter ? (
+          <div className="w-full">
+            <Label htmlFor="report-branch" className="mb-1.5 block text-sm">
+              Branch
+            </Label>
+            <Select value={branchId} onValueChange={onBranchChange}>
+              <SelectTrigger id="report-branch" className="w-full">
+                <SelectValue placeholder="Current branch" />
+              </SelectTrigger>
+              <SelectContent>
+                {branchFilterOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        ) : null}
 
         <DatePickerField
           id="report-date-from"

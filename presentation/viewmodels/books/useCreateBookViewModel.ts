@@ -10,7 +10,9 @@ import {
   type BookFormValues,
 } from "@/domain/schemas/bookFormSchema"
 import type { GetBooksUseCase } from "@/domain/usecases/books/GetBooksUseCase"
+import type { ShelfManagementUseCase } from "@/domain/usecases/shelves/ShelfManagementUseCase"
 import type { CreateBookStatus, CreateBookViewModelState } from "./CreateBookViewModelState"
+import { useBookFormLocation } from "./useBookFormLocation"
 
 type CreateBookViewModel = {
   state: CreateBookViewModelState
@@ -18,6 +20,16 @@ type CreateBookViewModel = {
   save: (values: BookFormValues) => Promise<void>
   addLanguage: (name: string) => void
   populateFromBook: (bookId: string) => Promise<void>
+  addLocationValue: (stepId: string, value: string) => Promise<void>
+  updateLocationValue: (
+    stepId: string,
+    currentValue: string,
+    value: string
+  ) => Promise<void>
+  deleteLocationValue: (stepId: string, value: string) => Promise<void>
+  addLocationStep: (label: string) => Promise<void>
+  updateLocationStep: (stepId: string, label: string) => Promise<void>
+  deleteLocationStep: (stepId: string) => Promise<void>
 }
 
 const DEFAULT_CATEGORIES = [
@@ -38,7 +50,8 @@ const DEFAULT_CATEGORIES = [
 const DEFAULT_LANGUAGES = ["English", "Kurdish", "Arabic", "Persian", "Turkish"]
 
 export function useCreateBookViewModel(
-  getBooksUseCase: GetBooksUseCase
+  getBooksUseCase: GetBooksUseCase,
+  shelfManagementUseCase: ShelfManagementUseCase
 ): CreateBookViewModel {
   const queryClient = useQueryClient()
   const [languages, setLanguages] = useState<string[]>(DEFAULT_LANGUAGES)
@@ -62,8 +75,11 @@ export function useCreateBookViewModel(
       initialPrice: 0,
       finalPrice: 0,
       coverUrl: null,
+      locationValues: {},
     },
   })
+
+  const location = useBookFormLocation(form, shelfManagementUseCase)
 
   const authorNamesQuery = useQuery({
     queryKey: ["authorNames"],
@@ -94,11 +110,11 @@ export function useCreateBookViewModel(
 
   const createBookMutation = useMutation({
     mutationFn: async (values: BookFormValues) => {
-      const { finalPrice, ...rest } = values
+      const { finalPrice, locationValues: _locationValues, ...rest } = values
       const result = await getBooksUseCase.createBook({
         ...rest,
         coverUrl: values.coverUrl,
-        shelfHint: "",
+        shelfHint: location.shelfHintFromForm(),
         price: finalPrice,
         branchId: "",
       })
@@ -137,6 +153,7 @@ export function useCreateBookViewModel(
     form.setValue("description", book.description)
     form.setValue("pages", book.pages)
     form.setValue("coverUrl", book.coverUrl ?? null)
+    location.setLocationFromShelfHint(book.shelfHint)
 
     if (book.language && !languages.includes(book.language)) {
       setLanguages((prev) => [...prev, book.language])
@@ -146,7 +163,8 @@ export function useCreateBookViewModel(
   const isLoading =
     authorNamesQuery.isPending ||
     translatorNamesQuery.isPending ||
-    booksQuery.isPending
+    booksQuery.isPending ||
+    location.isLocationOptionsLoading
   const isSaving = createBookMutation.isPending
   const isSaved = createBookMutation.isSuccess
 
@@ -170,7 +188,22 @@ export function useCreateBookViewModel(
     isReady: status === "ready",
     isSaving,
     isSaved,
+    locationOptions: location.locationOptions,
+    locationManageError: location.locationManageError,
+    isManagingLocation: location.isManagingLocation,
   }
 
-  return { state, form, save, addLanguage, populateFromBook }
+  return {
+    state,
+    form,
+    save,
+    addLanguage,
+    populateFromBook,
+    addLocationValue: location.addLocationValue,
+    updateLocationValue: location.updateLocationValue,
+    deleteLocationValue: location.deleteLocationValue,
+    addLocationStep: location.addLocationStep,
+    updateLocationStep: location.updateLocationStep,
+    deleteLocationStep: location.deleteLocationStep,
+  }
 }

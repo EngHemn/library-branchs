@@ -11,6 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
+import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { GetActivityLogsUseCase } from "@/domain/usecases/activityLogs/GetActivityLogsUseCase"
 import { ActivityLogsFilters } from "@/presentation/components/activity-logs/ActivityLogsFilters"
 import { ActivityLogsTable } from "@/presentation/components/activity-logs/ActivityLogsTable"
@@ -18,6 +19,7 @@ import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadc
 import { useActivityLogsViewModel } from "@/presentation/viewmodels/activityLogs/useActivityLogsViewModel"
 
 type ActivityLogsScreenProps = {
+  authUseCase: AuthUseCase
   getActivityLogsUseCase: GetActivityLogsUseCase
 }
 
@@ -35,9 +37,10 @@ function LoadingActivityLogsScreen() {
 }
 
 export function ActivityLogsScreen({
+  authUseCase,
   getActivityLogsUseCase,
 }: ActivityLogsScreenProps) {
-  const viewModel = useActivityLogsViewModel(getActivityLogsUseCase)
+  const viewModel = useActivityLogsViewModel(authUseCase, getActivityLogsUseCase)
   const { state } = viewModel
 
   useDashboardBreadcrumbs([
@@ -107,7 +110,8 @@ export function ActivityLogsScreen({
             onBranchFilterChange={viewModel.setBranchFilter}
             staffFilter={state.staffFilter}
             onStaffFilterChange={viewModel.setStaffFilter}
-            branchOptions={state.branchOptions}
+            branchFilterOptions={state.branchFilterOptions}
+            showBranchFilter={state.showBranchFilter}
             staffOptions={state.staffOptions}
           />
         </CardContent>

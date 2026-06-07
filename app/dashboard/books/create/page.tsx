@@ -5,6 +5,7 @@ import { Suspense } from "react"
 import { Skeleton } from "@/components/ui/skeleton"
 import { BookManagementFakeDataSource } from "@/data/datasources/BookManagementFakeDataSource"
 import { BookManagementRepositoryImpl } from "@/data/repositories/BookManagementRepositoryImpl"
+import { shelfManagementUseCase } from "@/app/dashboard/shelves/shelfDependencies"
 import { GetBooksUseCase } from "@/domain/usecases/books/GetBooksUseCase"
 import { CreateBookScreen } from "@/presentation/screens/books/CreateBookScreen"
 
@@ -24,7 +25,10 @@ export default function CreateBookPage() {
         </div>
       }
     >
-      <CreateBookScreen getBooksUseCase={getBooksUseCase} />
+      <CreateBookScreen
+        getBooksUseCase={getBooksUseCase}
+        shelfManagementUseCase={shelfManagementUseCase}
+      />
     </Suspense>
   )
 }

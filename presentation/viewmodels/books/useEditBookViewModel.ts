@@ -10,7 +10,10 @@ import {
   type BookFormValues,
 } from "@/domain/schemas/bookFormSchema"
 import type { GetBooksUseCase } from "@/domain/usecases/books/GetBooksUseCase"
+import type { ShelfManagementUseCase } from "@/domain/usecases/shelves/ShelfManagementUseCase"
+import { shelfHintToLocationValues } from "@/lib/bookLocationForm"
 import type { EditBookStatus, EditBookViewModelState } from "./EditBookViewModelState"
+import { useBookFormLocation } from "./useBookFormLocation"
 
 type EditBookViewModel = {
   state: EditBookViewModelState
@@ -18,6 +21,16 @@ type EditBookViewModel = {
   save: (values: BookFormValues) => Promise<void>
   addLanguage: (name: string) => void
   populateFromBook: (bookId: string) => Promise<void>
+  addLocationValue: (stepId: string, value: string) => Promise<void>
+  updateLocationValue: (
+    stepId: string,
+    currentValue: string,
+    value: string
+  ) => Promise<void>
+  deleteLocationValue: (stepId: string, value: string) => Promise<void>
+  addLocationStep: (label: string) => Promise<void>
+  updateLocationStep: (stepId: string, label: string) => Promise<void>
+  deleteLocationStep: (stepId: string) => Promise<void>
 }
 
 const DEFAULT_CATEGORIES = [
@@ -39,14 +52,14 @@ const DEFAULT_LANGUAGES = ["English", "Kurdish", "Arabic", "Persian", "Turkish"]
 
 export function useEditBookViewModel(
   bookId: string,
-  getBooksUseCase: GetBooksUseCase
+  getBooksUseCase: GetBooksUseCase,
+  shelfManagementUseCase: ShelfManagementUseCase
 ): EditBookViewModel {
   const queryClient = useQueryClient()
   const [languages, setLanguages] = useState<string[]>(DEFAULT_LANGUAGES)
   const [error, setError] = useState<string | null>(null)
   const originalBookRef = useRef<{
     branchId: string
-    shelfHint: string
   } | null>(null)
 
   const form = useForm<BookFormValues>({
@@ -67,8 +80,11 @@ export function useEditBookViewModel(
       initialPrice: 0,
       finalPrice: 0,
       coverUrl: null,
+      locationValues: {},
     },
   })
+
+  const location = useBookFormLocation(form, shelfManagementUseCase)
 
   const bookQuery = useQuery({
     queryKey: ["books", bookId],
@@ -108,11 +124,11 @@ export function useEditBookViewModel(
 
   useEffect(() => {
     const book = bookQuery.data
-    if (!book) return
+    const locationOptions = location.locationOptions
+    if (!book || !locationOptions) return
 
     originalBookRef.current = {
       branchId: book.branchId,
-      shelfHint: book.shelfHint,
     }
 
     form.reset({
@@ -131,19 +147,23 @@ export function useEditBookViewModel(
       initialPrice: book.initialPrice ?? book.price,
       finalPrice: book.price,
       coverUrl: book.coverUrl ?? null,
+      locationValues: shelfHintToLocationValues(
+        book.shelfHint,
+        locationOptions.steps
+      ),
     })
-  }, [bookQuery.data, form])
+  }, [bookQuery.data, location.locationOptions, form])
 
   const updateBookMutation = useMutation({
     mutationFn: async (values: BookFormValues) => {
       const original = originalBookRef.current
-      const { finalPrice, ...rest } = values
+      const { finalPrice, locationValues: _locationValues, ...rest } = values
       const result = await getBooksUseCase.updateBook({
         id: bookId,
         ...rest,
         coverUrl: values.coverUrl,
         branchId: original?.branchId ?? "",
-        shelfHint: original?.shelfHint ?? "",
+        shelfHint: location.shelfHintFromForm(),
         price: finalPrice,
       })
       if (!result.success) throw new Error(result.error)
@@ -184,6 +204,7 @@ export function useEditBookViewModel(
     form.setValue("description", book.description)
     form.setValue("pages", book.pages)
     form.setValue("coverUrl", book.coverUrl ?? null)
+    location.setLocationFromShelfHint(book.shelfHint)
 
     if (book.language && !languages.includes(book.language)) {
       setLanguages((prev) => [...prev, book.language])
@@ -194,7 +215,8 @@ export function useEditBookViewModel(
     bookQuery.isPending ||
     authorNamesQuery.isPending ||
     translatorNamesQuery.isPending ||
-    booksQuery.isPending
+    booksQuery.isPending ||
+    location.isLocationOptionsLoading
   const isError = bookQuery.isError
   const isNotFound = bookQuery.isSuccess && bookQuery.data === null
   const isSaving = updateBookMutation.isPending
@@ -226,7 +248,22 @@ export function useEditBookViewModel(
     isError,
     isSaving,
     isSaved,
+    locationOptions: location.locationOptions,
+    locationManageError: location.locationManageError,
+    isManagingLocation: location.isManagingLocation,
   }
 
-  return { state, form, save, addLanguage, populateFromBook }
+  return {
+    state,
+    form,
+    save,
+    addLanguage,
+    populateFromBook,
+    addLocationValue: location.addLocationValue,
+    updateLocationValue: location.updateLocationValue,
+    deleteLocationValue: location.deleteLocationValue,
+    addLocationStep: location.addLocationStep,
+    updateLocationStep: location.updateLocationStep,
+    deleteLocationStep: location.deleteLocationStep,
+  }
 }

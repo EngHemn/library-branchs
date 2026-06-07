@@ -14,13 +14,14 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import type {
   ActivityLogAction,
-  ActivityLogBranchOption,
   ActivityLogStaffOption,
 } from "@/domain/entities/activity-log/ActivityLog"
-
-type ActivityActionFilter = "all" | ActivityLogAction
-type ActivityBranchFilter = "all" | string
-type ActivityStaffFilter = "all" | string
+import type {
+  ActivityActionFilter,
+  ActivityBranchFilter,
+  ActivityBranchFilterOption,
+  ActivityStaffFilter,
+} from "@/presentation/viewmodels/activityLogs/ActivityLogsViewModelState"
 
 type FilterOption = {
   value: string
@@ -36,7 +37,8 @@ type ActivityLogsFiltersProps = {
   onBranchFilterChange: (value: ActivityBranchFilter) => void
   staffFilter: ActivityStaffFilter
   onStaffFilterChange: (value: ActivityStaffFilter) => void
-  branchOptions: ActivityLogBranchOption[]
+  branchFilterOptions: ActivityBranchFilterOption[]
+  showBranchFilter?: boolean
   staffOptions: ActivityLogStaffOption[]
 }
 
@@ -61,8 +63,9 @@ type FilterOptionComboboxProps<T extends string> = {
   value: T
   onValueChange: (value: T) => void
   placeholder: string
-  allLabel: string
   options: FilterOption[]
+  prependAllOption?: boolean
+  allLabel?: string
 }
 
 function FilterOptionCombobox<T extends string>({
@@ -71,12 +74,15 @@ function FilterOptionCombobox<T extends string>({
   value,
   onValueChange,
   placeholder,
-  allLabel,
   options,
+  prependAllOption = true,
+  allLabel = "All",
 }: FilterOptionComboboxProps<T>) {
   const [inputValue, setInputValue] = useState("")
 
-  const allOptions = [{ value: "all", label: allLabel }, ...options]
+  const allOptions = prependAllOption
+    ? [{ value: "all", label: allLabel }, ...options]
+    : options
   const optionMap = new Map(allOptions.map((o) => [o.value, o]))
   const selectedOption = optionMap.get(value)
 
@@ -147,10 +153,14 @@ export function ActivityLogsFilters({
   onBranchFilterChange,
   staffFilter,
   onStaffFilterChange,
-  branchOptions,
+  branchFilterOptions,
+  showBranchFilter = true,
   staffOptions,
 }: ActivityLogsFiltersProps) {
-  const branchFilterOptions = branchOptions.map((b) => ({ value: b.id, label: b.name }))
+  const branchOptions = branchFilterOptions.map((option) => ({
+    value: option.value,
+    label: option.label,
+  }))
   const staffFilterOptions = staffOptions.map((s) => ({ value: s.id, label: s.name }))
 
   return (
@@ -169,7 +179,13 @@ export function ActivityLogsFilters({
         />
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div
+        className={
+          showBranchFilter
+            ? "grid gap-3 sm:grid-cols-3"
+            : "grid gap-3 sm:grid-cols-2"
+        }
+      >
         <FilterOptionCombobox<ActivityActionFilter>
           id="activity-action-filter"
           label="Action"
@@ -180,17 +196,19 @@ export function ActivityLogsFilters({
           options={ACTION_OPTIONS}
         />
 
-        <FilterOptionCombobox
-          id="activity-branch-filter"
-          label="Branch"
-          value={branchFilter}
-          onValueChange={onBranchFilterChange}
-          placeholder="Search branches..."
-          allLabel="All branches"
-          options={branchFilterOptions}
-        />
+        {showBranchFilter ? (
+          <FilterOptionCombobox<ActivityBranchFilter>
+            id="activity-branch-filter"
+            label="Branch"
+            value={branchFilter}
+            onValueChange={onBranchFilterChange}
+            placeholder="Search branches..."
+            prependAllOption={false}
+            options={branchOptions}
+          />
+        ) : null}
 
-        <FilterOptionCombobox
+        <FilterOptionCombobox<ActivityStaffFilter>
           id="activity-staff-filter"
           label="Staff"
           value={staffFilter}

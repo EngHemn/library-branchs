@@ -13,6 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { useHydrated } from "@/hooks/use-hydrated"
 import { cn } from "@/lib/utils"
 import type { Notification } from "@/domain/entities/notification/Notification"
 
@@ -50,27 +51,35 @@ export function NotificationsDropdown({
   unreadCount = 0,
   recentNotifications = [],
 }: NotificationsDropdownProps) {
+  const hydrated = useHydrated()
+
+  const trigger = (
+    <Button
+      variant="outline"
+      size="sm"
+      className="relative gap-1.5"
+      aria-label="Notifications"
+    >
+      <BellIcon />
+      <span className="hidden sm:inline">Notifications</span>
+      {unreadCount > 0 && (
+        <Badge
+          variant="destructive"
+          className="absolute -top-1.5 -right-1.5 flex size-4 items-center justify-center rounded-full p-0 text-[10px]"
+        >
+          {unreadCount > 9 ? "9+" : unreadCount}
+        </Badge>
+      )}
+    </Button>
+  )
+
+  if (!hydrated) {
+    return trigger
+  }
+
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="outline"
-          size="sm"
-          className="relative gap-1.5"
-          aria-label="Notifications"
-        >
-          <BellIcon />
-          <span className="hidden sm:inline">Notifications</span>
-          {unreadCount > 0 && (
-            <Badge
-              variant="destructive"
-              className="absolute -top-1.5 -right-1.5 flex size-4 items-center justify-center rounded-full p-0 text-[10px]"
-            >
-              {unreadCount > 9 ? "9+" : unreadCount}
-            </Badge>
-          )}
-        </Button>
-      </DropdownMenuTrigger>
+      <DropdownMenuTrigger asChild>{trigger}</DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-80">
         <DropdownMenuLabel className="flex items-center justify-between">
           <span>Notifications</span>
