@@ -64,6 +64,10 @@ export function BookProfileCard({ book }: BookProfileCardProps) {
       href: book.translator ? getTranslatorViewHref(book.translator) : null,
     },
     { label: "Category", value: book.category },
+    {
+      label: "Location",
+      value: book.shelfHint.trim().length > 0 ? book.shelfHint : "—",
+    },
     { label: "Language", value: book.language },
     { label: "Pages", value: book.pages.toLocaleString() },
     { label: "Publication Date", value: book.publicationDate },

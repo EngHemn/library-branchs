@@ -4,6 +4,10 @@ export function getBranchViewHref(branchId: string): string {
   return `/dashboard/branches/${branchId}`
 }
 
+export function getBranchLocationTabHref(branchId: string): string {
+  return `/dashboard/branches/${branchId}?tab=location`
+}
+
 export function getParentBranchViewHref(branchId: string): string | null {
   const branch = fakeBranches.find((item) => item.id === branchId)
 

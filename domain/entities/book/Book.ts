@@ -18,4 +18,5 @@ export type Book = {
   branchId: string
   firstAddedBranch: string
   branchCount: number
+  shelfHint: string
 }

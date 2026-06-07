@@ -610,5 +610,58 @@ export const fakeDashboardSummary: DashboardSummary = {
 
   stockAlerts: 23,
   overdueBookings: 48,
-  upcomingEvents: 5,
+  groupStats: {
+    totalGroups: 5,
+    activeGroups: 4,
+    totalAssignedBooks: 18,
+    totalAssignedStaff: 13,
+  },
+  needStats: {
+    totalRequests: 8,
+    pendingRequests: 2,
+    approvedRequests: 1,
+    criticalRequests: 2,
+    lowStockBooks: 18,
+    outOfStockBooks: 5,
+  },
+  criticalNeedRequests: [
+    {
+      id: "ND-002",
+      name: "Network Switch Upgrade",
+      branchName: "Northside Books",
+      priority: "critical",
+    },
+    {
+      id: "ND-007",
+      name: "Hard Disk for Backup Server",
+      branchName: "Central Library & Bookshop",
+      priority: "critical",
+    },
+  ],
+  lowStockBooksPreview: [
+    {
+      id: "LSA-STK-002",
+      bookTitle: "Atomic Habits",
+      currentStock: 6,
+      minimumStock: 10,
+    },
+    {
+      id: "LSA-STK-003",
+      bookTitle: "Atomic Habits",
+      currentStock: 3,
+      minimumStock: 5,
+    },
+    {
+      id: "LSA-STK-009",
+      bookTitle: "The Silent Patient",
+      currentStock: 2,
+      minimumStock: 8,
+    },
+    {
+      id: "LSA-STK-015",
+      bookTitle: "Educated",
+      currentStock: 0,
+      minimumStock: 5,
+    },
+  ],
 }

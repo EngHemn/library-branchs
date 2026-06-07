@@ -6,7 +6,8 @@ import {
   BookMarkedIcon,
   BoxesIcon,
   CalendarCheckIcon,
-  CalendarDaysIcon,
+  ClipboardListIcon,
+  LayersIcon,
   LanguagesIcon,
   PenLineIcon,
   RefreshCwIcon,
@@ -32,6 +33,7 @@ import type {
 } from "@/domain/entities/reports/Reports"
 import { REPORT_CHARTS_PER_TAB } from "@/domain/entities/reports/Reports"
 import type { GetReportsUseCase } from "@/domain/usecases/reports/GetReportsUseCase"
+import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import { ReportDataTable } from "@/presentation/components/reports/ReportDataTable"
 import { ReportRechart } from "@/presentation/components/reports/ReportRechart"
 import { ReportsFilters } from "@/presentation/components/reports/ReportsFilters"
@@ -40,6 +42,7 @@ import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadc
 import { useReportsViewModel } from "@/presentation/viewmodels/reports/useReportsViewModel"
 
 type ReportsScreenProps = {
+  authUseCase: AuthUseCase
   getReportsUseCase: GetReportsUseCase
 }
 
@@ -51,12 +54,13 @@ const reportTabs: {
   { value: "overview", label: "Overview", icon: BarChart3Icon },
   { value: "sales", label: "Sales", icon: ShoppingCartIcon },
   { value: "inventory", label: "Inventory", icon: BoxesIcon },
-  { value: "events", label: "Events", icon: CalendarDaysIcon },
+  { value: "groups", label: "Groups", icon: LayersIcon },
   { value: "members", label: "Members", icon: UsersIcon },
   { value: "authors", label: "Authors", icon: PenLineIcon },
   { value: "translators", label: "Translators", icon: LanguagesIcon },
   { value: "bookings", label: "Bookings", icon: CalendarCheckIcon },
   { value: "books", label: "Books", icon: BookOpenIcon },
+  { value: "orders", label: "Orders", icon: ClipboardListIcon },
 ]
 
 function chartsForTab(charts: ReportChart[], category: ReportCategory): ReportChart[] {
@@ -70,10 +74,10 @@ function kpisForTab(kpis: ReportKpi[], category: ReportCategory): ReportKpi[] {
 }
 
 function tablesForTab(tables: ReportTable[], category: ReportCategory): ReportTable[] {
-  if (category !== "overview") {
-    return []
+  if (category === "overview" || category === "orders") {
+    return tables.filter((table) => table.category === category)
   }
-  return tables.filter((table) => table.category === "overview")
+  return []
 }
 
 function LoadingReportsScreen() {
@@ -98,8 +102,8 @@ function LoadingReportsScreen() {
   )
 }
 
-export function ReportsScreen({ getReportsUseCase }: ReportsScreenProps) {
-  const viewModel = useReportsViewModel(getReportsUseCase)
+export function ReportsScreen({ authUseCase, getReportsUseCase }: ReportsScreenProps) {
+  const viewModel = useReportsViewModel(authUseCase, getReportsUseCase)
   const { state } = viewModel
   const reports = state.isReady ? state.reports : null
 
@@ -154,7 +158,8 @@ export function ReportsScreen({ getReportsUseCase }: ReportsScreenProps) {
                 onPeriodChange={viewModel.setPeriod}
                 branchId={state.branchId}
                 onBranchChange={viewModel.setBranchId}
-                branches={state.branches}
+                branchFilterOptions={state.branchFilterOptions}
+                showBranchFilter={state.showBranchFilter}
                 dateFrom={state.dateFrom}
                 dateTo={state.dateTo}
                 onDateFromChange={viewModel.setDateFrom}

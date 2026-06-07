@@ -13,6 +13,7 @@ import {
 import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { GetBillsUseCase } from "@/domain/usecases/bills/GetBillsUseCase"
 import { resolveUserBranchId } from "@/lib/dashboardBranchScope"
+import { toBillDateInputValue } from "@/presentation/components/bills/billDisplay"
 import type { EditBillStatus, EditBillViewModelState } from "./EditBillViewModelState"
 
 type EditBillViewModel = {
@@ -81,7 +82,7 @@ export function useEditBillViewModel(
     form.reset({
       branchId: detailQuery.data.branchId,
       companyName: detailQuery.data.companyName,
-      billDate: detailQuery.data.billDate,
+      billDate: toBillDateInputValue(detailQuery.data.billDate),
       phoneNumber: detailQuery.data.phoneNumber,
       price: detailQuery.data.price,
       imageUrl: detailQuery.data.imageUrl ?? null,

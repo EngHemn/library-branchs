@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, type MouseEvent } from "react"
 import {
   BookOpenIcon,
   MinusIcon,
@@ -37,6 +37,65 @@ function formatPrice(price: number): string {
 
 function discountedPrice(price: number, discount: number): number {
   return price * (1 - discount / 100)
+}
+
+type CartQuantityOverlayProps = {
+  quantity: number
+  canAddMore: boolean
+  onUpdateQuantity: (qty: number) => void
+  className?: string
+  stopPropagation?: boolean
+}
+
+function CartQuantityOverlay({
+  quantity,
+  canAddMore,
+  onUpdateQuantity,
+  className,
+  stopPropagation = false,
+}: CartQuantityOverlayProps) {
+  const handleClick = (event: MouseEvent) => {
+    if (stopPropagation) {
+      event.stopPropagation()
+    }
+  }
+
+  return (
+    <div
+      className={cn(
+        "absolute left-2 top-2 flex items-center gap-0.5 rounded-lg border bg-background/95 px-0.5 shadow-sm backdrop-blur-sm",
+        className
+      )}
+      onClick={handleClick}
+    >
+      <Button
+        variant="ghost"
+        size="icon"
+        className="size-7"
+        onClick={(event) => {
+          if (stopPropagation) event.stopPropagation()
+          onUpdateQuantity(quantity - 1)
+        }}
+      >
+        <MinusIcon className="size-3.5" />
+      </Button>
+      <span className="min-w-6 text-center text-xs font-semibold">
+        {quantity}
+      </span>
+      <Button
+        variant="ghost"
+        size="icon"
+        className="size-7"
+        disabled={!canAddMore}
+        onClick={(event) => {
+          if (stopPropagation) event.stopPropagation()
+          onUpdateQuantity(quantity + 1)
+        }}
+      >
+        <PlusIcon className="size-3.5" />
+      </Button>
+    </div>
+  )
 }
 
 type BookDetailDialogProps = {
@@ -84,10 +143,12 @@ function BookDetailDialog({
           ) : null}
 
           {cartQuantity > 0 ? (
-            <Badge className="absolute left-3 top-3 gap-1">
-              <ShoppingCartIcon className="size-3" />
-              {cartQuantity} in cart
-            </Badge>
+            <CartQuantityOverlay
+              quantity={cartQuantity}
+              canAddMore={canAddMore}
+              onUpdateQuantity={onUpdateQuantity}
+              className="left-3 top-3"
+            />
           ) : null}
         </div>
 
@@ -165,42 +226,18 @@ function BookDetailDialog({
               Out of stock
             </Button>
           ) : cartQuantity === 0 ? (
-            <Button
-              className="w-full gap-2"
-              onClick={() => {
-                onAdd()
-                onOpenChange(false)
-              }}
-            >
+            <Button className="w-full gap-2" onClick={onAdd}>
               <ShoppingCartIcon className="size-4" />
               Add to Cart
             </Button>
           ) : (
-            <div className="flex items-center justify-between gap-3">
-              <span className="text-sm text-muted-foreground">In cart:</span>
-              <div className="flex items-center gap-2 rounded-lg border px-1">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="size-8"
-                  onClick={() => onUpdateQuantity(cartQuantity - 1)}
-                >
-                  <MinusIcon className="size-3.5" />
-                </Button>
-                <span className="min-w-[1.5rem] text-center text-sm font-semibold">
-                  {cartQuantity}
-                </span>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="size-8"
-                  onClick={() => onUpdateQuantity(cartQuantity + 1)}
-                  disabled={!canAddMore}
-                >
-                  <PlusIcon className="size-3.5" />
-                </Button>
-              </div>
-            </div>
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => onOpenChange(false)}
+            >
+              Close
+            </Button>
           )}
         </div>
       </DialogContent>
@@ -255,10 +292,12 @@ export function BookSaleCard({
           ) : null}
 
           {cartQuantity > 0 ? (
-            <Badge className="absolute left-2 top-2 gap-1">
-              <ShoppingCartIcon className="size-3" />
-              {cartQuantity}
-            </Badge>
+            <CartQuantityOverlay
+              quantity={cartQuantity}
+              canAddMore={cartQuantity < book.stock}
+              onUpdateQuantity={onUpdateQuantity}
+              stopPropagation
+            />
           ) : null}
         </div>
 

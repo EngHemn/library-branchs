@@ -4,6 +4,7 @@ import {
   ArrowLeftIcon,
   BookIcon,
   CalendarIcon,
+  MapPinIcon,
   PencilIcon,
 } from "lucide-react"
 
@@ -40,6 +41,12 @@ export function BookDetailHeader({
           <h1 className="text-2xl font-bold tracking-normal">{book.title}</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             {book.description}
+          </p>
+          <p className="mt-2 flex items-center gap-1.5 text-sm text-muted-foreground">
+            <MapPinIcon className="size-4 shrink-0" />
+            <span>
+              {book.shelfHint.trim().length > 0 ? book.shelfHint : "No location set"}
+            </span>
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
