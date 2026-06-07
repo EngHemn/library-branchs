@@ -1,5 +1,6 @@
 import { getEventEditHref, getEventViewHref } from "@/lib/eventLink"
 import { getBranchViewHref } from "@/lib/branchLink"
+import { getGroupEditHref, getGroupViewHref, getGroupViewTabHref } from "@/lib/groupLink"
 
 export const dashboardPaths = {
   events: {
@@ -7,6 +8,13 @@ export const dashboardPaths = {
     create: "/dashboard/events/create",
     detail: getEventViewHref,
     edit: getEventEditHref,
+  },
+  groups: {
+    list: "/dashboard/groups",
+    create: "/dashboard/groups/create",
+    detail: getGroupViewHref,
+    detailTab: getGroupViewTabHref,
+    edit: getGroupEditHref,
   },
   books: {
     list: "/dashboard/books",
