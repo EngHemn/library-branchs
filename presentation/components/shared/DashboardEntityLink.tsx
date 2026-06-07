@@ -161,5 +161,3 @@ export function buildCreateHrefWithReturn(
   return `${basePath}?${params.toString()}`
 }
 
-export { getEventEditHref, getEventViewHref, getGroupEditHref, getGroupViewHref }
-
