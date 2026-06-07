@@ -33,13 +33,6 @@ export const dashboardPaths = {
     detailTab: getGroupViewTabHref,
     edit: getGroupEditHref,
   },
-  groups: {
-    list: "/dashboard/groups",
-    create: "/dashboard/groups/create",
-    detail: getGroupViewHref,
-    detailTab: getGroupViewTabHref,
-    edit: getGroupEditHref,
-  },
   books: {
     list: "/dashboard/books",
     create: "/dashboard/books/create",
