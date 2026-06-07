@@ -4,8 +4,8 @@ export const dashboardPaths = {
   events: {
     list: "/dashboard/events",
     create: "/dashboard/events/create",
-    detail: getEventViewHref,
-    edit: getEventEditHref,
+    detail: (eventId: string) => `/dashboard/events/${eventId}`,
+    edit: (eventId: string) => `/dashboard/events/${eventId}/edit`,
   },
   shelves: {
     list: "/dashboard/shelves",
