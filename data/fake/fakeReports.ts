@@ -54,11 +54,11 @@ const kpiTemplates: Record<
     { label: "Inbound Units", baseValue: 1240 },
     { label: "Critical Items", baseValue: 8 },
   ],
-  events: [
-    { label: "Events Held", baseValue: 24 },
-    { label: "Attendance", baseValue: 840 },
-    { label: "Capacity Used", baseValue: 82, suffix: "%" },
-    { label: "No-Show Rate", baseValue: 9, suffix: "%" },
+  groups: [
+    { label: "Total Groups", baseValue: 48 },
+    { label: "Active Groups", baseValue: 36 },
+    { label: "Assigned Books", baseValue: 1240 },
+    { label: "Group Revenue", baseValue: 18600, prefix: "$" },
   ],
   members: [
     { label: "New Members", baseValue: 186 },
@@ -89,6 +89,12 @@ const kpiTemplates: Record<
     { label: "New Titles", baseValue: 124 },
     { label: "Out of Stock", baseValue: 218 },
     { label: "Circulation", baseValue: 1840 },
+  ],
+  orders: [
+    { label: "Total Orders", baseValue: 186 },
+    { label: "Order Value", baseValue: 28400, prefix: "$" },
+    { label: "Avg Items / Order", baseValue: 4 },
+    { label: "On-Time Delivery", baseValue: 92, suffix: "%" },
   ],
 }
 
@@ -228,11 +234,70 @@ function buildCharts(query: ReportsQuery): ReportChart[] {
   )
 }
 
+const orderReportAuthors = [
+  "Elena Vasquez",
+  "James Okonkwo",
+  "Marie Dubois",
+  "Ahmed Hassan",
+  "Yuki Tanaka",
+]
+const orderReportBooks = [
+  "The Silent Archive",
+  "River of Glass",
+  "Midnight Atlas",
+  "Letters from the Harbor",
+  "The Last Cartographer",
+]
+const orderReportTranslators = [
+  "Sofia Lindström",
+  "Carlos Mendez",
+  "Fatima Al-Rashid",
+  "No translator",
+  "Henrik Voss",
+]
+const orderReportCategories = [
+  "Fiction",
+  "Non-fiction",
+  "Children",
+  "Academic",
+  "Poetry",
+]
+
+function buildOrderReportRows(
+  labels: string[],
+  seed: number,
+  multiplier: number,
+  valuePrefix?: string
+): Record<string, string>[] {
+  return labels.map((label, index) => {
+    const orders = Math.max(1, Math.round(12 * multiplier * (0.7 + ((seed + index * 13) % 60) / 100)))
+    const units = Math.max(1, Math.round(orders * (2 + (index % 3))))
+    const value = Math.round(orders * (180 + index * 45) * multiplier)
+
+    return {
+      name: label,
+      orders: orders.toLocaleString(),
+      units: units.toLocaleString(),
+      value: valuePrefix === "$" ? `$${value.toLocaleString()}` : value.toLocaleString(),
+    }
+  })
+}
+
 function buildTables(query: ReportsQuery): ReportTable[] {
   const branchLabel =
     query.branchId === "all"
       ? "All branches"
       : (fakeBranches.find((b) => b.id === query.branchId)?.branchName ?? "Branch")
+
+  const seed = hashSeed(`${query.branchId}-${query.dateFrom}-${query.dateTo}-orders`)
+  const multiplier = getBranchMultiplier(query.branchId) * getDateMultiplier(query)
+
+  const orderTableColumns = [
+    { key: "name", label: "Name" },
+    { key: "orders", label: "Orders", align: "right" as const },
+    { key: "units", label: "Units", align: "right" as const },
+    { key: "value", label: "Value", align: "right" as const },
+  ]
 
   return [
     {
@@ -249,6 +314,38 @@ function buildTables(query: ReportsQuery): ReportTable[] {
         { metric: "Date range", value: `${query.dateFrom} → ${query.dateTo}` },
         { metric: "Period preset", value: periodLabels[query.period] },
       ],
+    },
+    {
+      id: "table-orders-by-author",
+      title: "Orders by Author",
+      description: "Purchase order volume and value grouped by author",
+      category: "orders",
+      columns: orderTableColumns,
+      rows: buildOrderReportRows(orderReportAuthors, seed, multiplier, "$"),
+    },
+    {
+      id: "table-orders-by-book",
+      title: "Orders by Book",
+      description: "Top titles by order frequency and spend",
+      category: "orders",
+      columns: orderTableColumns,
+      rows: buildOrderReportRows(orderReportBooks, seed + 17, multiplier, "$"),
+    },
+    {
+      id: "table-orders-by-translator",
+      title: "Orders by Translator",
+      description: "Order activity for translated editions",
+      category: "orders",
+      columns: orderTableColumns,
+      rows: buildOrderReportRows(orderReportTranslators, seed + 31, multiplier, "$"),
+    },
+    {
+      id: "table-orders-by-category",
+      title: "Orders by Category",
+      description: "Order volume and value by book category",
+      category: "orders",
+      columns: orderTableColumns,
+      rows: buildOrderReportRows(orderReportCategories, seed + 47, multiplier, "$"),
     },
   ]
 }
