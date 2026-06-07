@@ -1,0 +1,74 @@
+import type { LibraryGroup } from "@/domain/entities/group/Group"
+
+export const fakeGroups: LibraryGroup[] = [
+  {
+    id: "GRP-001",
+    name: "Summer Reading Collection",
+    description:
+      "Curated titles for the summer reading program including fiction, non-fiction, and children's books.",
+    status: "active",
+    imageUrl: null,
+    branchId: "BR-001",
+    bookIds: ["BK-001", "BK-004", "BK-005", "BK-006"],
+    staffIds: ["ST-001", "ST-002", "ST-003"],
+    createdAt: "2026-01-15T10:00:00.000Z",
+    updatedAt: "2026-05-20T14:30:00.000Z",
+    deletedAt: null,
+  },
+  {
+    id: "GRP-002",
+    name: "Software Engineering Essentials",
+    description:
+      "Core programming and software design books for the tech learning track.",
+    status: "active",
+    imageUrl: null,
+    branchId: "BR-001",
+    bookIds: ["BK-001", "BK-002", "BK-003"],
+    staffIds: ["ST-002", "ST-006"],
+    createdAt: "2026-02-01T09:00:00.000Z",
+    updatedAt: "2026-04-10T11:00:00.000Z",
+    deletedAt: null,
+  },
+  {
+    id: "GRP-003",
+    name: "Children's Story Hour",
+    description:
+      "Picture books and early reader titles for weekly story sessions.",
+    status: "active",
+    imageUrl: null,
+    branchId: "BR-002",
+    bookIds: ["BK-007", "BK-008"],
+    staffIds: ["ST-003", "ST-007"],
+    createdAt: "2026-03-05T08:00:00.000Z",
+    updatedAt: "2026-03-05T08:00:00.000Z",
+    deletedAt: null,
+  },
+  {
+    id: "GRP-004",
+    name: "Local Authors Showcase",
+    description:
+      "Books by regional authors featured in the monthly author spotlight.",
+    status: "inactive",
+    imageUrl: null,
+    branchId: "BR-004",
+    bookIds: ["BK-009", "BK-010"],
+    staffIds: ["ST-001"],
+    createdAt: "2025-11-20T12:00:00.000Z",
+    updatedAt: "2026-01-08T16:45:00.000Z",
+    deletedAt: null,
+  },
+  {
+    id: "GRP-005",
+    name: "Book Club Picks — Q2 2026",
+    description:
+      "Monthly selections for registered book club members across all branches.",
+    status: "active",
+    imageUrl: null,
+    branchId: "BR-001",
+    bookIds: ["BK-004", "BK-011", "BK-012", "BK-013", "BK-014"],
+    staffIds: ["ST-001", "ST-004", "ST-008", "ST-009"],
+    createdAt: "2026-04-01T10:00:00.000Z",
+    updatedAt: "2026-06-01T09:15:00.000Z",
+    deletedAt: null,
+  },
+]

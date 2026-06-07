@@ -4,6 +4,7 @@ import Link from "next/link"
 
 import { getAuthorViewHref } from "@/lib/authorLink"
 import { getBranchViewHref } from "@/lib/branchLink"
+import { getGroupViewHref } from "@/lib/groupLink"
 import { getTranslatorViewHref } from "@/lib/translatorLink"
 
 const defaultLinkClassName =
@@ -64,6 +65,23 @@ export function BookLink({ bookId, title, className }: BookLinkProps) {
       className={className}
     >
       {title}
+    </DashboardEntityLink>
+  )
+}
+
+type GroupLinkProps = {
+  groupId: string
+  name: string
+  className?: string
+}
+
+export function GroupLink({ groupId, name, className }: GroupLinkProps) {
+  return (
+    <DashboardEntityLink
+      href={getGroupViewHref(groupId)}
+      className={className}
+    >
+      {name}
     </DashboardEntityLink>
   )
 }
