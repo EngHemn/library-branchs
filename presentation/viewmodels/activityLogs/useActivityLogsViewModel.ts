@@ -1,16 +1,31 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 
+import { fakeBranches } from "@/data/fake/fakeBranches"
 import type {
   ActivityLog,
   ActivityLogAction,
   ActivityLogBranchOption,
   ActivityLogStaffOption,
 } from "@/domain/entities/activity-log/ActivityLog"
+import type { User } from "@/domain/entities/User"
+import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { GetActivityLogsUseCase } from "@/domain/usecases/activityLogs/GetActivityLogsUseCase"
-import type { ActivityActionFilter, ActivityBranchFilter, ActivityLogsViewModelState, ActivityStaffFilter, AsyncStatus } from "./ActivityLogsViewModelState"
+import {
+  getDashboardBranchScope,
+  resolveUserBranchId,
+  type DashboardBranchScope,
+} from "@/lib/dashboardBranchScope"
+import type {
+  ActivityActionFilter,
+  ActivityBranchFilter,
+  ActivityBranchFilterOption,
+  ActivityLogsViewModelState,
+  ActivityStaffFilter,
+  AsyncStatus,
+} from "./ActivityLogsViewModelState"
 
 export type ActivityLogsViewModel = {
   state: ActivityLogsViewModelState
@@ -26,6 +41,11 @@ type ActivityLogsQueryData = {
   branchOptions: ActivityLogBranchOption[]
   staffOptions: ActivityLogStaffOption[]
 }
+
+const allDashboardBranches = fakeBranches.map((branch) => ({
+  id: branch.id,
+  name: branch.branchName,
+}))
 
 function matchesSearch(log: ActivityLog, query: string): boolean {
   const normalizedQuery = query.trim().toLowerCase()
@@ -43,28 +63,104 @@ function matchesSearch(log: ActivityLog, query: string): boolean {
   return searchableValues.some((value) => value.toLowerCase().includes(normalizedQuery))
 }
 
+function resolveBranchFilterId(
+  branchFilter: ActivityBranchFilter,
+  userBranchId: string
+): string {
+  return branchFilter === "current" ? userBranchId : branchFilter
+}
+
+function getBranchFilterOptions(user: User): ActivityBranchFilterOption[] {
+  if (user.branchType === "sub") {
+    return []
+  }
+
+  const userBranchId = resolveUserBranchId(user)
+  const branchScope = getDashboardBranchScope(user, allDashboardBranches)
+
+  const otherBranches = branchScope.branches
+    .filter((branch) => branch.id !== userBranchId)
+    .map((branch) => ({ value: branch.id, label: branch.name }))
+    .sort((left, right) => left.label.localeCompare(right.label))
+
+  return [
+    { value: "all", label: "All branches" },
+    { value: "current", label: "Current branch" },
+    ...otherBranches,
+  ]
+}
+
+function isBranchSelectionValid(
+  branchFilter: ActivityBranchFilter,
+  scope: DashboardBranchScope,
+  userBranchId: string
+): boolean {
+  if (branchFilter === "all") {
+    return scope.allowAllBranches
+  }
+
+  if (branchFilter === "current") {
+    return scope.branchIds.includes(userBranchId)
+  }
+
+  return scope.branchIds.includes(branchFilter)
+}
+
 function filterLogs(
   logs: ActivityLog[],
   searchQuery: string,
   actionFilter: ActivityActionFilter,
   branchFilter: ActivityBranchFilter,
-  staffFilter: ActivityStaffFilter
+  staffFilter: ActivityStaffFilter,
+  scopedBranchIds: string[],
+  isSubBranch: boolean,
+  userBranchId: string
 ): ActivityLog[] {
   return logs.filter((log) => {
-    if (actionFilter !== "all" && log.action !== actionFilter) return false
-    if (branchFilter !== "all" && log.branchId !== branchFilter) return false
-    if (staffFilter !== "all" && log.staffId !== staffFilter) return false
+    if (!scopedBranchIds.includes(log.branchId)) {
+      return false
+    }
+
+    if (actionFilter !== "all" && log.action !== actionFilter) {
+      return false
+    }
+
+    if (isSubBranch) {
+      if (log.branchId !== userBranchId) {
+        return false
+      }
+    } else if (branchFilter !== "all") {
+      const effectiveBranchId = resolveBranchFilterId(branchFilter, userBranchId)
+      if (log.branchId !== effectiveBranchId) {
+        return false
+      }
+    }
+
+    if (staffFilter !== "all" && log.staffId !== staffFilter) {
+      return false
+    }
+
     return matchesSearch(log, searchQuery)
   })
 }
 
 export function useActivityLogsViewModel(
+  authUseCase: AuthUseCase,
   getActivityLogsUseCase: GetActivityLogsUseCase
 ): ActivityLogsViewModel {
   const [searchQuery, setSearchQuery] = useState("")
   const [actionFilter, setActionFilter] = useState<ActivityActionFilter>("all")
-  const [branchFilter, setBranchFilter] = useState<ActivityBranchFilter>("all")
+  const [branchFilter, setBranchFilterState] = useState<ActivityBranchFilter>("current")
   const [staffFilter, setStaffFilter] = useState<ActivityStaffFilter>("all")
+
+  const userQuery = useQuery({
+    queryKey: ["currentUser"],
+    queryFn: async () => {
+      const result = await authUseCase.getCurrentUser()
+      if (!result.success) throw new Error(result.error)
+      return result.data ?? null
+    },
+  })
 
   const { data, isPending, isFetching, isError, error, refetch } =
     useQuery<ActivityLogsQueryData>({
@@ -78,11 +174,33 @@ export function useActivityLogsViewModel(
           staffOptions: result.data.staffOptions,
         }
       },
+      enabled: userQuery.isSuccess,
     })
 
+  const user = userQuery.data ?? null
+  const userBranchId = user ? resolveUserBranchId(user) : ""
+  const isSubBranch = user?.branchType === "sub"
+  const branchScope = user ? getDashboardBranchScope(user, allDashboardBranches) : null
+  const scopedBranchIds = branchScope?.branchIds ?? []
+  const showBranchFilter = !isSubBranch
+  const branchFilterOptions = user ? getBranchFilterOptions(user) : []
+
+  useEffect(() => {
+    if (!user || !branchScope) return
+
+    if (isSubBranch) {
+      setBranchFilterState(userBranchId)
+      return
+    }
+
+    setBranchFilterState((current) =>
+      isBranchSelectionValid(current, branchScope, userBranchId) ? current : "current"
+    )
+  }, [user, userBranchId, isSubBranch, branchScope?.branchIds.join(",")])
+
   const status: AsyncStatus = (() => {
-    if (isPending || isFetching) return "loading"
-    if (isError) return "error"
+    if (userQuery.isPending || isPending || isFetching) return "loading"
+    if (userQuery.isError || isError) return "error"
     if (data !== undefined) return "success"
     return "idle"
   })()
@@ -91,26 +209,56 @@ export function useActivityLogsViewModel(
   const branchOptions = data?.branchOptions ?? []
   const staffOptions = data?.staffOptions ?? []
 
-  const filteredLogs = filterLogs(logs, searchQuery, actionFilter, branchFilter, staffFilter)
+  const filteredLogs = user
+    ? filterLogs(
+        logs,
+        searchQuery,
+        actionFilter,
+        branchFilter,
+        staffFilter,
+        scopedBranchIds,
+        isSubBranch,
+        userBranchId
+      )
+    : []
 
   async function reload(): Promise<void> {
-    await refetch()
+    await Promise.all([userQuery.refetch(), refetch()])
+  }
+
+  function setBranchFilter(value: ActivityBranchFilter): void {
+    if (isSubBranch) return
+    if (branchScope && !isBranchSelectionValid(value, branchScope, userBranchId)) return
+    setBranchFilterState(value)
   }
 
   const state: ActivityLogsViewModelState = {
     logs,
     status,
-    error: isError && error instanceof Error ? error.message : null,
+    error:
+      (userQuery.isError && userQuery.error instanceof Error
+        ? userQuery.error.message
+        : null) ??
+      (isError && error instanceof Error ? error.message : null),
     searchQuery,
     actionFilter,
     branchFilter,
     staffFilter,
     branchOptions,
+    branchFilterOptions,
+    showBranchFilter,
     staffOptions,
     filteredLogs,
-    isLoading: isPending || isFetching,
+    isLoading: userQuery.isPending || isPending || isFetching,
     isReady: status === "success",
   }
 
-  return { state, setSearchQuery, setActionFilter, setBranchFilter, setStaffFilter, reload }
+  return {
+    state,
+    setSearchQuery,
+    setActionFilter,
+    setBranchFilter,
+    setStaffFilter,
+    reload,
+  }
 }

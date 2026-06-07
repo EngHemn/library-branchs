@@ -1,6 +1,38 @@
 import { getBranchViewHref } from "@/lib/branchLink"
+import { getGroupEditHref, getGroupViewHref, getGroupViewTabHref } from "@/lib/groupLink"
+import { getNeedEditHref, getNeedViewHref, getNeedViewTabHref } from "@/lib/needLink"
 
 export const dashboardPaths = {
+  needs: {
+    list: "/dashboard/needs",
+    create: "/dashboard/needs/create",
+    detail: getNeedViewHref,
+    detailTab: getNeedViewTabHref,
+    edit: getNeedEditHref,
+  },
+  alerts: {
+    lowStock: "/dashboard/alerts/low-stock",
+  },
+  shelves: {
+    list: "/dashboard/shelves",
+    create: "/dashboard/shelves/create",
+    detail: (shelfId: string) => `/dashboard/shelves/${shelfId}`,
+    edit: (shelfId: string) => `/dashboard/shelves/${shelfId}/edit`,
+    shelfBook: {
+      add: (shelfId: string) => `/dashboard/shelves/${shelfId}/books/add`,
+      detail: (shelfId: string, shelfBookId: string) =>
+        `/dashboard/shelves/${shelfId}/books/${shelfBookId}`,
+      edit: (shelfId: string, shelfBookId: string) =>
+        `/dashboard/shelves/${shelfId}/books/${shelfBookId}/edit`,
+    },
+  },
+  groups: {
+    list: "/dashboard/groups",
+    create: "/dashboard/groups/create",
+    detail: getGroupViewHref,
+    detailTab: getGroupViewTabHref,
+    edit: getGroupEditHref,
+  },
   books: {
     list: "/dashboard/books",
     create: "/dashboard/books/create",
