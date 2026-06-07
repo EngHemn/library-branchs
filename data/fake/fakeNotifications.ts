@@ -51,6 +51,37 @@ export const fakeNotifications: Notification[] = [
   },
 ]
 
+let notificationCounter = 100
+
+export type DispatchNotificationInput = {
+  title: string
+  message: string
+  type: Notification["type"]
+  sendEmail?: boolean
+}
+
+export function dispatchFakeNotification(
+  input: DispatchNotificationInput
+): Notification {
+  notificationCounter += 1
+  const notification: Notification = {
+    id: `NTF-${notificationCounter}`,
+    title: input.title,
+    message: input.message,
+    createdAt: new Date().toISOString(),
+    read: false,
+    type: input.type,
+  }
+
+  fakeNotifications.unshift(notification)
+
+  if (input.sendEmail !== false) {
+    console.info(`[Email Notification] ${input.title}: ${input.message}`)
+  }
+
+  return notification
+}
+
 export function getUnreadNotificationCount(
   notifications: Notification[] = fakeNotifications
 ): number {

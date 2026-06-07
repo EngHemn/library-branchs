@@ -29,7 +29,7 @@ import { Label } from "@/components/ui/label"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import type { LowStockAlert } from "@/domain/entities/alert/LowStockAlert"
 import { LowStockAlertStatusBadge } from "@/presentation/components/alerts/LowStockAlertStatusBadge"
-import { NeedActionButton } from "@/presentation/components/needs/NeedActionButton"
+import { LowStockAlertActionButton } from "@/presentation/components/alerts/LowStockAlertActionButton"
 
 type LowStockAlertsTableProps = {
   alerts: LowStockAlert[]
@@ -173,14 +173,14 @@ export function LowStockAlertsTable({
       className: "text-right",
       cell: (alert) => (
         <div className="flex items-center justify-end gap-1">
-          <NeedActionButton
+          <LowStockAlertActionButton
             icon={EyeIcon}
             label="View book"
             onClick={() => onViewBook(alert)}
           />
           {alert.status === "active" ? (
             <>
-              <NeedActionButton
+              <LowStockAlertActionButton
                 icon={PackagePlusIcon}
                 label="Restock"
                 variant="outline"
@@ -191,7 +191,7 @@ export function LowStockAlertsTable({
                   )
                 }}
               />
-              <NeedActionButton
+              <LowStockAlertActionButton
                 icon={CheckIcon}
                 label="Mark resolved"
                 variant="outline"

@@ -6,7 +6,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import type { LowStockAlert } from "@/domain/entities/alert/LowStockAlert"
 import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { LowStockAlertUseCase } from "@/domain/usecases/alerts/LowStockAlertUseCase"
-import { getNeedDashboardBranchScope } from "@/lib/needBranchScope"
+import { fakeBranches } from "@/data/fake/fakeBranches"
+import { getDashboardBranchScope } from "@/lib/dashboardBranchScope"
 import type {
   LowStockAlertBranchFilter,
   LowStockAlertStatusFilter,
@@ -152,7 +153,15 @@ export function useLowStockAlertsViewModel(
   })
 
   const user = userQuery.data ?? null
-  const branchScope = user ? getNeedDashboardBranchScope(user) : null
+  const branchScope = user
+    ? getDashboardBranchScope(
+        user,
+        fakeBranches.map((branch) => ({
+          id: branch.id,
+          name: branch.branchName,
+        }))
+      )
+    : null
   const allAlerts = alertsQuery.data ?? []
 
   const filteredAlerts = user
