@@ -7,6 +7,10 @@ import {
   CardContent,
 } from "@/components/ui/card"
 import type { BillDetail } from "@/domain/entities/bill/BillDetail"
+import {
+  formatBillDate,
+  formatBillTime,
+} from "@/presentation/components/bills/billDisplay"
 
 type BillSummaryCardsProps = {
   bill: BillDetail
@@ -22,7 +26,8 @@ export function BillSummaryCards({ bill }: BillSummaryCardsProps) {
     {
       icon: CalendarIcon,
       label: "Bill Date",
-      value: bill.billDate,
+      value: formatBillDate(bill.billDate),
+      subValue: formatBillTime(bill.billDate),
     },
     {
       icon: PhoneIcon,
@@ -42,6 +47,9 @@ export function BillSummaryCards({ bill }: BillSummaryCardsProps) {
             <div>
               <p className="text-xs text-muted-foreground">{item.label}</p>
               <p className="font-semibold">{item.value}</p>
+              {"subValue" in item && item.subValue ? (
+                <p className="text-xs text-muted-foreground">{item.subValue}</p>
+              ) : null}
             </div>
           </CardContent>
         </Card>

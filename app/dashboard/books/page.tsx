@@ -8,6 +8,7 @@ import { BookManagementRepositoryImpl } from "@/data/repositories/BookManagement
 import { BookingManagementRepositoryImpl } from "@/data/repositories/BookingManagementRepositoryImpl"
 import { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import { GetBooksUseCase } from "@/domain/usecases/books/GetBooksUseCase"
+import { shelfManagementUseCase } from "@/app/dashboard/shelves/shelfDependencies"
 import { BookingManagementUseCase } from "@/domain/usecases/bookings/BookingManagementUseCase"
 import { BooksScreen } from "@/presentation/screens/books/BooksScreen"
 
@@ -34,6 +35,7 @@ export default function Page() {
     <BooksScreen
       authUseCase={authUseCase}
       getBooksUseCase={getBooksUseCase}
+      shelfManagementUseCase={shelfManagementUseCase}
       bookingManagementUseCase={bookingManagementUseCase}
     />
   )

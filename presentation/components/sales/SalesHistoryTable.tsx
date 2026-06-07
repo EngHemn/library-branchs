@@ -54,8 +54,36 @@ function formatCurrency(value: number): string {
   return `$${value.toFixed(2)}`
 }
 
-function formatDate(value: string): string {
-  return new Date(value).toLocaleString()
+function formatSaleDate(value: string): string {
+  const date = new Date(value)
+
+  if (Number.isNaN(date.getTime())) {
+    return value
+  }
+
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  })
+}
+
+function formatSaleTime(value: string): string {
+  const date = new Date(value)
+
+  if (Number.isNaN(date.getTime())) {
+    return "—"
+  }
+
+  return date.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+  })
+}
+
+function saleDateSortValue(value: string): number {
+  const date = new Date(value)
+  return Number.isNaN(date.getTime()) ? 0 : date.getTime()
 }
 
 function countBooks(sale: Sale): number {
@@ -93,10 +121,17 @@ export function SalesHistoryTable({
       },
       {
         key: "createdAt",
-        header: "Date",
+        header: "Date & Time",
         sortable: true,
-        sortValue: (sale) => sale.createdAt,
-        cell: (sale) => formatDate(sale.createdAt),
+        sortValue: (sale) => saleDateSortValue(sale.createdAt),
+        cell: (sale) => (
+          <div className="text-sm">
+            <p className="font-medium">{formatSaleDate(sale.createdAt)}</p>
+            <p className="text-xs text-muted-foreground">
+              {formatSaleTime(sale.createdAt)}
+            </p>
+          </div>
+        ),
       },
       {
         key: "branchName",
@@ -211,7 +246,7 @@ export function SalesHistoryTable({
             <SheetTitle>{selectedSale?.id ?? "Sale Details"}</SheetTitle>
             <SheetDescription>
               {selectedSale
-                ? `${selectedSale.branchName} - ${formatDate(selectedSale.createdAt)}`
+                ? `${selectedSale.branchName} · ${formatSaleDate(selectedSale.createdAt)} at ${formatSaleTime(selectedSale.createdAt)}`
                 : "Sale details"}
             </SheetDescription>
           </SheetHeader>

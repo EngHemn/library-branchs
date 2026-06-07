@@ -1,11 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { format, subDays, startOfYear } from "date-fns"
 
+import { fakeBranches } from "@/data/fake/fakeBranches"
 import type {
-  ReportBranchOption,
   ReportCategory,
   ReportChart,
   ReportKpi,
@@ -15,18 +15,35 @@ import type {
   ReportTable,
 } from "@/domain/entities/reports/Reports"
 import { REPORT_CHARTS_PER_TAB } from "@/domain/entities/reports/Reports"
+import type { User } from "@/domain/entities/User"
+import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { GetReportsUseCase } from "@/domain/usecases/reports/GetReportsUseCase"
-import type { AsyncStatus, ReportsViewModelState } from "./ReportsViewModelState"
+import {
+  getDashboardBranchScope,
+  resolveUserBranchId,
+  type DashboardBranchScope,
+} from "@/lib/dashboardBranchScope"
+import type {
+  AsyncStatus,
+  ReportBranchFilter,
+  ReportBranchFilterOption,
+  ReportsViewModelState,
+} from "./ReportsViewModelState"
 
 export type ReportsViewModel = {
   state: ReportsViewModelState
   setPeriod: (period: ReportPeriod) => void
-  setBranchId: (branchId: string) => void
+  setBranchId: (branchId: ReportBranchFilter) => void
   setDateFrom: (dateFrom: string) => void
   setDateTo: (dateTo: string) => void
   setCategory: (category: ReportCategory) => void
   reload: () => void
 }
+
+const allDashboardBranches = fakeBranches.map((branch) => ({
+  id: branch.id,
+  name: branch.branchName,
+}))
 
 function getDateRangeForPeriod(period: ReportPeriod): { dateFrom: string; dateTo: string } {
   const to = new Date()
@@ -61,29 +78,123 @@ function filterTables(tables: ReportTable[], category: ReportCategory): ReportTa
   return tables.filter((table) => table.category === "overview")
 }
 
-export function useReportsViewModel(getReportsUseCase: GetReportsUseCase): ReportsViewModel {
+function resolveBranchFilterId(
+  branchFilter: ReportBranchFilter,
+  userBranchId: string
+): string {
+  return branchFilter === "current" ? userBranchId : branchFilter
+}
+
+function getBranchFilterOptions(user: User): ReportBranchFilterOption[] {
+  if (user.branchType === "sub") {
+    return []
+  }
+
+  const userBranchId = resolveUserBranchId(user)
+  const branchScope = getDashboardBranchScope(user, allDashboardBranches)
+
+  const otherBranches = branchScope.branches
+    .filter((branch) => branch.id !== userBranchId)
+    .map((branch) => ({ value: branch.id, label: branch.name }))
+    .sort((left, right) => left.label.localeCompare(right.label))
+
+  return [
+    { value: "all", label: "All branches" },
+    { value: "current", label: "Current branch" },
+    ...otherBranches,
+  ]
+}
+
+function isBranchSelectionValid(
+  branchId: ReportBranchFilter,
+  scope: DashboardBranchScope,
+  userBranchId: string
+): boolean {
+  if (branchId === "all") {
+    return scope.allowAllBranches
+  }
+
+  if (branchId === "current") {
+    return scope.branchIds.includes(userBranchId)
+  }
+
+  return scope.branchIds.includes(branchId)
+}
+
+function resolveEffectiveBranchId(
+  branchId: ReportBranchFilter,
+  user: User,
+  userBranchId: string
+): string {
+  if (user.branchType === "sub") {
+    return userBranchId
+  }
+
+  return resolveBranchFilterId(branchId, userBranchId)
+}
+
+export function useReportsViewModel(
+  authUseCase: AuthUseCase,
+  getReportsUseCase: GetReportsUseCase
+): ReportsViewModel {
   const initialRange = getDateRangeForPeriod("30d")
 
   const [period, setPeriodState] = useState<ReportPeriod>("30d")
-  const [branchId, setBranchId] = useState("all")
+  const [branchId, setBranchIdState] = useState<ReportBranchFilter>("current")
   const [dateFrom, setDateFrom] = useState(initialRange.dateFrom)
   const [dateTo, setDateTo] = useState(initialRange.dateTo)
   const [category, setCategory] = useState<ReportCategory>("overview")
 
-  const query: ReportsQuery = { period, branchId, dateFrom, dateTo }
+  const userQuery = useQuery({
+    queryKey: ["currentUser"],
+    queryFn: async () => {
+      const result = await authUseCase.getCurrentUser()
+      if (!result.success) throw new Error(result.error)
+      return result.data ?? null
+    },
+  })
+
+  const user = userQuery.data ?? null
+  const userBranchId = user ? resolveUserBranchId(user) : ""
+  const isSubBranch = user?.branchType === "sub"
+  const branchScope = user ? getDashboardBranchScope(user, allDashboardBranches) : null
+  const showBranchFilter = !isSubBranch
+  const branchFilterOptions = user ? getBranchFilterOptions(user) : []
+
+  useEffect(() => {
+    if (!user || !branchScope) return
+
+    if (isSubBranch) {
+      setBranchIdState(userBranchId)
+      return
+    }
+
+    setBranchIdState((current) =>
+      isBranchSelectionValid(current, branchScope, userBranchId) ? current : "current"
+    )
+  }, [user, userBranchId, isSubBranch, branchScope?.branchIds.join(",")])
+
+  const effectiveBranchId = user
+    ? resolveEffectiveBranchId(branchId, user, userBranchId)
+    : branchId === "current"
+      ? "all"
+      : branchId
+
+  const query: ReportsQuery = { period, branchId: effectiveBranchId, dateFrom, dateTo }
 
   const { data: reports, isPending, isFetching, isError, error, refetch } = useQuery({
-    queryKey: ["reports", query],
+    queryKey: ["reports", query, user?.branchType, userBranchId],
     queryFn: async () => {
       const result = await getReportsUseCase.getReports(query)
       if (!result.success) throw new Error(result.error)
       return result.data
     },
+    enabled: userQuery.isSuccess,
   })
 
   const status: AsyncStatus = (() => {
-    if (isPending || isFetching) return "loading"
-    if (isError) return "error"
+    if (userQuery.isPending || isPending || isFetching) return "loading"
+    if (userQuery.isError || isError) return "error"
     if (reports !== undefined) return "success"
     return "idle"
   })()
@@ -93,6 +204,12 @@ export function useReportsViewModel(getReportsUseCase: GetReportsUseCase): Repor
     setPeriodState(nextPeriod)
     setDateFrom(range.dateFrom)
     setDateTo(range.dateTo)
+  }
+
+  function setBranchId(nextBranchId: ReportBranchFilter): void {
+    if (isSubBranch) return
+    if (branchScope && !isBranchSelectionValid(nextBranchId, branchScope, userBranchId)) return
+    setBranchIdState(nextBranchId)
   }
 
   function reload(): void {
@@ -106,14 +223,20 @@ export function useReportsViewModel(getReportsUseCase: GetReportsUseCase): Repor
   const state: ReportsViewModelState = {
     reports: reports ?? null,
     status,
-    error: isError && error instanceof Error ? error.message : null,
+    error:
+      (userQuery.isError && userQuery.error instanceof Error
+        ? userQuery.error.message
+        : null) ??
+      (isError && error instanceof Error ? error.message : null),
     period,
     branchId,
     dateFrom,
     dateTo,
     branches: reports?.branches ?? [],
+    branchFilterOptions,
+    showBranchFilter,
     category,
-    isLoading: isPending || isFetching,
+    isLoading: userQuery.isPending || isPending || isFetching,
     isReady: status === "success" && reports !== undefined,
     kpis,
     charts,
