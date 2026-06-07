@@ -80,7 +80,13 @@ export class BookManagementFakeDataSource {
 
     return {
       success: true,
-      data: this.books.map((book) => ({ ...book })),
+      data: this.books.map((book) => {
+        const detail = this.bookDetails.find((item) => item.id === book.id)
+        return {
+          ...book,
+          shelfHint: detail?.shelfHint ?? book.shelfHint ?? "",
+        }
+      }),
     }
   }
 
@@ -135,6 +141,7 @@ export class BookManagementFakeDataSource {
       branchId: input.branchId,
       firstAddedBranch: branch?.branchName ?? "Unknown Branch",
       branchCount: 1,
+      shelfHint: input.shelfHint,
     }
 
     this.books.push({ ...newBook })
@@ -200,6 +207,7 @@ export class BookManagementFakeDataSource {
       status: input.available > 0 ? "available" : existing.status,
       branchId: input.branchId,
       firstAddedBranch: branch?.branchName ?? existing.firstAddedBranch,
+      shelfHint: input.shelfHint,
     }
 
     this.books[bookIndex] = updatedBook
