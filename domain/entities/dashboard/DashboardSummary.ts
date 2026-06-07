@@ -134,5 +134,30 @@ export type DashboardSummary = {
   staffByBranch: DashboardChartBar[]
   stockAlerts: number
   overdueBookings: number
-  upcomingEvents: number
+  groupStats: {
+    totalGroups: number
+    activeGroups: number
+    totalAssignedBooks: number
+    totalAssignedStaff: number
+  }
+  needStats: {
+    totalRequests: number
+    pendingRequests: number
+    approvedRequests: number
+    criticalRequests: number
+    lowStockBooks: number
+    outOfStockBooks: number
+  }
+  criticalNeedRequests: Array<{
+    id: string
+    name: string
+    branchName: string
+    priority: string
+  }>
+  lowStockBooksPreview: Array<{
+    id: string
+    bookTitle: string
+    currentStock: number
+    minimumStock: number
+  }>
 }

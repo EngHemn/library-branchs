@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation"
 import {
   AlertTriangleIcon,
   BookOpenIcon,
-  CalendarDaysIcon,
   RefreshCwIcon,
 } from "lucide-react"
 
@@ -25,6 +24,8 @@ import { DashboardActivityFeed } from "@/presentation/components/dashboard/Dashb
 import { DashboardBookCharts } from "@/presentation/components/dashboard/DashboardBookCharts"
 import { DashboardBookingCharts } from "@/presentation/components/dashboard/DashboardBookingCharts"
 import { DashboardFilters } from "@/presentation/components/dashboard/DashboardFilters"
+import { DashboardGroupStats } from "@/presentation/components/dashboard/DashboardGroupStats"
+import { DashboardNeedsAlertsStats, DashboardAlertsSection } from "@/presentation/components/dashboard/DashboardNeedsAlertsStats"
 import { DashboardMetricsGrid } from "@/presentation/components/dashboard/DashboardMetricsGrid"
 import { DashboardOverviewCharts } from "@/presentation/components/dashboard/DashboardOverviewCharts"
 import { DashboardRecentBookingsTable } from "@/presentation/components/dashboard/DashboardRecentBookingsTable"
@@ -210,9 +211,18 @@ export function DashboardScreen({
             <TabsContent value="overview" className="mt-5 flex flex-col gap-5">
               <DashboardMetricsGrid metrics={summary.metrics} />
 
+              <DashboardNeedsAlertsStats needStats={summary.needStats} />
+
               <DashboardOverviewCharts
                 bookingsByStatus={summary.bookingsByStatus}
                 salesTrend={summary.salesTrend}
+              />
+
+              <DashboardGroupStats groupStats={summary.groupStats} />
+
+              <DashboardAlertsSection
+                criticalNeedRequests={summary.criticalNeedRequests}
+                lowStockBooksPreview={summary.lowStockBooksPreview}
               />
 
               <div className="grid gap-4 lg:grid-cols-[1fr_340px]">
@@ -265,26 +275,6 @@ export function DashboardScreen({
                       <p className="text-3xl font-bold">{summary.overdueBookings}</p>
                       <p className="mt-1 text-xs text-muted-foreground">
                         members have not returned books on time
-                      </p>
-                    </CardContent>
-                  </Card>
-
-                  <Card className="rounded-xl">
-                    <CardHeader className="flex-row items-center gap-3 space-y-0 pb-2">
-                      <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-sky-100 dark:bg-sky-900/40">
-                        <CalendarDaysIcon className="size-4 text-sky-600 dark:text-sky-400" />
-                      </span>
-                      <div className="min-w-0">
-                        <CardTitle className="text-sm">Upcoming Events</CardTitle>
-                        <CardDescription className="text-xs">
-                          Scheduled this week
-                        </CardDescription>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-3xl font-bold">{summary.upcomingEvents}</p>
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        library events scheduled for this week
                       </p>
                     </CardContent>
                   </Card>
