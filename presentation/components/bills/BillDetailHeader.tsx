@@ -4,6 +4,7 @@ import { PencilIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import type { BillDetail } from "@/domain/entities/bill/BillDetail"
+import { formatBillDate, formatBillTime } from "@/presentation/components/bills/billDisplay"
 
 type BillDetailHeaderProps = {
   bill: BillDetail
@@ -24,7 +25,8 @@ export function BillDetailHeader({ bill, onEdit }: BillDetailHeaderProps) {
         <p className="font-mono text-xs text-muted-foreground">{bill.id}</p>
         <h1 className="text-2xl font-bold tracking-normal">{bill.companyName}</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Import bill for {bill.branchName} · {bill.billDate}
+          Import bill for {bill.branchName} · {formatBillDate(bill.billDate)} at{" "}
+          {formatBillTime(bill.billDate)}
         </p>
         <p className="mt-2 text-lg font-semibold text-emerald-700 dark:text-emerald-300">
           {formatPrice(bill.price)}

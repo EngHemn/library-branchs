@@ -17,6 +17,11 @@ import {
 } from "@/components/ui/data-table"
 import type { Bill } from "@/domain/entities/bill/Bill"
 import { BillActionButton } from "@/presentation/components/bills/BillActionButton"
+import {
+  billDateSortValue,
+  formatBillDate,
+  formatBillTime,
+} from "@/presentation/components/bills/billDisplay"
 
 type BillsTableProps = {
   bills: Bill[]
@@ -77,10 +82,17 @@ export function BillsTable({
       },
       {
         key: "billDate",
-        header: "Date",
+        header: "Date & Time",
         sortable: true,
-        sortValue: (bill) => bill.billDate,
-        cell: (bill) => bill.billDate,
+        sortValue: (bill) => billDateSortValue(bill.billDate),
+        cell: (bill) => (
+          <div className="text-sm">
+            <p className="font-medium">{formatBillDate(bill.billDate)}</p>
+            <p className="text-xs text-muted-foreground">
+              {formatBillTime(bill.billDate)}
+            </p>
+          </div>
+        ),
       },
       {
         key: "phoneNumber",
