@@ -1,13 +1,6 @@
-import { getEventEditHref, getEventViewHref } from "@/lib/eventLink"
 import { getBranchViewHref } from "@/lib/branchLink"
 
 export const dashboardPaths = {
-  events: {
-    list: "/dashboard/events",
-    create: "/dashboard/events/create",
-    detail: getEventViewHref,
-    edit: getEventEditHref,
-  },
   books: {
     list: "/dashboard/books",
     create: "/dashboard/books/create",
