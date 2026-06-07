@@ -1,4 +1,3 @@
-import { getEventEditHref, getEventViewHref } from "@/lib/eventLink"
 import { getBranchViewHref } from "@/lib/branchLink"
 
 export const dashboardPaths = {
