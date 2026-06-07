@@ -4,12 +4,13 @@ export type ReportCategory =
   | "overview"
   | "sales"
   | "inventory"
-  | "events"
+  | "groups"
   | "members"
   | "authors"
   | "translators"
   | "bookings"
   | "books"
+  | "orders"
 
 export type ReportChartType = "bar" | "line" | "area" | "pie"
 

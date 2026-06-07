@@ -1,7 +1,7 @@
 "use client"
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import {
   ArrowLeftIcon,
   BookOpenIcon,
@@ -52,6 +52,22 @@ import { SubBranchesTab } from "@/presentation/components/branch-detail/SubBranc
 import { TranslatorsTab } from "@/presentation/components/branch-detail/TranslatorsTab"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
 import { useBranchDetailViewModel } from "@/presentation/viewmodels/branch-management/useBranchDetailViewModel"
+import type { TabKey } from "@/presentation/viewmodels/branch-management/BranchDetailViewModelState"
+
+const branchTabKeys: TabKey[] = [
+  "details",
+  "location",
+  "sub-branches",
+  "books",
+  "authors",
+  "translators",
+  "staff",
+  "members",
+]
+
+function isBranchTabKey(value: string): value is TabKey {
+  return branchTabKeys.includes(value as TabKey)
+}
 
 type ViewBranchScreenProps = {
   branchId: string
@@ -133,10 +149,18 @@ function LoadingState() {
 
 export function ViewBranchScreen({ branchId, branchDetailUseCase }: ViewBranchScreenProps) {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const viewModel = useBranchDetailViewModel(branchId, branchDetailUseCase)
   const { state } = viewModel
   const [pendingDelete, setPendingDelete] = useState<PendingDelete | null>(null)
   const deleteDialog = getDeleteDialogContent(pendingDelete)
+
+  useEffect(() => {
+    const tab = searchParams.get("tab")
+    if (tab && isBranchTabKey(tab)) {
+      viewModel.setActiveTab(tab)
+    }
+  }, [searchParams, viewModel])
 
   const handleConfirmDelete = () => {
     if (!pendingDelete) {

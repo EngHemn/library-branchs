@@ -1,12 +1,18 @@
 "use client"
 
 import type { Book } from "@/domain/entities/book/Book"
+import type { ShelfLocationOptions } from "@/domain/entities/shelf/ShelfLocationOptions"
 import type { User } from "@/domain/entities/User"
 
 export type BookCategoryFilter = "all" | string
 export type BookAuthorFilter = "all" | string
 export type BookTranslatorFilter = "all" | string
-export type BookBranchFilter = "all" | string
+export type BookBranchFilter = "all" | "current" | string
+
+export type BookBranchFilterOption = {
+  value: BookBranchFilter
+  label: string
+}
 
 export type BookFilterState = {
   searchQuery: string
@@ -14,6 +20,7 @@ export type BookFilterState = {
   authorFilter: BookAuthorFilter
   translatorFilter: BookTranslatorFilter
   branchFilter: BookBranchFilter
+  locationValues: Record<string, string>
 }
 
 export type BooksManagementDialog = {
@@ -36,7 +43,10 @@ export type BooksViewModelState = {
   categories: string[]
   authors: string[]
   translators: string[]
-  branches: string[]
+  branchFilterOptions: BookBranchFilterOption[]
+  locationOptions: ShelfLocationOptions | null
+  locationManageError: string | null
+  isManagingLocation: boolean
   filters: BookFilterState
   showBranchFilter: boolean
   dialog: BooksManagementDialog

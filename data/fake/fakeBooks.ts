@@ -17,6 +17,7 @@ export const fakeBooks: Book[] = [
     branchId: "BR-001",
     firstAddedBranch: "Central Library & Bookshop",
     branchCount: 3,
+    shelfHint: "Ground Floor / Reference / Row 1",
   },
   {
     id: "BK-002",
@@ -34,6 +35,7 @@ export const fakeBooks: Book[] = [
     branchId: "BR-001",
     firstAddedBranch: "Central Library & Bookshop",
     branchCount: 2,
+    shelfHint: "Ground Floor / Reference / Row 2",
   },
   {
     id: "BK-003",
@@ -51,6 +53,7 @@ export const fakeBooks: Book[] = [
     branchId: "BR-001",
     firstAddedBranch: "Central Library & Bookshop",
     branchCount: 2,
+    shelfHint: "",
   },
   {
     id: "BK-004",
@@ -68,6 +71,7 @@ export const fakeBooks: Book[] = [
     branchId: "BR-001",
     firstAddedBranch: "Central Library & Bookshop",
     branchCount: 4,
+    shelfHint: "",
   },
   {
     id: "BK-005",
@@ -85,6 +89,7 @@ export const fakeBooks: Book[] = [
     branchId: "BR-001",
     firstAddedBranch: "Central Library & Bookshop",
     branchCount: 5,
+    shelfHint: "",
   },
   {
     id: "BK-006",
@@ -102,6 +107,7 @@ export const fakeBooks: Book[] = [
     branchId: "BR-001",
     firstAddedBranch: "Central Library & Bookshop",
     branchCount: 2,
+    shelfHint: "",
   },
   {
     id: "BK-007",
@@ -119,6 +125,7 @@ export const fakeBooks: Book[] = [
     branchId: "BR-002",
     firstAddedBranch: "Northside Books",
     branchCount: 1,
+    shelfHint: "",
   },
   {
     id: "BK-008",
@@ -136,6 +143,7 @@ export const fakeBooks: Book[] = [
     branchId: "BR-002",
     firstAddedBranch: "Northside Books",
     branchCount: 2,
+    shelfHint: "",
   },
   {
     id: "BK-009",
@@ -153,6 +161,7 @@ export const fakeBooks: Book[] = [
     branchId: "BR-002",
     firstAddedBranch: "Northside Books",
     branchCount: 3,
+    shelfHint: "Ground Floor / Fiction / Row 3",
   },
   {
     id: "BK-010",
@@ -170,6 +179,7 @@ export const fakeBooks: Book[] = [
     branchId: "BR-004",
     firstAddedBranch: "West End Book Center",
     branchCount: 2,
+    shelfHint: "",
   },
   {
     id: "BK-011",
@@ -187,6 +197,7 @@ export const fakeBooks: Book[] = [
     branchId: "BR-004",
     firstAddedBranch: "West End Book Center",
     branchCount: 4,
+    shelfHint: "",
   },
   {
     id: "BK-012",
@@ -204,6 +215,7 @@ export const fakeBooks: Book[] = [
     branchId: "BR-004",
     firstAddedBranch: "West End Book Center",
     branchCount: 1,
+    shelfHint: "",
   },
   {
     id: "BK-013",
@@ -221,6 +233,7 @@ export const fakeBooks: Book[] = [
     branchId: "BR-007",
     firstAddedBranch: "Brookline Main Bookshop",
     branchCount: 2,
+    shelfHint: "",
   },
   {
     id: "BK-014",
@@ -238,6 +251,7 @@ export const fakeBooks: Book[] = [
     branchId: "BR-007",
     firstAddedBranch: "Brookline Main Bookshop",
     branchCount: 3,
+    shelfHint: "",
   },
   {
     id: "BK-015",
@@ -255,6 +269,7 @@ export const fakeBooks: Book[] = [
     branchId: "BR-009",
     firstAddedBranch: "Lexington Literature House",
     branchCount: 1,
+    shelfHint: "",
   },
   {
     id: "BK001",
@@ -272,6 +287,7 @@ export const fakeBooks: Book[] = [
     branchId: "BR-001",
     firstAddedBranch: "Erbil Main Branch",
     branchCount: 3,
+    shelfHint: "",
   },
   {
     id: "BK002",
@@ -289,6 +305,7 @@ export const fakeBooks: Book[] = [
     branchId: "BR-001",
     firstAddedBranch: "Erbil Main Branch",
     branchCount: 2,
+    shelfHint: "",
   },
   {
     id: "BK003",
@@ -306,6 +323,7 @@ export const fakeBooks: Book[] = [
     branchId: "BR-001",
     firstAddedBranch: "Erbil Main Branch",
     branchCount: 1,
+    shelfHint: "",
   },
   {
     id: "BK004",
@@ -323,6 +341,7 @@ export const fakeBooks: Book[] = [
     branchId: "BR-004",
     firstAddedBranch: "Sulaymaniyah Main Branch",
     branchCount: 2,
+    shelfHint: "",
   },
   {
     id: "BK005",
@@ -340,5 +359,6 @@ export const fakeBooks: Book[] = [
     branchId: "BR-004",
     firstAddedBranch: "Sulaymaniyah Main Branch",
     branchCount: 1,
+    shelfHint: "",
   },
 ]

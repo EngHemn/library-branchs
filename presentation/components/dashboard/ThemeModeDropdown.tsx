@@ -1,6 +1,5 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import { MonitorIcon, MoonIcon, SunIcon } from "lucide-react"
 import { useTheme } from "next-themes"
 
@@ -14,6 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { useHydrated } from "@/hooks/use-hydrated"
 
 const themeOptions = [
   { value: "light", label: "Light", icon: SunIcon },
@@ -29,33 +29,35 @@ function ThemeTriggerIcon({ theme }: { theme: string | undefined }) {
 
 export function ThemeModeDropdown() {
   const { theme, setTheme } = useTheme()
-  const [mounted, setMounted] = useState(false)
+  const hydrated = useHydrated()
 
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  const activeTheme = mounted ? (theme ?? "system") : "system"
+  const activeTheme = hydrated ? (theme ?? "system") : "system"
   const activeLabel =
     themeOptions.find((o) => o.value === activeTheme)?.label ?? "Theme"
 
+  const trigger = (
+    <Button
+      variant="outline"
+      size="sm"
+      className="gap-1.5"
+      aria-label="Color mode"
+    >
+      {hydrated ? (
+        <ThemeTriggerIcon theme={activeTheme} />
+      ) : (
+        <SunIcon className="opacity-0" aria-hidden />
+      )}
+      <span className="hidden sm:inline">{activeLabel}</span>
+    </Button>
+  )
+
+  if (!hydrated) {
+    return trigger
+  }
+
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="outline"
-          size="sm"
-          className="gap-1.5"
-          aria-label="Color mode"
-        >
-          {mounted ? (
-            <ThemeTriggerIcon theme={activeTheme} />
-          ) : (
-            <SunIcon className="opacity-0" aria-hidden />
-          )}
-          <span className="hidden sm:inline">{activeLabel}</span>
-        </Button>
-      </DropdownMenuTrigger>
+      <DropdownMenuTrigger asChild>{trigger}</DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-40">
         <DropdownMenuLabel>Color mode</DropdownMenuLabel>
         <DropdownMenuSeparator />

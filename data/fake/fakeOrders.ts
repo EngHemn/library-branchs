@@ -1,0 +1,90 @@
+import type { Order } from "@/domain/entities/order/Order"
+import type { OrderStatus } from "@/domain/entities/order/OrderStatus"
+
+export type FakeOrderRecord = Omit<
+  Order,
+  "branchLocation" | "latitude" | "longitude"
+> & {
+  bookIds: string[]
+  supplierEmail?: string | null
+  latitude?: number | null
+  longitude?: number | null
+}
+
+export const fakeOrders: FakeOrderRecord[] = [
+  {
+    id: "ORD-001",
+    branchId: "BR-001",
+    branchName: "Central Library & Bookshop",
+    supplierName: "PageTurner Wholesale",
+    orderDate: "2026-01-10T10:30:00",
+    expectedDeliveryDate: "2026-01-20T14:00:00",
+    status: "delivered" as OrderStatus,
+    totalAmount: 1240.5,
+    itemCount: 3,
+    phoneNumber: "+1 (617) 555-4401",
+    supplierEmail: "orders@pageturner.com",
+    notes: "Priority restock for bestsellers shelf.",
+    bookIds: ["BK-001", "BK-002", "BK-003"],
+  },
+  {
+    id: "ORD-002",
+    branchId: "BR-002",
+    branchName: "Northside Books",
+    supplierName: "Harbor Text Supply",
+    orderDate: "2026-02-01T09:15:00",
+    expectedDeliveryDate: "2026-02-12T11:30:00",
+    status: "shipped" as OrderStatus,
+    totalAmount: 680.0,
+    itemCount: 2,
+    phoneNumber: "+1 (617) 555-8820",
+    supplierEmail: "sales@harbortext.com",
+    notes: null,
+    bookIds: ["BK-004", "BK-005"],
+  },
+  {
+    id: "ORD-003",
+    branchId: "BR-001",
+    branchName: "Central Library & Bookshop",
+    supplierName: "Inkwell Distributors",
+    orderDate: "2026-02-15T13:45:00",
+    expectedDeliveryDate: "2026-02-28T16:00:00",
+    status: "confirmed" as OrderStatus,
+    totalAmount: 2150.75,
+    itemCount: 4,
+    phoneNumber: "+1 (617) 555-1199",
+    supplierEmail: "procurement@inkwell.com",
+    notes: "Includes translated editions for spring catalog.",
+    bookIds: ["BK-006", "BK-007", "BK-008", "BK-009"],
+  },
+  {
+    id: "ORD-004",
+    branchId: "BR-004",
+    branchName: "West End Book Center",
+    supplierName: "Metro Reading Imports",
+    orderDate: "2026-03-05T08:20:00",
+    expectedDeliveryDate: "2026-03-18T10:00:00",
+    status: "pending" as OrderStatus,
+    totalAmount: 945.25,
+    itemCount: 2,
+    phoneNumber: "+1 (617) 555-3300",
+    supplierEmail: null,
+    notes: "Awaiting supplier confirmation.",
+    bookIds: ["BK-010", "BK-011"],
+  },
+  {
+    id: "ORD-005",
+    branchId: "BR-003",
+    branchName: "Riverside Reading Room",
+    supplierName: "Scholar's Press Co.",
+    orderDate: "2026-01-28T15:10:00",
+    expectedDeliveryDate: "2026-02-05T09:00:00",
+    status: "cancelled" as OrderStatus,
+    totalAmount: 420.0,
+    itemCount: 1,
+    phoneNumber: "+1 (617) 555-7712",
+    supplierEmail: "support@scholarspress.com",
+    notes: "Cancelled due to duplicate order.",
+    bookIds: ["BK-012"],
+  },
+]

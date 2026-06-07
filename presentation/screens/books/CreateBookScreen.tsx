@@ -14,6 +14,7 @@ import {
 import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
 import type { GetBooksUseCase } from "@/domain/usecases/books/GetBooksUseCase"
+import type { ShelfManagementUseCase } from "@/domain/usecases/shelves/ShelfManagementUseCase"
 import { BookFormFields } from "@/presentation/components/books/BookFormFields"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
 import { useFormSubmitSuccess } from "@/presentation/hooks/useFormSubmitSuccess"
@@ -21,6 +22,7 @@ import { useCreateBookViewModel } from "@/presentation/viewmodels/books/useCreat
 
 type CreateBookScreenProps = {
   getBooksUseCase: GetBooksUseCase
+  shelfManagementUseCase: ShelfManagementUseCase
 }
 
 function LoadingState() {
@@ -48,11 +50,17 @@ function LoadingState() {
   )
 }
 
-export function CreateBookScreen({ getBooksUseCase }: CreateBookScreenProps) {
+export function CreateBookScreen({
+  getBooksUseCase,
+  shelfManagementUseCase,
+}: CreateBookScreenProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const returnTo = searchParams.get("returnTo")
-  const viewModel = useCreateBookViewModel(getBooksUseCase)
+  const viewModel = useCreateBookViewModel(
+    getBooksUseCase,
+    shelfManagementUseCase
+  )
   const { state, form } = viewModel
 
   useDashboardBreadcrumbs([
@@ -121,6 +129,15 @@ export function CreateBookScreen({ getBooksUseCase }: CreateBookScreenProps) {
                 onSubmit={viewModel.save}
                 onAddLanguage={viewModel.addLanguage}
                 onBookSelect={viewModel.populateFromBook}
+                locationOptions={state.locationOptions}
+                locationManageError={state.locationManageError}
+                isManagingLocation={state.isManagingLocation}
+                onAddLocationValue={viewModel.addLocationValue}
+                onUpdateLocationValue={viewModel.updateLocationValue}
+                onDeleteLocationValue={viewModel.deleteLocationValue}
+                onAddLocationStep={viewModel.addLocationStep}
+                onUpdateLocationStep={viewModel.updateLocationStep}
+                onDeleteLocationStep={viewModel.deleteLocationStep}
               >
                 <Separator />
                 <div className="flex justify-end gap-3">

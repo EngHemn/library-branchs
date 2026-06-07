@@ -24,6 +24,7 @@ import {
 import type { Book } from "@/domain/entities/book/Book"
 import { getAuthorViewHref } from "@/lib/authorLink"
 import { BookActionButton } from "@/presentation/components/books/BookActionButton"
+import { BookLocationCell } from "@/presentation/components/books/BookLocationCell"
 
 function PersonNameButton({
   name,
@@ -35,14 +36,16 @@ function PersonNameButton({
   onNavigate: (href: string) => void
 }) {
   if (!href) {
-    return <span className="font-medium">{name}</span>
+    return (
+      <span className="block max-w-[9rem] truncate font-medium">{name}</span>
+    )
   }
 
   return (
     <button
       type="button"
       onClick={() => onNavigate(href)}
-      className="font-medium text-primary underline-offset-4 hover:underline"
+      className="block max-w-[9rem] truncate text-left font-medium text-primary underline-offset-4 hover:underline"
     >
       {name}
     </button>
@@ -68,8 +71,8 @@ type BookColumnKey =
   | "title"
   | "author"
   | "category"
-  | "stock"
-  | "available"
+  | "location"
+  | "inventory"
   | "price"
   | "actions"
 
@@ -92,20 +95,21 @@ export function BooksTable({
       header: "Title",
       sortable: true,
       sortValue: (book) => book.title,
+      className: "w-[28%] max-w-0",
       cell: (book) => (
-        <div className="flex items-center gap-3">
+        <div className="flex min-w-0 items-center gap-2.5">
           <EntityImage
             src={book.coverUrl}
             alt={book.title}
-            width={40}
-            height={40}
-            className="size-10 shrink-0 rounded-md"
+            width={36}
+            height={36}
+            className="size-9 shrink-0 rounded-md"
             imageClassName="rounded-md"
-            fallback={<BookIcon className="size-5 text-muted-foreground" />}
+            fallback={<BookIcon className="size-4 text-muted-foreground" />}
           />
           <div className="min-w-0">
-            <span className="font-medium">{book.title}</span>
-            <span className="block text-xs text-muted-foreground">
+            <span className="block truncate font-medium">{book.title}</span>
+            <span className="block truncate text-xs text-muted-foreground">
               {book.language}
             </span>
           </div>
@@ -117,6 +121,7 @@ export function BooksTable({
       header: "Author",
       sortable: true,
       sortValue: (book) => book.author,
+      className: "w-[14%] max-w-0",
       cell: (book) => (
         <PersonNameButton
           name={book.author}
@@ -130,25 +135,35 @@ export function BooksTable({
       header: "Category",
       sortable: true,
       sortValue: (book) => book.category,
-      cell: (book) => book.category,
+      className: "w-[12%] max-w-0",
+      cell: (book) => (
+        <span className="block truncate text-sm">{book.category}</span>
+      ),
     },
     {
-      key: "stock",
-      header: "Stock",
+      key: "location",
+      header: "Location",
       sortable: true,
-      sortValue: (book) => book.stock,
-      headerClassName: "text-center",
-      className: "text-center tabular-nums",
-      cell: (book) => book.stock.toLocaleString(),
+      sortValue: (book) => book.shelfHint,
+      className: "w-[18%] max-w-0 whitespace-normal",
+      cell: (book) => <BookLocationCell shelfHint={book.shelfHint} />,
     },
     {
-      key: "available",
-      header: "Available",
+      key: "inventory",
+      header: "Avail / Stock",
       sortable: true,
       sortValue: (book) => book.available,
       headerClassName: "text-center",
-      className: "text-center tabular-nums",
-      cell: (book) => book.available.toLocaleString(),
+      className: "w-[10%] text-center tabular-nums",
+      cell: (book) => (
+        <span className="text-sm">
+          {book.available.toLocaleString()}
+          <span className="text-muted-foreground">
+            {" "}
+            / {book.stock.toLocaleString()}
+          </span>
+        </span>
+      ),
     },
     {
       key: "price",
@@ -156,45 +171,40 @@ export function BooksTable({
       sortable: true,
       sortValue: (book) => book.price,
       headerClassName: "text-center",
-      className: "text-center tabular-nums",
+      className: "w-[10%] text-center tabular-nums",
       cell: (book) => formatPrice(book.price),
     },
     {
       key: "actions",
       header: "Actions",
-      headerClassName: "text-left",
-      className: "text-right",
+      headerClassName: "text-right",
+      className: "w-[8%] text-right",
       cell: (book) => (
-        <div className="flex flex-row items-end gap-1">
-          <div className="flex gap-1">
-            <BookActionButton
-              icon={EyeIcon}
-              label="View Book"
-
-              variant="outline"
-              onClick={() => onView(book)}
-            />
-            <BookActionButton
-              icon={CalendarIcon}
-              variant="outline"
-              label="Book / Reserve"
-              onClick={() => onBooking(book)}
-            />
-          </div>
-          <div className="flex gap-1">
-            <BookActionButton
-              icon={PencilIcon}
-              label="Edit Book"
-              variant="outline"
-              onClick={() => onEdit(book)}
-            />
-            <BookActionButton
-              icon={Trash2Icon}
-              label="Delete Book"
-              variant="destructive"
-              onClick={() => onDelete(book)}
-            />
-          </div>
+        <div className="flex justify-end gap-0.5">
+          <BookActionButton
+            icon={EyeIcon}
+            label="View Book"
+            variant="outline"
+            onClick={() => onView(book)}
+          />
+          <BookActionButton
+            icon={CalendarIcon}
+            variant="outline"
+            label="Book / Reserve"
+            onClick={() => onBooking(book)}
+          />
+          <BookActionButton
+            icon={PencilIcon}
+            label="Edit Book"
+            variant="outline"
+            onClick={() => onEdit(book)}
+          />
+          <BookActionButton
+            icon={Trash2Icon}
+            label="Delete Book"
+            variant="destructive"
+            onClick={() => onDelete(book)}
+          />
         </div>
       ),
     },
@@ -217,7 +227,7 @@ export function BooksTable({
           emptyDescription="Try changing or clearing the active filters."
           initialSort={{ key: "title", direction: "asc" }}
           initialPageSize={10}
-          tableClassName=""
+          tableClassName="table-fixed"
         />
       </CardContent>
     </Card>
