@@ -4,6 +4,7 @@ import Link from "next/link"
 
 import { getAuthorViewHref } from "@/lib/authorLink"
 import { getBranchViewHref } from "@/lib/branchLink"
+import { getEventEditHref, getEventViewHref } from "@/lib/eventLink"
 import { getGroupEditHref, getGroupViewHref } from "@/lib/groupLink"
 import { getTranslatorViewHref } from "@/lib/translatorLink"
 
@@ -103,6 +104,20 @@ export function StaffLink({ staffId, name, className }: StaffLinkProps) {
   )
 }
 
+type EventLinkProps = {
+  eventId: string
+  name: string
+  className?: string
+}
+
+export function EventLink({ eventId, name, className }: EventLinkProps) {
+  return (
+    <DashboardEntityLink href={getEventViewHref(eventId)} className={className}>
+      {name}
+    </DashboardEntityLink>
+  )
+}
+
 type GroupLinkProps = {
   groupId: string
   name: string
@@ -176,5 +191,5 @@ export function buildCreateHrefWithReturn(
   return `${basePath}?${params.toString()}`
 }
 
-export { getGroupEditHref, getGroupViewHref }
+export { getEventEditHref, getEventViewHref, getGroupEditHref, getGroupViewHref }
 

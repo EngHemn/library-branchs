@@ -14,6 +14,7 @@ import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { GetBillsUseCase } from "@/domain/usecases/bills/GetBillsUseCase"
 import { resolveUserBranchId } from "@/lib/dashboardBranchScope"
 import { toBillDateInputValue } from "@/presentation/components/bills/billDisplay"
+import type { EditBillStatus, EditBillViewModelState } from "./EditBillViewModelState"
 
 type EditBillViewModel = {
   state: EditBillViewModelState

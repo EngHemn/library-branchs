@@ -12,6 +12,7 @@ import type {
   CreateBillInput,
   UpdateBillInput,
 } from "@/domain/repositories/BillManagementRepository"
+import type { Result } from "@/domain/result/Result"
 import { toBillDateTime } from "@/presentation/components/bills/billDisplay"
 
 function delay(ms: number): Promise<void> {
