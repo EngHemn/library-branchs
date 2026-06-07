@@ -1,8 +1,11 @@
 "use client"
 
-import { SearchIcon } from "lucide-react"
+import { useMemo, useState } from "react"
+import { MapPinIcon, RotateCcwIcon, SearchIcon, XIcon } from "lucide-react"
 
+import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import {
   Select,
   SelectContent,
@@ -10,6 +13,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import type { ShelfLocationOptions } from "@/domain/entities/shelf/ShelfLocationOptions"
+import {
+  hasActiveLocationFilter,
+  shelfHintFromLocationValues,
+} from "@/lib/bookLocationForm"
+import { BooksShelfFilterDialog } from "@/presentation/components/books/BooksShelfFilterDialog"
+import type { BookBranchFilterOption } from "@/presentation/viewmodels/books/BooksViewModelState"
 
 type BooksFiltersProps = {
   searchQuery: string
@@ -17,16 +27,32 @@ type BooksFiltersProps = {
   authorFilter: string
   translatorFilter: string
   branchFilter: string
+  locationValues: Record<string, string>
   categories: string[]
   authors: string[]
   translators: string[]
-  branches: string[]
+  branchFilterOptions: BookBranchFilterOption[]
+  locationOptions: ShelfLocationOptions | null
+  locationManageError: string | null
+  isManagingLocation: boolean
   showBranchFilter?: boolean
   onSearchQueryChange: (searchQuery: string) => void
   onCategoryFilterChange: (categoryFilter: string) => void
   onAuthorFilterChange: (authorFilter: string) => void
   onTranslatorFilterChange: (translatorFilter: string) => void
   onBranchFilterChange: (branchFilter: string) => void
+  onLocationFilterChange: (locationValues: Record<string, string>) => void
+  onClearFilters: () => void
+  onAddLocationValue: (stepId: string, value: string) => Promise<void>
+  onUpdateLocationValue: (
+    stepId: string,
+    currentValue: string,
+    value: string
+  ) => Promise<void>
+  onDeleteLocationValue: (stepId: string, value: string) => Promise<void>
+  onAddLocationStep: (label: string) => Promise<void>
+  onUpdateLocationStep: (stepId: string, label: string) => Promise<void>
+  onDeleteLocationStep: (stepId: string) => Promise<void>
 }
 
 export function BooksFilters({
@@ -35,96 +61,270 @@ export function BooksFilters({
   authorFilter,
   translatorFilter,
   branchFilter,
+  locationValues,
   categories,
   authors,
   translators,
-  branches,
+  branchFilterOptions,
+  locationOptions,
+  locationManageError,
+  isManagingLocation,
   showBranchFilter = true,
   onSearchQueryChange,
   onCategoryFilterChange,
   onAuthorFilterChange,
   onTranslatorFilterChange,
   onBranchFilterChange,
+  onLocationFilterChange,
+  onClearFilters,
+  onAddLocationValue,
+  onUpdateLocationValue,
+  onDeleteLocationValue,
+  onAddLocationStep,
+  onUpdateLocationStep,
+  onDeleteLocationStep,
 }: BooksFiltersProps) {
+  const [isShelfDialogOpen, setIsShelfDialogOpen] = useState(false)
+
+  const selectedBranchLabel = branchFilterOptions.find(
+    (option) => option.value === branchFilter
+  )?.label
+
+  const activeShelfFilterCount =
+    locationOptions &&
+    hasActiveLocationFilter(locationOptions.steps, locationValues)
+      ? 1
+      : 0
+
+  const shelfFilterLabel =
+    locationOptions &&
+    hasActiveLocationFilter(locationOptions.steps, locationValues)
+      ? shelfHintFromLocationValues(locationOptions.steps, locationValues)
+      : null
+
+  const activeFilterChips = useMemo(() => {
+    const chips: Array<{ key: string; label: string; onRemove: () => void }> =
+      []
+
+    if (categoryFilter !== "all") {
+      chips.push({
+        key: `category-${categoryFilter}`,
+        label: `Category: ${categoryFilter}`,
+        onRemove: () => onCategoryFilterChange("all"),
+      })
+    }
+
+    if (authorFilter !== "all") {
+      chips.push({
+        key: `author-${authorFilter}`,
+        label: `Author: ${authorFilter}`,
+        onRemove: () => onAuthorFilterChange("all"),
+      })
+    }
+
+    if (translatorFilter !== "all") {
+      chips.push({
+        key: `translator-${translatorFilter}`,
+        label: `Translator: ${translatorFilter}`,
+        onRemove: () => onTranslatorFilterChange("all"),
+      })
+    }
+
+    if (showBranchFilter && branchFilter !== "all" && selectedBranchLabel) {
+      chips.push({
+        key: `branch-${branchFilter}`,
+        label: `Branch: ${selectedBranchLabel}`,
+        onRemove: () => onBranchFilterChange("all"),
+      })
+    }
+
+    if (shelfFilterLabel) {
+      chips.push({
+        key: "shelf-location",
+        label: `Shelf: ${shelfFilterLabel}`,
+        onRemove: () => onLocationFilterChange({}),
+      })
+    }
+
+    return chips
+  }, [
+    categoryFilter,
+    authorFilter,
+    translatorFilter,
+    branchFilter,
+    showBranchFilter,
+    selectedBranchLabel,
+    shelfFilterLabel,
+    onCategoryFilterChange,
+    onAuthorFilterChange,
+    onTranslatorFilterChange,
+    onBranchFilterChange,
+    onLocationFilterChange,
+  ])
+
+  const hasActiveFilters =
+    activeFilterChips.length > 0 || searchQuery.trim().length > 0
+
   return (
-    <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-      <div className="relative flex-1 sm:min-w-[200px]">
-        <SearchIcon className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          value={searchQuery}
-          onChange={(event) => onSearchQueryChange(event.target.value)}
-          placeholder="Search title/ISBN..."
-          className="pl-9"
-        />
+    <>
+      <div className="flex flex-col gap-3 rounded-lg border bg-card p-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="relative sm:w-full sm:max-w-md">
+            <SearchIcon className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              id="books-search"
+              value={searchQuery}
+              onChange={(event) => onSearchQueryChange(event.target.value)}
+              placeholder="Search title, author, location..."
+              className="pl-9"
+            />
+          </div>
+
+          <div className="flex items-center justify-end gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setIsShelfDialogOpen(true)}
+            >
+              <MapPinIcon />
+              Shelf
+              {activeShelfFilterCount > 0 ? (
+                <span className="ml-1 rounded-full bg-primary px-1.5 py-0.5 text-xs text-primary-foreground">
+                  {activeShelfFilterCount}
+                </span>
+              ) : null}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onClearFilters}
+              disabled={!hasActiveFilters}
+            >
+              <RotateCcwIcon />
+              Reset
+            </Button>
+          </div>
+        </div>
+
+        <div
+          className={`grid gap-3 ${showBranchFilter ? "sm:grid-cols-2 lg:grid-cols-4" : "sm:grid-cols-3"}`}
+        >
+          <div className="space-y-2">
+            <Label htmlFor="books-category-filter">Category</Label>
+            <Select value={categoryFilter} onValueChange={onCategoryFilterChange}>
+              <SelectTrigger id="books-category-filter" className="w-full">
+                <SelectValue placeholder="All categories" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All categories</SelectItem>
+                {categories.map((category) => (
+                  <SelectItem key={category} value={category}>
+                    {category}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="books-author-filter">Author</Label>
+            <Select value={authorFilter} onValueChange={onAuthorFilterChange}>
+              <SelectTrigger id="books-author-filter" className="w-full">
+                <SelectValue placeholder="All authors" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All authors</SelectItem>
+                {authors.map((author) => (
+                  <SelectItem key={author} value={author}>
+                    {author}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="books-translator-filter">Translator</Label>
+            <Select
+              value={translatorFilter}
+              onValueChange={onTranslatorFilterChange}
+            >
+              <SelectTrigger id="books-translator-filter" className="w-full">
+                <SelectValue placeholder="All translators" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All translators</SelectItem>
+                {translators.map((translator) => (
+                  <SelectItem key={translator} value={translator}>
+                    {translator}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {showBranchFilter ? (
+            <div className="space-y-2">
+              <Label htmlFor="books-branch-filter">Branch</Label>
+              <Select value={branchFilter} onValueChange={onBranchFilterChange}>
+                <SelectTrigger id="books-branch-filter" className="w-full">
+                  <SelectValue placeholder="All branches" />
+                </SelectTrigger>
+                <SelectContent>
+                  {branchFilterOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          ) : null}
+        </div>
+
+        <div className="space-y-2">
+          <p className="text-sm font-medium text-muted-foreground">Filter by</p>
+          <div className="flex flex-wrap items-center gap-2">
+            {activeFilterChips.length > 0 ? (
+              activeFilterChips.map((chip) => (
+                <span
+                  key={chip.key}
+                  className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary"
+                >
+                  {chip.label}
+                  <button
+                    type="button"
+                    onClick={chip.onRemove}
+                    className="rounded-full p-0.5 hover:bg-primary/20"
+                    aria-label={`Remove ${chip.label} filter`}
+                  >
+                    <XIcon className="size-3" />
+                  </button>
+                </span>
+              ))
+            ) : (
+              <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
+                All
+              </span>
+            )}
+          </div>
+        </div>
       </div>
-      <div className="flex flex-wrap gap-3">
-        <Select
-          value={categoryFilter}
-          onValueChange={onCategoryFilterChange}
-        >
-          <SelectTrigger className="w-[160px]">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Categories</SelectItem>
-            {categories.map((category) => (
-              <SelectItem key={category} value={category}>
-                {category}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Select
-          value={authorFilter}
-          onValueChange={onAuthorFilterChange}
-        >
-          <SelectTrigger className="w-[180px]">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Authors</SelectItem>
-            {authors.map((author) => (
-              <SelectItem key={author} value={author}>
-                {author}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Select
-          value={translatorFilter}
-          onValueChange={onTranslatorFilterChange}
-        >
-          <SelectTrigger className="w-[170px]">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Translators</SelectItem>
-            {translators.map((translator) => (
-              <SelectItem key={translator} value={translator}>
-                {translator}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        {showBranchFilter ? (
-          <Select
-            value={branchFilter}
-            onValueChange={onBranchFilterChange}
-          >
-            <SelectTrigger className="w-[220px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Branches (has stock)</SelectItem>
-              {branches.map((branch) => (
-                <SelectItem key={branch} value={branch}>
-                  {branch}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        ) : null}
-      </div>
-    </div>
+
+      <BooksShelfFilterDialog
+        open={isShelfDialogOpen}
+        onOpenChange={setIsShelfDialogOpen}
+        locationOptions={locationOptions}
+        locationValues={locationValues}
+        locationManageError={locationManageError}
+        isManagingLocation={isManagingLocation}
+        onApply={onLocationFilterChange}
+        onAddLocationValue={onAddLocationValue}
+        onUpdateLocationValue={onUpdateLocationValue}
+        onDeleteLocationValue={onDeleteLocationValue}
+        onAddLocationStep={onAddLocationStep}
+        onUpdateLocationStep={onUpdateLocationStep}
+        onDeleteLocationStep={onDeleteLocationStep}
+      />
+    </>
   )
 }

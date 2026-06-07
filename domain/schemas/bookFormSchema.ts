@@ -31,6 +31,7 @@ export const bookFormSchema = z.object({
   initialPrice: optionalNonNegativeNumber,
   finalPrice: optionalNonNegativeNumber,
   coverUrl: optionalImageUrlSchema,
+  locationValues: z.record(z.string(), z.string()).default({}),
 })
 
 export type BookFormInput = z.input<typeof bookFormSchema>

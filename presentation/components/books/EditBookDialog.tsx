@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dialog"
 import { Skeleton } from "@/components/ui/skeleton"
 import type { GetBooksUseCase } from "@/domain/usecases/books/GetBooksUseCase"
+import type { ShelfManagementUseCase } from "@/domain/usecases/shelves/ShelfManagementUseCase"
 import { BookFormFields } from "@/presentation/components/books/BookFormFields"
 import { useEditBookViewModel } from "@/presentation/viewmodels/books/useEditBookViewModel"
 
@@ -38,12 +39,14 @@ type EditBookDialogProps = {
   onOpenChange: (open: boolean) => void
   bookId: string
   getBooksUseCase: GetBooksUseCase
+  shelfManagementUseCase: ShelfManagementUseCase
   onSaved?: () => void
 }
 
 type EditBookDialogContentProps = {
   bookId: string
   getBooksUseCase: GetBooksUseCase
+  shelfManagementUseCase: ShelfManagementUseCase
   onOpenChange: (open: boolean) => void
   onSaved?: () => void
 }
@@ -51,11 +54,23 @@ type EditBookDialogContentProps = {
 function EditBookDialogContent({
   bookId,
   getBooksUseCase,
+  shelfManagementUseCase,
   onOpenChange,
   onSaved,
 }: EditBookDialogContentProps) {
-  const { state, form, save, addLanguage, populateFromBook } =
-    useEditBookViewModel(bookId, getBooksUseCase)
+  const {
+    state,
+    form,
+    save,
+    addLanguage,
+    populateFromBook,
+    addLocationValue,
+    updateLocationValue,
+    deleteLocationValue,
+    addLocationStep,
+    updateLocationStep,
+    deleteLocationStep,
+  } = useEditBookViewModel(bookId, getBooksUseCase, shelfManagementUseCase)
 
   useEffect(() => {
     if (state.isSaved) {
@@ -109,6 +124,15 @@ function EditBookDialogContent({
         onAddLanguage={addLanguage}
         onBookSelect={populateFromBook}
         excludeBookId={bookId}
+        locationOptions={state.locationOptions}
+        locationManageError={state.locationManageError}
+        isManagingLocation={state.isManagingLocation}
+        onAddLocationValue={addLocationValue}
+        onUpdateLocationValue={updateLocationValue}
+        onDeleteLocationValue={deleteLocationValue}
+        onAddLocationStep={addLocationStep}
+        onUpdateLocationStep={updateLocationStep}
+        onDeleteLocationStep={deleteLocationStep}
       >
         <DialogFooter className="mt-4">
           <Button
@@ -134,6 +158,7 @@ export function EditBookDialog({
   onOpenChange,
   bookId,
   getBooksUseCase,
+  shelfManagementUseCase,
   onSaved,
 }: EditBookDialogProps) {
   return (
@@ -153,6 +178,7 @@ export function EditBookDialog({
             key={bookId}
             bookId={bookId}
             getBooksUseCase={getBooksUseCase}
+            shelfManagementUseCase={shelfManagementUseCase}
             onOpenChange={onOpenChange}
             onSaved={onSaved}
           />
