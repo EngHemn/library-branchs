@@ -3,11 +3,31 @@
 import { useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
+import { fakeBranches } from "@/data/fake/fakeBranches"
 import type { Book } from "@/domain/entities/book/Book"
 import type { User } from "@/domain/entities/User"
 import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { GetBooksUseCase } from "@/domain/usecases/books/GetBooksUseCase"
-import type { BookAuthorFilter, BookBranchFilter, BookCategoryFilter, BookFilterState, BookTranslatorFilter, BooksManagementDialog, BooksPageStatus, BooksViewModelState } from "./BooksViewModelState"
+import type { ShelfManagementUseCase } from "@/domain/usecases/shelves/ShelfManagementUseCase"
+import {
+  matchesBookShelfLocationFilter,
+} from "@/lib/bookLocationForm"
+import {
+  getDashboardBranchScope,
+  resolveUserBranchId,
+} from "@/lib/dashboardBranchScope"
+import { useShelfLocationOptionsMutations } from "@/presentation/viewmodels/shelves/useShelfLocationOptionsMutations"
+import type {
+  BookAuthorFilter,
+  BookBranchFilter,
+  BookBranchFilterOption,
+  BookCategoryFilter,
+  BookFilterState,
+  BookTranslatorFilter,
+  BooksManagementDialog,
+  BooksPageStatus,
+  BooksViewModelState,
+} from "./BooksViewModelState"
 
 type BooksViewModel = {
   state: BooksViewModelState
@@ -18,6 +38,18 @@ type BooksViewModel = {
   setAuthorFilter: (authorFilter: BookAuthorFilter) => void
   setTranslatorFilter: (translatorFilter: BookTranslatorFilter) => void
   setBranchFilter: (branchFilter: BookBranchFilter) => void
+  setLocationFilter: (locationValues: Record<string, string>) => void
+  clearFilters: () => void
+  addLocationValue: (stepId: string, value: string) => Promise<void>
+  updateLocationValue: (
+    stepId: string,
+    currentValue: string,
+    value: string
+  ) => Promise<void>
+  deleteLocationValue: (stepId: string, value: string) => Promise<void>
+  addLocationStep: (label: string) => Promise<void>
+  updateLocationStep: (stepId: string, label: string) => Promise<void>
+  deleteLocationStep: (stepId: string) => Promise<void>
   closeDialog: () => void
   deleteBook: (bookId: string) => Promise<void>
 }
@@ -28,13 +60,60 @@ const defaultFilters: BookFilterState = {
   authorFilter: "all",
   translatorFilter: "all",
   branchFilter: "all",
+  locationValues: {},
+}
+
+const allDashboardBranches = fakeBranches.map((branch) => ({
+  id: branch.id,
+  name: branch.branchName,
+}))
+
+function resolveBranchFilterId(
+  branchFilter: BookBranchFilter,
+  userBranchId: string
+): string {
+  return branchFilter === "current" ? userBranchId : branchFilter
+}
+
+function getBranchFilterOptions(user: User): BookBranchFilterOption[] {
+  if (user.branchType === "sub") {
+    return []
+  }
+
+  const userBranchId = resolveUserBranchId(user)
+  const branchScope = getDashboardBranchScope(user, allDashboardBranches)
+
+  const otherBranches = branchScope.branches
+    .filter((branch) => branch.id !== userBranchId)
+    .map((branch) => ({ value: branch.id, label: branch.name }))
+    .sort((left, right) => left.label.localeCompare(right.label))
+
+  return [
+    { value: "all", label: "All Branches" },
+    { value: "current", label: "Current Branch" },
+    ...otherBranches,
+  ]
+}
+
+function matchesBookBranchFilter(
+  book: Book,
+  branchFilter: BookBranchFilter,
+  user: User
+): boolean {
+  if (branchFilter === "all") {
+    return true
+  }
+
+  const userBranchId = resolveUserBranchId(user)
+  const effectiveBranchId = resolveBranchFilterId(branchFilter, userBranchId)
+  return book.branchId === effectiveBranchId
 }
 
 function matchesBookSearch(book: Book, searchQuery: string): boolean {
   const normalizedQuery = searchQuery.trim().toLowerCase()
   if (!normalizedQuery) return true
-  return [book.title, book.isbn].some((value) =>
-    value.toLowerCase().includes(normalizedQuery)
+  return [book.title, book.isbn, book.author, book.category, book.shelfHint].some(
+    (value) => value.toLowerCase().includes(normalizedQuery)
   )
 }
 
@@ -49,11 +128,24 @@ function getUniqueValues(books: Book[], accessor: (book: Book) => string | null)
 
 export function useBooksViewModel(
   authUseCase: AuthUseCase,
-  getBooksUseCase: GetBooksUseCase
+  getBooksUseCase: GetBooksUseCase,
+  shelfManagementUseCase: ShelfManagementUseCase
 ): BooksViewModel {
   const queryClient = useQueryClient()
   const [filters, setFilters] = useState<BookFilterState>(defaultFilters)
   const [dialog, setDialog] = useState<BooksManagementDialog>(null)
+  const locationMutations = useShelfLocationOptionsMutations(
+    shelfManagementUseCase
+  )
+
+  const locationOptionsQuery = useQuery({
+    queryKey: ["shelfLocationOptions"],
+    queryFn: async () => {
+      const result = await shelfManagementUseCase.getLocationOptions()
+      if (!result.success) throw new Error(result.error)
+      return result.data
+    },
+  })
 
   const userQuery = useQuery({
     queryKey: ["currentUser"],
@@ -135,6 +227,54 @@ export function useBooksViewModel(
     setFilters((current) => ({ ...current, branchFilter }))
   }
 
+  function setLocationFilter(locationValues: Record<string, string>): void {
+    setFilters((current) => ({ ...current, locationValues }))
+  }
+
+  async function addLocationValue(stepId: string, value: string): Promise<void> {
+    locationMutations.clearError()
+    await locationMutations.addLocationValue(stepId, value)
+  }
+
+  async function updateLocationValue(
+    stepId: string,
+    currentValue: string,
+    value: string
+  ): Promise<void> {
+    locationMutations.clearError()
+    await locationMutations.updateLocationValue(stepId, currentValue, value)
+  }
+
+  async function deleteLocationValue(
+    stepId: string,
+    value: string
+  ): Promise<void> {
+    locationMutations.clearError()
+    await locationMutations.deleteLocationValue(stepId, value)
+  }
+
+  async function addLocationStep(label: string): Promise<void> {
+    locationMutations.clearError()
+    await locationMutations.addLocationStep(label)
+  }
+
+  async function updateLocationStep(
+    stepId: string,
+    label: string
+  ): Promise<void> {
+    locationMutations.clearError()
+    await locationMutations.updateLocationStep(stepId, label)
+  }
+
+  async function deleteLocationStep(stepId: string): Promise<void> {
+    locationMutations.clearError()
+    await locationMutations.deleteLocationStep(stepId)
+  }
+
+  function clearFilters(): void {
+    setFilters(defaultFilters)
+  }
+
   function closeDialog(): void {
     setDialog(null)
   }
@@ -156,7 +296,8 @@ export function useBooksViewModel(
   const categories = getUniqueValues(books, (book) => book.category)
   const authors = getUniqueValues(books, (book) => book.author)
   const translators = getUniqueValues(books, (book) => book.translator)
-  const branches = getUniqueValues(books, (book) => book.firstAddedBranch)
+  const branchFilterOptions = user ? getBranchFilterOptions(user) : []
+  const locationOptions = locationOptionsQuery.data ?? null
 
   const filteredBooks = books.filter(
     (book) =>
@@ -167,8 +308,14 @@ export function useBooksViewModel(
         book.author === filters.authorFilter) &&
       (filters.translatorFilter === "all" ||
         book.translator === filters.translatorFilter) &&
-      (filters.branchFilter === "all" ||
-        book.firstAddedBranch === filters.branchFilter)
+      (user ? matchesBookBranchFilter(book, filters.branchFilter, user) : true) &&
+      (locationOptions
+        ? matchesBookShelfLocationFilter(
+            book.shelfHint,
+            locationOptions.steps,
+            filters.locationValues
+          )
+        : true)
   )
 
   const showBranchFilter = user?.branchType !== "sub"
@@ -181,7 +328,10 @@ export function useBooksViewModel(
     categories,
     authors,
     translators,
-    branches,
+    branchFilterOptions,
+    locationOptions,
+    locationManageError: locationMutations.error,
+    isManagingLocation: locationMutations.isPending,
     filters,
     showBranchFilter,
     dialog,
@@ -202,6 +352,14 @@ export function useBooksViewModel(
     setAuthorFilter,
     setTranslatorFilter,
     setBranchFilter,
+    setLocationFilter,
+    clearFilters,
+    addLocationValue,
+    updateLocationValue,
+    deleteLocationValue,
+    addLocationStep,
+    updateLocationStep,
+    deleteLocationStep,
     closeDialog,
     deleteBook,
   }

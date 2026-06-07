@@ -24,11 +24,13 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { ImageUpload } from "@/components/ui/image-upload"
 import type { Book } from "@/domain/entities/book/Book"
+import type { ShelfLocationOptions } from "@/domain/entities/shelf/ShelfLocationOptions"
 import type { BookFormValues } from "@/domain/schemas/bookFormSchema"
 import {
   BookingSearchCombobox,
   type BookingComboboxOption,
 } from "@/presentation/components/bookings/BookingSearchCombobox"
+import { BookFormLocationField } from "@/presentation/components/books/BookFormLocationField"
 import { BookTitleSearchCombobox } from "@/presentation/components/books/BookTitleSearchCombobox"
 
 const CREATE_AUTHOR_HREF = "/dashboard/authors/create"
@@ -47,6 +49,19 @@ type BookFormFieldsProps = {
   onAddLanguage: (name: string) => void
   onBookSelect: (bookId: string) => void
   excludeBookId?: string
+  locationOptions: ShelfLocationOptions | null
+  locationManageError: string | null
+  isManagingLocation: boolean
+  onAddLocationValue: (stepId: string, value: string) => Promise<void>
+  onUpdateLocationValue: (
+    stepId: string,
+    currentValue: string,
+    value: string
+  ) => Promise<void>
+  onDeleteLocationValue: (stepId: string, value: string) => Promise<void>
+  onAddLocationStep: (label: string) => Promise<void>
+  onUpdateLocationStep: (stepId: string, label: string) => Promise<void>
+  onDeleteLocationStep: (stepId: string) => Promise<void>
   children: React.ReactNode
 }
 
@@ -156,6 +171,15 @@ export function BookFormFields({
   onAddLanguage,
   onBookSelect,
   excludeBookId,
+  locationOptions,
+  locationManageError,
+  isManagingLocation,
+  onAddLocationValue,
+  onUpdateLocationValue,
+  onDeleteLocationValue,
+  onAddLocationStep,
+  onUpdateLocationStep,
+  onDeleteLocationStep,
   children,
 }: BookFormFieldsProps) {
   const authorOptions = toComboboxOptions(authors)
@@ -427,6 +451,20 @@ export function BookFormFields({
             )}
           />
         </div>
+
+        <BookFormLocationField
+          form={form}
+          locationOptions={locationOptions}
+          disabled={disabled}
+          locationManageError={locationManageError}
+          isManagingLocation={isManagingLocation}
+          onAddLocationValue={onAddLocationValue}
+          onUpdateLocationValue={onUpdateLocationValue}
+          onDeleteLocationValue={onDeleteLocationValue}
+          onAddLocationStep={onAddLocationStep}
+          onUpdateLocationStep={onUpdateLocationStep}
+          onDeleteLocationStep={onDeleteLocationStep}
+        />
 
         <FormField
           control={form.control}

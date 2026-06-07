@@ -4,8 +4,6 @@ import Link from "next/link"
 
 import { getAuthorViewHref } from "@/lib/authorLink"
 import { getBranchViewHref } from "@/lib/branchLink"
-import { getEventEditHref, getEventViewHref } from "@/lib/eventLink"
-import { getGroupEditHref, getGroupViewHref } from "@/lib/groupLink"
 import { getTranslatorViewHref } from "@/lib/translatorLink"
 
 const defaultLinkClassName =
@@ -99,34 +97,6 @@ export function StaffLink({ staffId, name, className }: StaffLinkProps) {
       href={`/dashboard/staff/${staffId}`}
       className={className}
     >
-      {name}
-    </DashboardEntityLink>
-  )
-}
-
-type EventLinkProps = {
-  eventId: string
-  name: string
-  className?: string
-}
-
-export function EventLink({ eventId, name, className }: EventLinkProps) {
-  return (
-    <DashboardEntityLink href={getEventViewHref(eventId)} className={className}>
-      {name}
-    </DashboardEntityLink>
-  )
-}
-
-type GroupLinkProps = {
-  groupId: string
-  name: string
-  className?: string
-}
-
-export function GroupLink({ groupId, name, className }: GroupLinkProps) {
-  return (
-    <DashboardEntityLink href={getGroupViewHref(groupId)} className={className}>
       {name}
     </DashboardEntityLink>
   )
