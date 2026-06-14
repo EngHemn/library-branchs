@@ -28,7 +28,9 @@ import {
 } from "lucide-react"
 
 import type { BranchType } from "@/domain/entities/branch/Branch"
-import { getBranchTypeLabel } from "@/lib/branchTypeLabel"
+import type { LoginType } from "@/domain/entities/LoginType"
+import { getLoginTypeLabel } from "@/lib/loginTypeLabel"
+import type { TranslationKey } from "@/presentation/i18n/messages"
 import { NavMain, type SidebarGroup } from "@/components/nav-main"
 import { NavUser } from "@/components/nav-user"
 import { TeamSwitcher } from "@/components/team-switcher"
@@ -40,9 +42,11 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 import { useLocale } from "@/presentation/i18n/useLocale"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type AppSidebarProps = React.ComponentProps<typeof Sidebar> & {
   branchType?: BranchType
+  loginType?: LoginType
   user?: {
     name: string
     email: string
@@ -57,12 +61,15 @@ const userFallback = {
   avatar: "",
 }
 
-function buildTeams(branchType: BranchType | undefined) {
+function buildTeams(
+  loginType: LoginType | undefined,
+  t: (key: TranslationKey) => string
+) {
   return [
     {
       name: "Liba",
       logo: <GalleryVerticalEndIcon />,
-      plan: getBranchTypeLabel(branchType),
+      plan: getLoginTypeLabel(loginType, t),
     },
   ]
 }
@@ -223,6 +230,7 @@ function buildSidebarGroups(branchType: BranchType | undefined): SidebarGroup[] 
 
 export function AppSidebar({
   branchType,
+  loginType,
   user,
   onLogout,
   side,
@@ -230,7 +238,8 @@ export function AppSidebar({
   ...props
 }: AppSidebarProps) {
   const { isRtl, direction } = useLocale()
-  const teams = React.useMemo(() => buildTeams(branchType), [branchType])
+  const { t } = useTranslation()
+  const teams = React.useMemo(() => buildTeams(loginType, t), [loginType, t])
   const groups = React.useMemo(
     () => buildSidebarGroups(branchType),
     [branchType]

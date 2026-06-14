@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useMutation } from "@tanstack/react-query"
 
-import type { BranchType } from "@/domain/entities/branch/Branch"
+import type { LoginType } from "@/domain/entities/LoginType"
 import type { User } from "@/domain/entities/User"
 import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { Result } from "@/domain/result/Result"
@@ -13,12 +13,12 @@ type LoginViewModel = {
   state: LoginViewModelState
   updateUsername: (value: string) => void
   updatePassword: (value: string) => void
-  updateBranchType: (value: BranchType) => void
+  updateLoginType: (value: LoginType) => void
   submit: () => Promise<void>
   logout: () => Promise<void>
 }
 
-const emptyForm: LoginFormState = { username: "", password: "", branchType: "main" }
+const emptyForm: LoginFormState = { username: "", password: "", loginType: "main" }
 
 export function useLoginViewModel(authUseCase: AuthUseCase): LoginViewModel {
   const [formState, setFormState] = useState<LoginFormState>(emptyForm)
@@ -53,8 +53,8 @@ export function useLoginViewModel(authUseCase: AuthUseCase): LoginViewModel {
     loginMutation.reset()
   }
 
-  function updateBranchType(value: BranchType): void {
-    setFormState((prev) => ({ ...prev, branchType: value }))
+  function updateLoginType(value: LoginType): void {
+    setFormState((prev) => ({ ...prev, loginType: value }))
     loginMutation.reset()
   }
 
@@ -64,7 +64,7 @@ export function useLoginViewModel(authUseCase: AuthUseCase): LoginViewModel {
         {
           username: formState.username,
           password: formState.password,
-          branchType: formState.branchType,
+          loginType: formState.loginType,
         },
         { onSettled: () => resolve() }
       )
@@ -127,5 +127,5 @@ export function useLoginViewModel(authUseCase: AuthUseCase): LoginViewModel {
         : null,
   }
 
-  return { state, updateUsername, updatePassword, updateBranchType, submit, logout }
+  return { state, updateUsername, updatePassword, updateLoginType, submit, logout }
 }

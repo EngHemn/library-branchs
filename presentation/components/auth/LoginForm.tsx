@@ -14,35 +14,35 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Spinner } from "@/components/ui/spinner"
-import type { BranchType } from "@/domain/entities/branch/Branch"
+import type { LoginType } from "@/domain/entities/LoginType"
 import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type LoginFormProps = {
   username: string
   password: string
-  branchType: BranchType
+  loginType: LoginType
   isLoading: boolean
   canLogout: boolean
   onUsernameChange: (value: string) => void
   onPasswordChange: (value: string) => void
-  onBranchTypeChange: (value: BranchType) => void
+  onLoginTypeChange: (value: LoginType) => void
   onSubmit: () => Promise<void>
   onLogout: () => Promise<void>
 }
 
-function isBranchType(value: string): value is BranchType {
-  return value === "main" || value === "sub"
+function isLoginType(value: string): value is LoginType {
+  return value === "main" || value === "main_no_sub" || value === "sub"
 }
 
 export function LoginForm({
   username,
   password,
-  branchType,
+  loginType,
   isLoading,
   canLogout,
   onUsernameChange,
   onPasswordChange,
-  onBranchTypeChange,
+  onLoginTypeChange,
   onSubmit,
   onLogout,
 }: LoginFormProps) {
@@ -63,21 +63,22 @@ export function LoginForm({
     <form onSubmit={handleSubmit}>
       <FieldGroup>
         <Field>
-          <FieldLabel htmlFor="branch-type">{t("auth.branchType")}</FieldLabel>
+          <FieldLabel htmlFor="login-type">{t("auth.loginType")}</FieldLabel>
           <Select
-            value={branchType}
+            value={loginType}
             disabled={isLoading}
             onValueChange={(value) => {
-              if (isBranchType(value)) {
-                onBranchTypeChange(value)
+              if (isLoginType(value)) {
+                onLoginTypeChange(value)
               }
             }}
           >
-            <SelectTrigger id="branch-type" className="w-full">
+            <SelectTrigger id="login-type" className="w-full">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="main">{t("auth.mainBranch")}</SelectItem>
+              <SelectItem value="main_no_sub">{t("auth.mainBranchNoSub")}</SelectItem>
               <SelectItem value="sub">{t("auth.subBranch")}</SelectItem>
             </SelectContent>
           </Select>

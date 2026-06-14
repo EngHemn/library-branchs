@@ -50,13 +50,13 @@ export class AuthFakeDataSource {
 
     const username = credentials.username.trim().toLowerCase()
     const password = credentials.password.trim()
-    const branchType = credentials.branchType === "sub" ? "sub" : "main"
+    const loginType = credentials.loginType
 
     const user = fakeUsers.find(
       (fakeUser) =>
         fakeUser.username.toLowerCase() === username &&
         fakeUser.password === password &&
-        fakeUser.branchType === branchType
+        fakeUser.loginType === loginType
     )
 
     if (!user) {
@@ -69,7 +69,7 @@ export class AuthFakeDataSource {
       return {
         success: false,
         error: accountExists
-          ? "Invalid credentials for the selected branch type"
+          ? "Invalid credentials for the selected login type"
           : "Invalid username or password",
       }
     }
@@ -80,6 +80,7 @@ export class AuthFakeDataSource {
       fullName: user.fullName,
       role: user.role,
       branchType: user.branchType,
+      loginType: user.loginType,
       branchId: user.branchId,
     }
 

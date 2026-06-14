@@ -76,12 +76,12 @@ export function LoginScreen({ authUseCase }: LoginScreenProps) {
               <LoginForm
                 username={viewModel.state.username}
                 password={viewModel.state.password}
-                branchType={viewModel.state.branchType}
+                loginType={viewModel.state.loginType}
                 isLoading={viewModel.state.isLoading}
                 canLogout={viewModel.state.user !== null}
                 onUsernameChange={viewModel.updateUsername}
                 onPasswordChange={viewModel.updatePassword}
-                onBranchTypeChange={viewModel.updateBranchType}
+                onLoginTypeChange={viewModel.updateLoginType}
                 onSubmit={viewModel.submit}
                 onLogout={viewModel.logout}
               />
