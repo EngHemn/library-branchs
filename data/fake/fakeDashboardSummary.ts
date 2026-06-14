@@ -553,32 +553,32 @@ export const fakeDashboardSummary: DashboardSummary = {
   ],
 
   bookingsByStatus: [
-    { label: "Borrowed", value: 312, color: "var(--chart-1)" },
-    { label: "Reserved", value: 184, color: "var(--chart-2)" },
-    { label: "Returned", value: 267, color: "var(--chart-3)" },
-    { label: "Overdue", value: 48, color: "var(--chart-4)" },
-    { label: "Cancelled", value: 81, color: "var(--chart-5)" },
+    { key: "borrowed", label: "Borrowed", value: 312, color: "var(--chart-1)" },
+    { key: "reserved", label: "Reserved", value: 184, color: "var(--chart-2)" },
+    { key: "returned", label: "Returned", value: 267, color: "var(--chart-3)" },
+    { key: "overdue", label: "Overdue", value: 48, color: "var(--chart-4)" },
+    { key: "cancelled", label: "Cancelled", value: 81, color: "var(--chart-5)" },
   ],
 
   bookingsByType: [
-    { label: "Outside", value: 568, color: "var(--chart-1)" },
-    { label: "Inside", value: 324, color: "var(--chart-2)" },
+    { key: "outside", label: "Outside", value: 568, color: "var(--chart-1)" },
+    { key: "inside", label: "Inside", value: 324, color: "var(--chart-2)" },
   ],
 
   booksByStatus: [
-    { label: "Available", value: 8640, color: "var(--chart-1)" },
-    { label: "Borrowed", value: 3920, color: "var(--chart-2)" },
-    { label: "Reserved", value: 1140, color: "var(--chart-3)" },
-    { label: "Unavailable", value: 682, color: "var(--chart-4)" },
+    { key: "available", label: "Available", value: 8640, color: "var(--chart-1)" },
+    { key: "borrowed", label: "Borrowed", value: 3920, color: "var(--chart-2)" },
+    { key: "reserved", label: "Reserved", value: 1140, color: "var(--chart-3)" },
+    { key: "unavailable", label: "Unavailable", value: 682, color: "var(--chart-4)" },
   ],
 
   booksByCategory: [
-    { label: "Software Eng.", value: 2140, color: "var(--chart-1)" },
-    { label: "Self-Dev.", value: 1830, color: "var(--chart-2)" },
-    { label: "Business", value: 1620, color: "var(--chart-3)" },
-    { label: "History", value: 1390, color: "var(--chart-4)" },
-    { label: "Psychology", value: 1210, color: "var(--chart-5)" },
-    { label: "Other", value: 4192, color: "var(--primary)" },
+    { key: "softwareEng", label: "Software Eng.", value: 2140, color: "var(--chart-1)" },
+    { key: "selfDev", label: "Self-Dev.", value: 1830, color: "var(--chart-2)" },
+    { key: "business", label: "Business", value: 1620, color: "var(--chart-3)" },
+    { key: "history", label: "History", value: 1390, color: "var(--chart-4)" },
+    { key: "psychology", label: "Psychology", value: 1210, color: "var(--chart-5)" },
+    { key: "other", label: "Other", value: 4192, color: "var(--primary)" },
   ],
 
   salesTrend: [
@@ -592,20 +592,20 @@ export const fakeDashboardSummary: DashboardSummary = {
   ],
 
   staffByRole: [
-    { label: "Librarian", value: 42, color: "var(--chart-1)" },
-    { label: "Manager", value: 14, color: "var(--chart-2)" },
-    { label: "Assistant", value: 28, color: "var(--chart-3)" },
-    { label: "Clerk", value: 19, color: "var(--chart-4)" },
-    { label: "Security", value: 8, color: "var(--chart-5)" },
+    { key: "librarian", label: "Librarian", value: 42, color: "var(--chart-1)" },
+    { key: "manager", label: "Manager", value: 14, color: "var(--chart-2)" },
+    { key: "assistant", label: "Assistant", value: 28, color: "var(--chart-3)" },
+    { key: "clerk", label: "Clerk", value: 19, color: "var(--chart-4)" },
+    { key: "security", label: "Security", value: 8, color: "var(--chart-5)" },
   ],
 
   staffByBranch: [
-    { label: "Central", value: 38, color: "var(--chart-1)" },
-    { label: "West End", value: 25, color: "var(--chart-2)" },
-    { label: "Brookline", value: 21, color: "var(--chart-3)" },
-    { label: "Northside", value: 14, color: "var(--chart-4)" },
-    { label: "South Garden", value: 8, color: "var(--chart-5)" },
-    { label: "Other", value: 5, color: "var(--primary)" },
+    { key: "central", label: "Central", value: 38, color: "var(--chart-1)" },
+    { key: "westEnd", label: "West End", value: 25, color: "var(--chart-2)" },
+    { key: "brookline", label: "Brookline", value: 21, color: "var(--chart-3)" },
+    { key: "northside", label: "Northside", value: 14, color: "var(--chart-4)" },
+    { key: "southGarden", label: "South Garden", value: 8, color: "var(--chart-5)" },
+    { key: "other", label: "Other", value: 5, color: "var(--primary)" },
   ],
 
   stockAlerts: 23,

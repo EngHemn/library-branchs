@@ -106,6 +106,7 @@ export type DashboardActivity = {
 }
 
 export type DashboardChartBar = {
+  key?: string
   label: string
   value: number
   color: string
