@@ -30,6 +30,7 @@ import { BookingsTable } from "@/presentation/components/bookings/BookingsTable"
 import { CreateBookingDialog } from "@/presentation/components/bookings/CreateBookingDialog"
 import { EditBookingDialog } from "@/presentation/components/bookings/EditBookingDialog"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import { useBookingsViewModel } from "@/presentation/viewmodels/bookings/useBookingsViewModel"
 
 type BookingsScreenProps = {
@@ -59,6 +60,7 @@ export function BookingsScreen({
   authUseCase,
   bookingManagementUseCase,
 }: BookingsScreenProps) {
+  const { t } = useTranslation()
   const viewModel = useBookingsViewModel(authUseCase, bookingManagementUseCase)
   const { state } = viewModel
   const [deleteBooking, setDeleteBooking] = useState<Booking | null>(null)
@@ -67,8 +69,8 @@ export function BookingsScreen({
   const [createBookingOpen, setCreateBookingOpen] = useState(false)
 
   useDashboardBreadcrumbs([
-    { label: "Workspace", href: "/dashboard" },
-    { label: "Bookings" },
+    { label: t("breadcrumbs.workspace"), href: "/dashboard" },
+    { label: t("nav.bookings") },
   ])
 
   const handleConfirmDelete = () => {
@@ -95,13 +97,13 @@ export function BookingsScreen({
         <div className="flex flex-1 items-center justify-center p-4">
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
-              <CardTitle>Bookings unavailable</CardTitle>
+              <CardTitle>{t("bookings.unavailable")}</CardTitle>
               <CardDescription>{state.error}</CardDescription>
             </CardHeader>
             <CardContent>
               <Button onClick={() => void viewModel.reload()}>
                 <RefreshCwIcon />
-                Retry
+                {t("common.retry")}
               </Button>
             </CardContent>
           </Card>
@@ -113,14 +115,16 @@ export function BookingsScreen({
           <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
             <section className="flex flex-col gap-3 pt-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <h1 className="text-2xl font-bold tracking-normal">Bookings</h1>
+                <h1 className="text-2xl font-bold tracking-normal">
+                  {t("bookings.title")}
+                </h1>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Track reservations, borrows, returns and overdue books.
+                  {t("bookings.subtitle")}
                 </p>
               </div>
               <Button onClick={() => setCreateBookingOpen(true)}>
                 <PlusIcon />
-                Create Booking
+                {t("bookings.dialog.createButton")}
               </Button>
             </section>
 
@@ -169,24 +173,24 @@ export function BookingsScreen({
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Cancel Booking</DialogTitle>
+            <DialogTitle>{t("bookings.cancelDialog.title")}</DialogTitle>
             <DialogDescription>
-              Are you sure you want to cancel booking &ldquo;
-              {cancelBooking?.bookingId}&rdquo; for &ldquo;
-              {cancelBooking?.bookTitle}&rdquo;? The booking status will be set
-              to cancelled.
+              {t("bookings.cancelDialog.description", {
+                bookingId: cancelBooking?.bookingId ?? "",
+                bookTitle: cancelBooking?.bookTitle ?? "",
+              })}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setCancelBooking(null)}>
-              Keep Booking
+              {t("bookings.cancelDialog.keepBooking")}
             </Button>
             <Button
               variant="destructive"
               onClick={handleConfirmCancel}
               disabled={state.isActionPending}
             >
-              Cancel Booking
+              {t("bookings.cancelDialog.confirm")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -200,23 +204,24 @@ export function BookingsScreen({
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete Booking</DialogTitle>
+            <DialogTitle>{t("bookings.deleteDialog.title")}</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete booking &ldquo;
-              {deleteBooking?.bookingId}&rdquo; for &ldquo;
-              {deleteBooking?.bookTitle}&rdquo;? This action cannot be undone.
+              {t("bookings.deleteDialog.description", {
+                bookingId: deleteBooking?.bookingId ?? "",
+                bookTitle: deleteBooking?.bookTitle ?? "",
+              })}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeleteBooking(null)}>
-              Cancel
+              {t("common.cancel")}
             </Button>
             <Button
               variant="destructive"
               onClick={handleConfirmDelete}
               disabled={state.isActionPending}
             >
-              Delete
+              {t("common.delete")}
             </Button>
           </DialogFooter>
         </DialogContent>

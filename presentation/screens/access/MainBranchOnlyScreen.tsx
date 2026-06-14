@@ -12,11 +12,14 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 export function MainBranchOnlyScreen() {
+  const { t } = useTranslation()
+
   useDashboardBreadcrumbs([
-    { label: "Workspace", href: "/dashboard" },
-    { label: "Access restricted" },
+    { label: t("breadcrumbs.workspace"), href: "/dashboard" },
+    { label: t("access.restricted") },
   ])
 
   return (
@@ -26,17 +29,16 @@ export function MainBranchOnlyScreen() {
           <div className="mb-2 flex size-10 items-center justify-center rounded-lg bg-muted">
             <Building2Icon className="size-5 text-muted-foreground" />
           </div>
-          <CardTitle>Main branch only</CardTitle>
+          <CardTitle>{t("access.mainBranchOnlyTitle")}</CardTitle>
           <CardDescription>
-            This page is only available to main branch users. Sub branches do not
-            have permission to access branch management.
+            {t("access.mainBranchOnlyDescription")}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Button asChild>
             <Link href="/dashboard">
               <ArrowLeftIcon />
-              Back to dashboard
+              {t("access.goBack")}
             </Link>
           </Button>
         </CardContent>

@@ -15,8 +15,8 @@ type NeedDetailViewModel = {
   openRejectDialog: () => void
   closeRejectDialog: () => void
   setRejectReason: (value: string) => void
-  approveNeed: () => Promise<void>
-  confirmRejectNeed: () => Promise<void>
+  approveNeed: () => Promise<boolean>
+  confirmRejectNeed: () => Promise<boolean>
   reload: () => Promise<void>
 }
 
@@ -118,11 +118,21 @@ export function useNeedDetailViewModel(
       setRejectError(null)
     },
     setRejectReason,
-    approveNeed: async () => {
-      await approveMutation.mutateAsync().catch(() => undefined)
+    approveNeed: async (): Promise<boolean> => {
+      try {
+        await approveMutation.mutateAsync()
+        return true
+      } catch {
+        return false
+      }
     },
-    confirmRejectNeed: async () => {
-      await rejectMutation.mutateAsync(rejectReason).catch(() => undefined)
+    confirmRejectNeed: async (): Promise<boolean> => {
+      try {
+        await rejectMutation.mutateAsync(rejectReason)
+        return true
+      } catch {
+        return false
+      }
     },
     reload: async () => {
       await needQuery.refetch()

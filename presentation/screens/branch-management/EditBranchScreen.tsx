@@ -21,6 +21,7 @@ import type { BranchManagementUseCase } from "@/domain/usecases/branch/BranchMan
 import { LocationPicker } from "@/presentation/components/branch-management/LocationPicker"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
 import { useFormSubmitSuccess } from "@/presentation/hooks/useFormSubmitSuccess"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import { useEditBranchViewModel } from "@/presentation/viewmodels/branch-management/useEditBranchViewModel"
 
 type EditBranchScreenProps = {
@@ -55,19 +56,20 @@ function LoadingState() {
 
 export function EditBranchScreen({ branchId, branchManagementUseCase }: EditBranchScreenProps) {
   const router = useRouter()
+  const { t } = useTranslation()
   const viewModel = useEditBranchViewModel(branchId, branchManagementUseCase)
   const { state } = viewModel
   const [showPassword, setShowPassword] = useState(false)
 
   useDashboardBreadcrumbs([
-    { label: "Workspace", href: "/dashboard" },
-    { label: "Branch Management", href: "/dashboard/branches" },
-    { label: "Edit Branch" },
+    { label: t("breadcrumbs.workspace"), href: "/dashboard" },
+    { label: t("nav.branches"), href: "/dashboard/branches" },
+    { label: t("branches.edit.breadcrumb") },
   ])
 
   const goBack = () => router.push("/dashboard/branches")
 
-  useFormSubmitSuccess(state.isSaved, "Branch updated successfully.")
+  useFormSubmitSuccess(state.isSaved, t("branches.edit.updateSuccess"))
 
   return (
     <>
@@ -77,15 +79,15 @@ export function EditBranchScreen({ branchId, branchManagementUseCase }: EditBran
         <div className="flex flex-1 items-center justify-center p-4">
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
-              <CardTitle>Branch not found</CardTitle>
+              <CardTitle>{t("branches.edit.notFoundTitle")}</CardTitle>
               <CardDescription>
-                The branch you are looking for does not exist or has been removed.
+                {t("branches.edit.notFoundDescription")}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Button variant="outline" onClick={goBack}>
                 <ArrowLeftIcon />
-                Back to branches
+                {t("branches.edit.backToBranches")}
               </Button>
             </CardContent>
           </Card>
@@ -96,13 +98,13 @@ export function EditBranchScreen({ branchId, branchManagementUseCase }: EditBran
         <div className="flex flex-1 items-center justify-center p-4">
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
-              <CardTitle>Something went wrong</CardTitle>
+              <CardTitle>{t("common.somethingWentWrong")}</CardTitle>
               <CardDescription>{state.error}</CardDescription>
             </CardHeader>
             <CardContent>
               <Button variant="outline" onClick={goBack}>
                 <ArrowLeftIcon />
-                Back to branches
+                {t("branches.edit.backToBranches")}
               </Button>
             </CardContent>
           </Card>
@@ -113,15 +115,14 @@ export function EditBranchScreen({ branchId, branchManagementUseCase }: EditBran
         <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
           <section className="flex items-center justify-between pt-4">
             <div>
-              <h1 className="text-2xl font-semibold tracking-normal">Edit Branch</h1>
+              <h1 className="text-2xl font-semibold tracking-normal">{t("branches.edit.title")}</h1>
               <p className="mt-1 text-sm text-muted-foreground">
-                Update the details for{" "}
-                <span className="font-medium text-foreground">{state.branch.branchName}</span>
+                {t("branches.edit.subtitle", { name: state.branch.branchName })}
               </p>
             </div>
             <Button variant="outline" onClick={goBack}>
               <ArrowLeftIcon />
-              Back
+              {t("common.back")}
             </Button>
           </section>
 
@@ -135,8 +136,8 @@ export function EditBranchScreen({ branchId, branchManagementUseCase }: EditBran
 
           <Card className="rounded-lg">
             <CardHeader>
-              <CardTitle>Branch Details</CardTitle>
-              <CardDescription>Update sub branch information.</CardDescription>
+              <CardTitle>{t("branches.edit.detailsTitle")}</CardTitle>
+              <CardDescription>{t("branches.edit.detailsDescription")}</CardDescription>
             </CardHeader>
             <CardContent>
               <form
@@ -148,7 +149,7 @@ export function EditBranchScreen({ branchId, branchManagementUseCase }: EditBran
               >
                 <div className="grid gap-6 sm:grid-cols-2">
                   <div className="space-y-2">
-                    <Label htmlFor="branchName">Branch Name</Label>
+                    <Label htmlFor="branchName">{t("branches.create.fields.branchName")}</Label>
                     <Input
                       id="branchName"
                       value={state.form.branchName}
@@ -161,7 +162,7 @@ export function EditBranchScreen({ branchId, branchManagementUseCase }: EditBran
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
+                    <Label htmlFor="email">{t("branches.create.fields.email")}</Label>
                     <Input
                       id="email"
                       type="email"
@@ -175,7 +176,7 @@ export function EditBranchScreen({ branchId, branchManagementUseCase }: EditBran
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="adminName">Admin Name</Label>
+                    <Label htmlFor="adminName">{t("branches.create.fields.adminName")}</Label>
                     <Input
                       id="adminName"
                       value={state.form.adminName}
@@ -188,7 +189,7 @@ export function EditBranchScreen({ branchId, branchManagementUseCase }: EditBran
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="phone">Phone</Label>
+                    <Label htmlFor="phone">{t("branches.create.fields.phone")}</Label>
                     <Input
                       id="phone"
                       value={state.form.phone}
@@ -202,15 +203,15 @@ export function EditBranchScreen({ branchId, branchManagementUseCase }: EditBran
 
                   <div className="space-y-2">
                     <Label htmlFor="password">
-                      Password{" "}
-                      <span className="text-xs font-normal text-muted-foreground">(leave empty to keep current)</span>
+                      {t("branches.create.fields.password")}{" "}
+                      <span className="text-xs font-normal text-muted-foreground">{t("branches.edit.passwordHint")}</span>
                     </Label>
                     <div className="flex gap-2">
                       <div className="relative flex-1">
                         <Input
                           id="password"
                           type={showPassword ? "text" : "password"}
-                          placeholder="New password (optional)"
+                          placeholder={t("branches.edit.passwordPlaceholder")}
                           value={state.form.password}
                           onChange={(e) => viewModel.setField("password", e.target.value)}
                           disabled={state.isSaving}
@@ -231,7 +232,7 @@ export function EditBranchScreen({ branchId, branchManagementUseCase }: EditBran
                         size="icon"
                         onClick={viewModel.autoGeneratePassword}
                         disabled={state.isSaving}
-                        title="Auto-generate password"
+                        title={t("branches.approveDialog.autoGeneratePassword")}
                       >
                         <RefreshCwIcon className="h-4 w-4" />
                       </Button>
@@ -242,7 +243,7 @@ export function EditBranchScreen({ branchId, branchManagementUseCase }: EditBran
                   </div>
 
                   <div className="space-y-2 sm:col-span-2">
-                    <Label htmlFor="address">Address</Label>
+                    <Label htmlFor="address">{t("branches.create.fields.address")}</Label>
                     <Input
                       id="address"
                       value={state.form.address}
@@ -265,8 +266,8 @@ export function EditBranchScreen({ branchId, branchManagementUseCase }: EditBran
 
                   <div className="sm:col-span-2">
                     <ImageUpload
-                      label="Branch image"
-                      previewAlt="Branch image preview"
+                      label={t("branches.edit.branchImage")}
+                      previewAlt={t("branches.edit.branchImagePreview")}
                       value={state.form.imageUrl}
                       onChange={(url) => viewModel.setField("imageUrl", url)}
                       disabled={state.isSaving}
@@ -278,11 +279,11 @@ export function EditBranchScreen({ branchId, branchManagementUseCase }: EditBran
 
                 <div className="flex justify-end gap-3">
                   <Button type="button" variant="outline" onClick={goBack} disabled={state.isSaving}>
-                    Cancel
+                    {t("common.cancel")}
                   </Button>
                   <Button type="submit" disabled={state.isSaving}>
                     {state.isSaving ? <Loader2Icon className="animate-spin" /> : <SaveIcon />}
-                    {state.isSaving ? "Saving..." : "Save Changes"}
+                    {state.isSaving ? t("branches.edit.saving") : t("common.saveChanges")}
                   </Button>
                 </div>
               </form>

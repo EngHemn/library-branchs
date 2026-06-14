@@ -48,6 +48,7 @@ import { BranchStatsCards } from "@/presentation/components/branch-management/Br
 import { BranchesTable } from "@/presentation/components/branch-management/BranchesTable"
 import { SubBranchRequestsTable } from "@/presentation/components/branch-management/SubBranchRequestsTable"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import { useBranchManagementViewModel } from "@/presentation/viewmodels/branch-management/useBranchManagementViewModel"
 
 type BranchManagementPageProps = {
@@ -85,6 +86,7 @@ export function BranchManagementPage({
   branchManagementUseCase,
 }: BranchManagementPageProps) {
   const router = useRouter()
+  const { t } = useTranslation()
   const viewModel = useBranchManagementViewModel(authUseCase, branchManagementUseCase)
   const { state } = viewModel
   const [pendingRequestAction, setPendingRequestAction] =
@@ -106,8 +108,8 @@ export function BranchManagementPage({
   }, [router, state.isUnauthenticated])
 
   useDashboardBreadcrumbs([
-    { label: "Workspace", href: "/dashboard" },
-    { label: "Branch Management" },
+    { label: t("breadcrumbs.workspace"), href: "/dashboard" },
+    { label: t("nav.branches") },
   ])
 
   const user = state.user
@@ -199,13 +201,13 @@ export function BranchManagementPage({
         <div className="flex flex-1 items-center justify-center p-4">
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
-              <CardTitle>Branch management unavailable</CardTitle>
+              <CardTitle>{t("branches.unavailable")}</CardTitle>
               <CardDescription>{state.error}</CardDescription>
             </CardHeader>
             <CardContent>
               <Button onClick={viewModel.reload}>
                 <RefreshCwIcon />
-                Retry
+                {t("common.retry")}
               </Button>
             </CardContent>
           </Card>
@@ -218,22 +220,22 @@ export function BranchManagementPage({
             <section className="flex items-center justify-between pt-4">
               <div>
                 <h1 className="text-2xl font-semibold tracking-normal">
-                  Branch Management
+                  {t("branches.title")}
                 </h1>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Manage branches and sub-branch requests.
+                  {t("branches.subtitle")}
                 </p>
               </div>
               <Button onClick={() => router.push("/dashboard/branches/create")}>
                 <PlusIcon />
-                Create Branch
+                {t("branches.createBranch")}
               </Button>
             </section>
 
             <Tabs defaultValue="branches" className="gap-4">
               <TabsList className="grid w-full grid-cols-2 sm:w-fit">
-                <TabsTrigger value="branches">Branches</TabsTrigger>
-                <TabsTrigger value="sub-requests">Sub Branch Requests</TabsTrigger>
+                <TabsTrigger value="branches">{t("branches.tabs.branches")}</TabsTrigger>
+                <TabsTrigger value="sub-requests">{t("branches.tabs.subRequests")}</TabsTrigger>
               </TabsList>
 
               <TabsContent value="branches" className="space-y-4">
@@ -325,18 +327,19 @@ export function BranchManagementPage({
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete Branch</DialogTitle>
+            <DialogTitle>{t("branches.deleteDialog.title")}</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete &ldquo;{pendingDeleteBranch?.branchName}
-              &rdquo;? This removes the branch from the workspace and cannot be undone.
+              {t("branches.deleteDialog.description", {
+                name: pendingDeleteBranch?.branchName ?? "",
+              })}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setPendingDeleteBranch(null)}>
-              Cancel
+              {t("common.cancel")}
             </Button>
             <Button variant="destructive" onClick={handleConfirmDeleteBranch}>
-              Delete
+              {t("common.delete")}
             </Button>
           </DialogFooter>
         </DialogContent>

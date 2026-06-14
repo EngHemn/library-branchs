@@ -29,6 +29,7 @@ import type { BranchManagementUseCase } from "@/domain/usecases/branch/BranchMan
 import type { StaffManagementUseCase } from "@/domain/usecases/staff/StaffManagementUseCase"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
 import { useFormSubmitSuccess } from "@/presentation/hooks/useFormSubmitSuccess"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import { useEditStaffViewModel } from "@/presentation/viewmodels/staff-management/useEditStaffViewModel"
 
 type EditStaffScreenProps = {
@@ -70,6 +71,7 @@ export function EditStaffScreen({
   branchManagementUseCase,
 }: EditStaffScreenProps) {
   const router = useRouter()
+  const { t } = useTranslation()
   const viewModel = useEditStaffViewModel(
     staffId,
     authUseCase,
@@ -80,14 +82,14 @@ export function EditStaffScreen({
   const [showPassword, setShowPassword] = useState(false)
 
   useDashboardBreadcrumbs([
-    { label: "Workspace", href: "/dashboard" },
-    { label: "Staff Management", href: "/dashboard/staff" },
-    { label: "Edit Staff" },
+    { label: t("breadcrumbs.workspace"), href: "/dashboard" },
+    { label: t("nav.staff"), href: "/dashboard/staff" },
+    { label: t("staff.edit.breadcrumb") },
   ])
 
   const goBack = () => router.push("/dashboard/staff")
 
-  useFormSubmitSuccess(state.isSaved, "Staff member updated successfully.")
+  useFormSubmitSuccess(state.isSaved, t("staff.edit.updateSuccess"))
 
   return (
     <>
@@ -97,15 +99,15 @@ export function EditStaffScreen({
         <div className="flex flex-1 items-center justify-center p-4">
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
-              <CardTitle>Staff member not found</CardTitle>
+              <CardTitle>{t("staff.notFoundTitle")}</CardTitle>
               <CardDescription>
-                The staff member you are looking for does not exist or has been removed.
+                {t("staff.notFoundDescription")}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Button variant="outline" onClick={goBack}>
                 <ArrowLeftIcon />
-                Back to staff
+                {t("staff.backToStaff")}
               </Button>
             </CardContent>
           </Card>
@@ -116,13 +118,13 @@ export function EditStaffScreen({
         <div className="flex flex-1 items-center justify-center p-4">
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
-              <CardTitle>Something went wrong</CardTitle>
+              <CardTitle>{t("common.somethingWentWrong")}</CardTitle>
               <CardDescription>{state.error}</CardDescription>
             </CardHeader>
             <CardContent>
               <Button variant="outline" onClick={goBack}>
                 <ArrowLeftIcon />
-                Back to staff
+                {t("staff.backToStaff")}
               </Button>
             </CardContent>
           </Card>
@@ -133,15 +135,14 @@ export function EditStaffScreen({
         <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
           <section className="flex items-center justify-between pt-4">
             <div>
-              <h1 className="text-2xl font-semibold tracking-normal">Edit Staff</h1>
+              <h1 className="text-2xl font-semibold tracking-normal">{t("staff.edit.title")}</h1>
               <p className="mt-1 text-sm text-muted-foreground">
-                Update the details for{" "}
-                <span className="font-medium text-foreground">{state.staffMember.staffName}</span>
+                {t("staff.edit.subtitle", { name: state.staffMember.staffName })}
               </p>
             </div>
             <Button variant="outline" onClick={goBack}>
               <ArrowLeftIcon />
-              Back
+              {t("common.back")}
             </Button>
           </section>
 
@@ -155,8 +156,8 @@ export function EditStaffScreen({
 
           <Card className="rounded-lg">
             <CardHeader>
-              <CardTitle>Staff Details</CardTitle>
-              <CardDescription>Update the information for this staff member.</CardDescription>
+              <CardTitle>{t("staff.create.detailsTitle")}</CardTitle>
+              <CardDescription>{t("staff.edit.detailsDescription")}</CardDescription>
             </CardHeader>
             <CardContent>
               <form
@@ -168,7 +169,7 @@ export function EditStaffScreen({
               >
                 <div className="grid gap-6 sm:grid-cols-2">
                   <div className="space-y-2">
-                    <Label htmlFor="staffName">Full Name</Label>
+                    <Label htmlFor="staffName">{t("staff.fields.fullName")}</Label>
                     <Input
                       id="staffName"
                       value={state.form.staffName}
@@ -181,19 +182,19 @@ export function EditStaffScreen({
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="role">Role</Label>
+                    <Label htmlFor="role">{t("staff.fields.role")}</Label>
                     <Select
                       value={state.form.role}
                       onValueChange={(value) => viewModel.setField("role", value)}
                       disabled={state.isSaving}
                     >
                       <SelectTrigger id="role">
-                        <SelectValue placeholder="Select role" />
+                        <SelectValue placeholder={t("staff.placeholders.selectRole")} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="branch_admin">Branch Admin</SelectItem>
-                        <SelectItem value="sub_branch_admin">Sub-Branch Admin</SelectItem>
-                        <SelectItem value="staff">Staff</SelectItem>
+                        <SelectItem value="branch_admin">{t("staff.roles.branchAdmin")}</SelectItem>
+                        <SelectItem value="sub_branch_admin">{t("staff.roles.subBranchAdmin")}</SelectItem>
+                        <SelectItem value="staff">{t("staff.roles.staff")}</SelectItem>
                       </SelectContent>
                     </Select>
                     {state.fieldErrors.role ? (
@@ -202,7 +203,7 @@ export function EditStaffScreen({
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
+                    <Label htmlFor="email">{t("staff.fields.email")}</Label>
                     <Input
                       id="email"
                       type="email"
@@ -216,7 +217,7 @@ export function EditStaffScreen({
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="phone">Phone</Label>
+                    <Label htmlFor="phone">{t("staff.fields.phone")}</Label>
                     <Input
                       id="phone"
                       value={state.form.phone}
@@ -230,14 +231,14 @@ export function EditStaffScreen({
 
                   {state.showBranchField ? (
                     <div className="space-y-2 sm:col-span-2">
-                      <Label htmlFor="branch">Branch</Label>
+                      <Label htmlFor="branch">{t("staff.fields.branch")}</Label>
                       <Select
                         value={state.form.branchId}
                         onValueChange={(value) => viewModel.setField("branchId", value)}
                         disabled={state.isSaving}
                       >
                         <SelectTrigger id="branch">
-                          <SelectValue placeholder="Select a branch" />
+                          <SelectValue placeholder={t("staff.placeholders.selectBranch")} />
                         </SelectTrigger>
                         <SelectContent>
                           {state.branches.map((branch) => (
@@ -255,8 +256,8 @@ export function EditStaffScreen({
 
                   <div className="space-y-2 sm:col-span-2">
                     <ImageUpload
-                      label="Profile photo"
-                      previewAlt="Staff profile photo preview"
+                      label={t("staff.fields.profilePhoto")}
+                      previewAlt={t("staff.fields.profilePhotoPreview")}
                       value={state.form.imageUrl}
                       onChange={(url) => viewModel.setField("imageUrl", url)}
                       disabled={state.isSaving}
@@ -265,15 +266,17 @@ export function EditStaffScreen({
 
                   <div className="space-y-2 sm:col-span-2">
                     <Label htmlFor="password">
-                      Password{" "}
-                      <span className="text-xs font-normal text-muted-foreground">(leave empty to keep current)</span>
+                      {t("staff.fields.password")}{" "}
+                      <span className="text-xs font-normal text-muted-foreground">
+                        {t("staff.edit.passwordHint")}
+                      </span>
                     </Label>
                     <div className="flex gap-2">
                       <div className="relative flex-1">
                         <Input
                           id="password"
                           type={showPassword ? "text" : "password"}
-                          placeholder="New password (optional)"
+                          placeholder={t("staff.edit.passwordPlaceholder")}
                           value={state.form.password}
                           onChange={(e) => viewModel.setField("password", e.target.value)}
                           disabled={state.isSaving}
@@ -294,7 +297,7 @@ export function EditStaffScreen({
                         size="icon"
                         onClick={viewModel.autoGeneratePassword}
                         disabled={state.isSaving}
-                        title="Auto-generate password"
+                        title={t("staff.create.autoGeneratePassword")}
                       >
                         <RefreshCwIcon className="h-4 w-4" />
                       </Button>
@@ -309,11 +312,11 @@ export function EditStaffScreen({
 
                 <div className="flex justify-end gap-3">
                   <Button type="button" variant="outline" onClick={goBack} disabled={state.isSaving}>
-                    Cancel
+                    {t("common.cancel")}
                   </Button>
                   <Button type="submit" disabled={state.isSaving}>
                     {state.isSaving ? <Loader2Icon className="animate-spin" /> : <SaveIcon />}
-                    {state.isSaving ? "Saving..." : "Save Changes"}
+                    {state.isSaving ? t("common.saving") : t("common.saveChanges")}
                   </Button>
                 </div>
               </form>

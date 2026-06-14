@@ -31,6 +31,7 @@ import { BooksTab } from "@/presentation/components/branch-detail/BooksTab"
 import { TranslatorsTab } from "@/presentation/components/branch-detail/TranslatorsTab"
 import { StaffDetailsTab } from "@/presentation/components/staff-management/StaffDetailsTab"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import { useViewStaffViewModel } from "@/presentation/viewmodels/staff-management/useViewStaffViewModel"
 
 type ViewStaffScreenProps = {
@@ -80,13 +81,14 @@ function LoadingState() {
 
 export function ViewStaffScreen({ staffId, staffManagementUseCase, branchDetailUseCase }: ViewStaffScreenProps) {
   const router = useRouter()
+  const { t } = useTranslation()
   const viewModel = useViewStaffViewModel(staffId, staffManagementUseCase, branchDetailUseCase)
   const { state } = viewModel
 
   useDashboardBreadcrumbs([
-    { label: "Workspace", href: "/dashboard" },
-    { label: "Staff Management", href: "/dashboard/staff" },
-    { label: state.staffMember?.staffName ?? "Staff Details" },
+    { label: t("breadcrumbs.workspace"), href: "/dashboard" },
+    { label: t("nav.staff"), href: "/dashboard/staff" },
+    { label: state.staffMember?.staffName ?? t("staff.view.breadcrumbFallback") },
   ])
 
   const goBack = () => router.back()
@@ -99,15 +101,15 @@ export function ViewStaffScreen({ staffId, staffManagementUseCase, branchDetailU
         <div className="flex flex-1 items-center justify-center p-4">
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
-              <CardTitle>Staff member not found</CardTitle>
+              <CardTitle>{t("staff.view.notFoundTitle")}</CardTitle>
               <CardDescription>
-                The staff member you are looking for does not exist or has been removed.
+                {t("staff.view.notFoundDescription")}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Button variant="outline" onClick={goBack}>
                 <ArrowLeftIcon />
-                Back to staff
+                {t("staff.view.backToStaff")}
               </Button>
             </CardContent>
           </Card>
@@ -118,17 +120,17 @@ export function ViewStaffScreen({ staffId, staffManagementUseCase, branchDetailU
         <div className="flex flex-1 items-center justify-center p-4">
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
-              <CardTitle>Something went wrong</CardTitle>
+              <CardTitle>{t("common.somethingWentWrong")}</CardTitle>
               <CardDescription>{state.error}</CardDescription>
             </CardHeader>
             <CardContent className="flex gap-3">
               <Button variant="outline" onClick={goBack}>
                 <ArrowLeftIcon />
-                Back to staff
+                {t("staff.view.backToStaff")}
               </Button>
               <Button onClick={() => router.refresh()}>
                 <RefreshCwIcon />
-                Retry
+                {t("common.retry")}
               </Button>
             </CardContent>
           </Card>
@@ -154,13 +156,13 @@ export function ViewStaffScreen({ staffId, staffManagementUseCase, branchDetailU
                     {state.staffMember.staffName}
                   </h1>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    View staff details and assigned branch resources.
+                    {t("staff.view.subtitle")}
                   </p>
                 </div>
               </div>
               <Button variant="outline" onClick={goBack}>
                 <ArrowLeftIcon />
-                Back
+                {t("common.back")}
               </Button>
             </section>
 
@@ -173,19 +175,19 @@ export function ViewStaffScreen({ staffId, staffManagementUseCase, branchDetailU
               <TabsList className="flex h-auto w-full flex-wrap justify-start gap-1 sm:w-fit">
                 <TabsTrigger value="details" className="gap-1.5">
                   <Building2Icon className="size-3.5" />
-                  <span className="hidden sm:inline">Details</span>
+                  <span className="hidden sm:inline">{t("staff.view.tabs.details")}</span>
                 </TabsTrigger>
                 <TabsTrigger value="books" className="gap-1.5">
                   <BookOpenIcon className="size-3.5" />
-                  <span className="hidden sm:inline">Books</span>
+                  <span className="hidden sm:inline">{t("staff.view.tabs.books")}</span>
                 </TabsTrigger>
                 <TabsTrigger value="authors" className="gap-1.5">
                   <PenLineIcon className="size-3.5" />
-                  <span className="hidden sm:inline">Authors</span>
+                  <span className="hidden sm:inline">{t("staff.view.tabs.authors")}</span>
                 </TabsTrigger>
                 <TabsTrigger value="translators" className="gap-1.5">
                   <LanguagesIcon className="size-3.5" />
-                  <span className="hidden sm:inline">Translators</span>
+                  <span className="hidden sm:inline">{t("staff.view.tabs.translators")}</span>
                 </TabsTrigger>
               </TabsList>
 

@@ -29,6 +29,7 @@ import type { BranchManagementUseCase } from "@/domain/usecases/branch/BranchMan
 import type { StaffManagementUseCase } from "@/domain/usecases/staff/StaffManagementUseCase"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
 import { useFormSubmitSuccess } from "@/presentation/hooks/useFormSubmitSuccess"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import { useCreateStaffViewModel } from "@/presentation/viewmodels/staff-management/useCreateStaffViewModel"
 
 type CreateStaffScreenProps = {
@@ -68,6 +69,7 @@ export function CreateStaffScreen({
   branchManagementUseCase,
 }: CreateStaffScreenProps) {
   const router = useRouter()
+  const { t } = useTranslation()
   const viewModel = useCreateStaffViewModel(
     authUseCase,
     staffManagementUseCase,
@@ -77,14 +79,14 @@ export function CreateStaffScreen({
   const [showPassword, setShowPassword] = useState(false)
 
   useDashboardBreadcrumbs([
-    { label: "Workspace", href: "/dashboard" },
-    { label: "Staff Management", href: "/dashboard/staff" },
-    { label: "Create Staff" },
+    { label: t("breadcrumbs.workspace"), href: "/dashboard" },
+    { label: t("nav.staff"), href: "/dashboard/staff" },
+    { label: t("staff.create.breadcrumb") },
   ])
 
   const goBack = () => router.push("/dashboard/staff")
 
-  useFormSubmitSuccess(state.isSaved, "Staff member created successfully.")
+  useFormSubmitSuccess(state.isSaved, t("staff.create.createSuccess"))
 
   return (
     <>
@@ -94,14 +96,14 @@ export function CreateStaffScreen({
         <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
           <section className="flex items-center justify-between pt-4">
             <div>
-              <h1 className="text-2xl font-semibold tracking-normal">Create Staff</h1>
+              <h1 className="text-2xl font-semibold tracking-normal">{t("staff.create.title")}</h1>
               <p className="mt-1 text-sm text-muted-foreground">
-                Add a new staff member and assign a role. Permissions come from the role configuration.
+                {t("staff.create.description")}
               </p>
             </div>
             <Button variant="outline" onClick={goBack}>
               <ArrowLeftIcon />
-              Back
+              {t("common.back")}
             </Button>
           </section>
 
@@ -115,8 +117,8 @@ export function CreateStaffScreen({
 
           <Card className="rounded-lg">
             <CardHeader>
-              <CardTitle>Staff Details</CardTitle>
-              <CardDescription>Fill in the information for the new staff member.</CardDescription>
+              <CardTitle>{t("staff.create.detailsTitle")}</CardTitle>
+              <CardDescription>{t("staff.create.detailsDescription")}</CardDescription>
             </CardHeader>
             <CardContent>
               <form
@@ -128,10 +130,10 @@ export function CreateStaffScreen({
               >
                 <div className="grid gap-6 sm:grid-cols-2">
                   <div className="space-y-2">
-                    <Label htmlFor="staffName">Full Name</Label>
+                    <Label htmlFor="staffName">{t("staff.fields.fullName")}</Label>
                     <Input
                       id="staffName"
-                      placeholder="Enter full name"
+                      placeholder={t("staff.placeholders.fullName")}
                       value={state.form.staffName}
                       onChange={(e) => viewModel.setField("staffName", e.target.value)}
                       disabled={state.isSaving || state.isSaved}
@@ -142,19 +144,19 @@ export function CreateStaffScreen({
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="role">Role</Label>
+                    <Label htmlFor="role">{t("staff.fields.role")}</Label>
                     <Select
                       value={state.form.role}
                       onValueChange={(value) => viewModel.setField("role", value)}
                       disabled={state.isSaving || state.isSaved}
                     >
                       <SelectTrigger id="role">
-                        <SelectValue placeholder="Select role" />
+                        <SelectValue placeholder={t("staff.placeholders.selectRole")} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="branch_admin">Branch Admin</SelectItem>
-                        <SelectItem value="sub_branch_admin">Sub-Branch Admin</SelectItem>
-                        <SelectItem value="staff">Staff</SelectItem>
+                        <SelectItem value="branch_admin">{t("staff.roles.branchAdmin")}</SelectItem>
+                        <SelectItem value="sub_branch_admin">{t("staff.roles.subBranchAdmin")}</SelectItem>
+                        <SelectItem value="staff">{t("staff.roles.staff")}</SelectItem>
                       </SelectContent>
                     </Select>
                     {state.fieldErrors.role ? (
@@ -163,11 +165,11 @@ export function CreateStaffScreen({
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
+                    <Label htmlFor="email">{t("staff.fields.email")}</Label>
                     <Input
                       id="email"
                       type="email"
-                      placeholder="Enter email address"
+                      placeholder={t("staff.placeholders.email")}
                       value={state.form.email}
                       onChange={(e) => viewModel.setField("email", e.target.value)}
                       disabled={state.isSaving || state.isSaved}
@@ -178,10 +180,10 @@ export function CreateStaffScreen({
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="phone">Phone</Label>
+                    <Label htmlFor="phone">{t("staff.fields.phone")}</Label>
                     <Input
                       id="phone"
-                      placeholder="Enter phone number"
+                      placeholder={t("staff.placeholders.phone")}
                       value={state.form.phone}
                       onChange={(e) => viewModel.setField("phone", e.target.value)}
                       disabled={state.isSaving || state.isSaved}
@@ -193,14 +195,14 @@ export function CreateStaffScreen({
 
                   {state.showBranchField ? (
                     <div className="space-y-2 sm:col-span-2">
-                      <Label htmlFor="branch">Branch</Label>
+                      <Label htmlFor="branch">{t("staff.fields.branch")}</Label>
                       <Select
                         value={state.form.branchId}
                         onValueChange={(value) => viewModel.setField("branchId", value)}
                         disabled={state.isSaving || state.isSaved}
                       >
                         <SelectTrigger id="branch">
-                          <SelectValue placeholder="Select a branch" />
+                          <SelectValue placeholder={t("staff.placeholders.selectBranch")} />
                         </SelectTrigger>
                         <SelectContent>
                           {state.branches.map((branch) => (
@@ -218,8 +220,8 @@ export function CreateStaffScreen({
 
                   <div className="space-y-2 sm:col-span-2">
                     <ImageUpload
-                      label="Profile photo"
-                      previewAlt="Staff profile photo preview"
+                      label={t("staff.fields.profilePhoto")}
+                      previewAlt={t("staff.fields.profilePhotoPreview")}
                       value={state.form.imageUrl}
                       onChange={(url) => viewModel.setField("imageUrl", url)}
                       disabled={state.isSaving || state.isSaved}
@@ -227,13 +229,13 @@ export function CreateStaffScreen({
                   </div>
 
                   <div className="space-y-2 sm:col-span-2">
-                    <Label htmlFor="password">Password</Label>
+                    <Label htmlFor="password">{t("staff.fields.password")}</Label>
                     <div className="flex gap-2">
                       <div className="relative flex-1">
                         <Input
                           id="password"
                           type={showPassword ? "text" : "password"}
-                          placeholder="Enter or generate a password"
+                          placeholder={t("staff.placeholders.password")}
                           value={state.form.password}
                           onChange={(e) => viewModel.setField("password", e.target.value)}
                           disabled={state.isSaving || state.isSaved}
@@ -254,7 +256,7 @@ export function CreateStaffScreen({
                         size="icon"
                         onClick={viewModel.autoGeneratePassword}
                         disabled={state.isSaving || state.isSaved}
-                        title="Auto-generate password"
+                        title={t("staff.create.autoGeneratePassword")}
                       >
                         <RefreshCwIcon className="h-4 w-4" />
                       </Button>
@@ -269,11 +271,11 @@ export function CreateStaffScreen({
 
                 <div className="flex justify-end gap-3">
                   <Button type="button" variant="outline" onClick={goBack} disabled={state.isSaving}>
-                    Cancel
+                    {t("common.cancel")}
                   </Button>
                   <Button type="submit" disabled={state.isSaving || state.isSaved}>
                     {state.isSaving ? <Loader2Icon className="animate-spin" /> : <PlusIcon />}
-                    {state.isSaving ? "Creating..." : "Create Staff"}
+                    {state.isSaving ? t("common.creating") : t("staff.create.createButton")}
                   </Button>
                 </div>
               </form>

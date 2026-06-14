@@ -36,9 +36,9 @@ type LowStockAlertsViewModel = {
   setSearchQuery: (value: string) => void
   setBranchFilter: (value: LowStockAlertBranchFilter) => void
   setStatusFilter: (value: LowStockAlertStatusFilter) => void
-  markResolved: (alertId: string) => Promise<void>
-  restock: (alertId: string, quantity: number) => Promise<void>
-  syncFromInventory: () => Promise<void>
+  markResolved: (alertId: string) => Promise<boolean>
+  restock: (alertId: string, quantity: number) => Promise<boolean>
+  syncFromInventory: () => Promise<boolean>
   reload: () => Promise<void>
 }
 
@@ -205,14 +205,29 @@ export function useLowStockAlertsViewModel(
     setSearchQuery,
     setBranchFilter,
     setStatusFilter,
-    markResolved: async (alertId) => {
-      await resolveMutation.mutateAsync(alertId).catch(() => undefined)
+    markResolved: async (alertId): Promise<boolean> => {
+      try {
+        await resolveMutation.mutateAsync(alertId)
+        return true
+      } catch {
+        return false
+      }
     },
-    restock: async (alertId, quantity) => {
-      await restockMutation.mutateAsync({ alertId, quantity }).catch(() => undefined)
+    restock: async (alertId, quantity): Promise<boolean> => {
+      try {
+        await restockMutation.mutateAsync({ alertId, quantity })
+        return true
+      } catch {
+        return false
+      }
     },
-    syncFromInventory: async () => {
-      await syncMutation.mutateAsync().catch(() => undefined)
+    syncFromInventory: async (): Promise<boolean> => {
+      try {
+        await syncMutation.mutateAsync()
+        return true
+      } catch {
+        return false
+      }
     },
     reload: async () => {
       await Promise.all([

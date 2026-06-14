@@ -19,6 +19,7 @@ import { BillDetailHeader } from "@/presentation/components/bills/BillDetailHead
 import { BillProductsTable } from "@/presentation/components/bills/BillProductsTable"
 import { BillSummaryCards } from "@/presentation/components/bills/BillSummaryCards"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import { useBillDetailViewModel } from "@/presentation/viewmodels/bills/useBillDetailViewModel"
 
 type ViewBillScreenProps = {
@@ -46,12 +47,13 @@ function LoadingState() {
 export function ViewBillScreen({ billId, getBillsUseCase }: ViewBillScreenProps) {
   const router = useRouter()
   const viewModel = useBillDetailViewModel(billId, getBillsUseCase)
+  const { t } = useTranslation()
   const { state } = viewModel
 
   useDashboardBreadcrumbs([
-    { label: "Workspace", href: "/dashboard" },
-    { label: "Bills", href: "/dashboard/bills" },
-    { label: state.bill?.companyName ?? "Bill Details" },
+    { label: t("breadcrumbs.workspace"), href: "/dashboard" },
+    { label: t("nav.bills"), href: "/dashboard/bills" },
+    { label: state.bill?.companyName ?? t("bills.view.breadcrumbFallback") },
   ])
 
   const goBack = () => router.back()
@@ -64,15 +66,13 @@ export function ViewBillScreen({ billId, getBillsUseCase }: ViewBillScreenProps)
         <div className="flex flex-1 items-center justify-center p-4">
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
-              <CardTitle>Bill not found</CardTitle>
-              <CardDescription>
-                This bill may have been removed or the link is invalid.
-              </CardDescription>
+              <CardTitle>{t("bills.notFoundTitle")}</CardTitle>
+              <CardDescription>{t("bills.notFoundDescription")}</CardDescription>
             </CardHeader>
             <CardContent>
               <Button variant="outline" onClick={() => router.push("/dashboard/bills")}>
                 <ArrowLeftIcon />
-                Back to Bills
+                {t("bills.backToBills")}
               </Button>
             </CardContent>
           </Card>
@@ -83,17 +83,17 @@ export function ViewBillScreen({ billId, getBillsUseCase }: ViewBillScreenProps)
         <div className="flex flex-1 items-center justify-center p-4">
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
-              <CardTitle>Bill unavailable</CardTitle>
+              <CardTitle>{t("bills.view.unavailable")}</CardTitle>
               <CardDescription>{state.error}</CardDescription>
             </CardHeader>
             <CardContent className="flex gap-2">
               <Button onClick={() => void viewModel.reload()}>
                 <RefreshCwIcon />
-                Retry
+                {t("common.retry")}
               </Button>
               <Button variant="outline" onClick={goBack}>
                 <ArrowLeftIcon />
-                Back
+                {t("common.back")}
               </Button>
             </CardContent>
           </Card>
@@ -105,7 +105,7 @@ export function ViewBillScreen({ billId, getBillsUseCase }: ViewBillScreenProps)
           <div className="flex justify-end pt-4">
             <Button variant="outline" onClick={goBack}>
               <ArrowLeftIcon />
-              Back
+              {t("common.back")}
             </Button>
           </div>
 
@@ -117,12 +117,14 @@ export function ViewBillScreen({ billId, getBillsUseCase }: ViewBillScreenProps)
           {state.bill.imageUrl ? (
             <Card className="rounded-lg">
               <CardHeader>
-                <CardTitle>Bill Image</CardTitle>
+                <CardTitle>{t("bills.view.billImage")}</CardTitle>
               </CardHeader>
               <CardContent>
                 <EntityImage
                   src={state.bill.imageUrl}
-                  alt={`Bill from ${state.bill.companyName}`}
+                  alt={t("bills.view.billImageAlt", {
+                    companyName: state.bill.companyName,
+                  })}
                   width={800}
                   height={320}
                   className="mx-auto max-h-80 w-full rounded-lg border"

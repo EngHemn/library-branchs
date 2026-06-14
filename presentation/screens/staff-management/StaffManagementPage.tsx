@@ -28,6 +28,7 @@ import { StaffDeleteDialog } from "@/presentation/components/staff-management/St
 import { StaffFilters } from "@/presentation/components/staff-management/StaffFilters"
 import { StaffTable } from "@/presentation/components/staff-management/StaffTable"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import { useStaffManagementViewModel } from "@/presentation/viewmodels/staff-management/useStaffManagementViewModel"
 
 type StaffManagementPageProps = {
@@ -53,6 +54,7 @@ export function StaffManagementPage({
   staffManagementUseCase,
 }: StaffManagementPageProps) {
   const router = useRouter()
+  const { t } = useTranslation()
   const viewModel = useStaffManagementViewModel(authUseCase, staffManagementUseCase)
   const { state } = viewModel
 
@@ -63,8 +65,8 @@ export function StaffManagementPage({
   }, [router, state.isUnauthenticated])
 
   useDashboardBreadcrumbs([
-    { label: "Workspace", href: "/dashboard" },
-    { label: "Staff Management" },
+    { label: t("breadcrumbs.workspace"), href: "/dashboard" },
+    { label: t("nav.staff") },
   ])
 
   const user = state.user
@@ -77,13 +79,13 @@ export function StaffManagementPage({
         <div className="flex flex-1 items-center justify-center p-4">
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
-              <CardTitle>Staff management unavailable</CardTitle>
+              <CardTitle>{t("staff.unavailable")}</CardTitle>
               <CardDescription>{state.error}</CardDescription>
             </CardHeader>
             <CardContent>
               <Button onClick={viewModel.reload}>
                 <RefreshCwIcon />
-                Retry
+                {t("common.retry")}
               </Button>
             </CardContent>
           </Card>
@@ -96,15 +98,15 @@ export function StaffManagementPage({
             <section className="flex items-center justify-between pt-4">
               <div>
                 <h1 className="text-2xl font-bold tracking-normal">
-                  Staff Management
+                  {t("staff.title")}
                 </h1>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Manage users, roles and branch assignments.
+                  {t("staff.subtitle")}
                 </p>
               </div>
               <Button onClick={() => router.push("/dashboard/staff/create")}>
                 <PlusIcon />
-                Add Staff
+                {t("staff.addStaff")}
               </Button>
             </section>
 

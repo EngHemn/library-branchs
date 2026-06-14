@@ -14,6 +14,7 @@ import {
   getSubBranchNetworkBranchIds,
   resolveUserBranchId,
 } from "@/lib/dashboardBranchScope"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import type {
   OrderBranchFilter,
   OrderBranchFilterOption,
@@ -76,7 +77,11 @@ function getScopedBranchIds(user: User): string[] {
   return getDashboardBranchScope(user, allDashboardBranches).branchIds
 }
 
-function getSubBranchFilterOptions(user: User): OrderBranchFilterOption[] {
+function getSubBranchFilterOptions(
+  user: User,
+  allBranchesLabel: string,
+  currentBranchLabel: string
+): OrderBranchFilterOption[] {
   const userBranchId = resolveUserBranchId(user)
   const networkIds = getSubBranchNetworkBranchIds(userBranchId)
 
@@ -86,18 +91,22 @@ function getSubBranchFilterOptions(user: User): OrderBranchFilterOption[] {
     .sort((left, right) => left.label.localeCompare(right.label))
 
   return [
-    { value: "all", label: "All branches" },
-    { value: "current", label: "Current branch" },
+    { value: "all", label: allBranchesLabel },
+    { value: "current", label: currentBranchLabel },
     ...otherBranches,
   ]
 }
 
-function getBranchFilterOptions(user: User): OrderBranchFilterOption[] {
+function getBranchFilterOptions(
+  user: User,
+  allBranchesLabel: string,
+  currentBranchLabel: string
+): OrderBranchFilterOption[] {
   if (user.branchType !== "sub") {
     return []
   }
 
-  return getSubBranchFilterOptions(user)
+  return getSubBranchFilterOptions(user, allBranchesLabel, currentBranchLabel)
 }
 
 function matchesBranchFilter(
@@ -259,6 +268,7 @@ export function useOrdersViewModel(
   authUseCase: AuthUseCase,
   getOrdersUseCase: GetOrdersUseCase
 ): OrdersViewModel {
+  const { t } = useTranslation()
   const queryClient = useQueryClient()
   const [filters, setFilters] = useState<OrdersFilterState>(defaultFilters)
 
@@ -320,7 +330,13 @@ export function useOrdersViewModel(
   const showBranchColumn = isSubBranch
     ? filters.branchFilter !== "current"
     : true
-  const branchFilterOptions = user ? getBranchFilterOptions(user) : []
+  const branchFilterOptions = user
+    ? getBranchFilterOptions(
+        user,
+        t("orders.filters.allBranches"),
+        t("orders.filters.currentBranch")
+      )
+    : []
   const scopedBranchIds = user ? getScopedBranchIds(user) : []
 
   const allOrders = orders ?? []

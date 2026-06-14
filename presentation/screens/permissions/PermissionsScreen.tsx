@@ -21,6 +21,7 @@ import { PermissionRoleFormDialog } from "@/presentation/components/permissions/
 import { PermissionRoleHeader } from "@/presentation/components/permissions/PermissionRoleHeader"
 import { PermissionRoleSidebar } from "@/presentation/components/permissions/PermissionRoleSidebar"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import { usePermissionsViewModel } from "@/presentation/viewmodels/permissions/usePermissionsViewModel"
 
 type PermissionsScreenProps = {
@@ -48,6 +49,7 @@ export function PermissionsScreen({
   permissionManagementUseCase,
 }: PermissionsScreenProps) {
   const router = useRouter()
+  const { t } = useTranslation()
   const viewModel = usePermissionsViewModel(authUseCase, permissionManagementUseCase)
   const { state } = viewModel
 
@@ -58,8 +60,8 @@ export function PermissionsScreen({
   }, [router, state.isUnauthenticated])
 
   useDashboardBreadcrumbs([
-    { label: "Workspace", href: "/dashboard" },
-    { label: "Permissions" },
+    { label: t("breadcrumbs.workspace"), href: "/dashboard" },
+    { label: t("nav.permissions") },
   ])
 
   const user = state.user
@@ -72,13 +74,13 @@ export function PermissionsScreen({
         <div className="flex flex-1 items-center justify-center p-4">
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
-              <CardTitle>Permissions unavailable</CardTitle>
+              <CardTitle>{t("permissions.unavailable")}</CardTitle>
               <CardDescription>{state.error}</CardDescription>
             </CardHeader>
             <CardContent>
               <Button onClick={viewModel.reload}>
                 <RefreshCwIcon />
-                Retry
+                {t("common.retry")}
               </Button>
             </CardContent>
           </Card>
@@ -88,10 +90,8 @@ export function PermissionsScreen({
       {state.isReady && user ? (
         <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
           <section className="pt-4">
-            <h1 className="text-2xl font-semibold">Permissions</h1>
-            <p className="mt-1 text-sm text-gray-500">
-              Configure page permissions by role. Assign roles to staff members in Staff Management.
-            </p>
+            <h1 className="text-2xl font-semibold">{t("permissions.title")}</h1>
+            <p className="mt-1 text-sm text-gray-500">{t("permissions.subtitle")}</p>
           </section>
 
           <div className="grid flex-1 grid-cols-1 gap-6 lg:grid-cols-[280px_1fr]">
@@ -141,7 +141,7 @@ export function PermissionsScreen({
               {!state.selectedRole && (
                 <div className="flex flex-1 items-center justify-center rounded-lg border bg-muted/30 p-12">
                   <p className="text-sm text-muted-foreground">
-                    Select a role to manage its permissions, or add a new role.
+                    {t("permissions.emptySelection")}
                   </p>
                 </div>
               )}

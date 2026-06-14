@@ -7,6 +7,7 @@ import type { ShelfManagementUseCase } from "@/domain/usecases/shelves/ShelfMana
 import { ShelfFormWizard } from "@/presentation/components/shelves/ShelfFormWizard"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
 import { useFormSubmitSuccess } from "@/presentation/hooks/useFormSubmitSuccess"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import { useCreateShelfViewModel } from "@/presentation/viewmodels/shelves/useCreateShelfViewModel"
 
 type CreateShelfScreenProps = {
@@ -28,18 +29,19 @@ export function CreateShelfScreen({
   authUseCase,
   shelfManagementUseCase,
 }: CreateShelfScreenProps) {
+  const { t } = useTranslation()
   const viewModel = useCreateShelfViewModel(authUseCase, shelfManagementUseCase)
   const { state, form } = viewModel
 
   useDashboardBreadcrumbs([
-    { label: "Workspace", href: "/dashboard" },
-    { label: "Shelf Management", href: dashboardPaths.shelves.list },
-    { label: "Add Shelf" },
+    { label: t("breadcrumbs.workspace"), href: "/dashboard" },
+    { label: t("nav.shelves"), href: dashboardPaths.shelves.list },
+    { label: t("shelves.addTitle") },
   ])
 
   useFormSubmitSuccess(
     state.isSaved,
-    "Shelf created successfully.",
+    t("shelves.create.success"),
     dashboardPaths.shelves.list
   )
 
@@ -53,8 +55,8 @@ export function CreateShelfScreen({
 
   return (
     <ShelfFormWizard
-      title="Add Shelf"
-      description="Create a new shelf with a guided location setup."
+      title={t("shelves.create.title")}
+      description={t("shelves.create.description")}
       backHref={dashboardPaths.shelves.list}
       form={form}
       currentStep={state.currentStep}
@@ -67,7 +69,7 @@ export function CreateShelfScreen({
       error={state.error}
       locationManageError={state.locationManageError}
       isManagingLocation={state.isManagingLocation}
-      submitLabel="Create Shelf"
+      submitLabel={t("shelves.create.submitButton")}
       onBack={viewModel.goBack}
       onNext={() => void viewModel.goNext()}
       onSave={() => void viewModel.save()}

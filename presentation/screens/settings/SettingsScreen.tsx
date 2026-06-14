@@ -17,7 +17,9 @@ import { AppearanceSection } from "@/presentation/components/settings/Appearance
 import { BorrowingRulesSection } from "@/presentation/components/settings/BorrowingRulesSection"
 import { LibraryInfoSection } from "@/presentation/components/settings/LibraryInfoSection"
 import { NotificationsSection } from "@/presentation/components/settings/NotificationsSection"
+import { LocaleSwitcher } from "@/presentation/components/shared/LocaleSwitcher"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import { useSettingsViewModel } from "@/presentation/viewmodels/settings/useSettingsViewModel"
 
 type SettingsScreenProps = {
@@ -44,12 +46,13 @@ function LoadingSettingsScreen() {
 }
 
 export function SettingsScreen({ settingsUseCase }: SettingsScreenProps) {
+  const { t } = useTranslation()
   const viewModel = useSettingsViewModel(settingsUseCase)
   const { state } = viewModel
 
   useDashboardBreadcrumbs([
-    { label: "Workspace", href: "/dashboard" },
-    { label: "Settings" },
+    { label: t("breadcrumbs.workspace"), href: "/dashboard" },
+    { label: t("settings.title") },
   ])
 
   if (state.isLoading) {
@@ -61,15 +64,15 @@ export function SettingsScreen({ settingsUseCase }: SettingsScreenProps) {
       <div className="flex flex-1 flex-col gap-4 p-4 pt-0 md:p-6 md:pt-0">
         <Card className="mt-4 rounded-lg border-destructive/40">
           <CardHeader>
-            <CardTitle>Unable to load settings</CardTitle>
+            <CardTitle>{t("settings.unableToLoad")}</CardTitle>
             <CardDescription>
-              {state.loadError ?? "Something went wrong. Please try again."}
+              {state.loadError ?? t("common.somethingWentWrong")}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Button type="button" onClick={() => void viewModel.reload()}>
               <RefreshCwIcon />
-              Retry
+              {t("common.retry")}
             </Button>
           </CardContent>
         </Card>
@@ -81,28 +84,30 @@ export function SettingsScreen({ settingsUseCase }: SettingsScreenProps) {
     <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
       <div className="flex flex-col gap-4 pt-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="space-y-1">
-          <h1 className="text-2xl font-semibold tracking-tight">Settings</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">
+            {t("settings.title")}
+          </h1>
           <p className="text-sm text-muted-foreground">
-            Manage appearance, library information, borrowing rules, and
-            notification preferences.
+            {t("settings.description")}
           </p>
         </div>
       </div>
 
       <Tabs defaultValue="appearance" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="appearance">Appearance</TabsTrigger>
-          <TabsTrigger value="library-info">Library Info</TabsTrigger>
-          <TabsTrigger value="borrowing-rules">Borrowing Rules</TabsTrigger>
-          <TabsTrigger value="notifications">Notifications</TabsTrigger>
+          <TabsTrigger value="appearance">{t("settings.tabs.appearance")}</TabsTrigger>
+          <TabsTrigger value="library-info">{t("settings.tabs.libraryInfo")}</TabsTrigger>
+          <TabsTrigger value="borrowing-rules">{t("settings.tabs.borrowingRules")}</TabsTrigger>
+          <TabsTrigger value="notifications">{t("settings.tabs.notifications")}</TabsTrigger>
+          <TabsTrigger value="language">{t("settings.tabs.language")}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="appearance">
           <Card>
             <CardHeader>
-              <CardTitle>Appearance</CardTitle>
+              <CardTitle>{t("settings.appearance.title")}</CardTitle>
               <CardDescription>
-                Customize the color mode and accent color of the interface.
+                {t("settings.appearance.description")}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -111,12 +116,27 @@ export function SettingsScreen({ settingsUseCase }: SettingsScreenProps) {
           </Card>
         </TabsContent>
 
+        <TabsContent value="language">
+          <Card>
+            <CardHeader>
+              <CardTitle>{t("settings.language.title")}</CardTitle>
+              <CardDescription>
+                {t("settings.language.description")}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <p className="text-sm font-medium">{t("settings.language.label")}</p>
+              <LocaleSwitcher />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
         <TabsContent value="library-info">
           <Card>
             <CardHeader>
-              <CardTitle>Library Information</CardTitle>
+              <CardTitle>{t("settings.libraryInfo.title")}</CardTitle>
               <CardDescription>
-                Update your library's public contact details and identity.
+                {t("settings.libraryInfo.description")}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -136,9 +156,9 @@ export function SettingsScreen({ settingsUseCase }: SettingsScreenProps) {
         <TabsContent value="borrowing-rules">
           <Card>
             <CardHeader>
-              <CardTitle>Borrowing Rules</CardTitle>
+              <CardTitle>{t("settings.borrowingRules.title")}</CardTitle>
               <CardDescription>
-                Configure loan durations, renewal limits, and fine policies.
+                {t("settings.borrowingRules.description")}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -158,9 +178,9 @@ export function SettingsScreen({ settingsUseCase }: SettingsScreenProps) {
         <TabsContent value="notifications">
           <Card>
             <CardHeader>
-              <CardTitle>Notifications</CardTitle>
+              <CardTitle>{t("settings.notifications.title")}</CardTitle>
               <CardDescription>
-                Control which notifications are sent to library members.
+                {t("settings.notifications.description")}
               </CardDescription>
             </CardHeader>
             <CardContent>

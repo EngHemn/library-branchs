@@ -18,6 +18,7 @@ import type { GetBillsUseCase } from "@/domain/usecases/bills/GetBillsUseCase"
 import { BillFormFields } from "@/presentation/components/bills/BillFormFields"
 import { buildCreateHrefWithReturn } from "@/presentation/components/shared/DashboardEntityLink"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import { useFormSubmitSuccess } from "@/presentation/hooks/useFormSubmitSuccess"
 import { useEditBillViewModel } from "@/presentation/viewmodels/bills/useEditBillViewModel"
 
@@ -58,17 +59,18 @@ export function EditBillScreen({
   const currentPath = `/dashboard/bills/${billId}/edit?returnTo=${encodeURIComponent(returnTo)}`
   const createBookHref = buildCreateHrefWithReturn(CREATE_BOOK_PATH, currentPath)
   const viewModel = useEditBillViewModel(billId, authUseCase, getBillsUseCase)
+  const { t } = useTranslation()
   const { state, form } = viewModel
 
   useDashboardBreadcrumbs([
-    { label: "Workspace", href: "/dashboard" },
-    { label: "Bills", href: "/dashboard/bills" },
-    { label: "Edit Bill" },
+    { label: t("breadcrumbs.workspace"), href: "/dashboard" },
+    { label: t("nav.bills"), href: "/dashboard/bills" },
+    { label: t("bills.edit.breadcrumb") },
   ])
 
   const goBack = () => router.push(returnTo)
 
-  useFormSubmitSuccess(state.isSaved, "Bill updated successfully.")
+  useFormSubmitSuccess(state.isSaved, t("bills.edit.updateSuccess"))
 
   return (
     <>
@@ -78,15 +80,13 @@ export function EditBillScreen({
         <div className="flex flex-1 items-center justify-center p-4">
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
-              <CardTitle>Bill not found</CardTitle>
-              <CardDescription>
-                This bill may have been removed or the link is invalid.
-              </CardDescription>
+              <CardTitle>{t("bills.notFoundTitle")}</CardTitle>
+              <CardDescription>{t("bills.notFoundDescription")}</CardDescription>
             </CardHeader>
             <CardContent>
               <Button variant="outline" onClick={() => router.push("/dashboard/bills")}>
                 <ArrowLeftIcon />
-                Back to Bills
+                {t("bills.backToBills")}
               </Button>
             </CardContent>
           </Card>
@@ -97,13 +97,13 @@ export function EditBillScreen({
         <div className="flex flex-1 items-center justify-center p-4">
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
-              <CardTitle>Could not load bill</CardTitle>
+              <CardTitle>{t("bills.edit.loadErrorTitle")}</CardTitle>
               <CardDescription>{state.error}</CardDescription>
             </CardHeader>
             <CardContent>
               <Button variant="outline" onClick={goBack}>
                 <ArrowLeftIcon />
-                Go Back
+                {t("common.back")}
               </Button>
             </CardContent>
           </Card>
@@ -114,14 +114,12 @@ export function EditBillScreen({
         <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
           <section className="flex items-center justify-between pt-4">
             <div>
-              <h1 className="text-2xl font-semibold tracking-normal">Edit Bill</h1>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Update bill details and imported products.
-              </p>
+              <h1 className="text-2xl font-semibold tracking-normal">{t("bills.edit.title")}</h1>
+              <p className="mt-1 text-sm text-muted-foreground">{t("bills.edit.subtitle")}</p>
             </div>
             <Button variant="outline" onClick={goBack}>
               <ArrowLeftIcon />
-              Back
+              {t("common.back")}
             </Button>
           </section>
 
@@ -137,8 +135,8 @@ export function EditBillScreen({
 
           <Card className="rounded-lg">
             <CardHeader>
-              <CardTitle>Bill Details</CardTitle>
-              <CardDescription>Update supplier, price, branch, and books.</CardDescription>
+              <CardTitle>{t("bills.edit.detailsTitle")}</CardTitle>
+              <CardDescription>{t("bills.edit.detailsDescription")}</CardDescription>
             </CardHeader>
             <CardContent>
               <BillFormFields
@@ -158,7 +156,7 @@ export function EditBillScreen({
                     onClick={goBack}
                     disabled={state.isSaving}
                   >
-                    Cancel
+                    {t("common.cancel")}
                   </Button>
                   <Button type="submit" disabled={state.isSaving || state.isSaved}>
                     {state.isSaving ? (
@@ -166,7 +164,7 @@ export function EditBillScreen({
                     ) : (
                       <SaveIcon />
                     )}
-                    {state.isSaving ? "Saving..." : "Save Changes"}
+                    {state.isSaving ? t("common.saving") : t("common.saveChanges")}
                   </Button>
                 </div>
               </BillFormFields>

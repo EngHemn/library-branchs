@@ -17,6 +17,7 @@ import type { ShelfManagementUseCase } from "@/domain/usecases/shelves/ShelfMana
 import { ShelfFormWizard } from "@/presentation/components/shelves/ShelfFormWizard"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
 import { useFormSubmitSuccess } from "@/presentation/hooks/useFormSubmitSuccess"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import { useEditShelfViewModel } from "@/presentation/viewmodels/shelves/useEditShelfViewModel"
 
 type EditShelfScreenProps = {
@@ -41,6 +42,7 @@ export function EditShelfScreen({
   shelfManagementUseCase,
 }: EditShelfScreenProps) {
   const router = useRouter()
+  const { t } = useTranslation()
   const viewModel = useEditShelfViewModel(
     shelfId,
     authUseCase,
@@ -49,14 +51,14 @@ export function EditShelfScreen({
   const { state, form } = viewModel
 
   useDashboardBreadcrumbs([
-    { label: "Workspace", href: "/dashboard" },
-    { label: "Shelf Management", href: dashboardPaths.shelves.list },
-    { label: "Edit Shelf" },
+    { label: t("breadcrumbs.workspace"), href: "/dashboard" },
+    { label: t("nav.shelves"), href: dashboardPaths.shelves.list },
+    { label: t("shelves.editTitle") },
   ])
 
   useFormSubmitSuccess(
     state.isSaved,
-    "Shelf updated successfully.",
+    t("shelves.edit.success"),
     dashboardPaths.shelves.list
   )
 
@@ -69,14 +71,14 @@ export function EditShelfScreen({
       <div className="flex flex-1 flex-col gap-4 p-4 pt-0 md:p-6 md:pt-0">
         <Card className="mt-4 rounded-lg">
           <CardHeader>
-            <CardTitle>Shelf not found</CardTitle>
+            <CardTitle>{t("shelves.edit.notFoundTitle")}</CardTitle>
             <CardDescription>
-              The shelf you are trying to edit does not exist or is unavailable.
+              {t("shelves.edit.notFoundDescription")}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Button onClick={() => router.push(dashboardPaths.shelves.list)}>
-              Back to Shelves
+              {t("shelves.edit.backToShelves")}
             </Button>
           </CardContent>
         </Card>
@@ -90,8 +92,8 @@ export function EditShelfScreen({
 
   return (
     <ShelfFormWizard
-      title="Edit Shelf"
-      description="Update shelf details and rebuild the location if needed."
+      title={t("shelves.edit.title")}
+      description={t("shelves.edit.description")}
       backHref={dashboardPaths.shelves.list}
       form={form}
       currentStep={state.currentStep}
@@ -104,7 +106,7 @@ export function EditShelfScreen({
       error={state.error}
       locationManageError={state.locationManageError}
       isManagingLocation={state.isManagingLocation}
-      submitLabel="Save Changes"
+      submitLabel={t("shelves.edit.submitButton")}
       onBack={viewModel.goBack}
       onNext={() => void viewModel.goNext()}
       onSave={() => void viewModel.save()}

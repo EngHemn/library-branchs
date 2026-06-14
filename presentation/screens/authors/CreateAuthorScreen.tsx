@@ -16,6 +16,7 @@ import type { GetAuthorsUseCase } from "@/domain/usecases/authors/GetAuthorsUseC
 import { AuthorFormFields } from "@/presentation/components/authors/AuthorFormFields"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
 import { useFormSubmitSuccess } from "@/presentation/hooks/useFormSubmitSuccess"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import { useCreateAuthorViewModel } from "@/presentation/viewmodels/authors/useCreateAuthorViewModel"
 
 type CreateAuthorScreenProps = {
@@ -24,31 +25,34 @@ type CreateAuthorScreenProps = {
 
 export function CreateAuthorScreen({ getAuthorsUseCase }: CreateAuthorScreenProps) {
   const router = useRouter()
+  const { t } = useTranslation()
   const viewModel = useCreateAuthorViewModel(getAuthorsUseCase)
   const { state, form } = viewModel
 
   useDashboardBreadcrumbs([
-    { label: "Workspace", href: "/dashboard" },
-    { label: "Authors", href: "/dashboard/authors" },
-    { label: "Add Author" },
+    { label: t("breadcrumbs.workspace"), href: "/dashboard" },
+    { label: t("nav.authors"), href: "/dashboard/authors" },
+    { label: t("authors.addTitle") },
   ])
 
   const goBack = () => router.back()
 
-  useFormSubmitSuccess(state.isSaved, "Author created successfully.")
+  useFormSubmitSuccess(state.isSaved, t("authors.createSuccess"))
 
   return (
     <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
       <section className="flex items-center justify-between pt-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-normal">Add Author</h1>
+          <h1 className="text-2xl font-semibold tracking-normal">
+            {t("authors.addTitle")}
+          </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Add a new author to the library.
+            {t("authors.addDescription")}
           </p>
         </div>
         <Button variant="outline" onClick={goBack}>
           <ArrowLeftIcon />
-          Back
+          {t("common.back")}
         </Button>
       </section>
 
@@ -64,8 +68,8 @@ export function CreateAuthorScreen({ getAuthorsUseCase }: CreateAuthorScreenProp
 
       <Card className="rounded-lg">
         <CardHeader>
-          <CardTitle>Author Details</CardTitle>
-          <CardDescription>Fill in the information for the new author.</CardDescription>
+          <CardTitle>{t("authors.detailsTitle")}</CardTitle>
+          <CardDescription>{t("authors.detailsDescription")}</CardDescription>
         </CardHeader>
         <CardContent>
           <AuthorFormFields
@@ -81,11 +85,11 @@ export function CreateAuthorScreen({ getAuthorsUseCase }: CreateAuthorScreenProp
                 onClick={goBack}
                 disabled={state.isSaving}
               >
-                Cancel
+                {t("common.cancel")}
               </Button>
               <Button type="submit" disabled={state.isSaving || state.isSaved}>
                 {state.isSaving ? <Loader2Icon className="animate-spin" /> : <PlusIcon />}
-                {state.isSaving ? "Creating..." : "Create Author"}
+                {state.isSaving ? t("common.creating") : t("authors.createButton")}
               </Button>
             </div>
           </AuthorFormFields>

@@ -18,6 +18,7 @@ import type { GetOrdersUseCase } from "@/domain/usecases/orders/GetOrdersUseCase
 import { OrderFormFields } from "@/presentation/components/orders/OrderFormFields"
 import { buildCreateHrefWithReturn } from "@/presentation/components/shared/DashboardEntityLink"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import { useFormSubmitSuccess } from "@/presentation/hooks/useFormSubmitSuccess"
 import { useCreateOrderViewModel } from "@/presentation/viewmodels/orders/useCreateOrderViewModel"
 
@@ -56,17 +57,18 @@ export function CreateOrderScreen({
   const currentPath = `/dashboard/orders/create?returnTo=${encodeURIComponent(returnTo)}`
   const createBookHref = buildCreateHrefWithReturn(CREATE_BOOK_PATH, currentPath)
   const viewModel = useCreateOrderViewModel(authUseCase, getOrdersUseCase)
+  const { t } = useTranslation()
   const { state, form } = viewModel
 
   useDashboardBreadcrumbs([
-    { label: "Workspace", href: "/dashboard" },
-    { label: "Orders", href: "/dashboard/orders" },
-    { label: "Add Order" },
+    { label: t("breadcrumbs.workspace"), href: "/dashboard" },
+    { label: t("nav.orders"), href: "/dashboard/orders" },
+    { label: t("orders.create.breadcrumb") },
   ])
 
   const goBack = () => router.push(returnTo)
 
-  useFormSubmitSuccess(state.isSaved, "Order created successfully.")
+  useFormSubmitSuccess(state.isSaved, t("orders.create.createSuccess"))
 
   if (state.isLoading) {
     return <LoadingState />
@@ -76,14 +78,12 @@ export function CreateOrderScreen({
     <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
       <section className="flex items-center justify-between pt-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-normal">Add Order</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Create a purchase order with supplier details and book items.
-          </p>
+          <h1 className="text-2xl font-semibold tracking-normal">{t("orders.create.title")}</h1>
+          <p className="mt-1 text-sm text-muted-foreground">{t("orders.create.subtitle")}</p>
         </div>
         <Button variant="outline" onClick={goBack}>
           <ArrowLeftIcon />
-          Back
+          {t("common.back")}
         </Button>
       </section>
 
@@ -99,10 +99,8 @@ export function CreateOrderScreen({
 
       <Card className="rounded-lg">
         <CardHeader>
-          <CardTitle>Order Details</CardTitle>
-          <CardDescription>
-            Enter supplier information, dates, status, and books to order.
-          </CardDescription>
+          <CardTitle>{t("orders.create.detailsTitle")}</CardTitle>
+          <CardDescription>{t("orders.create.detailsDescription")}</CardDescription>
         </CardHeader>
         <CardContent>
           <OrderFormFields
@@ -122,11 +120,11 @@ export function CreateOrderScreen({
                 onClick={goBack}
                 disabled={state.isSaving}
               >
-                Cancel
+                {t("common.cancel")}
               </Button>
               <Button type="submit" disabled={state.isSaving || state.isSaved}>
                 {state.isSaving ? <Loader2Icon className="animate-spin" /> : <PlusIcon />}
-                {state.isSaving ? "Creating..." : "Create Order"}
+                {state.isSaving ? t("common.creating") : t("orders.create.createButton")}
               </Button>
             </div>
           </OrderFormFields>

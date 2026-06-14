@@ -12,6 +12,7 @@ import {
   getDashboardBranchScope,
   resolveUserBranchId,
 } from "@/lib/dashboardBranchScope"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import type {
   BillBranchFilter,
   BillBranchFilterOption,
@@ -56,7 +57,10 @@ function getScopedBranchIds(user: User): string[] {
   return getDashboardBranchScope(user, allDashboardBranches).branchIds
 }
 
-function getBranchFilterOptions(user: User): BillBranchFilterOption[] {
+function getBranchFilterOptions(
+  user: User,
+  currentBranchLabel: string
+): BillBranchFilterOption[] {
   if (user.branchType === "sub") {
     return []
   }
@@ -69,7 +73,7 @@ function getBranchFilterOptions(user: User): BillBranchFilterOption[] {
     .map((branch) => ({ value: branch.id, label: branch.name }))
     .sort((left, right) => left.label.localeCompare(right.label))
 
-  return [{ value: "current", label: "Current Branch" }, ...otherBranches]
+  return [{ value: "current", label: currentBranchLabel }, ...otherBranches]
 }
 
 function matchesDateRange(
@@ -139,6 +143,7 @@ export function useBillsViewModel(
   authUseCase: AuthUseCase,
   getBillsUseCase: GetBillsUseCase
 ): BillsViewModel {
+  const { t } = useTranslation()
   const queryClient = useQueryClient()
   const [filters, setFilters] = useState<BillsFilterState>(defaultFilters)
 
@@ -197,7 +202,9 @@ export function useBillsViewModel(
   const isSubBranch = user?.branchType === "sub"
   const showBranchFilter = !isSubBranch
   const showBranchColumn = !isSubBranch && filters.branchFilter !== "current"
-  const branchFilterOptions = user ? getBranchFilterOptions(user) : []
+  const branchFilterOptions = user
+    ? getBranchFilterOptions(user, t("bills.filters.currentBranch"))
+    : []
   const scopedBranchIds = user ? getScopedBranchIds(user) : []
 
   const allBills = bills ?? []

@@ -23,6 +23,7 @@ import { BookProfileCard } from "@/presentation/components/books/BookProfileCard
 import { BookSummaryCards } from "@/presentation/components/books/BookSummaryCards"
 import { CreateBookingDialog } from "@/presentation/components/bookings/CreateBookingDialog"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import { useBookDetailViewModel } from "@/presentation/viewmodels/books/useBookDetailViewModel"
 
 type ViewBookScreenProps = {
@@ -76,14 +77,15 @@ export function ViewBookScreen({
   bookingManagementUseCase,
 }: ViewBookScreenProps) {
   const router = useRouter()
+  const { t } = useTranslation()
   const viewModel = useBookDetailViewModel(bookId, authUseCase, getBooksUseCase)
   const { state } = viewModel
   const [createBookingOpen, setCreateBookingOpen] = useState(false)
 
   useDashboardBreadcrumbs([
-    { label: "Workspace", href: "/dashboard" },
-    { label: "Books", href: "/dashboard/books" },
-    { label: state.bookDetail?.title ?? "Book Details" },
+    { label: t("breadcrumbs.workspace"), href: "/dashboard" },
+    { label: t("nav.books"), href: "/dashboard/books" },
+    { label: state.bookDetail?.title ?? t("books.view.breadcrumbFallback") },
   ])
 
   const goBack = () => router.back()
@@ -96,15 +98,15 @@ export function ViewBookScreen({
         <div className="flex flex-1 items-center justify-center p-4">
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
-              <CardTitle>Book not found</CardTitle>
+              <CardTitle>{t("books.view.notFoundTitle")}</CardTitle>
               <CardDescription>
-                The book you are looking for does not exist or has been removed.
+                {t("books.view.notFoundDescription")}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Button variant="outline" onClick={goBack}>
                 <ArrowLeftIcon />
-                Back to books
+                {t("books.view.backToBooks")}
               </Button>
             </CardContent>
           </Card>
@@ -115,17 +117,17 @@ export function ViewBookScreen({
         <div className="flex flex-1 items-center justify-center p-4">
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
-              <CardTitle>Something went wrong</CardTitle>
+              <CardTitle>{t("common.somethingWentWrong")}</CardTitle>
               <CardDescription>{state.error}</CardDescription>
             </CardHeader>
             <CardContent className="flex gap-3">
               <Button variant="outline" onClick={goBack}>
                 <ArrowLeftIcon />
-                Back to books
+                {t("books.view.backToBooks")}
               </Button>
               <Button onClick={viewModel.reload}>
                 <RefreshCwIcon />
-                Retry
+                {t("common.retry")}
               </Button>
             </CardContent>
           </Card>

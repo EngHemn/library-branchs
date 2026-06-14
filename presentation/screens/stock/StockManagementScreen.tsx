@@ -22,6 +22,7 @@ import { StockSummaryCards } from "@/presentation/components/stock/StockSummaryC
 import { StockTable } from "@/presentation/components/stock/StockTable"
 import { TransferStockDialog } from "@/presentation/components/stock/TransferStockDialog"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import type { StockViewModel } from "@/presentation/viewmodels/stock/useStockViewModel"
 
 type StockManagementScreenProps = {
@@ -55,12 +56,13 @@ function LoadingStockManagementPage() {
 
 export function StockManagementScreen({ viewModel }: StockManagementScreenProps) {
   const router = useRouter()
+  const { t } = useTranslation()
   const { state } = viewModel
   const [addReduceMode, setAddReduceMode] = useState<"add" | "reduce">("add")
 
   useDashboardBreadcrumbs([
-    { label: "Workspace", href: "/dashboard" },
-    { label: "Stock Management" },
+    { label: t("breadcrumbs.workspace"), href: "/dashboard" },
+    { label: t("nav.stock") },
   ])
 
   function handleAddStock(row: StockRow) {
@@ -86,13 +88,13 @@ export function StockManagementScreen({ viewModel }: StockManagementScreenProps)
         <div className="flex flex-1 items-center justify-center p-4">
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
-              <CardTitle>Stock management unavailable</CardTitle>
+              <CardTitle>{t("stock.unavailable")}</CardTitle>
               <CardDescription>
-                {state.stockError ?? "Failed to load stock data."}
+                {state.stockError ?? t("stock.loadError")}
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button onClick={() => viewModel.reload()}>Retry</Button>
+              <Button onClick={() => viewModel.reload()}>{t("common.retry")}</Button>
             </CardContent>
           </Card>
         </div>
@@ -103,10 +105,10 @@ export function StockManagementScreen({ viewModel }: StockManagementScreenProps)
           <section className="flex items-center justify-between pt-4">
             <div>
               <h1 className="text-2xl font-semibold tracking-normal">
-                Stock Management
+                {t("stock.title")}
               </h1>
               <p className="mt-1 text-sm text-muted-foreground">
-                Manage bookstore inventory across branches.
+                {t("stock.subtitle")}
               </p>
             </div>
             <div className="flex items-center gap-2">
@@ -115,11 +117,11 @@ export function StockManagementScreen({ viewModel }: StockManagementScreenProps)
                 onClick={() => viewModel.openTransferDialog(null)}
               >
                 <ArrowRightLeft />
-                Transfer Stock
+                {t("stock.transferStock")}
               </Button>
               <Button onClick={() => router.push("/dashboard/stock/create")}>
                 <PlusIcon />
-                Add Stock
+                {t("stock.addStock")}
               </Button>
             </div>
           </section>
@@ -128,11 +130,11 @@ export function StockManagementScreen({ viewModel }: StockManagementScreenProps)
             <TabsList className="grid w-full grid-cols-2 sm:w-fit">
               <TabsTrigger value="stock">
                 <WarehouseIcon className="mr-1.5 size-4" />
-                Stock
+                {t("stock.tabs.stock")}
               </TabsTrigger>
               <TabsTrigger value="history">
                 <PackageIcon className="mr-1.5 size-4" />
-                Movement History
+                {t("stock.tabs.movementHistory")}
               </TabsTrigger>
             </TabsList>
 
@@ -176,14 +178,14 @@ export function StockManagementScreen({ viewModel }: StockManagementScreenProps)
               {state.movementsStatus === "error" ? (
                 <Card className="rounded-lg">
                   <CardHeader>
-                    <CardTitle>Movement history unavailable</CardTitle>
+                    <CardTitle>{t("stock.movementHistoryUnavailable")}</CardTitle>
                     <CardDescription>
-                      {state.movementsError ?? "Failed to load movement history."}
+                      {state.movementsError ?? t("stock.movementHistoryLoadError")}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <Button variant="outline" onClick={() => viewModel.reload()}>
-                      Retry
+                      {t("common.retry")}
                     </Button>
                   </CardContent>
                 </Card>

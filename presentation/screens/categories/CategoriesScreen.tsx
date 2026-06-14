@@ -30,6 +30,7 @@ import { ConcatCategoryDialog } from "@/presentation/components/categories/Conca
 import { CategoryFormDialog } from "@/presentation/components/categories/CategoryFormDialog"
 import { CategorySummaryCards } from "@/presentation/components/categories/CategorySummaryCards"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import { useCategoriesViewModel } from "@/presentation/viewmodels/categories/useCategoriesViewModel"
 
 type CategoriesScreenProps = {
@@ -57,6 +58,7 @@ function LoadingCategoriesScreen() {
 export function CategoriesScreen({ getCategoriesUseCase }: CategoriesScreenProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const { t } = useTranslation()
   const viewModel = useCategoriesViewModel(getCategoriesUseCase)
   const { state } = viewModel
   const [deleteCategory, setDeleteCategory] = useState<Category | null>(null)
@@ -65,8 +67,8 @@ export function CategoriesScreen({ getCategoriesUseCase }: CategoriesScreenProps
   const shouldOpenCreateDialog = searchParams.get("create") === "true"
 
   useDashboardBreadcrumbs([
-    { label: "Workspace", href: "/dashboard" },
-    { label: "Categories" },
+    { label: t("breadcrumbs.workspace"), href: "/dashboard" },
+    { label: t("nav.categories") },
   ])
 
   useEffect(() => {
@@ -93,13 +95,13 @@ export function CategoriesScreen({ getCategoriesUseCase }: CategoriesScreenProps
         <div className="flex flex-1 items-center justify-center p-4">
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
-              <CardTitle>Categories unavailable</CardTitle>
+              <CardTitle>{t("categories.unavailable")}</CardTitle>
               <CardDescription>{state.error}</CardDescription>
             </CardHeader>
             <CardContent>
               <Button onClick={() => void viewModel.reload()}>
                 <RefreshCwIcon />
-                Retry
+                {t("common.retry")}
               </Button>
             </CardContent>
           </Card>
@@ -111,19 +113,21 @@ export function CategoriesScreen({ getCategoriesUseCase }: CategoriesScreenProps
           <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
             <section className="flex flex-col gap-3 pt-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <h1 className="text-2xl font-bold tracking-normal">Categories</h1>
+                <h1 className="text-2xl font-bold tracking-normal">
+                  {t("categories.title")}
+                </h1>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Organize books into clear categories.
+                  {t("categories.subtitle")}
                 </p>
               </div>
               <div className="flex flex-wrap gap-2">
                 <Button variant="outline" onClick={viewModel.openConcatDialog}>
                   <GitMergeIcon />
-                  Concat Category
+                  {t("categories.concatCategory")}
                 </Button>
                 <Button onClick={viewModel.openCreateDialog}>
                   <PlusIcon />
-                  Add Category
+                  {t("categories.addCategory")}
                 </Button>
               </div>
             </section>
@@ -184,22 +188,23 @@ export function CategoriesScreen({ getCategoriesUseCase }: CategoriesScreenProps
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete Category</DialogTitle>
+            <DialogTitle>{t("categories.deleteDialog.title")}</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete &ldquo;{deleteCategory?.name}
-              &rdquo;? This action cannot be undone.
+              {t("categories.deleteDialog.description", {
+                name: deleteCategory?.name ?? "",
+              })}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeleteCategory(null)}>
-              Cancel
+              {t("common.cancel")}
             </Button>
             <Button
               variant="destructive"
               onClick={handleConfirmDelete}
               disabled={state.isDeleting}
             >
-              Delete
+              {t("common.delete")}
             </Button>
           </DialogFooter>
         </DialogContent>

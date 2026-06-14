@@ -17,6 +17,7 @@ import type { SalesUseCase } from "@/domain/usecases/sales/SalesUseCase"
 import { SalesHistoryFilters } from "@/presentation/components/sales/SalesHistoryFilters"
 import { SalesHistoryTable } from "@/presentation/components/sales/SalesHistoryTable"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import { useSalesHistoryViewModel } from "@/presentation/viewmodels/sales/useSalesHistoryViewModel"
 
 type SalesHistoryScreenProps = {
@@ -41,13 +42,14 @@ export function SalesHistoryScreen({
   authUseCase,
   salesUseCase,
 }: SalesHistoryScreenProps) {
+  const { t } = useTranslation()
   const viewModel = useSalesHistoryViewModel(authUseCase, salesUseCase)
   const { state } = viewModel
 
   useDashboardBreadcrumbs([
-    { label: "Workspace", href: "/dashboard" },
-    { label: "Sales", href: "/dashboard/sales" },
-    { label: "Sales History" },
+    { label: t("breadcrumbs.workspace"), href: "/dashboard" },
+    { label: t("nav.sales"), href: "/dashboard/sales" },
+    { label: t("sales.history.breadcrumb") },
   ])
 
   if (state.status === "idle" || state.status === "loading") {
@@ -59,13 +61,13 @@ export function SalesHistoryScreen({
       <div className="flex flex-1 items-center justify-center p-4">
         <Card className="w-full max-w-md rounded-lg">
           <CardHeader>
-            <CardTitle>Sales history unavailable</CardTitle>
+            <CardTitle>{t("sales.history.unavailable")}</CardTitle>
             <CardDescription>{state.error}</CardDescription>
           </CardHeader>
           <CardContent>
             <Button onClick={() => void viewModel.reload()}>
               <RefreshCwIcon />
-              Retry
+              {t("common.retry")}
             </Button>
           </CardContent>
         </Card>
@@ -77,30 +79,30 @@ export function SalesHistoryScreen({
     <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
       <section className="flex flex-col gap-3 pt-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-normal">Sales History</h1>
+          <h1 className="text-2xl font-semibold tracking-normal">{t("sales.history.title")}</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            View all completed and voided sales transactions.
+            {t("sales.history.subtitle")}
           </p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm" asChild>
             <Link href="/dashboard/sales">
               <ArrowLeftIcon />
-              Back to Sales
+              {t("sales.history.backToSales")}
             </Link>
           </Button>
           <Button variant="outline" size="sm" onClick={() => void viewModel.reload()}>
             <RefreshCwIcon />
-            Refresh
+            {t("common.refresh")}
           </Button>
         </div>
       </section>
 
       <Card className="rounded-lg">
         <CardHeader>
-          <CardTitle>Filters</CardTitle>
+          <CardTitle>{t("sales.history.filtersTitle")}</CardTitle>
           <CardDescription>
-            Search by book name and narrow results by status, branch, or date range.
+            {t("sales.history.filtersDescription")}
           </CardDescription>
         </CardHeader>
         <CardContent>

@@ -13,6 +13,7 @@ import {
   getDashboardBranchScope,
   resolveUserBranchId,
 } from "@/lib/dashboardBranchScope"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import { buildGroupSalesReport } from "@/domain/services/group/buildGroupSalesReport"
 import { emptyGroupSalesReport } from "@/domain/entities/group/GroupSalesReport"
 import type {
@@ -61,7 +62,11 @@ function resolveBranchFilterId(
   return branchFilter === "current" ? userBranchId : branchFilter
 }
 
-function getBranchFilterOptions(user: User): GroupBranchFilterOption[] {
+function getBranchFilterOptions(
+  user: User,
+  allBranchesLabel: string,
+  currentBranchLabel: string
+): GroupBranchFilterOption[] {
   if (user.branchType === "sub") {
     return []
   }
@@ -75,8 +80,8 @@ function getBranchFilterOptions(user: User): GroupBranchFilterOption[] {
     .sort((left, right) => left.label.localeCompare(right.label))
 
   return [
-    { value: "all", label: "All Branches" },
-    { value: "current", label: "Current Branch" },
+    { value: "all", label: allBranchesLabel },
+    { value: "current", label: currentBranchLabel },
     ...otherBranches,
   ]
 }
@@ -187,6 +192,7 @@ export function useGroupDetailViewModel(
   groupManagementUseCase: GroupManagementUseCase,
   options?: GroupDetailViewModelOptions
 ): GroupDetailViewModel {
+  const { t } = useTranslation()
   const [booksFilters, setBooksFilters] = useState<GroupBooksFilterState>(() => ({
     ...defaultBooksFilters,
     branchFilter:
@@ -252,7 +258,13 @@ export function useGroupDetailViewModel(
   const showBooksBranchFilter = !isSubBranch
   const showSalesBranchFilter = !isSubBranch
   const showSalesBranchColumn = !isSubBranch && salesFilters.branchFilter !== "current"
-  const branchFilterOptions = user ? getBranchFilterOptions(user) : []
+  const branchFilterOptions = user
+    ? getBranchFilterOptions(
+        user,
+        t("groups.filters.allBranches"),
+        t("groups.filters.currentBranch")
+      )
+    : []
   const scopedBranchIds = user
     ? getDashboardBranchScope(user, allDashboardBranches).branchIds
     : []

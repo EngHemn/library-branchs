@@ -30,6 +30,7 @@ import { MembersFilters } from "@/presentation/components/members/MembersFilters
 import { MembersTable } from "@/presentation/components/members/MembersTable"
 import { useBranchNameLookup } from "@/presentation/hooks/useBranchNameLookup"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import { useMembersViewModel } from "@/presentation/viewmodels/members/useMembersViewModel"
 
 type MembersScreenProps = {
@@ -57,14 +58,15 @@ export function MembersScreen({
   branchManagementUseCase,
 }: MembersScreenProps) {
   const router = useRouter()
+  const { t } = useTranslation()
   const viewModel = useMembersViewModel(authUseCase, memberManagementUseCase)
   const branchNameToId = useBranchNameLookup(branchManagementUseCase)
   const { state } = viewModel
   const [deleteMember, setDeleteMember] = useState<Member | null>(null)
 
   useDashboardBreadcrumbs([
-    { label: "Workspace", href: "/dashboard" },
-    { label: "Members" },
+    { label: t("breadcrumbs.workspace"), href: "/dashboard" },
+    { label: t("nav.members") },
   ])
 
   const handleConfirmDelete = () => {
@@ -83,13 +85,13 @@ export function MembersScreen({
         <div className="flex flex-1 items-center justify-center p-4">
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
-              <CardTitle>Members unavailable</CardTitle>
+              <CardTitle>{t("members.unavailable")}</CardTitle>
               <CardDescription>{state.error}</CardDescription>
             </CardHeader>
             <CardContent>
               <Button onClick={() => void viewModel.reload()}>
                 <RefreshCwIcon />
-                Retry
+                {t("common.retry")}
               </Button>
             </CardContent>
           </Card>
@@ -101,14 +103,12 @@ export function MembersScreen({
           <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
             <section className="flex flex-col gap-3 pt-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <h1 className="text-2xl font-bold tracking-normal">Members</h1>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  Members are global records and can borrow from any branch.
-                </p>
+                <h1 className="text-2xl font-bold tracking-normal">{t("members.title")}</h1>
+                <p className="mt-1 text-sm text-muted-foreground">{t("members.subtitle")}</p>
               </div>
               <Button onClick={() => router.push("/dashboard/members/create")}>
                 <PlusIcon />
-                Add Member
+                {t("members.addMember")}
               </Button>
             </section>
 
@@ -148,22 +148,23 @@ export function MembersScreen({
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete Member</DialogTitle>
+            <DialogTitle>{t("members.deleteDialog.title")}</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete &ldquo;{deleteMember?.memberName}
-              &rdquo;? This action cannot be undone.
+              {t("members.deleteDialog.description", {
+                name: deleteMember?.memberName ?? "",
+              })}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeleteMember(null)}>
-              Cancel
+              {t("common.cancel")}
             </Button>
             <Button
               variant="destructive"
               onClick={handleConfirmDelete}
               disabled={state.isDeleting}
             >
-              Delete
+              {t("common.delete")}
             </Button>
           </DialogFooter>
         </DialogContent>

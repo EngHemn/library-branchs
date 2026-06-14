@@ -21,6 +21,7 @@ import type { BranchManagementUseCase } from "@/domain/usecases/branch/BranchMan
 import { LocationPicker } from "@/presentation/components/branch-management/LocationPicker"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
 import { useFormSubmitSuccess } from "@/presentation/hooks/useFormSubmitSuccess"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import { useCreateBranchViewModel } from "@/presentation/viewmodels/branch-management/useCreateBranchViewModel"
 
 type CreateBranchScreenProps = {
@@ -56,19 +57,20 @@ export function CreateBranchScreen({
   branchManagementUseCase,
 }: CreateBranchScreenProps) {
   const router = useRouter()
+  const { t } = useTranslation()
   const viewModel = useCreateBranchViewModel(branchManagementUseCase)
   const { state } = viewModel
   const [showPassword, setShowPassword] = useState(false)
 
   useDashboardBreadcrumbs([
-    { label: "Workspace", href: "/dashboard" },
-    { label: "Branch Management", href: "/dashboard/branches" },
-    { label: "Create Branch" },
+    { label: t("breadcrumbs.workspace"), href: "/dashboard" },
+    { label: t("nav.branches"), href: "/dashboard/branches" },
+    { label: t("branches.create.breadcrumb") },
   ])
 
   const goBack = () => router.push("/dashboard/branches")
 
-  useFormSubmitSuccess(state.isSaved, "Branch created successfully.")
+  useFormSubmitSuccess(state.isSaved, t("branches.create.createSuccess"))
 
   return (
     <>
@@ -78,13 +80,13 @@ export function CreateBranchScreen({
         <div className="flex flex-1 items-center justify-center p-4">
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
-              <CardTitle>Unable to create branch</CardTitle>
+              <CardTitle>{t("branches.create.unableToCreate")}</CardTitle>
               <CardDescription>{state.error}</CardDescription>
             </CardHeader>
             <CardContent>
               <Button variant="outline" onClick={goBack}>
                 <ArrowLeftIcon />
-                Back to branches
+                {t("branches.create.backToBranches")}
               </Button>
             </CardContent>
           </Card>
@@ -95,12 +97,12 @@ export function CreateBranchScreen({
         <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
           <section className="flex items-center justify-between pt-4">
             <div>
-              <h1 className="text-2xl font-semibold tracking-normal">Create Branch</h1>
-              <p className="mt-1 text-sm text-muted-foreground">Add a new branch to the workspace.</p>
+              <h1 className="text-2xl font-semibold tracking-normal">{t("branches.create.title")}</h1>
+              <p className="mt-1 text-sm text-muted-foreground">{t("branches.create.subtitle")}</p>
             </div>
             <Button variant="outline" onClick={goBack}>
               <ArrowLeftIcon />
-              Back
+              {t("common.back")}
             </Button>
           </section>
 
@@ -114,8 +116,8 @@ export function CreateBranchScreen({
 
           <Card className="rounded-lg">
             <CardHeader>
-              <CardTitle>Branch Details</CardTitle>
-              <CardDescription>Fill in the information for the new branch.</CardDescription>
+              <CardTitle>{t("branches.create.detailsTitle")}</CardTitle>
+              <CardDescription>{t("branches.create.detailsDescription")}</CardDescription>
             </CardHeader>
             <CardContent>
               <form
@@ -127,10 +129,10 @@ export function CreateBranchScreen({
               >
                 <div className="grid gap-6 sm:grid-cols-2">
                   <div className="space-y-2">
-                    <Label htmlFor="branchName">Branch Name</Label>
+                    <Label htmlFor="branchName">{t("branches.create.fields.branchName")}</Label>
                     <Input
                       id="branchName"
-                      placeholder="Enter branch name"
+                      placeholder={t("branches.create.placeholders.branchName")}
                       value={state.form.branchName}
                       onChange={(e) => viewModel.setField("branchName", e.target.value)}
                       disabled={state.isSaving || state.isSaved}
@@ -141,11 +143,11 @@ export function CreateBranchScreen({
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
+                    <Label htmlFor="email">{t("branches.create.fields.email")}</Label>
                     <Input
                       id="email"
                       type="email"
-                      placeholder="Enter email address"
+                      placeholder={t("branches.create.placeholders.email")}
                       value={state.form.email}
                       onChange={(e) => viewModel.setField("email", e.target.value)}
                       disabled={state.isSaving || state.isSaved}
@@ -156,10 +158,10 @@ export function CreateBranchScreen({
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="adminName">Admin Name</Label>
+                    <Label htmlFor="adminName">{t("branches.create.fields.adminName")}</Label>
                     <Input
                       id="adminName"
-                      placeholder="Enter admin name"
+                      placeholder={t("branches.create.placeholders.adminName")}
                       value={state.form.adminName}
                       onChange={(e) => viewModel.setField("adminName", e.target.value)}
                       disabled={state.isSaving || state.isSaved}
@@ -170,10 +172,10 @@ export function CreateBranchScreen({
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="phone">Phone</Label>
+                    <Label htmlFor="phone">{t("branches.create.fields.phone")}</Label>
                     <Input
                       id="phone"
-                      placeholder="Enter phone number"
+                      placeholder={t("branches.create.placeholders.phone")}
                       value={state.form.phone}
                       onChange={(e) => viewModel.setField("phone", e.target.value)}
                       disabled={state.isSaving || state.isSaved}
@@ -184,13 +186,13 @@ export function CreateBranchScreen({
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="password">Password</Label>
+                    <Label htmlFor="password">{t("branches.create.fields.password")}</Label>
                     <div className="flex gap-2">
                       <div className="relative flex-1">
                         <Input
                           id="password"
                           type={showPassword ? "text" : "password"}
-                          placeholder="Enter or generate a password"
+                          placeholder={t("branches.create.placeholders.password")}
                           value={state.form.password}
                           onChange={(e) => viewModel.setField("password", e.target.value)}
                           disabled={state.isSaving || state.isSaved}
@@ -211,7 +213,7 @@ export function CreateBranchScreen({
                         size="icon"
                         onClick={viewModel.autoGeneratePassword}
                         disabled={state.isSaving || state.isSaved}
-                        title="Auto-generate password"
+                        title={t("branches.approveDialog.autoGeneratePassword")}
                       >
                         <RefreshCwIcon className="h-4 w-4" />
                       </Button>
@@ -222,10 +224,10 @@ export function CreateBranchScreen({
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="address">Address</Label>
+                    <Label htmlFor="address">{t("branches.create.fields.address")}</Label>
                     <Input
                       id="address"
-                      placeholder="Enter address"
+                      placeholder={t("branches.create.placeholders.address")}
                       value={state.form.address}
                       onChange={(e) => viewModel.setField("address", e.target.value)}
                       disabled={state.isSaving || state.isSaved}
@@ -247,8 +249,8 @@ export function CreateBranchScreen({
 
                   <div className="sm:col-span-2">
                     <ImageUpload
-                      label="Branch image"
-                      previewAlt="Branch image preview"
+                      label={t("branches.create.branchImage")}
+                      previewAlt={t("branches.create.branchImagePreview")}
                       value={state.form.imageUrl}
                       onChange={(url) => viewModel.setField("imageUrl", url)}
                       disabled={state.isSaving || state.isSaved}
@@ -260,11 +262,11 @@ export function CreateBranchScreen({
 
                 <div className="flex justify-end gap-3">
                   <Button type="button" variant="outline" onClick={goBack} disabled={state.isSaving}>
-                    Cancel
+                    {t("common.cancel")}
                   </Button>
                   <Button type="submit" disabled={state.isSaving || state.isSaved}>
                     {state.isSaving ? <Loader2Icon className="animate-spin" /> : <PlusIcon />}
-                    {state.isSaving ? "Creating..." : "Create Branch"}
+                    {state.isSaving ? t("branches.create.creating") : t("branches.createBranch")}
                   </Button>
                 </div>
               </form>

@@ -18,6 +18,7 @@ import type { BranchManagementUseCase } from "@/domain/usecases/branch/BranchMan
 import type { MemberManagementUseCase } from "@/domain/usecases/members/MemberManagementUseCase"
 import { MemberFormFields } from "@/presentation/components/members/MemberFormFields"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import { useCreateMemberViewModel } from "@/presentation/viewmodels/members/useCreateMemberViewModel"
 
 type CreateMemberScreenProps = {
@@ -57,6 +58,7 @@ export function CreateMemberScreen({
   branchManagementUseCase,
 }: CreateMemberScreenProps) {
   const router = useRouter()
+  const { t } = useTranslation()
   const searchParams = useSearchParams()
   const returnTo = searchParams.get("returnTo") ?? "/dashboard/members"
   const viewModel = useCreateMemberViewModel(
@@ -67,9 +69,9 @@ export function CreateMemberScreen({
   const { state, form } = viewModel
 
   useDashboardBreadcrumbs([
-    { label: "Workspace", href: "/dashboard" },
-    { label: "Members", href: "/dashboard/members" },
-    { label: "Add Member" },
+    { label: t("breadcrumbs.workspace"), href: "/dashboard" },
+    { label: t("nav.members"), href: "/dashboard/members" },
+    { label: t("members.create.breadcrumb") },
   ])
 
   const goBack = () => router.push(returnTo)
@@ -82,13 +84,13 @@ export function CreateMemberScreen({
         <div className="flex flex-1 items-center justify-center p-4">
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
-              <CardTitle>Something went wrong</CardTitle>
+              <CardTitle>{t("common.somethingWentWrong")}</CardTitle>
               <CardDescription>{state.error}</CardDescription>
             </CardHeader>
             <CardContent>
               <Button variant="outline" onClick={goBack}>
                 <ArrowLeftIcon />
-                Back to members
+                {t("members.backToMembers")}
               </Button>
             </CardContent>
           </Card>
@@ -99,14 +101,16 @@ export function CreateMemberScreen({
         <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
           <section className="flex items-center justify-between pt-4">
             <div>
-              <h1 className="text-2xl font-semibold tracking-normal">Add Member</h1>
+              <h1 className="text-2xl font-semibold tracking-normal">
+                {t("members.create.title")}
+              </h1>
               <p className="mt-1 text-sm text-muted-foreground">
-                Register a new library member.
+                {t("members.create.description")}
               </p>
             </div>
             <Button variant="outline" onClick={goBack}>
               <ArrowLeftIcon />
-              Back
+              {t("common.back")}
             </Button>
           </section>
 
@@ -114,10 +118,10 @@ export function CreateMemberScreen({
             <Card className="rounded-lg border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-950">
               <CardContent className="flex items-center gap-3 py-3">
                 <p className="text-sm font-medium text-green-800 dark:text-green-200">
-                  Member created successfully.
+                  {t("members.create.createSuccess")}
                 </p>
                 <Button size="sm" variant="outline" onClick={goBack}>
-                  Back to members
+                  {t("members.backToMembers")}
                 </Button>
               </CardContent>
             </Card>
@@ -135,8 +139,8 @@ export function CreateMemberScreen({
 
           <Card className="rounded-lg">
             <CardHeader>
-              <CardTitle>Member Details</CardTitle>
-              <CardDescription>Fill in the information for the new member.</CardDescription>
+              <CardTitle>{t("members.create.detailsTitle")}</CardTitle>
+              <CardDescription>{t("members.create.detailsDescription")}</CardDescription>
             </CardHeader>
             <CardContent>
               <MemberFormFields
@@ -152,11 +156,11 @@ export function CreateMemberScreen({
                     onClick={goBack}
                     disabled={state.isSaving}
                   >
-                    Cancel
+                    {t("common.cancel")}
                   </Button>
                   <Button type="submit" disabled={state.isSaving || state.isSaved}>
                     {state.isSaving ? <Loader2Icon className="animate-spin" /> : <PlusIcon />}
-                    {state.isSaving ? "Creating..." : "Create Member"}
+                    {state.isSaving ? t("common.creating") : t("members.create.createButton")}
                   </Button>
                 </div>
               </MemberFormFields>

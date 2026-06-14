@@ -18,6 +18,7 @@ import type { GetBillsUseCase } from "@/domain/usecases/bills/GetBillsUseCase"
 import { BillFormFields } from "@/presentation/components/bills/BillFormFields"
 import { buildCreateHrefWithReturn } from "@/presentation/components/shared/DashboardEntityLink"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import { useFormSubmitSuccess } from "@/presentation/hooks/useFormSubmitSuccess"
 import { useCreateBillViewModel } from "@/presentation/viewmodels/bills/useCreateBillViewModel"
 
@@ -56,17 +57,18 @@ export function CreateBillScreen({
   const currentPath = `/dashboard/bills/create?returnTo=${encodeURIComponent(returnTo)}`
   const createBookHref = buildCreateHrefWithReturn(CREATE_BOOK_PATH, currentPath)
   const viewModel = useCreateBillViewModel(authUseCase, getBillsUseCase)
+  const { t } = useTranslation()
   const { state, form } = viewModel
 
   useDashboardBreadcrumbs([
-    { label: "Workspace", href: "/dashboard" },
-    { label: "Bills", href: "/dashboard/bills" },
-    { label: "Add Bill" },
+    { label: t("breadcrumbs.workspace"), href: "/dashboard" },
+    { label: t("nav.bills"), href: "/dashboard/bills" },
+    { label: t("bills.create.breadcrumb") },
   ])
 
   const goBack = () => router.push(returnTo)
 
-  useFormSubmitSuccess(state.isSaved, "Bill created successfully. Products imported to branch.")
+  useFormSubmitSuccess(state.isSaved, t("bills.create.createSuccess"))
 
   if (state.isLoading) {
     return <LoadingState />
@@ -76,14 +78,12 @@ export function CreateBillScreen({
     <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
       <section className="flex items-center justify-between pt-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-normal">Add Bill</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Upload a bill, select books, and import products into a branch.
-          </p>
+          <h1 className="text-2xl font-semibold tracking-normal">{t("bills.create.title")}</h1>
+          <p className="mt-1 text-sm text-muted-foreground">{t("bills.create.subtitle")}</p>
         </div>
         <Button variant="outline" onClick={goBack}>
           <ArrowLeftIcon />
-          Back
+          {t("common.back")}
         </Button>
       </section>
 
@@ -99,10 +99,8 @@ export function CreateBillScreen({
 
       <Card className="rounded-lg">
         <CardHeader>
-          <CardTitle>Bill Details</CardTitle>
-          <CardDescription>
-            Enter supplier information, price, and books to import.
-          </CardDescription>
+          <CardTitle>{t("bills.create.detailsTitle")}</CardTitle>
+          <CardDescription>{t("bills.create.detailsDescription")}</CardDescription>
         </CardHeader>
         <CardContent>
           <BillFormFields
@@ -122,11 +120,11 @@ export function CreateBillScreen({
                 onClick={goBack}
                 disabled={state.isSaving}
               >
-                Cancel
+                {t("common.cancel")}
               </Button>
               <Button type="submit" disabled={state.isSaving || state.isSaved}>
                 {state.isSaving ? <Loader2Icon className="animate-spin" /> : <PlusIcon />}
-                {state.isSaving ? "Creating..." : "Create Bill"}
+                {state.isSaving ? t("common.creating") : t("bills.create.createButton")}
               </Button>
             </div>
           </BillFormFields>

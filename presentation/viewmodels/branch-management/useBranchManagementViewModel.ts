@@ -6,8 +6,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import type {
   Branch,
   BranchStats,
-  BranchStatus,
-  BranchType,
   MainBranchRequest,
   SubBranchRequest,
 } from "@/domain/entities/branch/Branch"
@@ -15,6 +13,8 @@ import type { User } from "@/domain/entities/User"
 import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { BranchManagementUseCase } from "@/domain/usecases/branch/BranchManagementUseCase"
 
+import { useLocale } from "@/presentation/i18n/useLocale"
+import { translate } from "@/presentation/i18n/messages"
 import { useBranchRequestActionsHook } from "./useBranchRequestActionsHook"
 import type { ActiveBranchFilter, ActiveBranchFilterId, BranchFilterState, BranchManagementDialog, BranchManagementStatus, BranchManagementViewModelState, BranchStatusFilter, BranchTypeFilter } from "./BranchManagementViewModelState"
 
@@ -56,16 +56,6 @@ const emptyStats: BranchStats = {
   inactiveBranches: 0,
 }
 
-const branchTypeLabels: Record<BranchType, string> = {
-  main: "Main Branch",
-  sub: "Sub Branch",
-}
-
-const branchStatusLabels: Record<BranchStatus, string> = {
-  active: "Active",
-  inactive: "Inactive",
-}
-
 function calculateBranchStats(branches: Branch[]): BranchStats {
   return branches.reduce<BranchStats>(
     (stats, branch) => ({
@@ -96,6 +86,7 @@ export function useBranchManagementViewModel(
   branchManagementUseCase: BranchManagementUseCase
 ): BranchManagementViewModel {
   const queryClient = useQueryClient()
+  const { locale } = useLocale()
   const [filters, setFilters] = useState<BranchFilterState>(defaultFilters)
   const [expandedMainRequestIds, setExpandedMainRequestIds] = useState<string[]>([])
   const [expandedSubRequestIds, setExpandedSubRequestIds] = useState<string[]>([])
@@ -149,7 +140,10 @@ export function useBranchManagementViewModel(
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["branchManagement"] }),
     onError: (err: Error) =>
-      setDialog({ title: "Branch action unavailable", description: err.message }),
+      setDialog({
+        title: translate(locale, "branches.actionUnavailable"),
+        description: err.message,
+      }),
   })
 
   const toggleBranchStatusMutation = useMutation({
@@ -160,12 +154,15 @@ export function useBranchManagementViewModel(
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["branchManagement"] }),
     onError: (err: Error) =>
-      setDialog({ title: "Branch action unavailable", description: err.message }),
+      setDialog({
+        title: translate(locale, "branches.actionUnavailable"),
+        description: err.message,
+      }),
   })
 
   const requestActions = useBranchRequestActionsHook({
     branchManagementUseCase,
-    userFullName: user?.fullName ?? "Workspace Admin",
+    userFullName: user?.fullName ?? translate(locale, "branches.actions.workspaceAdmin"),
     setDialog,
     setExpandedMainRequestIds,
     setExpandedSubRequestIds,
@@ -256,13 +253,13 @@ export function useBranchManagementViewModel(
 
   const activeFilters: ActiveBranchFilter[] = []
   if (filters.searchQuery.trim()) {
-    activeFilters.push({ id: "search", label: "Search", value: filters.searchQuery.trim() })
+    activeFilters.push({ id: "search", label: "search", value: filters.searchQuery.trim() })
   }
   if (filters.typeFilter !== "all") {
-    activeFilters.push({ id: "type", label: "Type", value: branchTypeLabels[filters.typeFilter] })
+    activeFilters.push({ id: "type", label: "type", value: filters.typeFilter })
   }
   if (filters.statusFilter !== "all") {
-    activeFilters.push({ id: "status", label: "Status", value: branchStatusLabels[filters.statusFilter] })
+    activeFilters.push({ id: "status", label: "status", value: filters.statusFilter })
   }
 
   const isUnauthenticated = !isUserLoading && !isUserError && user === null

@@ -18,6 +18,7 @@ import type { ShelfManagementUseCase } from "@/domain/usecases/shelves/ShelfMana
 import { BookFormFields } from "@/presentation/components/books/BookFormFields"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
 import { useFormSubmitSuccess } from "@/presentation/hooks/useFormSubmitSuccess"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import { useCreateBookViewModel } from "@/presentation/viewmodels/books/useCreateBookViewModel"
 
 type CreateBookScreenProps = {
@@ -55,6 +56,7 @@ export function CreateBookScreen({
   shelfManagementUseCase,
 }: CreateBookScreenProps) {
   const router = useRouter()
+  const { t } = useTranslation()
   const searchParams = useSearchParams()
   const returnTo = searchParams.get("returnTo")
   const viewModel = useCreateBookViewModel(
@@ -64,9 +66,9 @@ export function CreateBookScreen({
   const { state, form } = viewModel
 
   useDashboardBreadcrumbs([
-    { label: "Workspace", href: "/dashboard" },
-    { label: "Books", href: "/dashboard/books" },
-    { label: "Add Book" },
+    { label: t("breadcrumbs.workspace"), href: "/dashboard" },
+    { label: t("nav.books"), href: "/dashboard/books" },
+    { label: t("books.create.breadcrumb") },
   ])
 
   const goBack = () => {
@@ -79,7 +81,7 @@ export function CreateBookScreen({
 
   useFormSubmitSuccess(
     state.isSaved,
-    "Book created successfully.",
+    t("books.create.createSuccess"),
     returnTo ?? undefined
   )
 
@@ -91,14 +93,16 @@ export function CreateBookScreen({
         <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
           <section className="flex items-center justify-between pt-4">
             <div>
-              <h1 className="text-2xl font-semibold tracking-normal">Add Book</h1>
+              <h1 className="text-2xl font-semibold tracking-normal">
+                {t("books.create.title")}
+              </h1>
               <p className="mt-1 text-sm text-muted-foreground">
-                Add a new book to the library.
+                {t("books.create.description")}
               </p>
             </div>
             <Button variant="outline" onClick={goBack}>
               <ArrowLeftIcon />
-              Back
+              {t("common.back")}
             </Button>
           </section>
 
@@ -114,8 +118,8 @@ export function CreateBookScreen({
 
           <Card className="rounded-lg">
             <CardHeader>
-              <CardTitle>Book Details</CardTitle>
-              <CardDescription>Fill in the information for the new book.</CardDescription>
+              <CardTitle>{t("books.create.detailsTitle")}</CardTitle>
+              <CardDescription>{t("books.create.detailsDescription")}</CardDescription>
             </CardHeader>
             <CardContent>
               <BookFormFields
@@ -147,11 +151,11 @@ export function CreateBookScreen({
                     onClick={goBack}
                     disabled={state.isSaving}
                   >
-                    Cancel
+                    {t("common.cancel")}
                   </Button>
                   <Button type="submit" disabled={state.isSaving || state.isSaved}>
                     {state.isSaving ? <Loader2Icon className="animate-spin" /> : <PlusIcon />}
-                    {state.isSaving ? "Creating..." : "Create Book"}
+                    {state.isSaving ? t("common.creating") : t("books.create.createButton")}
                   </Button>
                 </div>
               </BookFormFields>

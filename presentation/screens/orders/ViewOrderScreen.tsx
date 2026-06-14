@@ -19,6 +19,7 @@ import { OrderItemsTable } from "@/presentation/components/orders/OrderItemsTabl
 import { OrderLocationSection } from "@/presentation/components/orders/OrderLocationSection"
 import { OrderSummaryCards } from "@/presentation/components/orders/OrderSummaryCards"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import { useOrderDetailViewModel } from "@/presentation/viewmodels/orders/useOrderDetailViewModel"
 
 type ViewOrderScreenProps = {
@@ -46,12 +47,13 @@ function LoadingState() {
 export function ViewOrderScreen({ orderId, getOrdersUseCase }: ViewOrderScreenProps) {
   const router = useRouter()
   const viewModel = useOrderDetailViewModel(orderId, getOrdersUseCase)
+  const { t } = useTranslation()
   const { state } = viewModel
 
   useDashboardBreadcrumbs([
-    { label: "Workspace", href: "/dashboard" },
-    { label: "Orders", href: "/dashboard/orders" },
-    { label: state.order?.supplierName ?? "Order Details" },
+    { label: t("breadcrumbs.workspace"), href: "/dashboard" },
+    { label: t("nav.orders"), href: "/dashboard/orders" },
+    { label: state.order?.supplierName ?? t("orders.view.breadcrumbFallback") },
   ])
 
   const goBack = () => router.back()
@@ -64,15 +66,13 @@ export function ViewOrderScreen({ orderId, getOrdersUseCase }: ViewOrderScreenPr
         <div className="flex flex-1 items-center justify-center p-4">
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
-              <CardTitle>Order not found</CardTitle>
-              <CardDescription>
-                This order may have been removed or the link is invalid.
-              </CardDescription>
+              <CardTitle>{t("orders.notFoundTitle")}</CardTitle>
+              <CardDescription>{t("orders.notFoundDescription")}</CardDescription>
             </CardHeader>
             <CardContent>
               <Button variant="outline" onClick={() => router.push("/dashboard/orders")}>
                 <ArrowLeftIcon />
-                Back to Orders
+                {t("orders.backToOrders")}
               </Button>
             </CardContent>
           </Card>
@@ -83,17 +83,17 @@ export function ViewOrderScreen({ orderId, getOrdersUseCase }: ViewOrderScreenPr
         <div className="flex flex-1 items-center justify-center p-4">
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
-              <CardTitle>Order unavailable</CardTitle>
+              <CardTitle>{t("orders.view.unavailable")}</CardTitle>
               <CardDescription>{state.error}</CardDescription>
             </CardHeader>
             <CardContent className="flex gap-2">
               <Button onClick={() => void viewModel.reload()}>
                 <RefreshCwIcon />
-                Retry
+                {t("common.retry")}
               </Button>
               <Button variant="outline" onClick={goBack}>
                 <ArrowLeftIcon />
-                Back
+                {t("common.back")}
               </Button>
             </CardContent>
           </Card>
@@ -105,7 +105,7 @@ export function ViewOrderScreen({ orderId, getOrdersUseCase }: ViewOrderScreenPr
           <div className="flex justify-end pt-4">
             <Button variant="outline" onClick={goBack}>
               <ArrowLeftIcon />
-              Back
+              {t("common.back")}
             </Button>
           </div>
 
@@ -121,7 +121,7 @@ export function ViewOrderScreen({ orderId, getOrdersUseCase }: ViewOrderScreenPr
           {state.order.notes ? (
             <Card className="rounded-lg">
               <CardHeader>
-                <CardTitle>Notes</CardTitle>
+                <CardTitle>{t("orders.view.notes")}</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground">{state.order.notes}</p>

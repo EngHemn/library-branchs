@@ -225,7 +225,7 @@ export function DataTable<TItem, TColumnKey extends string>({
                       type="button"
                       variant="ghost"
                       size="sm"
-                      className="-ml-2 h-7 px-2 font-medium"
+                      className="-ms-2 h-7 px-2 font-medium"
                       onClick={() => handleSort(column)}
                       aria-label={`Sort by ${column.header}`}
                     >

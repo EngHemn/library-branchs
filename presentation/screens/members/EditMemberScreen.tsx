@@ -16,6 +16,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import type { MemberManagementUseCase } from "@/domain/usecases/members/MemberManagementUseCase"
 import { MemberFormFields } from "@/presentation/components/members/MemberFormFields"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import { useEditMemberViewModel } from "@/presentation/viewmodels/members/useEditMemberViewModel"
 
 type EditMemberScreenProps = {
@@ -53,13 +54,14 @@ export function EditMemberScreen({
   memberManagementUseCase,
 }: EditMemberScreenProps) {
   const router = useRouter()
+  const { t } = useTranslation()
   const viewModel = useEditMemberViewModel(memberId, memberManagementUseCase)
   const { state, form } = viewModel
 
   useDashboardBreadcrumbs([
-    { label: "Workspace", href: "/dashboard" },
-    { label: "Members", href: "/dashboard/members" },
-    { label: "Edit Member" },
+    { label: t("breadcrumbs.workspace"), href: "/dashboard" },
+    { label: t("nav.members"), href: "/dashboard/members" },
+    { label: t("members.edit.breadcrumb") },
   ])
 
   const goBack = () => router.back()
@@ -72,15 +74,13 @@ export function EditMemberScreen({
         <div className="flex flex-1 items-center justify-center p-4">
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
-              <CardTitle>Member not found</CardTitle>
-              <CardDescription>
-                The member you are looking for does not exist or has been removed.
-              </CardDescription>
+              <CardTitle>{t("members.notFoundTitle")}</CardTitle>
+              <CardDescription>{t("members.notFoundDescription")}</CardDescription>
             </CardHeader>
             <CardContent>
               <Button variant="outline" onClick={() => router.push("/dashboard/members")}>
                 <ArrowLeftIcon />
-                Back to members
+                {t("members.backToMembers")}
               </Button>
             </CardContent>
           </Card>
@@ -91,17 +91,17 @@ export function EditMemberScreen({
         <div className="flex flex-1 items-center justify-center p-4">
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
-              <CardTitle>Something went wrong</CardTitle>
+              <CardTitle>{t("common.somethingWentWrong")}</CardTitle>
               <CardDescription>{state.error}</CardDescription>
             </CardHeader>
             <CardContent className="flex gap-3">
               <Button variant="outline" onClick={() => router.push("/dashboard/members")}>
                 <ArrowLeftIcon />
-                Back to members
+                {t("members.backToMembers")}
               </Button>
               <Button onClick={() => router.refresh()}>
                 <RefreshCwIcon />
-                Retry
+                {t("common.retry")}
               </Button>
             </CardContent>
           </Card>
@@ -112,12 +112,14 @@ export function EditMemberScreen({
         <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
           <section className="flex items-center justify-between pt-4">
             <div>
-              <h1 className="text-2xl font-semibold tracking-normal">Edit Member</h1>
-              <p className="mt-1 text-sm text-muted-foreground">Update the member information.</p>
+              <h1 className="text-2xl font-semibold tracking-normal">
+                {t("members.edit.title")}
+              </h1>
+              <p className="mt-1 text-sm text-muted-foreground">{t("members.edit.subtitle")}</p>
             </div>
             <Button variant="outline" onClick={goBack}>
               <ArrowLeftIcon />
-              Back
+              {t("common.back")}
             </Button>
           </section>
 
@@ -125,10 +127,10 @@ export function EditMemberScreen({
             <Card className="rounded-lg border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-950">
               <CardContent className="flex items-center gap-3 py-3">
                 <p className="text-sm font-medium text-green-800 dark:text-green-200">
-                  Member updated successfully.
+                  {t("members.edit.updateSuccess")}
                 </p>
                 <Button size="sm" variant="outline" onClick={goBack}>
-                  Back to member
+                  {t("members.backToMember")}
                 </Button>
               </CardContent>
             </Card>
@@ -144,8 +146,8 @@ export function EditMemberScreen({
 
           <Card className="rounded-lg">
             <CardHeader>
-              <CardTitle>Member Details</CardTitle>
-              <CardDescription>Modify the member details below.</CardDescription>
+              <CardTitle>{t("members.create.detailsTitle")}</CardTitle>
+              <CardDescription>{t("members.edit.detailsDescription")}</CardDescription>
             </CardHeader>
             <CardContent>
               <MemberFormFields
@@ -156,11 +158,11 @@ export function EditMemberScreen({
                 <Separator />
                 <div className="flex justify-end gap-3">
                   <Button type="button" variant="outline" onClick={goBack} disabled={state.isSaving}>
-                    Cancel
+                    {t("common.cancel")}
                   </Button>
                   <Button type="submit" disabled={state.isSaving || state.isSaved}>
                     {state.isSaving ? <Loader2Icon className="animate-spin" /> : <SaveIcon />}
-                    {state.isSaving ? "Saving..." : "Save Changes"}
+                    {state.isSaving ? t("common.saving") : t("common.saveChanges")}
                   </Button>
                 </div>
               </MemberFormFields>

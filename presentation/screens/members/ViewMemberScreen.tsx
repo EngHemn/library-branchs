@@ -28,6 +28,7 @@ import { MemberBookingsTable } from "@/presentation/components/members/MemberBoo
 import { MemberDetailsTab } from "@/presentation/components/members/MemberDetailsTab"
 import { useBranchNameLookup } from "@/presentation/hooks/useBranchNameLookup"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import { useViewMemberViewModel } from "@/presentation/viewmodels/members/useViewMemberViewModel"
 
 type ViewMemberScreenProps = {
@@ -70,6 +71,7 @@ export function ViewMemberScreen({
   branchManagementUseCase,
 }: ViewMemberScreenProps) {
   const router = useRouter()
+  const { t } = useTranslation()
   const viewModel = useViewMemberViewModel(
     memberId,
     authUseCase,
@@ -79,9 +81,9 @@ export function ViewMemberScreen({
   const { state } = viewModel
 
   useDashboardBreadcrumbs([
-    { label: "Workspace", href: "/dashboard" },
-    { label: "Members", href: "/dashboard/members" },
-    { label: state.member?.memberName ?? "Member Details" },
+    { label: t("breadcrumbs.workspace"), href: "/dashboard" },
+    { label: t("nav.members"), href: "/dashboard/members" },
+    { label: state.member?.memberName ?? t("members.view.breadcrumbFallback") },
   ])
 
   const goBack = () => router.back()
@@ -94,15 +96,13 @@ export function ViewMemberScreen({
         <div className="flex flex-1 items-center justify-center p-4">
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
-              <CardTitle>Member not found</CardTitle>
-              <CardDescription>
-                The member you are looking for does not exist or has been removed.
-              </CardDescription>
+              <CardTitle>{t("members.notFoundTitle")}</CardTitle>
+              <CardDescription>{t("members.notFoundDescription")}</CardDescription>
             </CardHeader>
             <CardContent>
               <Button variant="outline" onClick={goBack}>
                 <ArrowLeftIcon />
-                Back to members
+                {t("members.backToMembers")}
               </Button>
             </CardContent>
           </Card>
@@ -113,17 +113,17 @@ export function ViewMemberScreen({
         <div className="flex flex-1 items-center justify-center p-4">
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
-              <CardTitle>Something went wrong</CardTitle>
+              <CardTitle>{t("common.somethingWentWrong")}</CardTitle>
               <CardDescription>{state.error}</CardDescription>
             </CardHeader>
             <CardContent className="flex gap-3">
               <Button variant="outline" onClick={goBack}>
                 <ArrowLeftIcon />
-                Back to members
+                {t("members.backToMembers")}
               </Button>
               <Button onClick={() => router.refresh()}>
                 <RefreshCwIcon />
-                Retry
+                {t("common.retry")}
               </Button>
             </CardContent>
           </Card>
@@ -139,12 +139,12 @@ export function ViewMemberScreen({
                   {state.member.memberName}
                 </h1>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  View member profile, active bookings, and borrowing history.
+                  {t("members.view.subtitle")}
                 </p>
               </div>
               <Button variant="outline" onClick={goBack}>
                 <ArrowLeftIcon />
-                Back
+                {t("common.back")}
               </Button>
             </section>
 
@@ -159,19 +159,23 @@ export function ViewMemberScreen({
               <TabsList className="flex h-auto w-full flex-wrap justify-start gap-1 sm:w-fit">
                 <TabsTrigger value="details" className="gap-1.5">
                   <UserRoundIcon className="size-3.5" />
-                  <span className="hidden sm:inline">Details</span>
+                  <span className="hidden sm:inline">{t("members.view.tabs.details")}</span>
                 </TabsTrigger>
                 <TabsTrigger value="active-bookings" className="gap-1.5">
                   <BookOpenIcon className="size-3.5" />
-                  <span className="hidden sm:inline">Active Bookings</span>
+                  <span className="hidden sm:inline">
+                    {t("members.view.tabs.activeBookings")}
+                  </span>
                 </TabsTrigger>
                 <TabsTrigger value="late-returns" className="gap-1.5">
                   <ClockIcon className="size-3.5" />
-                  <span className="hidden sm:inline">Late Returns</span>
+                  <span className="hidden sm:inline">{t("members.view.tabs.lateReturns")}</span>
                 </TabsTrigger>
                 <TabsTrigger value="borrowing-history" className="gap-1.5">
                   <HistoryIcon className="size-3.5" />
-                  <span className="hidden sm:inline">Borrowing History</span>
+                  <span className="hidden sm:inline">
+                    {t("members.view.tabs.borrowingHistory")}
+                  </span>
                 </TabsTrigger>
               </TabsList>
 
@@ -185,18 +189,18 @@ export function ViewMemberScreen({
 
               <TabsContent value="active-bookings">
                 <MemberBookingsTable
-                  title="Active Bookings"
+                  title={t("members.view.tabs.activeBookings")}
                   bookings={state.member.bookings.active}
-                  emptyMessage="This member has no active bookings."
+                  emptyMessage={t("members.view.empty.activeBookings")}
                   showBranchColumn={state.showBranchColumn}
                 />
               </TabsContent>
 
               <TabsContent value="late-returns">
                 <MemberBookingsTable
-                  title="Late Returns"
+                  title={t("members.view.tabs.lateReturns")}
                   bookings={state.member.bookings.lateReturns}
-                  emptyMessage="This member has no late returns."
+                  emptyMessage={t("members.view.empty.lateReturns")}
                   showBranchColumn={state.showBranchColumn}
                   showDaysOverdue
                 />
@@ -204,9 +208,9 @@ export function ViewMemberScreen({
 
               <TabsContent value="borrowing-history">
                 <MemberBookingsTable
-                  title="Borrowing History"
+                  title={t("members.view.tabs.borrowingHistory")}
                   bookings={state.member.bookings.history}
-                  emptyMessage="This member has no borrowing history."
+                  emptyMessage={t("members.view.empty.borrowingHistory")}
                   showBranchColumn={state.showBranchColumn}
                   showReturnedDate
                 />

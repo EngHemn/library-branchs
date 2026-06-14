@@ -3,6 +3,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 import type { BranchManagementUseCase } from "@/domain/usecases/branch/BranchManagementUseCase"
+import { useLocale } from "@/presentation/i18n/useLocale"
+import { translate } from "@/presentation/i18n/messages"
 
 type BranchManagementDialog = { title: string; description: string } | null
 
@@ -31,6 +33,7 @@ export function useBranchRequestActionsHook({
   setExpandedSubRequestIds,
 }: BranchRequestActionsParams): BranchRequestActions {
   const queryClient = useQueryClient()
+  const { locale } = useLocale()
 
   const approveMainMutation = useMutation({
     mutationFn: async (vars: { requestId: string; password: string }) => {
@@ -44,12 +47,17 @@ export function useBranchRequestActionsHook({
     onSuccess: (branch) => {
       void queryClient.invalidateQueries({ queryKey: ["branchManagement"] })
       setDialog({
-        title: "Main branch request approved",
-        description: `${branch.branchName} was created and removed from the pending queue.`,
+        title: translate(locale, "branches.actions.mainApprovedTitle"),
+        description: translate(locale, "branches.actions.mainApprovedDescription", {
+          name: branch.branchName,
+        }),
       })
     },
     onError: (err: Error) =>
-      setDialog({ title: "Request action unavailable", description: err.message }),
+      setDialog({
+        title: translate(locale, "branches.actions.requestActionUnavailable"),
+        description: err.message,
+      }),
   })
 
   const rejectMainMutation = useMutation({
@@ -66,14 +74,17 @@ export function useBranchRequestActionsHook({
     onSuccess: (message) => {
       void queryClient.invalidateQueries({ queryKey: ["branchManagement"] })
       setDialog({
-        title: "Main branch request rejected",
+        title: translate(locale, "branches.actions.mainRejectedTitle"),
         description: message?.trim()
-          ? "The request was rejected and your message was sent to the requester."
-          : "The request was removed from the mock request queue.",
+          ? translate(locale, "branches.actions.rejectedWithMessage")
+          : translate(locale, "branches.actions.rejectedWithoutMessage"),
       })
     },
     onError: (err: Error) =>
-      setDialog({ title: "Request action unavailable", description: err.message }),
+      setDialog({
+        title: translate(locale, "branches.actions.requestActionUnavailable"),
+        description: err.message,
+      }),
   })
 
   const approveSubMutation = useMutation({
@@ -88,12 +99,17 @@ export function useBranchRequestActionsHook({
     onSuccess: (branch) => {
       void queryClient.invalidateQueries({ queryKey: ["branchManagement"] })
       setDialog({
-        title: "Sub branch request approved",
-        description: `${branch.branchName} was created and removed from the pending queue.`,
+        title: translate(locale, "branches.actions.subApprovedTitle"),
+        description: translate(locale, "branches.actions.mainApprovedDescription", {
+          name: branch.branchName,
+        }),
       })
     },
     onError: (err: Error) =>
-      setDialog({ title: "Request action unavailable", description: err.message }),
+      setDialog({
+        title: translate(locale, "branches.actions.requestActionUnavailable"),
+        description: err.message,
+      }),
   })
 
   const rejectSubMutation = useMutation({
@@ -110,14 +126,17 @@ export function useBranchRequestActionsHook({
     onSuccess: (message) => {
       void queryClient.invalidateQueries({ queryKey: ["branchManagement"] })
       setDialog({
-        title: "Sub branch request rejected",
+        title: translate(locale, "branches.actions.subRejectedTitle"),
         description: message?.trim()
-          ? "The request was rejected and your message was sent to the requester."
-          : "The request was removed from the mock request queue.",
+          ? translate(locale, "branches.actions.rejectedWithMessage")
+          : translate(locale, "branches.actions.rejectedWithoutMessage"),
       })
     },
     onError: (err: Error) =>
-      setDialog({ title: "Request action unavailable", description: err.message }),
+      setDialog({
+        title: translate(locale, "branches.actions.requestActionUnavailable"),
+        description: err.message,
+      }),
   })
 
   const replyToMainMutation = useMutation({
@@ -135,12 +154,15 @@ export function useBranchRequestActionsHook({
         prev.includes(requestId) ? prev : [...prev, requestId]
       )
       setDialog({
-        title: "Reply sent",
-        description: "Your message was added to the request thread.",
+        title: translate(locale, "branches.actions.replySentTitle"),
+        description: translate(locale, "branches.actions.replySentDescription"),
       })
     },
     onError: (err: Error) =>
-      setDialog({ title: "Reply could not be sent", description: err.message }),
+      setDialog({
+        title: translate(locale, "branches.actions.replyFailedTitle"),
+        description: err.message,
+      }),
   })
 
   const replyToSubMutation = useMutation({
@@ -158,12 +180,15 @@ export function useBranchRequestActionsHook({
         prev.includes(requestId) ? prev : [...prev, requestId]
       )
       setDialog({
-        title: "Reply sent",
-        description: "Your message was added to the request thread.",
+        title: translate(locale, "branches.actions.replySentTitle"),
+        description: translate(locale, "branches.actions.replySentDescription"),
       })
     },
     onError: (err: Error) =>
-      setDialog({ title: "Reply could not be sent", description: err.message }),
+      setDialog({
+        title: translate(locale, "branches.actions.replyFailedTitle"),
+        description: err.message,
+      }),
   })
 
   async function approveMainBranchRequest(requestId: string, password: string): Promise<void> {

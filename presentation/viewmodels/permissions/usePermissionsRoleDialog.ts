@@ -5,6 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 import type { PermissionCode, PermissionRole } from "@/domain/entities/permission/Permission"
 import type { PermissionManagementUseCase } from "@/domain/usecases/permission/PermissionManagementUseCase"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 export type RoleDialogMode = "create" | "edit"
 
@@ -37,6 +38,7 @@ export type RoleDialogResult = {
 }
 
 export function usePermissionsRoleDialog(options: RoleDialogOptions): RoleDialogResult {
+  const { t } = useTranslation()
   const queryClient = useQueryClient()
 
   const [roleDialogMode, setRoleDialogMode] = useState<RoleDialogMode | null>(null)
@@ -114,7 +116,7 @@ export function usePermissionsRoleDialog(options: RoleDialogOptions): RoleDialog
   async function submitRoleForm(): Promise<void> {
     const trimmedName = roleForm.name.trim()
     if (!trimmedName) {
-      setRoleFormNameError("Role name is required")
+      setRoleFormNameError(t("permissions.errors.roleNameRequired"))
       return
     }
     setRoleFormError(null)
