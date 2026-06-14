@@ -18,6 +18,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import type { MemberDetail } from "@/domain/entities/member/MemberDetail"
 import type { MemberStatus } from "@/domain/entities/member/Member"
 import { BranchLink } from "@/presentation/components/branch-management/BranchLink"
+import type { TranslationKey } from "@/presentation/i18n/messages"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type MemberDetailsTabProps = {
   member: MemberDetail
@@ -25,10 +27,10 @@ type MemberDetailsTabProps = {
   showBranchesUsedSection?: boolean
 }
 
-const statusLabels: Record<MemberStatus, string> = {
-  active: "active",
-  inactive: "inactive",
-  suspended: "suspended",
+const STATUS_KEYS: Record<MemberStatus, TranslationKey> = {
+  active: "common.active",
+  inactive: "common.inactive",
+  suspended: "members.statuses.suspended",
 }
 
 function getInitials(name: string): string {
@@ -41,6 +43,8 @@ function getInitials(name: string): string {
 }
 
 function MemberStatusBadge({ status }: { status: MemberStatus }) {
+  const { t } = useTranslation()
+
   return (
     <Badge
       variant="outline"
@@ -52,7 +56,7 @@ function MemberStatusBadge({ status }: { status: MemberStatus }) {
             : "border-muted bg-muted text-muted-foreground"
       }
     >
-      {statusLabels[status]}
+      {t(STATUS_KEYS[status])}
     </Badge>
   )
 }
@@ -114,24 +118,26 @@ export function MemberDetailsTab({
   branchNameToId,
   showBranchesUsedSection = true,
 }: MemberDetailsTabProps) {
+  const { t } = useTranslation()
+
   return (
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <StatCard
           icon={BookOpenIcon}
-          label="Active Bookings"
+          label={t("members.details.activeBookings")}
           value={member.bookings.active.length}
           className="bg-sky-100 text-sky-600"
         />
         <StatCard
           icon={BookOpenIcon}
-          label="Late Returns"
+          label={t("members.details.lateReturns")}
           value={member.bookings.lateReturns.length}
           className="bg-red-100 text-red-600"
         />
         <StatCard
           icon={BookOpenIcon}
-          label="Borrowing History"
+          label={t("members.details.borrowingHistory")}
           value={member.bookings.history.length}
           className="bg-violet-100 text-violet-600"
         />
@@ -153,23 +159,23 @@ export function MemberDetailsTab({
         </CardHeader>
         <CardContent>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            <InfoRow icon={UserRoundIcon} label="Full Name">
+            <InfoRow icon={UserRoundIcon} label={t("members.fields.fullName")}>
               {member.memberName}
             </InfoRow>
-            <InfoRow icon={MailIcon} label="Email">
+            <InfoRow icon={MailIcon} label={t("members.fields.email")}>
               {member.email}
             </InfoRow>
-            <InfoRow icon={PhoneIcon} label="Phone">
+            <InfoRow icon={PhoneIcon} label={t("members.fields.phone")}>
               {member.phone}
             </InfoRow>
-            <InfoRow icon={Building2Icon} label="Registered Branch">
+            <InfoRow icon={Building2Icon} label={t("members.fields.registeredBranch")}>
               <BranchLink
                 branchId={member.branchId}
                 branchName={member.registerBranch}
               />
             </InfoRow>
             {showBranchesUsedSection ? (
-              <InfoRow icon={Building2Icon} label="Branches Used">
+              <InfoRow icon={Building2Icon} label={t("members.table.branchesUsed")}>
                 <div className="flex flex-wrap gap-1">
                   {member.allBranchesUsed.map((branch) => {
                     const branchId = branchNameToId?.[branch]
@@ -199,13 +205,13 @@ export function MemberDetailsTab({
                 </div>
               </InfoRow>
             ) : null}
-            <InfoRow icon={MapPinIcon} label="Address">
+            <InfoRow icon={MapPinIcon} label={t("members.fields.address")}>
               {member.address}
             </InfoRow>
-            <InfoRow icon={CalendarIcon} label="Registered">
+            <InfoRow icon={CalendarIcon} label={t("members.fields.registered")}>
               {member.registrationDate}
             </InfoRow>
-            <InfoRow icon={UserPlusIcon} label="Added By">
+            <InfoRow icon={UserPlusIcon} label={t("members.fields.addedBy")}>
               <Link
                 href={`/dashboard/staff/${member.addedBy.staffId}`}
                 className="inline-flex items-center gap-2 rounded-md px-2 py-1 text-sm font-medium text-primary transition-colors hover:bg-muted hover:underline"

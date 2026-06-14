@@ -19,6 +19,7 @@ import { formatShelfLocationParts } from "@/lib/shelfLocationDisplay"
 import { ShelfActionButton } from "@/presentation/components/shelves/ShelfActionButton"
 import { ShelfStatusBadge } from "@/presentation/components/shelves/ShelfStatusBadge"
 import { ShelfTypeBadge } from "@/presentation/components/shelves/ShelfTypeBadge"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type ShelvesTableProps = {
   shelves: Shelf[]
@@ -46,10 +47,12 @@ export function ShelvesTable({
   onEdit,
   onDelete,
 }: ShelvesTableProps) {
+  const { t } = useTranslation()
+
   const columns: DataTableColumn<Shelf, ShelfColumnKey>[] = [
     {
       key: "id",
-      header: "ID",
+      header: t("shelves.table.id"),
       sortable: true,
       sortValue: (shelf) => shelf.id,
       cell: (shelf) => (
@@ -60,14 +63,14 @@ export function ShelvesTable({
     },
     {
       key: "name",
-      header: "Shelf Name",
+      header: t("shelves.table.shelfName"),
       sortable: true,
       sortValue: (shelf) => shelf.name,
       cell: (shelf) => <span className="font-semibold">{shelf.name}</span>,
     },
     {
       key: "shelfType",
-      header: "Shelf Type",
+      header: t("shelves.table.shelfType"),
       sortable: true,
       sortValue: (shelf) => shelf.shelfType,
       cell: (shelf) => <ShelfTypeBadge shelfType={shelf.shelfType} />,
@@ -76,7 +79,7 @@ export function ShelvesTable({
       ? [
           {
             key: "branch" as const,
-            header: "Branch",
+            header: t("shelves.table.branch"),
             sortable: true,
             sortValue: (shelf: Shelf) => shelf.branchName,
             cell: (shelf: Shelf) => (
@@ -87,7 +90,7 @@ export function ShelvesTable({
       : []),
     {
       key: "location",
-      header: "Location",
+      header: t("shelves.table.location"),
       sortable: true,
       sortValue: (shelf) => formatShelfLocationParts(shelf.locationParts),
       cell: (shelf) => (
@@ -98,14 +101,14 @@ export function ShelvesTable({
     },
     {
       key: "capacity",
-      header: "Capacity",
+      header: t("shelves.table.capacity"),
       sortable: true,
       sortValue: (shelf) => shelf.capacity,
       cell: (shelf) => shelf.capacity.toLocaleString(),
     },
     {
       key: "bookCount",
-      header: "Books",
+      header: t("shelves.table.books"),
       sortable: true,
       sortValue: (shelf) => shelf.bookCount,
       cell: (shelf) => (
@@ -119,33 +122,33 @@ export function ShelvesTable({
     },
     {
       key: "status",
-      header: "Status",
+      header: t("shelves.table.status"),
       sortable: true,
       sortValue: (shelf) => shelf.status,
       cell: (shelf) => <ShelfStatusBadge status={shelf.status} />,
     },
     {
       key: "actions",
-      header: "Actions",
+      header: t("shelves.table.actions"),
       headerClassName: "text-right",
       className: "text-right",
       cell: (shelf) => (
-        <div className="flex justify-end gap-1">
+        <div className="table-action-content">
           <ShelfActionButton
             icon={EyeIcon}
-            label="View"
+            label={t("shelves.table.view")}
             variant="outline"
             onClick={() => onView(shelf)}
           />
           <ShelfActionButton
             icon={PencilIcon}
-            label="Edit"
+            label={t("shelves.table.edit")}
             variant="outline"
             onClick={() => onEdit(shelf)}
           />
           <ShelfActionButton
             icon={Trash2Icon}
-            label="Delete"
+            label={t("shelves.table.delete")}
             variant="destructive"
             onClick={() => onDelete(shelf)}
           />
@@ -157,9 +160,11 @@ export function ShelvesTable({
   return (
     <Card className="rounded-lg">
       <CardHeader>
-        <CardTitle>All Shelves</CardTitle>
+        <CardTitle>{t("shelves.table.title")}</CardTitle>
         <CardDescription>
-          {shelves.length.toLocaleString()} shelf records
+          {t("shelves.table.recordCount", {
+            count: shelves.length.toLocaleString(),
+          })}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -167,8 +172,8 @@ export function ShelvesTable({
           data={shelves}
           columns={columns}
           getRowId={(shelf) => shelf.id}
-          emptyTitle="No shelves found"
-          emptyDescription="Try changing or clearing the active filters."
+          emptyTitle={t("shelves.table.emptyTitle")}
+          emptyDescription={t("shelves.table.emptyDescription")}
           initialSort={{ key: "name", direction: "asc" }}
           initialPageSize={10}
           tableClassName="min-w-[960px]"

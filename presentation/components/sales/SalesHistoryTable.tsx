@@ -33,6 +33,8 @@ import {
 } from "@/components/ui/table"
 import type { Sale } from "@/domain/entities/sales/Sale"
 import type { SaleStatus } from "@/domain/entities/sales/SaleStatus"
+import type { TranslationKey } from "@/presentation/i18n/messages"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type SalesHistoryTableProps = {
   sales: Sale[]
@@ -100,28 +102,30 @@ function getStatusBadgeVariant(
   return "secondary"
 }
 
-function getStatusLabel(status: SaleStatus): string {
-  return status === "voided" ? "Voided" : "Completed"
+const STATUS_KEYS: Record<SaleStatus, TranslationKey> = {
+  completed: "sales.statuses.completed",
+  voided: "sales.statuses.voided",
 }
 
 export function SalesHistoryTable({
   sales,
   showBranchColumn = true,
 }: SalesHistoryTableProps) {
+  const { t } = useTranslation()
   const [selectedSale, setSelectedSale] = useState<Sale | null>(null)
 
   const columns = useMemo(() => {
     const allColumns: DataTableColumn<Sale, SalesHistoryColumnKey>[] = [
       {
         key: "id",
-        header: "Sale ID",
+        header: t("sales.history.table.saleId"),
         sortable: true,
         sortValue: (sale) => sale.id,
         cell: (sale) => <span className="font-mono text-xs">{sale.id}</span>,
       },
       {
         key: "createdAt",
-        header: "Date & Time",
+        header: t("sales.history.table.dateTime"),
         sortable: true,
         sortValue: (sale) => saleDateSortValue(sale.createdAt),
         cell: (sale) => (
@@ -135,14 +139,14 @@ export function SalesHistoryTable({
       },
       {
         key: "branchName",
-        header: "Branch",
+        header: t("sales.history.table.branch"),
         sortable: true,
         sortValue: (sale) => sale.branchName,
         cell: (sale) => sale.branchName,
       },
       {
         key: "books",
-        header: "Books",
+        header: t("sales.history.table.books"),
         sortable: true,
         sortValue: (sale) => countBooks(sale),
         cell: (sale) => <span className="text-right">{countBooks(sale)}</span>,
@@ -151,7 +155,7 @@ export function SalesHistoryTable({
       },
       {
         key: "subtotal",
-        header: "Subtotal",
+        header: t("sales.history.table.subtotal"),
         sortable: true,
         sortValue: (sale) => sale.subtotal,
         cell: (sale) => formatCurrency(sale.subtotal),
@@ -160,7 +164,7 @@ export function SalesHistoryTable({
       },
       {
         key: "discountAmount",
-        header: "Discount",
+        header: t("sales.history.table.discount"),
         sortable: true,
         sortValue: (sale) => sale.discountAmount,
         cell: (sale) => formatCurrency(sale.discountAmount),
@@ -169,7 +173,7 @@ export function SalesHistoryTable({
       },
       {
         key: "total",
-        header: "Total",
+        header: t("sales.history.table.total"),
         sortable: true,
         sortValue: (sale) => sale.total,
         cell: (sale) => (
@@ -180,18 +184,18 @@ export function SalesHistoryTable({
       },
       {
         key: "status",
-        header: "Status",
+        header: t("sales.history.table.status"),
         sortable: true,
         sortValue: (sale) => sale.status,
         cell: (sale) => (
           <Badge variant={getStatusBadgeVariant(sale.status)}>
-            {getStatusLabel(sale.status)}
+            {t(STATUS_KEYS[sale.status])}
           </Badge>
         ),
       },
       {
         key: "actions",
-        header: "Actions",
+        header: t("sales.history.table.actions"),
         headerClassName: "text-right",
         className: "text-right",
         cell: (sale) => (
@@ -202,7 +206,7 @@ export function SalesHistoryTable({
             onClick={() => setSelectedSale(sale)}
           >
             <EyeIcon className="size-4" />
-            View
+            {t("sales.history.view")}
           </Button>
         ),
       },
@@ -211,22 +215,24 @@ export function SalesHistoryTable({
     return showBranchColumn
       ? allColumns
       : allColumns.filter((column) => column.key !== "branchName")
-  }, [showBranchColumn])
+  }, [showBranchColumn, t])
 
   return (
     <>
       <Card className="rounded-lg">
         <CardHeader>
-          <CardTitle>Sales History</CardTitle>
-          <CardDescription>{sales.length.toLocaleString()} sale records</CardDescription>
+          <CardTitle>{t("sales.history.title")}</CardTitle>
+          <CardDescription>
+            {t("sales.history.recordCount", { count: sales.length.toLocaleString() })}
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <DataTable
             data={sales}
             columns={columns}
             getRowId={(sale) => sale.id}
-            emptyTitle="No sales found"
-            emptyDescription="No sales match the current filters."
+            emptyTitle={t("sales.history.emptyTitle")}
+            emptyDescription={t("sales.history.emptyDescription")}
             initialSort={{ key: "createdAt", direction: "desc" }}
             initialPageSize={10}
           />
@@ -243,11 +249,15 @@ export function SalesHistoryTable({
       >
         <SheetContent className="w-full p-0 sm:min-w-2/5">
           <SheetHeader className="border-b">
-            <SheetTitle>{selectedSale?.id ?? "Sale Details"}</SheetTitle>
+            <SheetTitle>{selectedSale?.id ?? t("sales.history.saleDetails")}</SheetTitle>
             <SheetDescription>
               {selectedSale
-                ? `${selectedSale.branchName} · ${formatSaleDate(selectedSale.createdAt)} at ${formatSaleTime(selectedSale.createdAt)}`
-                : "Sale details"}
+                ? t("sales.history.saleAt", {
+                    branch: selectedSale.branchName,
+                    date: formatSaleDate(selectedSale.createdAt),
+                    time: formatSaleTime(selectedSale.createdAt),
+                  })
+                : t("sales.history.saleDetailsFallback")}
             </SheetDescription>
           </SheetHeader>
 
@@ -255,14 +265,14 @@ export function SalesHistoryTable({
             <div className="space-y-4 p-4">
               <div className="flex items-center gap-2">
                 <Badge variant={getStatusBadgeVariant(selectedSale.status)}>
-                  {getStatusLabel(selectedSale.status)}
+                  {t(STATUS_KEYS[selectedSale.status])}
                 </Badge>
               </div>
 
               <div className="grid grid-cols-2 gap-3 text-sm">
                 <Card className="rounded-lg">
                   <CardContent className="space-y-1 p-3">
-                    <p className="text-muted-foreground">Subtotal</p>
+                    <p className="text-muted-foreground">{t("sales.history.table.subtotal")}</p>
                     <p className="font-semibold">
                       {formatCurrency(selectedSale.subtotal)}
                     </p>
@@ -270,7 +280,7 @@ export function SalesHistoryTable({
                 </Card>
                 <Card className="rounded-lg">
                   <CardContent className="space-y-1 p-3">
-                    <p className="text-muted-foreground">Discount</p>
+                    <p className="text-muted-foreground">{t("sales.history.table.discount")}</p>
                     <p className="font-semibold">
                       {formatCurrency(selectedSale.discountAmount)}
                     </p>
@@ -278,7 +288,7 @@ export function SalesHistoryTable({
                 </Card>
                 <Card className="col-span-2 rounded-lg">
                   <CardContent className="space-y-1 p-3">
-                    <p className="text-muted-foreground">Total</p>
+                    <p className="text-muted-foreground">{t("sales.history.table.total")}</p>
                     <p className="text-base font-semibold">
                       {formatCurrency(selectedSale.total)}
                     </p>
@@ -289,10 +299,10 @@ export function SalesHistoryTable({
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Book</TableHead>
-                    <TableHead className="text-right">Qty</TableHead>
-                    <TableHead className="text-right">Price</TableHead>
-                    <TableHead className="text-right">Line Total</TableHead>
+                    <TableHead>{t("sales.history.table.book")}</TableHead>
+                    <TableHead className="text-right">{t("sales.history.table.qty")}</TableHead>
+                    <TableHead className="text-right">{t("sales.history.table.price")}</TableHead>
+                    <TableHead className="text-right">{t("sales.history.table.lineTotal")}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>

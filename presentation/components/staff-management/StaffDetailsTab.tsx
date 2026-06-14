@@ -13,8 +13,10 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { EntityImage } from "@/components/ui/entity-image"
-import { getPermissionRoleLabel } from "@/domain/entities/permission/Permission"
+import type { PermissionStaffRole } from "@/domain/entities/permission/Permission"
 import type { StaffMember } from "@/domain/entities/staff/StaffMember"
+import type { TranslationKey } from "@/presentation/i18n/messages"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type StaffDetailsTabProps = {
   staffMember: StaffMember
@@ -23,9 +25,10 @@ type StaffDetailsTabProps = {
   translatorCount: number
 }
 
-const statusLabels = {
-  active: "Active",
-  inactive: "Inactive",
+const STAFF_ROLE_KEYS: Record<PermissionStaffRole, TranslationKey> = {
+  branch_admin: "staff.roles.branchAdmin",
+  sub_branch_admin: "staff.roles.subBranchAdmin",
+  staff: "staff.roles.staff",
 }
 
 function StatCard({
@@ -86,26 +89,29 @@ export function StaffDetailsTab({
   authorCount,
   translatorCount,
 }: StaffDetailsTabProps) {
-  const roleLabel = getPermissionRoleLabel(staffMember.role)
+  const { t } = useTranslation()
+  const roleLabel = STAFF_ROLE_KEYS[staffMember.role as PermissionStaffRole]
+    ? t(STAFF_ROLE_KEYS[staffMember.role as PermissionStaffRole])
+    : staffMember.role
 
   return (
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <StatCard
           icon={BookOpenIcon}
-          label="Branch Books"
+          label={t("staff.details.branchBooks")}
           value={bookCount}
           className="bg-sky-100 text-sky-600"
         />
         <StatCard
           icon={UsersIcon}
-          label="Branch Authors"
+          label={t("staff.details.branchAuthors")}
           value={authorCount}
           className="bg-violet-100 text-violet-600"
         />
         <StatCard
           icon={UsersIcon}
-          label="Branch Translators"
+          label={t("staff.details.branchTranslators")}
           value={translatorCount}
           className="bg-orange-100 text-orange-600"
         />
@@ -144,7 +150,7 @@ export function StaffDetailsTab({
                     staffMember.status === "active" ? "default" : "outline"
                   }
                 >
-                  {statusLabels[staffMember.status]}
+                  {t(`common.${staffMember.status}` as TranslationKey)}
                 </Badge>
               </div>
             </div>
@@ -152,21 +158,21 @@ export function StaffDetailsTab({
         </CardHeader>
         <CardContent>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            <InfoRow icon={HashIcon} label="Staff ID">
+            <InfoRow icon={HashIcon} label={t("staff.details.staffId")}>
               {staffMember.staffId}
             </InfoRow>
-            <InfoRow icon={MailIcon} label="Email">
+            <InfoRow icon={MailIcon} label={t("staff.details.email")}>
               {staffMember.email}
             </InfoRow>
-            <InfoRow icon={PhoneIcon} label="Phone">
+            <InfoRow icon={PhoneIcon} label={t("staff.details.phone")}>
               {staffMember.phone}
             </InfoRow>
-            <InfoRow icon={Building2Icon} label="Branch">
+            <InfoRow icon={Building2Icon} label={t("staff.details.branch")}>
               {staffMember.branch}
             </InfoRow>
-            <InfoRow icon={ShieldCheckIcon} label="Access">
+            <InfoRow icon={ShieldCheckIcon} label={t("staff.details.access")}>
               <span className="text-muted-foreground">
-                Permissions inherited from the {roleLabel} role. Configure role permissions on the Permissions page.
+                {t("staff.details.accessDescription", { role: roleLabel })}
               </span>
             </InfoRow>
           </div>

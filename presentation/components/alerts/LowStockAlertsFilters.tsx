@@ -12,6 +12,8 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
+import { useTranslation } from "@/presentation/i18n/useTranslation"
+
 export type LowStockAlertStatusFilter = "all" | "active" | "resolved"
 export type LowStockAlertBranchFilter = "all" | string
 
@@ -36,6 +38,8 @@ export function LowStockAlertsFilters({
   onBranchFilterChange,
   onStatusFilterChange,
 }: LowStockAlertsFiltersProps) {
+  const { t } = useTranslation()
+
   return (
     <div className="flex flex-col gap-4">
       <div className="relative flex-1">
@@ -43,7 +47,7 @@ export function LowStockAlertsFilters({
         <Input
           value={searchQuery}
           onChange={(event) => onSearchQueryChange(event.target.value)}
-          placeholder="Search by book title or ISBN..."
+          placeholder={t("alerts.searchPlaceholder")}
           className="pl-9"
         />
       </div>
@@ -51,7 +55,7 @@ export function LowStockAlertsFilters({
       <div className="grid gap-3 sm:grid-cols-2">
         {showBranchFilter ? (
           <div className="space-y-2">
-            <Label>Branch</Label>
+            <Label>{t("alerts.branch")}</Label>
             <Select
               value={branchFilter}
               onValueChange={(value) =>
@@ -59,10 +63,10 @@ export function LowStockAlertsFilters({
               }
             >
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="All branches" />
+                <SelectValue placeholder={t("alerts.allBranches")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All branches</SelectItem>
+                <SelectItem value="all">{t("alerts.allBranches")}</SelectItem>
                 {branchOptions.map((branch) => (
                   <SelectItem key={branch.id} value={branch.id}>
                     {branch.name}
@@ -74,7 +78,7 @@ export function LowStockAlertsFilters({
         ) : null}
 
         <div className="space-y-2">
-          <Label>Status</Label>
+          <Label>{t("alerts.status")}</Label>
           <Select
             value={statusFilter}
             onValueChange={(value) =>
@@ -82,12 +86,12 @@ export function LowStockAlertsFilters({
             }
           >
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="All statuses" />
+              <SelectValue placeholder={t("alerts.allStatuses")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All statuses</SelectItem>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="resolved">Resolved</SelectItem>
+              <SelectItem value="all">{t("alerts.allStatuses")}</SelectItem>
+              <SelectItem value="active">{t("alerts.active")}</SelectItem>
+              <SelectItem value="resolved">{t("alerts.resolved")}</SelectItem>
             </SelectContent>
           </Select>
         </div>

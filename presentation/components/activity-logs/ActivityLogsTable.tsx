@@ -16,6 +16,8 @@ import type { ActivityLog } from "@/domain/entities/activity-log/ActivityLog"
 import { BranchLink } from "@/presentation/components/branch-management/BranchLink"
 import { ActivityLogActionBadge } from "@/presentation/components/activity-logs/ActivityLogActionBadge"
 import { StaffLink } from "@/presentation/components/shared/DashboardEntityLink"
+import type { TranslationKey } from "@/presentation/i18n/messages"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type ActivityLogsTableProps = {
   logs: ActivityLog[]
@@ -49,10 +51,11 @@ function timestampSortValue(iso: string): number {
 }
 
 export function ActivityLogsTable({ logs }: ActivityLogsTableProps) {
+  const { t } = useTranslation()
   const columns: DataTableColumn<ActivityLog, ActivityLogColumnKey>[] = [
     {
       key: "createdAt",
-      header: "Timestamp",
+      header: t("activityLogs.table.timestamp"),
       sortable: true,
       sortValue: (log) => timestampSortValue(log.createdAt),
       cell: (log) => (
@@ -61,14 +64,14 @@ export function ActivityLogsTable({ logs }: ActivityLogsTableProps) {
     },
     {
       key: "action",
-      header: "Action",
+      header: t("activityLogs.table.action"),
       sortable: true,
       sortValue: (log) => log.action,
       cell: (log) => <ActivityLogActionBadge action={log.action} />,
     },
     {
       key: "description",
-      header: "Description",
+      header: t("activityLogs.table.description"),
       sortable: true,
       sortValue: (log) => log.description,
       cell: (log) => (
@@ -77,7 +80,7 @@ export function ActivityLogsTable({ logs }: ActivityLogsTableProps) {
     },
     {
       key: "entity",
-      header: "Entity",
+      header: t("activityLogs.table.entity"),
       sortable: true,
       sortValue: (log) => log.entityType,
       cell: (log) => (
@@ -93,7 +96,7 @@ export function ActivityLogsTable({ logs }: ActivityLogsTableProps) {
     },
     {
       key: "staff",
-      header: "Staff",
+      header: t("activityLogs.table.staff"),
       sortable: true,
       sortValue: (log) => log.staffName,
       cell: (log) => (
@@ -105,7 +108,7 @@ export function ActivityLogsTable({ logs }: ActivityLogsTableProps) {
     },
     {
       key: "branch",
-      header: "Branch",
+      header: t("activityLogs.table.branch"),
       sortable: true,
       sortValue: (log) => log.branchName,
       cell: (log) => (
@@ -118,7 +121,7 @@ export function ActivityLogsTable({ logs }: ActivityLogsTableProps) {
     },
     {
       key: "ipAddress",
-      header: "IP Address",
+      header: t("activityLogs.table.ipAddress"),
       sortable: true,
       sortValue: (log) => log.ipAddress,
       cell: (log) => (
@@ -132,11 +135,16 @@ export function ActivityLogsTable({ logs }: ActivityLogsTableProps) {
   return (
     <Card className="rounded-lg">
       <CardHeader className="pb-3">
-        <CardTitle className="text-base">Activity Logs</CardTitle>
+        <CardTitle className="text-base">{t("activityLogs.table.title")}</CardTitle>
         <CardDescription>
           {logs.length === 0
-            ? "No logs match the current filters."
-            : `${logs.length} log${logs.length === 1 ? "" : "s"} shown`}
+            ? t("activityLogs.table.noLogsFound")
+            : t(
+                logs.length === 1
+                  ? "activityLogs.table.logsCount"
+                  : "activityLogs.table.logsCountPlural",
+                { count: logs.length }
+              )}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -144,8 +152,8 @@ export function ActivityLogsTable({ logs }: ActivityLogsTableProps) {
           data={logs}
           columns={columns}
           getRowId={(log) => log.id}
-          emptyTitle="No activity logs found"
-          emptyDescription="Try adjusting your search or filter criteria."
+          emptyTitle={t("activityLogs.table.emptyTitle")}
+          emptyDescription={t("activityLogs.table.emptyDescription")}
           initialSort={{ key: "createdAt", direction: "desc" }}
           initialPageSize={10}
         />

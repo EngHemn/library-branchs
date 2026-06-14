@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/data-table"
 import type { Category } from "@/domain/entities/category/Category"
 import { CategoryActionButton } from "@/presentation/components/categories/CategoryActionButton"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type CategoriesTableProps = {
   categories: Category[]
@@ -31,20 +32,20 @@ type CategoryColumnKey =
   | "status"
   | "actions"
 
-const statusLabels = {
-  active: "active",
-  inactive: "inactive",
-}
-
 export function CategoriesTable({
   categories,
   onEdit,
   onDelete,
 }: CategoriesTableProps) {
+  const { t } = useTranslation()
+
+  const statusLabel = (status: Category["status"]) =>
+    status === "active" ? t("common.active") : t("common.inactive")
+
   const columns: DataTableColumn<Category, CategoryColumnKey>[] = [
     {
       key: "id",
-      header: "ID",
+      header: t("categories.table.id"),
       sortable: true,
       sortValue: (category) => category.id,
       cell: (category) => (
@@ -55,7 +56,7 @@ export function CategoriesTable({
     },
     {
       key: "name",
-      header: "Name",
+      header: t("categories.table.name"),
       sortable: true,
       sortValue: (category) => category.name,
       cell: (category) => (
@@ -64,7 +65,7 @@ export function CategoriesTable({
     },
     {
       key: "description",
-      header: "Description",
+      header: t("categories.table.description"),
       sortable: true,
       sortValue: (category) => category.description,
       cell: (category) => (
@@ -73,7 +74,7 @@ export function CategoriesTable({
     },
     {
       key: "totalBooks",
-      header: "Total Books",
+      header: t("categories.table.totalBooks"),
       sortable: true,
       sortValue: (category) => category.totalBooks,
       cell: (category) => (
@@ -87,9 +88,9 @@ export function CategoriesTable({
     },
     {
       key: "status",
-      header: "Status",
+      header: t("categories.table.status"),
       sortable: true,
-      sortValue: (category) => statusLabels[category.status],
+      sortValue: (category) => statusLabel(category.status),
       cell: (category) => (
         <Badge
           variant="outline"
@@ -99,26 +100,26 @@ export function CategoriesTable({
               : "border-muted bg-muted text-muted-foreground"
           }
         >
-          {statusLabels[category.status]}
+          {statusLabel(category.status)}
         </Badge>
       ),
     },
     {
       key: "actions",
-      header: "Actions",
+      header: t("categories.table.actions"),
       headerClassName: "text-right",
       className: "text-right",
       cell: (category) => (
-        <div className="flex justify-end gap-1">
+        <div className="table-action-content">
           <CategoryActionButton
             icon={PencilIcon}
-            label="Edit"
+            label={t("categories.table.editCategory")}
             variant="outline"
             onClick={() => onEdit(category)}
           />
           <CategoryActionButton
             icon={Trash2Icon}
-            label="Delete"
+            label={t("categories.table.deleteCategory")}
             variant="destructive"
             onClick={() => onDelete(category)}
           />
@@ -130,9 +131,11 @@ export function CategoriesTable({
   return (
     <Card className="rounded-lg">
       <CardHeader>
-        <CardTitle>All Categories</CardTitle>
+        <CardTitle>{t("categories.table.title")}</CardTitle>
         <CardDescription>
-          {categories.length.toLocaleString()} category records
+          {t("categories.table.recordCount", {
+            count: categories.length.toLocaleString(),
+          })}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -140,8 +143,8 @@ export function CategoriesTable({
           data={categories}
           columns={columns}
           getRowId={(category) => category.id}
-          emptyTitle="No categories found"
-          emptyDescription="Try changing or clearing the active filters."
+          emptyTitle={t("categories.table.emptyTitle")}
+          emptyDescription={t("categories.table.emptyDescription")}
           initialSort={{ key: "name", direction: "asc" }}
           initialPageSize={10}
           tableClassName="min-w-[900px]"

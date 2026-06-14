@@ -19,6 +19,8 @@ import { Input } from "@/components/ui/input"
 import type { Author } from "@/domain/entities/author/Author"
 import type { BranchPermissions } from "@/domain/entities/permission/BranchPermissions"
 import { BranchActionButton } from "@/presentation/components/branch-management/BranchActionButton"
+import type { TranslationKey } from "@/presentation/i18n/messages"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type AuthorsTabProps = {
   authors: Author[]
@@ -38,8 +40,6 @@ type AuthorColumnKey =
   | "status"
   | "actions"
 
-const statusLabels = { active: "Active", inactive: "Inactive" }
-
 export function AuthorsTab({
   authors,
   permissions,
@@ -50,66 +50,70 @@ export function AuthorsTab({
   onDelete,
   onToggleStatus,
 }: AuthorsTabProps) {
+  const { t } = useTranslation()
+
   const columns: DataTableColumn<Author, AuthorColumnKey>[] = [
     {
       key: "name",
-      header: "Name",
+      header: t("branches.detail.shared.name"),
       sortable: true,
       sortValue: (a) => a.name,
       cell: (a) => <span className="font-medium">{a.name}</span>,
     },
     {
       key: "nationality",
-      header: "Nationality",
+      header: t("branches.detail.shared.nationality"),
       sortable: true,
       sortValue: (a) => a.nationality,
       cell: (a) => a.nationality,
     },
     {
       key: "totalBooks",
-      header: "Total Books",
+      header: t("branches.detail.stats.totalBooks"),
       sortable: true,
       sortValue: (a) => a.totalBooks,
       cell: (a) => a.totalBooks.toLocaleString(),
     },
     {
       key: "status",
-      header: "Status",
+      header: t("common.status"),
       sortable: true,
-      sortValue: (a) => statusLabels[a.status],
+      sortValue: (a) => t(`common.${a.status}` as TranslationKey),
       cell: (a) => (
         <Badge variant={a.status === "active" ? "default" : "outline"}>
-          {statusLabels[a.status]}
+          {t(`common.${a.status}` as TranslationKey)}
         </Badge>
       ),
     },
     {
       key: "actions",
-      header: "Actions",
+      header: t("common.actions"),
       headerClassName: "text-right",
       className: "text-right",
       cell: (a) => {
         const toggleLabel =
-          a.status === "active" ? "Deactivate" : "Activate"
+          a.status === "active"
+            ? t("branches.detail.shared.deactivate")
+            : t("branches.detail.shared.activate")
         const ToggleIcon = a.status === "active" ? PowerOffIcon : PowerIcon
 
         return (
-          <div className="flex justify-end gap-1">
+          <div className="table-action-content">
             <BranchActionButton
               icon={EyeIcon}
-              label="View"
+              label={t("common.view")}
               onClick={() => onView(a)}
             />
             {permissions.canManageAuthors ? (
               <>
                 <BranchActionButton
                   icon={PencilIcon}
-                  label="Edit"
+                  label={t("common.edit")}
                   onClick={() => onEdit(a)}
                 />
                 <BranchActionButton
                   icon={Trash2Icon}
-                  label="Delete"
+                  label={t("common.delete")}
                   variant="destructive"
                   onClick={() => onDelete(a)}
                 />
@@ -129,11 +133,11 @@ export function AuthorsTab({
   return (
     <Card className="rounded-lg">
       <CardHeader className="flex-row items-center justify-between gap-4 space-y-0">
-        <CardTitle>Authors</CardTitle>
+        <CardTitle>{t("branches.view.tabs.authors")}</CardTitle>
         <div className="relative w-full max-w-xs">
           <SearchIcon className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Search authors..."
+            placeholder={t("branches.detail.shared.searchAuthors")}
             value={searchQuery}
             onChange={(e) => onSearchQueryChange(e.target.value)}
             className="pl-9"
@@ -145,8 +149,8 @@ export function AuthorsTab({
           data={authors}
           columns={columns}
           getRowId={(a) => a.id}
-          emptyTitle="No authors found"
-          emptyDescription="This branch does not have any authors yet."
+          emptyTitle={t("branches.detail.empty.authors.title")}
+          emptyDescription={t("branches.detail.empty.authors.description")}
           initialSort={{ key: "name", direction: "asc" }}
           initialPageSize={5}
           tableClassName="min-w-[700px]"

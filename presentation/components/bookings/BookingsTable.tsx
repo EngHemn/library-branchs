@@ -42,6 +42,8 @@ import type {
   BookingStatus,
   BookingType,
 } from "@/domain/entities/booking/Booking"
+import type { TranslationKey } from "@/presentation/i18n/messages"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type BookingsTableProps = {
   bookings: Booking[]
@@ -74,18 +76,35 @@ const typeClassNames: Record<BookingType, string> = {
     "border-teal-200 bg-teal-50 text-teal-700 dark:border-teal-900 dark:bg-teal-950 dark:text-teal-300",
 }
 
+const STATUS_KEYS: Record<BookingStatus, TranslationKey> = {
+  reserved: "bookings.statuses.reserved",
+  borrowed: "bookings.statuses.borrowed",
+  returned: "bookings.statuses.returned",
+  overdue: "bookings.statuses.overdue",
+  cancelled: "bookings.statuses.cancelled",
+}
+
+const TYPE_KEYS: Record<BookingType, TranslationKey> = {
+  inside: "bookings.types.inside",
+  outside: "bookings.types.outside",
+}
+
 function BookingStatusBadge({ status }: { status: BookingStatus }) {
+  const { t } = useTranslation()
+
   return (
     <Badge variant="outline" className={statusClassNames[status]}>
-      {status}
+      {t(STATUS_KEYS[status])}
     </Badge>
   )
 }
 
 function BookingTypeBadge({ type }: { type: BookingType }) {
+  const { t } = useTranslation()
+
   return (
     <Badge variant="outline" className={typeClassNames[type]}>
-      {type}
+      {t(TYPE_KEYS[type])}
     </Badge>
   )
 }
@@ -119,6 +138,7 @@ function BookingActionsMenu({
   onEdit,
   onDelete,
 }: BookingActionsMenuProps) {
+  const { t } = useTranslation()
   const showReturnOrExtend = canReturnOrExtend(booking.status)
   const showCancel = canCancel(booking.status)
 
@@ -129,7 +149,7 @@ function BookingActionsMenu({
           type="button"
           variant="outline"
           size="icon-sm"
-          aria-label="Booking actions"
+          aria-label={t("bookings.actions.bookingActions")}
           disabled={isActionPending}
         >
           <IoSettingsOutline className="size-4" />
@@ -140,23 +160,23 @@ function BookingActionsMenu({
           <>
             <DropdownMenuItem onClick={() => onReturn(booking)}>
               <CornerDownLeftIcon />
-              Return
+              {t("bookings.actions.return")}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => onExtend(booking)}>
               <CalendarPlusIcon />
-              Extend
+              {t("bookings.actions.extend")}
             </DropdownMenuItem>
           </>
         ) : null}
         {showCancel ? (
           <DropdownMenuItem onClick={() => onCancel(booking)}>
             <XIcon />
-            Cancel
+            {t("bookings.actions.cancel")}
           </DropdownMenuItem>
         ) : null}
         <DropdownMenuItem onClick={() => onEdit(booking)}>
           <PencilIcon />
-          Edit
+          {t("bookings.actions.edit")}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
@@ -164,7 +184,7 @@ function BookingActionsMenu({
           onClick={() => onDelete(booking)}
         >
           <Trash2Icon />
-          Delete
+          {t("bookings.actions.delete")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -181,33 +201,39 @@ export function BookingsTable({
   onEdit,
   onDelete,
 }: BookingsTableProps) {
+  const { t } = useTranslation()
+
   return (
     <Card className="rounded-lg">
       <CardHeader>
-        <CardTitle>Bookings</CardTitle>
+        <CardTitle>{t("bookings.table.title")}</CardTitle>
         <CardDescription>
-          {bookings.length.toLocaleString()} booking records
+          {t("bookings.table.recordCount", { count: bookings.length })}
         </CardDescription>
       </CardHeader>
       <CardContent>
         {bookings.length === 0 ? (
           <p className="py-8 text-center text-sm text-muted-foreground">
-            No bookings found. Try changing or clearing the active filters.
+            {t("bookings.table.emptyDescription")}
           </p>
         ) : (
           <div className="overflow-x-auto">
             <Table className={showBranchColumn ? "min-w-[980px]" : "min-w-[820px]"}>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Book</TableHead>
-                  <TableHead>Member</TableHead>
-                  {showBranchColumn ? <TableHead>Branch</TableHead> : null}
-                  <TableHead>Type</TableHead>
-                  <TableHead>Booking Date</TableHead>
-                  <TableHead>Due Date</TableHead>
-                  <TableHead>Return Date</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead>{t("bookings.table.book")}</TableHead>
+                  <TableHead>{t("bookings.table.member")}</TableHead>
+                  {showBranchColumn ? (
+                    <TableHead>{t("bookings.table.branch")}</TableHead>
+                  ) : null}
+                  <TableHead>{t("bookings.table.type")}</TableHead>
+                  <TableHead>{t("bookings.table.bookingDate")}</TableHead>
+                  <TableHead>{t("bookings.table.dueDate")}</TableHead>
+                  <TableHead>{t("bookings.table.returnDate")}</TableHead>
+                  <TableHead>{t("bookings.table.status")}</TableHead>
+                  <TableHead className="text-right">
+                    {t("bookings.table.actions")}
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -240,7 +266,9 @@ export function BookingsTable({
                     </TableCell>
                     <TableCell>{booking.bookingDate}</TableCell>
                     <TableCell>{booking.dueDate}</TableCell>
-                    <TableCell>{booking.returnDate ?? "—"}</TableCell>
+                    <TableCell>
+                      {booking.returnDate ?? t("bookings.table.noReturnDate")}
+                    </TableCell>
                     <TableCell>
                       <BookingStatusBadge status={booking.status} />
                     </TableCell>

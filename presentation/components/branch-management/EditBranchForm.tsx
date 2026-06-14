@@ -24,6 +24,7 @@ import { ImageUpload } from "@/components/ui/image-upload"
 import { Separator } from "@/components/ui/separator"
 import type { Branch, BranchType } from "@/domain/entities/branch/Branch"
 import type { BranchFormErrors } from "@/domain/validators/branch/validateBranchForm"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type EditBranchFormField = {
   branchName: string
@@ -70,14 +71,15 @@ export function EditBranchForm({
   onSave,
   onCancel,
 }: EditBranchFormProps) {
+  const { t } = useTranslation()
   const isDisabled = isSaving || isSaved
 
   return (
     <Card className="rounded-lg">
       <CardHeader>
-        <CardTitle>Edit Branch</CardTitle>
+        <CardTitle>{t("branches.editForm.title")}</CardTitle>
         <CardDescription>
-          Update the details for branch {branchId}
+          {t("branches.editForm.description", { id: branchId })}
         </CardDescription>
       </CardHeader>
 
@@ -91,13 +93,13 @@ export function EditBranchForm({
         {isSaved ? (
           <div className="flex items-center gap-2 rounded-lg border border-emerald-500/50 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-700 dark:text-emerald-400">
             <CheckCircle2Icon className="size-4 shrink-0" />
-            Branch updated successfully. Redirecting…
+            {t("branches.editForm.redirecting")}
           </div>
         ) : null}
 
         <div className="grid gap-5 sm:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor="branchName">Branch Name</Label>
+            <Label htmlFor="branchName">{t("branches.create.fields.branchName")}</Label>
             <Input
               id="branchName"
               value={form.branchName}
@@ -109,7 +111,7 @@ export function EditBranchForm({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t("branches.create.fields.email")}</Label>
             <Input
               id="email"
               type="email"
@@ -122,7 +124,7 @@ export function EditBranchForm({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="adminName">Admin Name</Label>
+            <Label htmlFor="adminName">{t("branches.create.fields.adminName")}</Label>
             <Input
               id="adminName"
               value={form.adminName}
@@ -134,7 +136,7 @@ export function EditBranchForm({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="phone">Phone</Label>
+            <Label htmlFor="phone">{t("branches.create.fields.phone")}</Label>
             <Input
               id="phone"
               type="tel"
@@ -147,7 +149,7 @@ export function EditBranchForm({
           </div>
 
           <div className="space-y-2 sm:col-span-2">
-            <Label htmlFor="address">Address</Label>
+            <Label htmlFor="address">{t("branches.create.fields.address")}</Label>
             <Input
               id="address"
               value={form.address}
@@ -160,8 +162,8 @@ export function EditBranchForm({
 
           <div className="space-y-2 sm:col-span-2">
             <ImageUpload
-              label="Branch image"
-              previewAlt="Branch image preview"
+              label={t("branches.edit.branchImage")}
+              previewAlt={t("branches.edit.branchImagePreview")}
               value={form.imageUrl}
               onChange={(url) => onFieldChange("imageUrl", url)}
               disabled={isDisabled}
@@ -170,7 +172,7 @@ export function EditBranchForm({
 
           {branchType === "sub" ? (
             <div className="space-y-2 sm:col-span-2">
-              <Label htmlFor="parentBranch">Parent Branch</Label>
+              <Label htmlFor="parentBranch">{t("branches.editForm.parentBranch")}</Label>
               <Select
                 value={form.parentBranch ?? ""}
                 disabled={isDisabled}
@@ -183,7 +185,7 @@ export function EditBranchForm({
                   className="w-full"
                   aria-invalid={Boolean(fieldErrors.parentBranch)}
                 >
-                  <SelectValue placeholder="Select a parent branch" />
+                  <SelectValue placeholder={t("branches.editForm.selectParentBranch")} />
                 </SelectTrigger>
                 <SelectContent>
                   {mainBranches.map((branch) => (
@@ -207,7 +209,7 @@ export function EditBranchForm({
           disabled={isDisabled}
           onClick={onCancel}
         >
-          Cancel
+          {t("common.cancel")}
         </Button>
         <Button
           disabled={isDisabled}
@@ -216,10 +218,10 @@ export function EditBranchForm({
           {isSaving ? (
             <>
               <Loader2Icon className="size-4 animate-spin" />
-              Saving…
+              {t("branches.edit.saving")}
             </>
           ) : (
-            "Save Changes"
+            t("common.saveChanges")
           )}
         </Button>
       </CardFooter>

@@ -23,6 +23,7 @@ import {
   getShelfTypeLabel,
 } from "@/domain/entities/shelf/ShelfType"
 import type { ShelfFormValues } from "@/domain/schemas/shelfFormSchema"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type ShelfDetailsFieldsProps = {
   form: UseFormReturn<ShelfFormValues>
@@ -37,6 +38,8 @@ export function ShelfDetailsFields({
   canSelectBranch,
   disabled = false,
 }: ShelfDetailsFieldsProps) {
+  const { t } = useTranslation()
+
   return (
     <Form {...form}>
       <div className="grid gap-4 sm:grid-cols-2">
@@ -45,10 +48,10 @@ export function ShelfDetailsFields({
           name="name"
           render={({ field }) => (
             <FormItem className="sm:col-span-2">
-              <FormLabel>Shelf Name</FormLabel>
+              <FormLabel>{t("shelves.form.fields.shelfName")}</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="Fiction A-H Row 3"
+                  placeholder={t("shelves.form.fields.shelfNamePlaceholder")}
                   disabled={disabled}
                   {...field}
                 />
@@ -63,7 +66,7 @@ export function ShelfDetailsFields({
           name="shelfType"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Shelf Type</FormLabel>
+              <FormLabel>{t("shelves.form.fields.shelfType")}</FormLabel>
               <Select
                 value={field.value}
                 onValueChange={field.onChange}
@@ -71,7 +74,9 @@ export function ShelfDetailsFields({
               >
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select shelf type" />
+                    <SelectValue
+                      placeholder={t("shelves.form.fields.shelfTypePlaceholder")}
+                    />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
@@ -92,7 +97,7 @@ export function ShelfDetailsFields({
           name="branchId"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Branch</FormLabel>
+              <FormLabel>{t("shelves.form.fields.branch")}</FormLabel>
               <Select
                 value={field.value}
                 onValueChange={field.onChange}
@@ -100,7 +105,9 @@ export function ShelfDetailsFields({
               >
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select branch" />
+                    <SelectValue
+                      placeholder={t("shelves.form.fields.branchPlaceholder")}
+                    />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
@@ -121,7 +128,7 @@ export function ShelfDetailsFields({
           name="capacity"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Capacity</FormLabel>
+              <FormLabel>{t("shelves.form.fields.capacity")}</FormLabel>
               <FormControl>
                 <Input type="number" min={1} disabled={disabled} {...field} />
               </FormControl>
@@ -135,7 +142,7 @@ export function ShelfDetailsFields({
           name="status"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Status</FormLabel>
+              <FormLabel>{t("shelves.form.fields.status")}</FormLabel>
               <Select
                 value={field.value}
                 onValueChange={field.onChange}
@@ -143,12 +150,14 @@ export function ShelfDetailsFields({
               >
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select status" />
+                    <SelectValue
+                      placeholder={t("shelves.form.fields.statusPlaceholder")}
+                    />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="inactive">Inactive</SelectItem>
+                  <SelectItem value="active">{t("common.active")}</SelectItem>
+                  <SelectItem value="inactive">{t("common.inactive")}</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />

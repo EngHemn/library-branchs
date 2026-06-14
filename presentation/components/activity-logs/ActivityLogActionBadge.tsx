@@ -1,5 +1,7 @@
 import { Badge } from "@/components/ui/badge"
 import type { ActivityLogAction } from "@/domain/entities/activity-log/ActivityLog"
+import type { TranslationKey } from "@/presentation/i18n/messages"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type ActivityLogActionBadgeProps = {
   action: ActivityLogAction
@@ -60,11 +62,12 @@ const actionConfig: Record<
 }
 
 export function ActivityLogActionBadge({ action }: ActivityLogActionBadgeProps) {
+  const { t } = useTranslation()
   const config = actionConfig[action]
 
   return (
     <Badge variant="outline" className={config.className}>
-      {config.label}
+      {t(`activityLogs.actions.${action}` as TranslationKey)}
     </Badge>
   )
 }

@@ -25,6 +25,7 @@ import type {
 } from "@/domain/repositories/BillManagementRepository"
 import type { BillFormValues } from "@/domain/schemas/billFormSchema"
 import { BillBooksSelector } from "@/presentation/components/bills/BillBooksSelector"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type BillFormFieldsProps = {
   form: UseFormReturn<BillFormValues>
@@ -47,6 +48,8 @@ export function BillFormFields({
   onSubmit,
   children,
 }: BillFormFieldsProps) {
+  const { t } = useTranslation()
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -57,7 +60,7 @@ export function BillFormFields({
               name="branchId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Branch</FormLabel>
+                  <FormLabel>{t("bills.form.branch")}</FormLabel>
                   <Select
                     value={field.value}
                     onValueChange={field.onChange}
@@ -65,7 +68,7 @@ export function BillFormFields({
                   >
                     <FormControl>
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select branch to import products" />
+                        <SelectValue placeholder={t("bills.form.branchPlaceholder")} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -87,10 +90,10 @@ export function BillFormFields({
             name="companyName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Company Name</FormLabel>
+                <FormLabel>{t("bills.form.companyName")}</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Supplier or vendor name"
+                    placeholder={t("bills.form.companyNamePlaceholder")}
                     disabled={disabled}
                     {...field}
                   />
@@ -105,7 +108,7 @@ export function BillFormFields({
             name="billDate"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Bill Date</FormLabel>
+                <FormLabel>{t("bills.form.billDate")}</FormLabel>
                 <FormControl>
                   <Input type="date" disabled={disabled} {...field} />
                 </FormControl>
@@ -119,7 +122,7 @@ export function BillFormFields({
             name="phoneNumber"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Phone Number</FormLabel>
+                <FormLabel>{t("bills.form.phoneNumber")}</FormLabel>
                 <FormControl>
                   <Input
                     placeholder="+1 (555) 000-0000"
@@ -137,7 +140,7 @@ export function BillFormFields({
             name="price"
             render={({ field }) => (
               <FormItem className="sm:col-span-2">
-                <FormLabel>Total Price</FormLabel>
+                <FormLabel>{t("bills.form.totalPrice")}</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
@@ -161,8 +164,8 @@ export function BillFormFields({
             <FormItem>
               <FormControl>
                 <ImageUpload
-                  label="Bill image"
-                  previewAlt="Bill image preview"
+                  label={t("bills.form.billImage")}
+                  previewAlt={t("bills.form.billImagePreview")}
                   value={field.value ?? null}
                   onChange={field.onChange}
                   disabled={disabled}
@@ -178,7 +181,7 @@ export function BillFormFields({
           name="bookIds"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Products (Books)</FormLabel>
+              <FormLabel>{t("bills.form.products")}</FormLabel>
               <FormControl>
                 <BillBooksSelector
                   bookOptions={bookOptions}

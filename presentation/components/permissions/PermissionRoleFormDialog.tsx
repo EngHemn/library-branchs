@@ -14,6 +14,8 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
+import { translatePermissionError } from "@/presentation/components/permissions/permissionI18n"
 
 type PermissionRoleFormDialogProps = {
   open: boolean
@@ -42,11 +44,15 @@ export function PermissionRoleFormDialog({
   onClose,
   onSubmit,
 }: PermissionRoleFormDialogProps) {
-  const title = mode === "create" ? "Add Role" : "Edit Role"
+  const { t } = useTranslation()
+  const title =
+    mode === "create"
+      ? t("permissions.roleForm.createTitle")
+      : t("permissions.roleForm.editTitle")
   const descriptionText =
     mode === "create"
-      ? "Create a new role, then configure its permissions."
-      : "Update the role name and description."
+      ? t("permissions.roleForm.createDescription")
+      : t("permissions.roleForm.editDescription")
 
   return (
     <Dialog open={open} onOpenChange={(nextOpen) => !nextOpen && onClose()}>
@@ -64,33 +70,39 @@ export function PermissionRoleFormDialog({
           }}
         >
           <div className="space-y-2">
-            <Label htmlFor="role-name">Role Name</Label>
+            <Label htmlFor="role-name">{t("permissions.roleForm.roleName")}</Label>
             <Input
               id="role-name"
               value={name}
               onChange={(event) => onNameChange(event.target.value)}
-              placeholder="Enter role name"
+              placeholder={t("permissions.roleForm.roleNamePlaceholder")}
               disabled={isSubmitting}
             />
             {nameError ? (
-              <p className="text-sm text-destructive">{nameError}</p>
+              <p className="text-sm text-destructive">
+                {translatePermissionError(nameError, t)}
+              </p>
             ) : null}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="role-description">Description</Label>
+            <Label htmlFor="role-description">
+              {t("permissions.roleForm.description")}
+            </Label>
             <Textarea
               id="role-description"
               value={description}
               onChange={(event) => onDescriptionChange(event.target.value)}
-              placeholder="Describe what this role can do"
+              placeholder={t("permissions.roleForm.descriptionPlaceholder")}
               rows={3}
               disabled={isSubmitting}
             />
           </div>
 
           {formError ? (
-            <p className="text-sm text-destructive">{formError}</p>
+            <p className="text-sm text-destructive">
+              {translatePermissionError(formError, t)}
+            </p>
           ) : null}
 
           <DialogFooter>
@@ -100,17 +112,17 @@ export function PermissionRoleFormDialog({
               onClick={onClose}
               disabled={isSubmitting}
             >
-              Cancel
+              {t("common.cancel")}
             </Button>
             <Button type="submit" disabled={isSubmitting}>
               {isSubmitting ? <Loader2Icon className="animate-spin" /> : null}
               {isSubmitting
                 ? mode === "create"
-                  ? "Creating..."
-                  : "Saving..."
+                  ? t("permissions.roleForm.creating")
+                  : t("common.saving")
                 : mode === "create"
-                  ? "Add Role"
-                  : "Save Changes"}
+                  ? t("permissions.roleForm.addRole")
+                  : t("common.saveChanges")}
             </Button>
           </DialogFooter>
         </form>

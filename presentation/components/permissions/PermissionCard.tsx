@@ -6,6 +6,8 @@ import type {
   PermissionCategory,
   PermissionCode,
 } from "@/domain/entities/permission/Permission"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
+import { getPermissionCategoryName } from "@/presentation/components/permissions/permissionI18n"
 
 type PermissionCardProps = {
   category: PermissionCategory
@@ -22,6 +24,7 @@ export function PermissionCard({
   onSelectAll,
   onDeselectAll,
 }: PermissionCardProps) {
+  const { t } = useTranslation()
   const selectedCount = category.permissions.filter((p) =>
     selectedPermissions.includes(p)
   ).length
@@ -32,7 +35,7 @@ export function PermissionCard({
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-sm font-semibold">
-            {category.name}{" "}
+            {getPermissionCategoryName(category.name, t)}{" "}
             <span className="font-normal text-muted-foreground">
               ({selectedCount}/{totalCount})
             </span>
@@ -43,14 +46,14 @@ export function PermissionCard({
               onClick={onSelectAll}
               className="text-xs font-medium text-primary hover:underline"
             >
-              All
+              {t("permissions.card.selectAll")}
             </button>
             <button
               type="button"
               onClick={onDeselectAll}
               className="text-xs font-medium text-muted-foreground hover:underline"
             >
-              None
+              {t("permissions.card.deselectAll")}
             </button>
           </div>
         </div>

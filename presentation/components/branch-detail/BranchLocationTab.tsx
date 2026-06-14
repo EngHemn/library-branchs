@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Skeleton } from "@/components/ui/skeleton"
 import type { BranchDetail } from "@/domain/entities/branch/BranchDetail"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type BranchLocationTabProps = {
   branchDetail: BranchDetail
@@ -25,6 +26,7 @@ const DEFAULT_CENTER: [number, number] = [42.3601, -71.0589]
 const DEFAULT_ZOOM = 12
 
 export function BranchLocationTab({ branchDetail }: BranchLocationTabProps) {
+  const { t } = useTranslation()
   const mapContainerRef = useRef<HTMLDivElement>(null)
   const mapInstanceRef = useRef<import("leaflet").Map | null>(null)
   const [mapState, setMapState] = useState<MapState>("loading")
@@ -108,9 +110,9 @@ export function BranchLocationTab({ branchDetail }: BranchLocationTabProps) {
             <MapPinIcon className="size-6 text-muted-foreground" />
           </div>
           <div className="text-center">
-            <p className="font-medium">No location set</p>
+            <p className="font-medium">{t("branches.location.noLocationSet")}</p>
             <p className="mt-1 text-sm text-muted-foreground">
-              This branch does not have a map location assigned yet.
+              {t("branches.location.noLocationDescription")}
             </p>
           </div>
         </CardContent>
@@ -124,7 +126,7 @@ export function BranchLocationTab({ branchDetail }: BranchLocationTabProps) {
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
             <MapPinIcon className="size-4" />
-            Branch Location
+            {t("branches.location.title")}
           </CardTitle>
           <CardDescription>{branchDetail.address}</CardDescription>
         </CardHeader>
@@ -142,7 +144,7 @@ export function BranchLocationTab({ branchDetail }: BranchLocationTabProps) {
 
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="space-y-1.5">
-              <Label htmlFor="view-latitude">Latitude</Label>
+              <Label htmlFor="view-latitude">{t("branches.location.latitude")}</Label>
               <Input
                 id="view-latitude"
                 value={String(branchDetail.latitude)}
@@ -151,7 +153,7 @@ export function BranchLocationTab({ branchDetail }: BranchLocationTabProps) {
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="view-longitude">Longitude</Label>
+              <Label htmlFor="view-longitude">{t("branches.location.longitude")}</Label>
               <Input
                 id="view-longitude"
                 value={String(branchDetail.longitude)}
@@ -167,7 +169,7 @@ export function BranchLocationTab({ branchDetail }: BranchLocationTabProps) {
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
             <NavigationIcon className="size-4" />
-            Address Details
+            {t("branches.location.addressDetails")}
           </CardTitle>
         </CardHeader>
         <CardContent>

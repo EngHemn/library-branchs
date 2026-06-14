@@ -4,6 +4,8 @@ import { format, parseISO } from "date-fns"
 import { CalendarIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
+import type { TranslationKey } from "@/presentation/i18n/messages"
 import { Calendar } from "@/components/ui/calendar"
 import { Label } from "@/components/ui/label"
 import {
@@ -43,11 +45,11 @@ type ReportsFiltersProps = {
   generatedAt?: string
 }
 
-const periodOptions: { value: ReportPeriod; label: string }[] = [
-  { value: "7d", label: "Last 7 days" },
-  { value: "30d", label: "Last 30 days" },
-  { value: "90d", label: "Last 90 days" },
-  { value: "ytd", label: "Year to date" },
+const periodOptions: { value: ReportPeriod; labelKey: TranslationKey }[] = [
+  { value: "7d", labelKey: "reports.periods.7d" as TranslationKey },
+  { value: "30d", labelKey: "reports.periods.30d" as TranslationKey },
+  { value: "90d", labelKey: "reports.periods.90d" as TranslationKey },
+  { value: "ytd", labelKey: "reports.periods.ytd" as TranslationKey },
 ]
 
 const PERIOD_VALUES = new Set<string>(periodOptions.map((o) => o.value))
@@ -82,6 +84,7 @@ function DatePickerField({
   maxDate?: Date
   minDate?: Date
 }) {
+  const { t } = useTranslation()
   const selected = value ? parseISO(value) : undefined
 
   return (
@@ -101,7 +104,7 @@ function DatePickerField({
             )}
           >
             <CalendarIcon className="size-4" />
-            {value ? format(parseISO(value), "MMM d, yyyy") : "Pick date"}
+            {value ? format(parseISO(value), "MMM d, yyyy") : t("reports.filters.pickDate")}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="start">
@@ -140,6 +143,7 @@ export function ReportsFilters({
   branchName,
   generatedAt,
 }: ReportsFiltersProps) {
+  const { t } = useTranslation()
   const dateToMax = new Date()
   const dateToMin = dateFrom ? parseISO(dateFrom) : undefined
 
@@ -152,7 +156,7 @@ export function ReportsFilters({
         <p className="text-xs text-muted-foreground">
           {branchName ? `${branchName} · ` : null}
           {dateFrom && dateTo ? `${dateFrom} → ${dateTo}` : null}
-          {generatedAt ? ` · Generated ${formatGeneratedAt(generatedAt)}` : null}
+          {generatedAt ? ` · ${t("reports.filters.generated", { date: formatGeneratedAt(generatedAt) })}` : null}
         </p>
       </div>
 
@@ -164,7 +168,7 @@ export function ReportsFilters({
       >
         <div className="w-full">
           <Label htmlFor="report-period" className="mb-1.5 block text-sm">
-            Quick period
+            {t("reports.filters.quickPeriod")}
           </Label>
           <Select
             value={period}
@@ -176,7 +180,7 @@ export function ReportsFilters({
             <SelectContent>
               {periodOptions.map((option) => (
                 <SelectItem key={option.value} value={option.value}>
-                  {option.label}
+                  {t(option.labelKey)}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -186,11 +190,11 @@ export function ReportsFilters({
         {showBranchFilter ? (
           <div className="w-full">
             <Label htmlFor="report-branch" className="mb-1.5 block text-sm">
-              Branch
+              {t("reports.filters.branch")}
             </Label>
             <Select value={branchId} onValueChange={onBranchChange}>
               <SelectTrigger id="report-branch" className="w-full">
-                <SelectValue placeholder="Current branch" />
+                <SelectValue placeholder={t("reports.filters.currentBranch")} />
               </SelectTrigger>
               <SelectContent>
                 {branchFilterOptions.map((option) => (
@@ -205,7 +209,7 @@ export function ReportsFilters({
 
         <DatePickerField
           id="report-date-from"
-          label="From"
+          label={t("reports.filters.from")}
           value={dateFrom}
           onChange={onDateFromChange}
           maxDate={dateTo ? parseISO(dateTo) : dateToMax}
@@ -213,7 +217,7 @@ export function ReportsFilters({
 
         <DatePickerField
           id="report-date-to"
-          label="To"
+          label={t("reports.filters.to")}
           value={dateTo}
           onChange={onDateToChange}
           minDate={dateToMin}

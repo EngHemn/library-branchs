@@ -17,6 +17,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import type { ShelfBook } from "@/domain/entities/shelf/ShelfBook"
 import { formatShelfLocationParts } from "@/lib/shelfLocationDisplay"
 import { ShelfActionButton } from "@/presentation/components/shelves/ShelfActionButton"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type ShelfBooksTableProps = {
   books: ShelfBook[]
@@ -43,38 +44,40 @@ export function ShelfBooksTable({
   onEdit,
   onDelete,
 }: ShelfBooksTableProps) {
+  const { t } = useTranslation()
+
   const columns: DataTableColumn<ShelfBook, ShelfBookColumnKey>[] = [
     {
       key: "title",
-      header: "Title",
+      header: t("shelves.booksTable.titleColumn"),
       sortable: true,
       sortValue: (book) => book.title,
       cell: (book) => <span className="font-medium">{book.title}</span>,
     },
     {
       key: "author",
-      header: "Author",
+      header: t("shelves.booksTable.author"),
       sortable: true,
       sortValue: (book) => book.author,
       cell: (book) => book.author,
     },
     {
       key: "category",
-      header: "Category",
+      header: t("shelves.booksTable.category"),
       sortable: true,
       sortValue: (book) => book.category,
       cell: (book) => book.category,
     },
     {
       key: "language",
-      header: "Language",
+      header: t("shelves.booksTable.language"),
       sortable: true,
       sortValue: (book) => book.language,
       cell: (book) => book.language,
     },
     {
       key: "isbn",
-      header: "ISBN",
+      header: t("shelves.booksTable.isbn"),
       sortable: true,
       sortValue: (book) => book.isbn,
       cell: (book) => (
@@ -85,7 +88,7 @@ export function ShelfBooksTable({
     },
     {
       key: "location",
-      header: "Location",
+      header: t("shelves.booksTable.location"),
       sortable: true,
       sortValue: (book) => formatShelfLocationParts(book.locationParts),
       cell: (book) => (
@@ -96,33 +99,33 @@ export function ShelfBooksTable({
     },
     {
       key: "quantity",
-      header: "Qty",
+      header: t("shelves.booksTable.qty"),
       sortable: true,
       sortValue: (book) => book.quantity,
       cell: (book) => book.quantity.toLocaleString(),
     },
     {
       key: "actions",
-      header: "Actions",
+      header: t("shelves.booksTable.actions"),
       headerClassName: "text-right",
       className: "text-right",
       cell: (book) => (
-        <div className="flex justify-end gap-1">
+        <div className="table-action-content">
           <ShelfActionButton
             icon={EyeIcon}
-            label="View"
+            label={t("shelves.booksTable.view")}
             variant="outline"
             onClick={() => onView(book)}
           />
           <ShelfActionButton
             icon={PencilIcon}
-            label="Edit"
+            label={t("shelves.booksTable.edit")}
             variant="outline"
             onClick={() => onEdit(book)}
           />
           <ShelfActionButton
             icon={Trash2Icon}
-            label="Remove"
+            label={t("shelves.booksTable.remove")}
             variant="destructive"
             onClick={() => onDelete(book)}
           />
@@ -148,9 +151,11 @@ export function ShelfBooksTable({
   return (
     <Card className="rounded-lg">
       <CardHeader>
-        <CardTitle>Books on Shelf</CardTitle>
+        <CardTitle>{t("shelves.booksTable.title")}</CardTitle>
         <CardDescription>
-          {books.length.toLocaleString()} book records
+          {t("shelves.booksTable.recordCount", {
+            count: books.length.toLocaleString(),
+          })}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -158,8 +163,8 @@ export function ShelfBooksTable({
           data={books}
           columns={columns}
           getRowId={(book) => book.id}
-          emptyTitle="No books found"
-          emptyDescription="Try changing or clearing the active filters."
+          emptyTitle={t("shelves.booksTable.emptyTitle")}
+          emptyDescription={t("shelves.booksTable.emptyDescription")}
           initialSort={{ key: "title", direction: "asc" }}
           initialPageSize={10}
           tableClassName="min-w-[1020px]"

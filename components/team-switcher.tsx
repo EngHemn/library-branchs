@@ -18,6 +18,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { useHydrated } from "@/hooks/use-hydrated"
+import { useLocale } from "@/presentation/i18n/useLocale"
 import { ChevronsUpDownIcon, PlusIcon } from "lucide-react"
 
 export function TeamSwitcher({
@@ -30,6 +31,7 @@ export function TeamSwitcher({
   }[]
 }) {
   const { isMobile } = useSidebar()
+  const { isRtl } = useLocale()
   const hydrated = useHydrated()
   const [selectedTeamName, setSelectedTeamName] = React.useState(teams[0]?.name)
   const activeTeam =
@@ -47,7 +49,7 @@ export function TeamSwitcher({
       <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
         {activeTeam.logo}
       </div>
-      <div className="grid flex-1 text-left text-sm leading-tight">
+      <div className="grid flex-1 text-start text-sm leading-tight">
         <span className="truncate font-medium">{activeTeam.name}</span>
         {activeTeam.plan ? (
           <span className="truncate text-xs text-muted-foreground">
@@ -55,7 +57,7 @@ export function TeamSwitcher({
           </span>
         ) : null}
       </div>
-      <ChevronsUpDownIcon className="ml-auto" />
+      <ChevronsUpDownIcon className="ms-auto" />
     </SidebarMenuButton>
   )
 
@@ -68,7 +70,7 @@ export function TeamSwitcher({
             <DropdownMenuContent
               className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
               align="start"
-              side={isMobile ? "bottom" : "right"}
+              side={isMobile ? "bottom" : isRtl ? "left" : "right"}
               sideOffset={4}
             >
               <DropdownMenuLabel className="text-xs text-muted-foreground">

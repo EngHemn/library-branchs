@@ -1,3 +1,5 @@
+"use client"
+
 import {
   BookmarkIcon,
   BookOpenIcon,
@@ -10,51 +12,62 @@ import {
 
 import { Card } from "@/components/ui/card"
 import type { BookingStats } from "@/domain/entities/booking/Booking"
+import type { TranslationKey } from "@/presentation/i18n/messages"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type BookingStatsCardsProps = {
   stats: BookingStats
 }
 
+type StatCardConfig = {
+  labelKey: TranslationKey
+  value: number
+  icon: typeof BookmarkIcon
+  className: string
+}
+
 export function BookingStatsCards({ stats }: BookingStatsCardsProps) {
-  const cards = [
+  const { t } = useTranslation()
+
+  const cards: StatCardConfig[] = [
     {
-      label: "Reserved",
+      labelKey: "bookings.stats.reserved",
       value: stats.reserved,
       icon: BookmarkIcon,
       className: "bg-amber-100 text-amber-600",
     },
     {
-      label: "Borrowed",
+      labelKey: "bookings.stats.borrowed",
       value: stats.borrowed,
       icon: BookOpenIcon,
       className: "bg-sky-100 text-sky-600",
     },
     {
-      label: "Returned",
+      labelKey: "bookings.stats.returned",
       value: stats.returned,
       icon: CircleCheckIcon,
       className: "bg-emerald-100 text-emerald-600",
     },
     {
-      label: "Overdue",
+      labelKey: "bookings.stats.overdue",
       value: stats.overdue,
       icon: ClockIcon,
       className: "bg-rose-100 text-rose-600",
     },
     {
-      label: "Cancelled",
+      labelKey: "bookings.stats.cancelled",
       value: stats.cancelled,
       icon: CircleXIcon,
       className: "bg-slate-100 text-slate-600",
     },
     {
-      label: "Inside",
+      labelKey: "bookings.stats.inside",
       value: stats.inside,
       icon: LogInIcon,
       className: "bg-lime-100 text-lime-600",
     },
     {
-      label: "Outside",
+      labelKey: "bookings.stats.outside",
       value: stats.outside,
       icon: LogOutIcon,
       className: "bg-teal-100 text-teal-600",
@@ -65,10 +78,11 @@ export function BookingStatsCards({ stats }: BookingStatsCardsProps) {
     <section className="grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-7">
       {cards.map((card) => {
         const Icon = card.icon
+        const label = t(card.labelKey)
 
         return (
           <Card
-            key={card.label}
+            key={card.labelKey}
             className="flex flex-row items-center gap-3 rounded-lg p-4 shadow-sm"
           >
             <div
@@ -78,7 +92,7 @@ export function BookingStatsCards({ stats }: BookingStatsCardsProps) {
             </div>
             <div className="flex min-w-0 flex-col">
               <span className="truncate text-xs font-medium tracking-wide text-muted-foreground uppercase">
-                {card.label}
+                {label}
               </span>
               <span className="text-lg font-semibold">
                 {card.value.toLocaleString()}

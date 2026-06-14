@@ -16,6 +16,7 @@ import { getShelfTypeLabel } from "@/domain/entities/shelf/ShelfType"
 import { formatShelfLocationParts } from "@/lib/shelfLocationDisplay"
 import { ShelfStatusBadge } from "@/presentation/components/shelves/ShelfStatusBadge"
 import { ShelfTypeBadge } from "@/presentation/components/shelves/ShelfTypeBadge"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type ShelfDetailOverviewProps = {
   shelf: Shelf
@@ -42,6 +43,7 @@ export function ShelfDetailOverview({
   showBranchField = true,
   onEdit,
 }: ShelfDetailOverviewProps) {
+  const { t } = useTranslation()
   const availableSpace = Math.max(shelf.capacity - shelf.bookCount, 0)
   const utilization = getUtilizationPercent(shelf)
 
@@ -61,28 +63,36 @@ export function ShelfDetailOverview({
         </div>
         <Button variant="outline" onClick={onEdit}>
           <PencilIcon />
-          Edit Shelf
+          {t("shelves.view.editShelf")}
         </Button>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <InfoItem
-            label="Shelf Type"
+            label={t("shelves.detail.shelfType")}
             value={getShelfTypeLabel(shelf.shelfType)}
           />
           {showBranchField ? (
-            <InfoItem label="Branch" value={shelf.branchName} />
+            <InfoItem label={t("shelves.detail.branch")} value={shelf.branchName} />
           ) : null}
-          <InfoItem label="Capacity" value={`${shelf.capacity.toLocaleString()} books`} />
           <InfoItem
-            label="Books on Shelf"
+            label={t("shelves.detail.capacity")}
+            value={t("shelves.detail.booksCount", {
+              count: shelf.capacity.toLocaleString(),
+            })}
+          />
+          <InfoItem
+            label={t("shelves.detail.booksOnShelf")}
             value={shelf.bookCount.toLocaleString()}
           />
           <InfoItem
-            label="Available Space"
+            label={t("shelves.detail.availableSpace")}
             value={availableSpace.toLocaleString()}
           />
-          <InfoItem label="Utilization" value={`${utilization}%`} />
+          <InfoItem
+            label={t("shelves.detail.utilization")}
+            value={`${utilization}%`}
+          />
         </div>
 
         {shelf.locationParts.length > 0 ? (

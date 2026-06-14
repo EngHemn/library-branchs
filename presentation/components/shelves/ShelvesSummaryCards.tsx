@@ -12,6 +12,8 @@ import { Card } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { cn } from "@/lib/utils"
 import type { ShelfSummary } from "@/domain/entities/shelf/Shelf"
+import type { TranslationKey } from "@/presentation/i18n/messages"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type ShelvesSummaryCardsProps = {
   summary: ShelfSummary | null
@@ -20,8 +22,8 @@ type ShelvesSummaryCardsProps = {
 
 type SummaryCardConfig = {
   key: keyof ShelfSummary
-  label: string
-  hint: string
+  labelKey: TranslationKey
+  hintKey: TranslationKey
   icon: ElementType
   iconClassName: string
   accentClassName: string
@@ -30,8 +32,8 @@ type SummaryCardConfig = {
 const cards: SummaryCardConfig[] = [
   {
     key: "totalShelves",
-    label: "Total Shelves",
-    hint: "Across visible branches",
+    labelKey: "shelves.summary.totalShelves",
+    hintKey: "shelves.summary.totalShelvesHint",
     icon: LayersIcon,
     iconClassName:
       "bg-sky-100 text-sky-600 dark:bg-sky-950 dark:text-sky-400",
@@ -39,8 +41,8 @@ const cards: SummaryCardConfig[] = [
   },
   {
     key: "mainBranchShelves",
-    label: "Main Branch",
-    hint: "Shelves in main branches",
+    labelKey: "shelves.summary.mainBranch",
+    hintKey: "shelves.summary.mainBranchHint",
     icon: Building2Icon,
     iconClassName:
       "bg-violet-100 text-violet-600 dark:bg-violet-950 dark:text-violet-400",
@@ -48,8 +50,8 @@ const cards: SummaryCardConfig[] = [
   },
   {
     key: "subBranchShelves",
-    label: "Sub Branch",
-    hint: "Shelves in sub branches",
+    labelKey: "shelves.summary.subBranch",
+    hintKey: "shelves.summary.subBranchHint",
     icon: ArchiveIcon,
     iconClassName:
       "bg-amber-100 text-amber-600 dark:bg-amber-950 dark:text-amber-400",
@@ -57,8 +59,8 @@ const cards: SummaryCardConfig[] = [
   },
   {
     key: "activeShelves",
-    label: "Active",
-    hint: "Currently in use",
+    labelKey: "shelves.summary.active",
+    hintKey: "shelves.summary.activeHint",
     icon: CheckCircleIcon,
     iconClassName:
       "bg-emerald-100 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400",
@@ -83,6 +85,8 @@ export function ShelvesSummaryCards({
   summary,
   isLoading = false,
 }: ShelvesSummaryCardsProps) {
+  const { t } = useTranslation()
+
   if (isLoading) {
     return (
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -119,13 +123,13 @@ export function ShelvesSummaryCards({
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-sm font-medium text-muted-foreground">
-                {card.label}
+                {t(card.labelKey)}
               </p>
               <p className="text-2xl font-bold tabular-nums tracking-tight">
                 {value.toLocaleString()}
               </p>
               <p className="truncate text-xs text-muted-foreground">
-                {card.hint}
+                {t(card.hintKey)}
               </p>
             </div>
           </Card>

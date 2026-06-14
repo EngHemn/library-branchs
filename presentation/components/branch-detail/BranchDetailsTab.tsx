@@ -16,19 +16,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { EntityImage } from "@/components/ui/entity-image"
 import type { BranchDetail } from "@/domain/entities/branch/BranchDetail"
 import { BranchAdminLink } from "@/presentation/components/branch-management/BranchAdminLink"
+import type { TranslationKey } from "@/presentation/i18n/messages"
+import { useLocale } from "@/presentation/i18n/useLocale"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type BranchDetailsTabProps = {
   branchDetail: BranchDetail
-}
-
-const branchTypeLabels = {
-  main: "Main Branch",
-  sub: "Sub Branch",
-}
-
-const branchStatusLabels = {
-  active: "Active",
-  inactive: "Inactive",
 }
 
 function StatCard({
@@ -80,27 +73,30 @@ function InfoRow({
 }
 
 export function BranchDetailsTab({ branchDetail }: BranchDetailsTabProps) {
+  const { t } = useTranslation()
+  const { locale } = useLocale()
+
   return (
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
           icon={BookOpenIcon}
-          label="Total Books"
+          label={t("branches.detail.stats.totalBooks")}
           value={branchDetail.bookCount}
         />
         <StatCard
           icon={UsersIcon}
-          label="Total Members"
+          label={t("branches.detail.stats.totalMembers")}
           value={branchDetail.totalMembers}
         />
         <StatCard
           icon={UsersIcon}
-          label="Total Staff"
+          label={t("branches.detail.stats.totalStaff")}
           value={branchDetail.staffCount}
         />
         <StatCard
           icon={GitBranchIcon}
-          label="Sub Branches"
+          label={t("branches.detail.stats.subBranches")}
           value={branchDetail.totalSubBranches}
         />
       </div>
@@ -127,12 +123,12 @@ export function BranchDetailsTab({ branchDetail }: BranchDetailsTabProps) {
                 <Badge
                   variant={branchDetail.type === "main" ? "default" : "secondary"}
                 >
-                  {branchTypeLabels[branchDetail.type]}
+                  {t(`branches.types.${branchDetail.type}` as TranslationKey)}
                 </Badge>
                 <Badge
                   variant={branchDetail.status === "active" ? "default" : "outline"}
                 >
-                  {branchStatusLabels[branchDetail.status]}
+                  {t(`common.${branchDetail.status}` as TranslationKey)}
                 </Badge>
               </div>
             </div>
@@ -140,30 +136,30 @@ export function BranchDetailsTab({ branchDetail }: BranchDetailsTabProps) {
         </CardHeader>
         <CardContent>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            <InfoRow icon={MailIcon} label="Email">
+            <InfoRow icon={MailIcon} label={t("branches.detail.info.email")}>
               {branchDetail.email}
             </InfoRow>
-            <InfoRow icon={PhoneIcon} label="Phone">
+            <InfoRow icon={PhoneIcon} label={t("branches.detail.info.phone")}>
               {branchDetail.phone}
             </InfoRow>
-            <InfoRow icon={MapPinIcon} label="Address">
+            <InfoRow icon={MapPinIcon} label={t("branches.detail.info.address")}>
               {branchDetail.address}
             </InfoRow>
-            <InfoRow icon={UsersIcon} label="Admin">
+            <InfoRow icon={UsersIcon} label={t("branches.detail.info.admin")}>
               <BranchAdminLink
                 branchId={branchDetail.id}
                 adminName={branchDetail.adminName}
               />
             </InfoRow>
-            <InfoRow icon={CalendarIcon} label="Created Date">
-              {new Date(branchDetail.createdDate).toLocaleDateString("en-US", {
+            <InfoRow icon={CalendarIcon} label={t("branches.detail.info.createdDate")}>
+              {new Date(branchDetail.createdDate).toLocaleDateString(locale, {
                 year: "numeric",
                 month: "long",
                 day: "numeric",
               })}
             </InfoRow>
             {branchDetail.type === "sub" && branchDetail.parentBranch ? (
-              <InfoRow icon={Building2Icon} label="Parent Branch">
+              <InfoRow icon={Building2Icon} label={t("branches.detail.info.parentBranch")}>
                 {branchDetail.parentBranch}
               </InfoRow>
             ) : null}

@@ -21,6 +21,7 @@ import type { Branch } from "@/domain/entities/branch/Branch"
 import type { CartItem } from "@/domain/entities/sales/CartItem"
 import type { SaleBook } from "@/domain/entities/sales/SaleBook"
 import { cn } from "@/lib/utils"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import { BookSaleCard } from "./BookSaleCard"
 
 type BooksForSaleGridProps = {
@@ -149,6 +150,8 @@ export function BooksForSaleGrid({
   onRequestShopFromDisplayedBranch,
   isSubBranchUser = false,
 }: BooksForSaleGridProps) {
+  const { t } = useTranslation()
+
   function getCartQuantity(bookId: string): number {
     return cart.find((item) => item.book.id === bookId)?.quantity ?? 0
   }
@@ -175,9 +178,9 @@ export function BooksForSaleGrid({
         ) : (
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-semibold">All branches catalog</p>
+              <p className="text-sm font-semibold">{t("sales.books.allBranchesCatalog")}</p>
               <p className="text-xs text-muted-foreground">
-                Browse all books first, then choose a shopping branch to add items to cart.
+                {t("sales.books.allBranchesHint")}
               </p>
             </div>
           </div>
@@ -188,8 +191,10 @@ export function BooksForSaleGrid({
             <div className="flex items-center gap-1.5">
               <AlertCircleIcon className="size-4 shrink-0 text-amber-600 dark:text-amber-400" />
               <span className="text-xs text-amber-800 dark:text-amber-200">
-                Browsing <strong>{displayedBranch.branchName}</strong> — shopping
-                from <strong>{shoppingBranch.branchName}</strong>
+                {t("sales.books.browsingFrom", {
+                  displayed: displayedBranch.branchName,
+                  shopping: shoppingBranch.branchName,
+                })}
               </span>
             </div>
             <Button
@@ -198,7 +203,7 @@ export function BooksForSaleGrid({
               className="h-6 gap-1 border-amber-300 px-2 text-[11px] text-amber-800 hover:bg-amber-100 dark:border-amber-700 dark:text-amber-200"
               onClick={onRequestShopFromDisplayedBranch}
             >
-              Switch to shop here
+              {t("sales.books.switchToShopHere")}
               <ArrowRightIcon className="size-3" />
             </Button>
           </div>
@@ -208,7 +213,7 @@ export function BooksForSaleGrid({
           <SearchIcon className="absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             className="pl-8"
-            placeholder="Search books by title, author or category…"
+            placeholder={t("sales.books.searchPlaceholder")}
             value={searchQuery}
             onChange={(e) => onSearchQueryChange(e.target.value)}
           />
@@ -218,32 +223,32 @@ export function BooksForSaleGrid({
           <FilterCombobox
             value={languageFilter}
             onValueChange={onLanguageFilterChange}
-            placeholder="Language"
-            allLabel="All Languages"
+            placeholder={t("sales.books.language")}
+            allLabel={t("sales.books.allLanguages")}
             options={languages}
             widthClassName="w-[150px]"
           />
           <FilterCombobox
             value={categoryFilter}
             onValueChange={onCategoryFilterChange}
-            placeholder="Category"
-            allLabel="All Categories"
+            placeholder={t("sales.books.category")}
+            allLabel={t("sales.books.allCategories")}
             options={categories}
             widthClassName="w-[170px]"
           />
           <FilterCombobox
             value={authorFilter}
             onValueChange={onAuthorFilterChange}
-            placeholder="Author"
-            allLabel="All Authors"
+            placeholder={t("sales.books.author")}
+            allLabel={t("sales.books.allAuthors")}
             options={authors}
             widthClassName="w-[180px]"
           />
           <FilterCombobox
             value={translatorFilter}
             onValueChange={onTranslatorFilterChange}
-            placeholder="Translator"
-            allLabel="All Translators"
+            placeholder={t("sales.books.translator")}
+            allLabel={t("sales.books.allTranslators")}
             options={translators}
             widthClassName="w-[180px]"
           />
@@ -262,7 +267,7 @@ export function BooksForSaleGrid({
       )}
 
       {booksStatus === "success" && books.length === 0 && (
-        <EmptyState message="No books available in this branch." />
+        <EmptyState message={t("sales.books.noBooksInBranch")} />
       )}
 
       {booksStatus === "success" && books.length > 0 && (
@@ -287,7 +292,7 @@ export function BooksForSaleGrid({
 
       {booksStatus === "success" && books.length === 0 && searchQuery && (
         <EmptyState
-          message={`No books matched "${searchQuery}". Try a different search.`}
+          message={t("sales.books.noSearchResults", { query: searchQuery })}
         />
       )}
     </div>

@@ -13,6 +13,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Skeleton } from "@/components/ui/skeleton"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 export type BranchRequestLocationView = {
   branchName: string
@@ -34,6 +35,7 @@ export function BranchRequestLocationDialog({
   location,
   onClose,
 }: BranchRequestLocationDialogProps) {
+  const { t } = useTranslation()
   const mapContainerRef = useRef<HTMLDivElement>(null)
   const mapInstanceRef = useRef<import("leaflet").Map | null>(null)
   const [mapState, setMapState] = useState<MapState>("loading")
@@ -133,16 +135,16 @@ export function BranchRequestLocationDialog({
                 <div className="rounded-full bg-blue-100 p-2 dark:bg-blue-900/30">
                   <MapPinIcon className="size-5 text-blue-600 dark:text-blue-400" />
                 </div>
-                <DialogTitle>Request location</DialogTitle>
+                <DialogTitle>{t("branches.locationDialog.title")}</DialogTitle>
               </div>
               <DialogDescription className="text-left">
-                Proposed location for <strong>{location.branchName}</strong>
+                {t("branches.locationDialog.description", { name: location.branchName })}
               </DialogDescription>
             </DialogHeader>
 
             {!hasLocation ? (
               <div className="rounded-lg border bg-muted/30 px-4 py-8 text-center text-sm text-muted-foreground">
-                No map location was provided with this request.
+                {t("branches.locationDialog.noMapLocation")}
               </div>
             ) : (
               <div className="space-y-4">
@@ -158,10 +160,10 @@ export function BranchRequestLocationDialog({
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label htmlFor="request-address">Address</Label>
+                  <Label htmlFor="request-address">{t("branches.locationDialog.address")}</Label>
                   <Input
                     id="request-address"
-                    value={location.address || "No address provided"}
+                    value={location.address || t("branches.locationDialog.noAddress")}
                     readOnly
                     className="bg-muted/40"
                   />
@@ -169,7 +171,7 @@ export function BranchRequestLocationDialog({
 
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div className="space-y-1.5">
-                    <Label htmlFor="request-latitude">Latitude</Label>
+                    <Label htmlFor="request-latitude">{t("branches.locationDialog.latitude")}</Label>
                     <Input
                       id="request-latitude"
                       value={String(location.latitude)}
@@ -178,7 +180,7 @@ export function BranchRequestLocationDialog({
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <Label htmlFor="request-longitude">Longitude</Label>
+                    <Label htmlFor="request-longitude">{t("branches.locationDialog.longitude")}</Label>
                     <Input
                       id="request-longitude"
                       value={String(location.longitude)}

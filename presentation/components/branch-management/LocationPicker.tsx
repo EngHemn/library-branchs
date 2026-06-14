@@ -8,6 +8,7 @@
   import { Input } from "@/components/ui/input"
   import { Label } from "@/components/ui/label"
   import { Skeleton } from "@/components/ui/skeleton"
+  import { useTranslation } from "@/presentation/i18n/useTranslation"
 
   type LocationPickerProps = {
     latitude: number | null
@@ -29,6 +30,7 @@
     onChange,
     disabled = false,
   }: LocationPickerProps) {
+    const { t } = useTranslation()
     const mapContainerRef = useRef<HTMLDivElement>(null)
     const mapInstanceRef = useRef<import("leaflet").Map | null>(null)
     const markerRef = useRef<import("leaflet").Marker | null>(null)
@@ -204,7 +206,7 @@
         const results = (await response.json()) as NominatimResult[]
 
         if (!results.length) {
-          setSearchError("No location found for that address.")
+          setSearchError(t("branches.location.noLocationFound"))
           setIsSearching(false)
           return
         }
@@ -214,7 +216,7 @@
 
         onChange(lat, lng)
       } catch {
-        setSearchError("Location search failed. Please try again.")
+        setSearchError(t("branches.location.searchFailed"))
       }
 
       setIsSearching(false)
@@ -229,16 +231,16 @@
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-base">
             <MapPinIcon className="size-4" />
-            Branch Location
+            {t("branches.location.title")}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {!disabled ? (
             <div className="space-y-2">
-              <Label>Search by address</Label>
+              <Label>{t("branches.location.searchByAddress")}</Label>
               <div className="flex gap-2">
                 <Input
-                  placeholder="Enter an address to search..."
+                  placeholder={t("branches.location.searchPlaceholder")}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyDown={(e) => {
@@ -256,14 +258,14 @@
                   disabled={disabled || isSearching || !searchQuery.trim()}
                 >
                   <SearchIcon className="size-4" />
-                  <span className="sr-only">Search</span>
+                  <span className="sr-only">{t("common.search")}</span>
                 </Button>
               </div>
               {searchError ? (
                 <p className="text-sm text-destructive">{searchError}</p>
               ) : null}
               <p className="text-xs text-muted-foreground">
-                Or click on the map to place the marker.
+                {t("branches.location.clickMapHint")}
               </p>
             </div>
           ) : null}
@@ -281,22 +283,22 @@
 
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="space-y-1.5">
-              <Label htmlFor="latitude">Latitude</Label>
+              <Label htmlFor="latitude">{t("branches.location.latitude")}</Label>
               <Input
                 id="latitude"
                 value={latitude !== null ? String(latitude) : ""}
                 readOnly
-                placeholder="Select location on map"
+                placeholder={t("branches.location.selectOnMap")}
                 className="bg-muted/40 font-mono text-sm"
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="longitude">Longitude</Label>
+              <Label htmlFor="longitude">{t("branches.location.longitude")}</Label>
               <Input
                 id="longitude"
                 value={longitude !== null ? String(longitude) : ""}
                 readOnly
-                placeholder="Select location on map"
+                placeholder={t("branches.location.selectOnMap")}
                 className="bg-muted/40 font-mono text-sm"
               />
             </div>
@@ -315,7 +317,7 @@
               className="text-muted-foreground hover:text-destructive"
             >
               <XCircleIcon className="size-4" />
-              Clear location
+              {t("branches.location.clearLocation")}
             </Button>
           ) : null}
         </CardContent>

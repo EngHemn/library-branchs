@@ -11,15 +11,17 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import type { TranslationKey } from "@/presentation/i18n/messages"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 export type SidebarItem = {
-  title: string
+  titleKey: TranslationKey
   href: string
   icon: LucideIcon
 }
 
 export type SidebarGroup = {
-  title: string
+  titleKey: TranslationKey
   items: SidebarItem[]
 }
 
@@ -37,29 +39,31 @@ function isSidebarItemActive(pathname: string, href: string): boolean {
 
 export function NavMain({ groups }: NavMainProps) {
   const pathname = usePathname()
+  const { t } = useTranslation()
 
   return (
     <>
       {groups.map((group) => (
-        <SidebarSection key={group.title} className="py-2">
+        <SidebarSection key={group.titleKey} className="py-2">
           <SidebarGroupLabel className="font-semibold">
-            {group.title}
+            {t(group.titleKey)}
           </SidebarGroupLabel>
           <SidebarMenu className="gap-1">
             {group.items.map((item) => {
               const Icon = item.icon
+              const label = t(item.titleKey)
 
               return (
-                <SidebarMenuItem key={item.title}>
+                <SidebarMenuItem key={item.href}>
                   <SidebarMenuButton
                     asChild
                     isActive={isSidebarItemActive(pathname, item.href)}
-                    tooltip={item.title}
+                    tooltip={label}
                     className="h-9"
                   >
                     <Link href={item.href}>
                       <Icon />
-                      <span>{item.title}</span>
+                      <span>{label}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

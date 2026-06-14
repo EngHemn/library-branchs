@@ -25,6 +25,7 @@ import { formatShelfLocationParts } from "@/lib/shelfLocationDisplay"
 import { cn } from "@/lib/utils"
 import { ShelfLocationContentPanel } from "@/presentation/components/shelves/ShelfLocationContentPanel"
 import { ShelfLocationStepsPanel } from "@/presentation/components/shelves/ShelfLocationStepsPanel"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 export type LocationFormValues = {
   locationValues: Record<string, string>
@@ -80,11 +81,15 @@ function LocationSelectPanel({
   onQuickAddNameChange,
   onQuickAdd,
 }: LocationSelectPanelProps) {
+  const { t } = useTranslation()
+
   return (
     <div className="space-y-4">
       <div>
         <p className="mb-3 text-sm font-medium">
-          Select {currentStepLabel.toLowerCase()}
+          {t("shelves.location.selectStep", {
+            step: currentStepLabel.toLowerCase(),
+          })}
         </p>
         <RadioGroup
           value={selectedValue}
@@ -112,7 +117,9 @@ function LocationSelectPanel({
         <Input
           value={quickAddName}
           onChange={(event) => onQuickAddNameChange(event.target.value)}
-          placeholder={`Add new ${currentStepLabel.toLowerCase()} and select...`}
+          placeholder={t("shelves.location.addNewAndSelect", {
+            step: currentStepLabel.toLowerCase(),
+          })}
           disabled={disabled || isManagingLocation}
           onKeyDown={(event) => {
             if (event.key === "Enter") {
@@ -134,7 +141,7 @@ function LocationSelectPanel({
           ) : (
             <PlusIcon />
           )}
-          Add & Select
+          {t("shelves.location.addAndSelect")}
         </Button>
       </div>
     </div>
@@ -189,12 +196,14 @@ export function ShelfLocationStepFlow({
   canStepBack = false,
   onAfterSelect,
 }: ShelfLocationStepFlowProps) {
+  const { t } = useTranslation()
   const [quickAddName, setQuickAddName] = useState("")
   const [addStepDialogOpen, setAddStepDialogOpen] = useState(false)
   const locationValues = form.watch("locationValues")
   const currentStep = locationOptions.steps[locationStepIndex]
   const currentStepId = currentStep?.id ?? ""
-  const currentStepLabel = currentStep?.label ?? "Step"
+  const currentStepLabel =
+    currentStep?.label ?? t("shelves.location.stepFallback")
   const currentValues = currentStepId
     ? getStepValues(locationOptions, currentStepId)
     : []
@@ -263,7 +272,7 @@ export function ShelfLocationStepFlow({
     if (selectOnly) {
       return (
         <p className="rounded-lg border border-dashed p-4 text-sm text-muted-foreground">
-          No location steps configured yet.
+          {t("shelves.location.noStepsConfigured")}
         </p>
       )
     }
@@ -283,7 +292,7 @@ export function ShelfLocationStepFlow({
           </Button>
         </div>
         <p className="rounded-lg border border-dashed p-4 text-sm text-muted-foreground">
-          Add at least one location step to continue.
+          {t("shelves.location.addAtLeastOneStep")}
         </p>
         <AddLocationStepDialog
           open={addStepDialogOpen}
@@ -377,7 +386,7 @@ export function ShelfLocationStepFlow({
           quickAddName={quickAddName}
           disabled={disabled}
           isManagingLocation={isManagingLocation}
-          emptyMessage="No values yet. Add one below."
+          emptyMessage={t("shelves.location.noValuesYet")}
           onSelectValue={handleSelectValue}
           onQuickAddNameChange={setQuickAddName}
           onQuickAdd={() => void handleQuickAdd()}
@@ -385,8 +394,8 @@ export function ShelfLocationStepFlow({
       ) : (
         <Tabs defaultValue="select" className="w-full">
           <TabsList className="grid w-full max-w-xl grid-cols-2">
-            <TabsTrigger value="select">Select</TabsTrigger>
-            <TabsTrigger value="content">Content</TabsTrigger>
+            <TabsTrigger value="select">{t("shelves.location.select")}</TabsTrigger>
+            <TabsTrigger value="content">{t("shelves.location.content")}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="select" className="mt-4">
@@ -398,7 +407,7 @@ export function ShelfLocationStepFlow({
               quickAddName={quickAddName}
               disabled={disabled}
               isManagingLocation={isManagingLocation}
-              emptyMessage="No values yet. Add one below or use the Content tab."
+              emptyMessage={t("shelves.location.noValuesYetWithContent")}
               onSelectValue={handleSelectValue}
               onQuickAddNameChange={setQuickAddName}
               onQuickAdd={() => void handleQuickAdd()}
@@ -423,7 +432,7 @@ export function ShelfLocationStepFlow({
         <div className="flex items-start gap-3 rounded-lg border bg-muted/30 p-4">
           <MapPinIcon className="mt-0.5 size-4 shrink-0 text-primary" />
           <div>
-            <p className="text-sm font-medium">Location preview</p>
+            <p className="text-sm font-medium">{t("shelves.location.locationPreview")}</p>
             <p className="text-sm text-muted-foreground">
               {formatShelfLocationParts(completedParts)}
             </p>
@@ -455,14 +464,15 @@ function AddLocationStepDialog({
   onUpdateStep,
   onDeleteStep,
 }: AddLocationStepDialogProps) {
+  const { t } = useTranslation()
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add Location Step</DialogTitle>
+          <DialogTitle>{t("shelves.location.addStepDialog.title")}</DialogTitle>
           <DialogDescription>
-            Add, rename, or remove location steps. Shelves follow these steps in
-            order.
+            {t("shelves.location.addStepDialog.description")}
           </DialogDescription>
         </DialogHeader>
         <ShelfLocationStepsPanel

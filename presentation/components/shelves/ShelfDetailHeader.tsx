@@ -7,6 +7,7 @@ import type { Shelf } from "@/domain/entities/shelf/Shelf"
 import { formatShelfLocationParts } from "@/lib/shelfLocationDisplay"
 import { ShelfStatusBadge } from "@/presentation/components/shelves/ShelfStatusBadge"
 import { ShelfTypeBadge } from "@/presentation/components/shelves/ShelfTypeBadge"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type ShelfDetailHeaderProps = {
   shelf: Shelf
@@ -14,6 +15,8 @@ type ShelfDetailHeaderProps = {
 }
 
 export function ShelfDetailHeader({ shelf, onEdit }: ShelfDetailHeaderProps) {
+  const { t } = useTranslation()
+
   return (
     <section className="flex flex-col gap-4 pt-4 sm:flex-row sm:items-start sm:justify-between">
       <div className="space-y-2">
@@ -29,7 +32,7 @@ export function ShelfDetailHeader({ shelf, onEdit }: ShelfDetailHeaderProps) {
       </div>
       <Button variant="outline" onClick={onEdit}>
         <PencilIcon />
-        Edit Shelf
+        {t("shelves.view.editShelf")}
       </Button>
     </section>
   )

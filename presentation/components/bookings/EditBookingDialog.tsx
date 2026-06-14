@@ -15,6 +15,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton"
 import type { BookingManagementUseCase } from "@/domain/usecases/bookings/BookingManagementUseCase"
 import { BookingFormFields } from "@/presentation/components/bookings/BookingFormFields"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import { useEditBookingViewModel } from "@/presentation/viewmodels/bookings/useEditBookingViewModel"
 
 function isComboboxPortalTarget(target: EventTarget | null): boolean {
@@ -51,6 +52,7 @@ function EditBookingDialogContent({
   bookingManagementUseCase,
   onOpenChange,
 }: EditBookingDialogContentProps) {
+  const { t } = useTranslation()
   const { state, form, save } = useEditBookingViewModel(
     bookingId,
     bookingManagementUseCase
@@ -58,10 +60,10 @@ function EditBookingDialogContent({
 
   useEffect(() => {
     if (state.isSaved) {
-      toast.success("Booking updated successfully.")
+      toast.success(t("bookings.dialog.updateSuccess"))
       onOpenChange(false)
     }
-  }, [state.isSaved, onOpenChange])
+  }, [state.isSaved, onOpenChange, t])
 
   if (state.isLoading) {
     return (
@@ -76,7 +78,7 @@ function EditBookingDialogContent({
   if (state.isNotFound) {
     return (
       <p className="py-6 text-center text-sm text-muted-foreground">
-        Booking not found or has been removed.
+        {t("bookings.dialog.notFoundOrRemoved")}
       </p>
     )
   }
@@ -84,7 +86,7 @@ function EditBookingDialogContent({
   if (state.isError && !state.isReady) {
     return (
       <p className="py-6 text-center text-sm text-destructive">
-        {state.error ?? "Failed to load booking."}
+        {state.error ?? t("bookings.dialog.loadFailed")}
       </p>
     )
   }
@@ -110,11 +112,11 @@ function EditBookingDialogContent({
             onClick={() => onOpenChange(false)}
             disabled={state.isSaving}
           >
-            Cancel
+            {t("common.cancel")}
           </Button>
           <Button type="submit" disabled={state.isSaving || state.isSaved}>
             {state.isSaving ? <Loader2Icon className="animate-spin" /> : <SaveIcon />}
-            {state.isSaving ? "Saving..." : "Save Changes"}
+            {state.isSaving ? t("common.saving") : t("common.saveChanges")}
           </Button>
         </DialogFooter>
       </BookingFormFields>
@@ -128,6 +130,8 @@ export function EditBookingDialog({
   bookingId,
   bookingManagementUseCase,
 }: EditBookingDialogProps) {
+  const { t } = useTranslation()
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
@@ -137,7 +141,7 @@ export function EditBookingDialog({
         onFocusOutside={preventDialogDismissForCombobox}
       >
         <DialogHeader>
-          <DialogTitle>Edit Booking</DialogTitle>
+          <DialogTitle>{t("bookings.dialog.editTitle")}</DialogTitle>
         </DialogHeader>
 
         {open && bookingId ? (

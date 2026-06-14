@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import type { BillBookOption } from "@/domain/repositories/BillManagementRepository"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type BillBooksSelectorProps = {
   bookOptions: BillBookOption[]
@@ -36,6 +37,7 @@ export function BillBooksSelector({
   createBookHref,
 }: BillBooksSelectorProps) {
   const router = useRouter()
+  const { t } = useTranslation()
   const [searchQuery, setSearchQuery] = useState("")
 
   const filteredBooks = useMemo(
@@ -67,7 +69,7 @@ export function BillBooksSelector({
         <Input
           value={searchQuery}
           onChange={(event) => setSearchQuery(event.target.value)}
-          placeholder="Search books by title, ISBN, or ID..."
+          placeholder={t("bills.booksSelector.searchPlaceholder")}
           disabled={disabled}
           className="pl-9"
         />
@@ -99,8 +101,8 @@ export function BillBooksSelector({
           <div className="flex flex-col items-center gap-3 py-6 text-center">
             <p className="text-sm text-muted-foreground">
               {hasSearchQuery
-                ? "No books match your search."
-                : "No books available to import."}
+                ? t("bills.booksSelector.noMatch")
+                : t("bills.booksSelector.noAvailable")}
             </p>
             {showAddBook ? (
               <Button
@@ -111,7 +113,7 @@ export function BillBooksSelector({
                 onClick={handleAddBook}
               >
                 <PlusIcon />
-                Add Book
+                {t("bills.booksSelector.addBook")}
               </Button>
             ) : null}
           </div>
@@ -120,9 +122,9 @@ export function BillBooksSelector({
 
       <div className="flex items-center justify-between text-xs text-muted-foreground">
         <span>
-          {selectedBookIds.length} selected
+          {t("bills.booksSelector.selected", { count: selectedBookIds.length })}
           {hasSearchQuery && filteredBooks.length > 0
-            ? ` · ${filteredBooks.length} shown`
+            ? ` · ${t("bills.booksSelector.shown", { count: filteredBooks.length })}`
             : ""}
         </span>
         <Button
@@ -134,7 +136,7 @@ export function BillBooksSelector({
           onClick={handleAddBook}
         >
           <PlusIcon className="size-3.5" />
-          Add new book
+          {t("bills.booksSelector.addNewBook")}
         </Button>
       </div>
     </div>

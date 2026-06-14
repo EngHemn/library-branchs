@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import type {
   BillBranchFilter,
   BillBranchFilterOption,
@@ -41,6 +42,8 @@ export function BillsFilters({
   onDateFromChange,
   onDateToChange,
 }: BillsFiltersProps) {
+  const { t } = useTranslation()
+
   return (
     <div className="flex flex-col gap-3 rounded-lg border bg-card p-4">
       <div
@@ -51,14 +54,14 @@ export function BillsFilters({
         }
       >
         <div className="space-y-2">
-          <Label htmlFor="bills-search">Search</Label>
+          <Label htmlFor="bills-search">{t("bills.filters.search")}</Label>
           <div className="relative">
             <SearchIcon className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               id="bills-search"
               value={searchQuery}
               onChange={(event) => onSearchQueryChange(event.target.value)}
-              placeholder="Search bills by company, branch, or phone..."
+              placeholder={t("bills.filters.searchPlaceholder")}
               className="pl-9"
             />
           </div>
@@ -66,7 +69,7 @@ export function BillsFilters({
 
         {showBranchFilter ? (
           <div className="space-y-2">
-            <Label htmlFor="bills-branch-filter">Filter by Branch</Label>
+            <Label htmlFor="bills-branch-filter">{t("bills.filters.filterByBranch")}</Label>
             <Select value={branchFilter} onValueChange={onBranchFilterChange}>
               <SelectTrigger id="bills-branch-filter" className="w-full">
                 <SelectValue />
@@ -85,7 +88,7 @@ export function BillsFilters({
 
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="bills-date-from">Date From</Label>
+          <Label htmlFor="bills-date-from">{t("bills.filters.dateFrom")}</Label>
           <Input
             id="bills-date-from"
             type="date"
@@ -98,7 +101,7 @@ export function BillsFilters({
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="bills-date-to">Date To</Label>
+          <Label htmlFor="bills-date-to">{t("bills.filters.dateTo")}</Label>
           <Input
             id="bills-date-to"
             type="date"

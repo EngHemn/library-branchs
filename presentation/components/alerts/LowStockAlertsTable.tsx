@@ -31,11 +31,13 @@ import type { LowStockAlert } from "@/domain/entities/alert/LowStockAlert"
 import { LowStockAlertStatusBadge } from "@/presentation/components/alerts/LowStockAlertStatusBadge"
 import { LowStockAlertActionButton } from "@/presentation/components/alerts/LowStockAlertActionButton"
 
+import { useTranslation } from "@/presentation/i18n/useTranslation"
+
 type LowStockAlertsTableProps = {
   alerts: LowStockAlert[]
   showBranchColumn?: boolean
   onViewBook: (alert: LowStockAlert) => void
-  onRestock: (alert: LowStockAlert, quantity: number) => Promise<void>
+  onRestock: (alert: LowStockAlert, quantity: number) => Promise<boolean>
   onMarkResolved: (alert: LowStockAlert) => void
 }
 
@@ -57,6 +59,7 @@ export function LowStockAlertsTable({
   onRestock,
   onMarkResolved,
 }: LowStockAlertsTableProps) {
+  const { t } = useTranslation()
   const [restockAlert, setRestockAlert] = useState<LowStockAlert | null>(null)
   const [restockQuantity, setRestockQuantity] = useState("10")
   const [isRestocking, setIsRestocking] = useState(false)
@@ -68,9 +71,11 @@ export function LowStockAlertsTable({
 
     setIsRestocking(true)
     try {
-      await onRestock(restockAlert, quantity)
-      setRestockAlert(null)
-      setRestockQuantity("10")
+      const success = await onRestock(restockAlert, quantity)
+      if (success) {
+        setRestockAlert(null)
+        setRestockQuantity("10")
+      }
     } finally {
       setIsRestocking(false)
     }
@@ -79,7 +84,7 @@ export function LowStockAlertsTable({
   const columns: DataTableColumn<LowStockAlert, AlertColumnKey>[] = [
     {
       key: "bookCover",
-      header: "Cover",
+      header: t("alerts.columnCover"),
       cell: (alert) => (
         <EntityImage
           src={alert.bookCoverUrl}
@@ -93,7 +98,7 @@ export function LowStockAlertsTable({
     },
     {
       key: "bookTitle",
-      header: "Book Title",
+      header: t("alerts.columnBookTitle"),
       sortable: true,
       sortValue: (alert) => alert.bookTitle,
       cell: (alert) => (
@@ -102,7 +107,7 @@ export function LowStockAlertsTable({
     },
     {
       key: "isbn",
-      header: "ISBN",
+      header: t("alerts.columnIsbn"),
       sortable: true,
       sortValue: (alert) => alert.isbn,
       cell: (alert) => (
@@ -113,7 +118,7 @@ export function LowStockAlertsTable({
       ? [
           {
             key: "branchName" as const,
-            header: "Branch",
+            header: t("alerts.columnBranch"),
             sortable: true,
             sortValue: (alert: LowStockAlert) => alert.branchName,
             cell: (alert: LowStockAlert) => alert.branchName,
@@ -122,7 +127,7 @@ export function LowStockAlertsTable({
       : []),
     {
       key: "currentStock",
-      header: "Current Stock",
+      header: t("alerts.columnCurrentStock"),
       sortable: true,
       sortValue: (alert) => alert.currentStock,
       cell: (alert) => (
@@ -139,7 +144,7 @@ export function LowStockAlertsTable({
     },
     {
       key: "minimumStock",
-      header: "Minimum Stock",
+      header: t("alerts.columnMinimumStock"),
       sortable: true,
       sortValue: (alert) => alert.minimumStock,
       cell: (alert) => (
@@ -150,7 +155,7 @@ export function LowStockAlertsTable({
     },
     {
       key: "shortageQuantity",
-      header: "Shortage",
+      header: t("alerts.columnShortage"),
       sortable: true,
       sortValue: (alert) => alert.shortageQuantity,
       cell: (alert) => (
@@ -161,28 +166,28 @@ export function LowStockAlertsTable({
     },
     {
       key: "status",
-      header: "Status",
+      header: t("alerts.columnStatus"),
       sortable: true,
       sortValue: (alert) => alert.status,
       cell: (alert) => <LowStockAlertStatusBadge status={alert.status} />,
     },
     {
       key: "actions",
-      header: "Actions",
+      header: t("alerts.columnActions"),
       headerClassName: "text-right",
       className: "text-right",
       cell: (alert) => (
-        <div className="flex items-center justify-end gap-1">
+        <div className="table-action-content">
           <LowStockAlertActionButton
             icon={EyeIcon}
-            label="View book"
+            label={t("alerts.actionViewBook")}
             onClick={() => onViewBook(alert)}
           />
           {alert.status === "active" ? (
             <>
               <LowStockAlertActionButton
                 icon={PackagePlusIcon}
-                label="Restock"
+                label={t("alerts.actionRestock")}
                 variant="outline"
                 onClick={() => {
                   setRestockAlert(alert)
@@ -193,7 +198,7 @@ export function LowStockAlertsTable({
               />
               <LowStockAlertActionButton
                 icon={CheckIcon}
-                label="Mark resolved"
+                label={t("alerts.actionMarkResolved")}
                 variant="outline"
                 onClick={() => onMarkResolved(alert)}
               />
@@ -208,11 +213,13 @@ export function LowStockAlertsTable({
     <TooltipProvider>
       <Card className="rounded-lg">
         <CardHeader className="pb-3">
-          <CardTitle className="text-base">Low Stock Alerts</CardTitle>
+          <CardTitle className="text-base">{t("alerts.tableTitle")}</CardTitle>
           <CardDescription>
             {alerts.length === 0
-              ? "No alerts match the current filters."
-              : `${alerts.length} alert${alerts.length === 1 ? "" : "s"} shown`}
+              ? t("alerts.noAlertsMatch")
+              : alerts.length === 1
+                ? t("alerts.alertsCountOne", { count: 1 })
+                : t("alerts.alertsCountOther", { count: alerts.length })}
           </CardDescription>
         </CardHeader>
         <CardContent className="p-0">
@@ -220,8 +227,8 @@ export function LowStockAlertsTable({
             data={alerts}
             columns={columns}
             getRowId={(alert) => alert.id}
-            emptyTitle="No low stock alerts"
-            emptyDescription="All book inventory levels are above minimum thresholds."
+            emptyTitle={t("alerts.emptyTitle")}
+            emptyDescription={t("alerts.emptyDescription")}
             initialSort={{ key: "shortageQuantity", direction: "desc" }}
             initialPageSize={10}
           />
@@ -234,14 +241,16 @@ export function LowStockAlertsTable({
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Restock Book</DialogTitle>
+            <DialogTitle>{t("alerts.restockBook")}</DialogTitle>
             <DialogDescription>
-              Add stock for &ldquo;{restockAlert?.bookTitle}&rdquo; at{" "}
-              {restockAlert?.branchName}.
+              {t("alerts.addStockFor", {
+                title: restockAlert?.bookTitle ?? "",
+                branch: restockAlert?.branchName ?? "",
+              })}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-2">
-            <Label htmlFor="restock-quantity">Quantity to add</Label>
+            <Label htmlFor="restock-quantity">{t("alerts.quantityToAdd")}</Label>
             <Input
               id="restock-quantity"
               type="number"
@@ -257,14 +266,14 @@ export function LowStockAlertsTable({
               onClick={() => setRestockAlert(null)}
               disabled={isRestocking}
             >
-              Cancel
+              {t("common.cancel")}
             </Button>
             <Button
               type="button"
               onClick={() => void handleRestockConfirm()}
               disabled={isRestocking}
             >
-              {isRestocking ? "Restocking..." : "Confirm Restock"}
+              {isRestocking ? t("alerts.restocking") : t("alerts.confirmRestock")}
             </Button>
           </DialogFooter>
         </DialogContent>

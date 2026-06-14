@@ -10,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type CategoriesFiltersProps = {
   searchQuery: string
@@ -24,6 +25,8 @@ export function CategoriesFilters({
   onSearchQueryChange,
   onStatusFilterChange,
 }: CategoriesFiltersProps) {
+  const { t } = useTranslation()
+
   return (
     <div className="flex flex-col gap-3 rounded-lg border bg-card p-4 sm:flex-row sm:items-center">
       <div className="relative flex-1">
@@ -31,7 +34,7 @@ export function CategoriesFilters({
         <Input
           value={searchQuery}
           onChange={(event) => onSearchQueryChange(event.target.value)}
-          placeholder="Search categories..."
+          placeholder={t("categories.filters.searchPlaceholder")}
           className="pl-9"
         />
       </div>
@@ -45,9 +48,9 @@ export function CategoriesFilters({
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">All Status</SelectItem>
-          <SelectItem value="active">Active</SelectItem>
-          <SelectItem value="inactive">Inactive</SelectItem>
+          <SelectItem value="all">{t("categories.filters.allStatus")}</SelectItem>
+          <SelectItem value="active">{t("common.active")}</SelectItem>
+          <SelectItem value="inactive">{t("common.inactive")}</SelectItem>
         </SelectContent>
       </Select>
     </div>

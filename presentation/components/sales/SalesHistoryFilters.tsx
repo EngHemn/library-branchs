@@ -11,6 +11,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import type { TranslationKey } from "@/presentation/i18n/messages"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import type {
   SalesHistoryBranchFilter,
   SalesHistoryBranchFilterOption,
@@ -32,15 +34,16 @@ type SalesHistoryFiltersProps = {
   onDateToChange: (dateTo: string | null) => void
 }
 
-const statusOptions: { value: SalesHistoryStatusFilter; label: string }[] = [
-  { value: "all", label: "All Status" },
-  { value: "completed", label: "Completed" },
-  { value: "voided", label: "Voided" },
-]
+const STATUS_FILTER_VALUES = new Set<string>(["all", "completed", "voided"])
 
-const STATUS_FILTER_VALUES = new Set<string>(
-  statusOptions.map((option) => option.value)
-)
+const STATUS_OPTION_KEYS: Record<
+  SalesHistoryStatusFilter,
+  TranslationKey
+> = {
+  all: "sales.history.allStatus",
+  completed: "sales.statuses.completed",
+  voided: "sales.statuses.voided",
+}
 
 function isSalesHistoryStatusFilter(
   value: string
@@ -62,6 +65,9 @@ export function SalesHistoryFilters({
   onDateFromChange,
   onDateToChange,
 }: SalesHistoryFiltersProps) {
+  const { t } = useTranslation()
+  const statusOptions: SalesHistoryStatusFilter[] = ["all", "completed", "voided"]
+
   return (
     <div className="flex flex-col gap-3">
       <div className="relative flex-1">
@@ -69,14 +75,16 @@ export function SalesHistoryFilters({
         <Input
           value={searchQuery}
           onChange={(event) => onSearchQueryChange(event.target.value)}
-          placeholder="Search by book name..."
+          placeholder={t("sales.history.searchPlaceholder")}
           className="pl-9"
         />
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <div className="space-y-2">
-          <Label htmlFor="sales-history-status-filter">Filter by Status</Label>
+          <Label htmlFor="sales-history-status-filter">
+            {t("sales.history.filterByStatus")}
+          </Label>
           <Select
             value={statusFilter}
             onValueChange={(value) => {
@@ -90,8 +98,8 @@ export function SalesHistoryFilters({
             </SelectTrigger>
             <SelectContent>
               {statusOptions.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
+                <SelectItem key={option} value={option}>
+                  {t(STATUS_OPTION_KEYS[option])}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -100,7 +108,9 @@ export function SalesHistoryFilters({
 
         {showBranchFilter ? (
           <div className="space-y-2">
-            <Label htmlFor="sales-history-branch-filter">Filter by Branch</Label>
+            <Label htmlFor="sales-history-branch-filter">
+              {t("sales.history.filterByBranch")}
+            </Label>
             <Select value={branchFilter} onValueChange={onBranchFilterChange}>
               <SelectTrigger id="sales-history-branch-filter" className="w-full">
                 <SelectValue />
@@ -117,7 +127,7 @@ export function SalesHistoryFilters({
         ) : null}
 
         <div className="space-y-2">
-          <Label htmlFor="sales-history-date-from">Date From</Label>
+          <Label htmlFor="sales-history-date-from">{t("sales.history.dateFrom")}</Label>
           <Input
             id="sales-history-date-from"
             type="date"
@@ -130,7 +140,7 @@ export function SalesHistoryFilters({
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="sales-history-date-to">Date To</Label>
+          <Label htmlFor="sales-history-date-to">{t("sales.history.dateTo")}</Label>
           <Input
             id="sales-history-date-to"
             type="date"

@@ -3,6 +3,8 @@
 import { CheckIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import type { TranslationKey } from "@/presentation/i18n/messages"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type ShelfFormStep = 1 | 2 | 3
 
@@ -10,15 +12,17 @@ type ShelfFormStepIndicatorProps = {
   currentStep: ShelfFormStep
 }
 
-const steps = [
-  { step: 1 as const, label: "Details" },
-  { step: 2 as const, label: "Location" },
-  { step: 3 as const, label: "Review" },
+const steps: Array<{ step: ShelfFormStep; labelKey: TranslationKey }> = [
+  { step: 1, labelKey: "shelves.form.steps.details" },
+  { step: 2, labelKey: "shelves.form.steps.location" },
+  { step: 3, labelKey: "shelves.form.steps.review" },
 ]
 
 export function ShelfFormStepIndicator({
   currentStep,
 }: ShelfFormStepIndicatorProps) {
+  const { t } = useTranslation()
+
   return (
     <ol className="flex flex-wrap items-center gap-2 sm:gap-4">
       {steps.map((item, index) => {
@@ -47,7 +51,7 @@ export function ShelfFormStepIndicator({
                   isActive ? "text-foreground" : "text-muted-foreground"
                 )}
               >
-                {item.label}
+                {t(item.labelKey)}
               </span>
             </div>
             {index < steps.length - 1 ? (

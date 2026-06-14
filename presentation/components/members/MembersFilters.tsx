@@ -14,6 +14,8 @@ import type {
   MemberBranchFilter,
   MemberStatusFilter,
 } from "@/presentation/viewmodels/members/MembersViewModelState"
+import type { TranslationKey } from "@/presentation/i18n/messages"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 const MEMBER_STATUS_VALUES = new Set<string>(["all", "active", "inactive", "suspended"])
 
@@ -36,12 +38,11 @@ type MembersFiltersProps = {
   onBranchUsedFilterChange: (branchUsedFilter: MemberBranchFilter) => void
 }
 
-const statusOptions: { value: MemberStatusFilter; label: string }[] = [
-  { value: "all", label: "All Status" },
-  { value: "active", label: "Active" },
-  { value: "inactive", label: "Inactive" },
-  { value: "suspended", label: "Suspended" },
-]
+const STATUS_KEYS: Record<Exclude<MemberStatusFilter, "all">, TranslationKey> = {
+  active: "common.active",
+  inactive: "common.inactive",
+  suspended: "members.statuses.suspended",
+}
 
 export function MembersFilters({
   searchQuery,
@@ -57,6 +58,15 @@ export function MembersFilters({
   onBranchRegisteredFilterChange,
   onBranchUsedFilterChange,
 }: MembersFiltersProps) {
+  const { t } = useTranslation()
+
+  const statusOptions: { value: MemberStatusFilter; label: string }[] = [
+    { value: "all", label: t("members.filters.allStatus") },
+    { value: "active", label: t(STATUS_KEYS.active) },
+    { value: "inactive", label: t(STATUS_KEYS.inactive) },
+    { value: "suspended", label: t(STATUS_KEYS.suspended) },
+  ]
+
   return (
     <div className="flex flex-col gap-3 rounded-lg border bg-card p-4 sm:flex-row sm:items-center">
       <div className="relative min-w-0 flex-1">
@@ -64,7 +74,7 @@ export function MembersFilters({
         <Input
           value={searchQuery}
           onChange={(event) => onSearchQueryChange(event.target.value)}
-          placeholder="Search by name, email, or phone..."
+          placeholder={t("members.filters.searchPlaceholder")}
           className="pl-9"
         />
       </div>
@@ -92,10 +102,10 @@ export function MembersFilters({
             onValueChange={onBranchRegisteredFilterChange}
           >
             <SelectTrigger className="w-[200px]">
-              <SelectValue placeholder="All branches" />
+              <SelectValue placeholder={t("members.filters.allBranches")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Registered Branches</SelectItem>
+              <SelectItem value="all">{t("members.filters.allRegisteredBranches")}</SelectItem>
               {registeredBranches.map((branch) => (
                 <SelectItem key={branch} value={branch}>
                   {branch}
@@ -107,10 +117,10 @@ export function MembersFilters({
         {showBranchUsedFilter ? (
           <Select value={branchUsedFilter} onValueChange={onBranchUsedFilterChange}>
             <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="All branches" />
+              <SelectValue placeholder={t("members.filters.allBranches")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Branches Used</SelectItem>
+              <SelectItem value="all">{t("members.filters.allBranchesUsed")}</SelectItem>
               {usedBranches.map((branch) => (
                 <SelectItem key={branch} value={branch}>
                   {branch}

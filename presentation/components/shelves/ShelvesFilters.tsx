@@ -15,6 +15,7 @@ import {
   getShelfTypeLabel,
 } from "@/domain/entities/shelf/ShelfType"
 import type { ShelfType } from "@/domain/entities/shelf/ShelfType"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 export type ShelfBranchFilter = "all" | string
 
@@ -43,6 +44,8 @@ export function ShelvesFilters({
   onShelfTypeFilterChange,
   onStatusFilterChange,
 }: ShelvesFiltersProps) {
+  const { t } = useTranslation()
+
   return (
     <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
       <div className="relative min-w-0 flex-1">
@@ -50,7 +53,7 @@ export function ShelvesFilters({
         <Input
           value={searchQuery}
           onChange={(event) => onSearchQueryChange(event.target.value)}
-          placeholder="Search by name, branch, or location..."
+          placeholder={t("shelves.filters.searchPlaceholder")}
           className="pl-9"
         />
       </div>
@@ -62,10 +65,10 @@ export function ShelvesFilters({
             onValueChange={(value) => onBranchFilterChange(value)}
           >
             <SelectTrigger className="w-full sm:w-[180px]">
-              <SelectValue placeholder="All Branches" />
+              <SelectValue placeholder={t("shelves.filters.allBranches")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Branches</SelectItem>
+              <SelectItem value="all">{t("shelves.filters.allBranches")}</SelectItem>
               {branchOptions.map((branch) => (
                 <SelectItem key={branch.id} value={branch.id}>
                   {branch.name}
@@ -82,10 +85,10 @@ export function ShelvesFilters({
           }
         >
           <SelectTrigger className="w-full sm:w-[160px]">
-            <SelectValue placeholder="All Shelf Types" />
+            <SelectValue placeholder={t("shelves.filters.allShelfTypes")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Shelf Types</SelectItem>
+            <SelectItem value="all">{t("shelves.filters.allShelfTypes")}</SelectItem>
             {SHELF_TYPES.map((type) => (
               <SelectItem key={type} value={type}>
                 {getShelfTypeLabel(type)}
@@ -101,12 +104,12 @@ export function ShelvesFilters({
           }
         >
           <SelectTrigger className="w-full sm:w-[140px]">
-            <SelectValue placeholder="All Status" />
+            <SelectValue placeholder={t("shelves.filters.allStatus")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Status</SelectItem>
-            <SelectItem value="active">Active</SelectItem>
-            <SelectItem value="inactive">Inactive</SelectItem>
+            <SelectItem value="all">{t("shelves.filters.allStatus")}</SelectItem>
+            <SelectItem value="active">{t("common.active")}</SelectItem>
+            <SelectItem value="inactive">{t("common.inactive")}</SelectItem>
           </SelectContent>
         </Select>
       </div>

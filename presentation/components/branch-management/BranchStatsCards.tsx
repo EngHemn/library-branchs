@@ -9,57 +9,38 @@ import {
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card"
 
 import type { BranchStats } from "@/domain/entities/branch/Branch"
+import type { TranslationKey } from "@/presentation/i18n/messages"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type BranchStatsCardsProps = {
   stats: BranchStats
   hideMainBranchCard?: boolean
 }
+const statKeys = [
+  { key: "totalBranches" as const, icon: Building2Icon, className: "bg-sky-100 text-sky-600" },
+  { key: "mainBranches" as const, icon: BookOpenIcon, className: "bg-violet-100 text-violet-600", mainOnly: true },
+  { key: "subBranches" as const, icon: NetworkIcon, className: "bg-orange-100 text-orange-600" },
+  { key: "activeBranches" as const, icon: CircleCheckIcon, className: "bg-emerald-100 text-emerald-600" },
+  { key: "inactiveBranches" as const, icon: CircleSlashIcon, className: "bg-rose-100 text-rose-600" },
+]
+
 export function BranchStatsCards({
   stats,
   hideMainBranchCard = false,
 }: BranchStatsCardsProps) {
-  const cards = [
-    {
-      label: "Total Branches",
-      value: stats.totalBranches,
-      icon: Building2Icon,
-      className: "bg-sky-100 text-sky-600",
-    },
-    ...(!hideMainBranchCard
-      ? [
-          {
-            label: "Main Branches",
-            value: stats.mainBranches,
-            icon: BookOpenIcon,
-            className: "bg-violet-100 text-violet-600",
-          },
-        ]
-      : []),
-    {
-      label: "Sub Branches",
-      value: stats.subBranches,
-      icon: NetworkIcon,
-      className: "bg-orange-100 text-orange-600",
-    },
-    {
-      label: "Active Branches",
-      value: stats.activeBranches,
-      icon: CircleCheckIcon,
-      className: "bg-emerald-100 text-emerald-600",
-    },
-    {
-      label: "Inactive Branches",
-      value: stats.inactiveBranches,
-      icon: CircleSlashIcon,
-      className: "bg-rose-100 text-rose-600",
-    },
-  ]
+  const { t } = useTranslation()
+
+  const cards = statKeys
+    .filter((card) => !card.mainOnly || !hideMainBranchCard)
+    .map((card) => ({
+      label: t(`branches.stats.${card.key}` as TranslationKey),
+      value: stats[card.key],
+      icon: card.icon,
+      className: card.className,
+    }))
 
   return (
     <section

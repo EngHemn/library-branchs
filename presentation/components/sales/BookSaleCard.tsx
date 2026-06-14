@@ -22,6 +22,7 @@ import { Separator } from "@/components/ui/separator"
 import { cn } from "@/lib/utils"
 import { EntityImage } from "@/components/ui/entity-image"
 import type { SaleBook } from "@/domain/entities/sales/SaleBook"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type BookSaleCardProps = {
   book: SaleBook
@@ -117,6 +118,7 @@ function BookDetailDialog({
   onAdd,
   onUpdateQuantity,
 }: BookDetailDialogProps) {
+  const { t } = useTranslation()
   const hasDiscount = book.discount > 0
   const finalPrice = discountedPrice(book.price, book.discount)
   const isOutOfStock = book.stock === 0
@@ -167,7 +169,7 @@ function BookDetailDialog({
 
           <div className="flex flex-col gap-1.5 rounded-lg bg-muted/40 px-4 py-3 text-sm">
             <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">Stock</span>
+              <span className="text-muted-foreground">{t("sales.books.stock")}</span>
               <span
                 className={cn(
                   "font-medium",
@@ -180,7 +182,9 @@ function BookDetailDialog({
                         : "text-emerald-600"
                 )}
               >
-                {isOutOfStock ? "Out of stock" : `${book.stock} available`}
+                {isOutOfStock
+                  ? t("sales.books.outOfStock")
+                  : t("sales.books.available", { count: book.stock })}
               </span>
             </div>
 
@@ -189,7 +193,7 @@ function BookDetailDialog({
             {hasDiscount ? (
               <>
                 <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">Original price</span>
+                  <span className="text-muted-foreground">{t("sales.books.originalPrice")}</span>
                   <span className="text-muted-foreground line-through">
                     {formatPrice(book.price)}
                   </span>
@@ -197,13 +201,13 @@ function BookDetailDialog({
                 <div className="flex items-center justify-between">
                   <span className="flex items-center gap-1 text-red-500">
                     <TagIcon className="size-3.5" />
-                    Discount
+                    {t("sales.books.discount")}
                   </span>
                   <span className="text-red-500">-{book.discount}%</span>
                 </div>
                 <Separator />
                 <div className="flex items-center justify-between font-semibold">
-                  <span>Final price</span>
+                  <span>{t("sales.books.finalPrice")}</span>
                   <span className="text-lg text-primary">
                     {formatPrice(finalPrice)}
                   </span>
@@ -211,7 +215,7 @@ function BookDetailDialog({
               </>
             ) : (
               <div className="flex items-center justify-between font-semibold">
-                <span>Price</span>
+                <span>{t("sales.books.price")}</span>
                 <span className="text-lg">{formatPrice(book.price)}</span>
               </div>
             )}
@@ -219,16 +223,16 @@ function BookDetailDialog({
 
           {!isShoppingBranch ? (
             <p className="text-center text-xs text-muted-foreground">
-              Switch to shop from this branch to add books to your cart.
+              {t("sales.books.switchBranchHint")}
             </p>
           ) : isOutOfStock ? (
             <Button disabled className="w-full">
-              Out of stock
+              {t("sales.books.outOfStock")}
             </Button>
           ) : cartQuantity === 0 ? (
             <Button className="w-full gap-2" onClick={onAdd}>
               <ShoppingCartIcon className="size-4" />
-              Add to Cart
+              {t("sales.books.addToCart")}
             </Button>
           ) : (
             <Button
@@ -236,7 +240,7 @@ function BookDetailDialog({
               className="w-full"
               onClick={() => onOpenChange(false)}
             >
-              Close
+              {t("common.close")}
             </Button>
           )}
         </div>

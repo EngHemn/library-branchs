@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import type { BranchStatus } from "@/domain/entities/branch/Branch"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type BranchStatusFilter = "all" | BranchStatus
 
@@ -43,28 +44,30 @@ export function BranchFilters({
   onStatusFilterChange,
   onResetFilters,
 }: BranchFiltersProps) {
+  const { t } = useTranslation()
+
   return (
     <Card className="rounded-lg">
       <CardHeader>
-        <CardTitle>Filters</CardTitle>
+        <CardTitle>{t("branches.filters.title")}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid gap-3 lg:grid-cols-[minmax(240px,1fr)_160px_auto] lg:items-end">
           <div className="space-y-2">
-            <Label htmlFor="branch-search">Search</Label>
+            <Label htmlFor="branch-search">{t("common.search")}</Label>
             <div className="relative">
               <SearchIcon className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 id="branch-search"
                 value={searchQuery}
                 onChange={(event) => onSearchQueryChange(event.target.value)}
-                placeholder="Search branch, phone, address, email, admin"
+                placeholder={t("branches.filters.searchPlaceholder")}
                 className="pl-8"
               />
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="branch-status-filter">Status</Label>
+            <Label htmlFor="branch-status-filter">{t("common.status")}</Label>
             <Select
               value={statusFilter}
               onValueChange={(value) => {
@@ -77,9 +80,9 @@ export function BranchFilters({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All</SelectItem>
-                <SelectItem value="active">Active</SelectItem>
-                <SelectItem value="inactive">Inactive</SelectItem>
+                <SelectItem value="all">{t("common.all")}</SelectItem>
+                <SelectItem value="active">{t("common.active")}</SelectItem>
+                <SelectItem value="inactive">{t("common.inactive")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -91,7 +94,7 @@ export function BranchFilters({
             className="w-full lg:w-auto"
           >
             <RotateCcwIcon />
-            Reset Filters
+            {t("branches.filters.resetFilters")}
           </Button>
         </div>
       </CardContent>

@@ -1,41 +1,46 @@
 "use client"
 
 import type { BranchRequestReply } from "@/domain/entities/branch/Branch"
+import { useLocale } from "@/presentation/i18n/useLocale"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type BranchRequestExpandedDetailsProps = {
   note: string
   replies: BranchRequestReply[]
 }
 
-function formatReplyDate(sentAt: string): string {
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  }).format(new Date(sentAt))
-}
-
 export function BranchRequestExpandedDetails({
   note,
   replies,
 }: BranchRequestExpandedDetailsProps) {
+  const { t } = useTranslation()
+  const { locale } = useLocale()
+
+  function formatReplyDate(sentAt: string): string {
+    return new Intl.DateTimeFormat(locale, {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+    }).format(new Date(sentAt))
+  }
+
   return (
     <div className="space-y-3">
       <div className="rounded-lg border bg-background p-3">
         <div className="text-xs font-medium tracking-normal text-muted-foreground uppercase">
-          Note
+          {t("branches.requests.note")}
         </div>
-        <p className="mt-1 text-sm leading-6">{note || "No note submitted."}</p>
+        <p className="mt-1 text-sm leading-6">{note || t("branches.requests.noNote")}</p>
       </div>
 
       <div className="rounded-lg border bg-background p-3">
         <div className="text-xs font-medium tracking-normal text-muted-foreground uppercase">
-          Messages
+          {t("branches.requests.messages")}
         </div>
         {replies.length === 0 ? (
-          <p className="mt-1 text-sm text-muted-foreground">No messages yet.</p>
+          <p className="mt-1 text-sm text-muted-foreground">{t("branches.requests.noMessages")}</p>
         ) : (
           <ul className="mt-2 space-y-2">
             {replies.map((reply) => (

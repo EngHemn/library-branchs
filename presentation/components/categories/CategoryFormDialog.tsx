@@ -23,6 +23,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import type { CategoryFormValues } from "@/domain/schemas/categoryFormSchema"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type CategoryFormDialogProps = {
   open: boolean
@@ -43,11 +44,16 @@ export function CategoryFormDialog({
   onOpenChange,
   onSubmit,
 }: CategoryFormDialogProps) {
-  const title = mode === "create" ? "Add Category" : "Edit Category"
+  const { t } = useTranslation()
+
+  const title =
+    mode === "create"
+      ? t("categories.form.createTitle")
+      : t("categories.form.editTitle")
   const description =
     mode === "create"
-      ? "Create a new category to organize books."
-      : "Update the category name and description."
+      ? t("categories.form.createDescription")
+      : t("categories.form.editDescription")
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -64,10 +70,10 @@ export function CategoryFormDialog({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>{t("categories.form.nameLabel")}</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Enter category name"
+                      placeholder={t("categories.form.namePlaceholder")}
                       disabled={isSaving}
                       {...field}
                     />
@@ -82,10 +88,10 @@ export function CategoryFormDialog({
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description</FormLabel>
+                  <FormLabel>{t("categories.form.descriptionLabel")}</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Enter category description"
+                      placeholder={t("categories.form.descriptionPlaceholder")}
                       disabled={isSaving}
                       rows={3}
                       {...field}
@@ -107,17 +113,17 @@ export function CategoryFormDialog({
                 disabled={isSaving}
                 onClick={() => onOpenChange(false)}
               >
-                Cancel
+                {t("common.cancel")}
               </Button>
               <Button type="submit" disabled={isSaving}>
                 {isSaving ? <Loader2Icon className="animate-spin" /> : null}
                 {isSaving
                   ? mode === "create"
-                    ? "Creating..."
-                    : "Saving..."
+                    ? t("common.creating")
+                    : t("common.saving")
                   : mode === "create"
-                    ? "Create Category"
-                    : "Save Changes"}
+                    ? t("categories.form.createButton")
+                    : t("categories.form.saveButton")}
               </Button>
             </DialogFooter>
           </form>
