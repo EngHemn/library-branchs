@@ -125,7 +125,17 @@
     }
   html {
     @apply font-sans;
+    --font-sans: var(--font-sans-en), system-ui, sans-serif;
     }
+  html[dir="rtl"] {
+    --font-sans: var(--font-sans-ar), var(--font-sans-en), system-ui, sans-serif;
+    }
+}
+
+@layer utilities {
+  .table-action-content {
+    @apply flex items-center justify-end gap-1 rtl:justify-start;
+  }
 }
 
 /* ── Color theme: blue ─────────────────────────────────────────────── */
