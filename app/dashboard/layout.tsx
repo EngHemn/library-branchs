@@ -16,6 +16,7 @@ import {
 } from "@/lib/mainBranchRouteAccess"
 import { DashboardHeader } from "@/presentation/components/dashboard/DashboardHeader"
 import { DashboardBreadcrumbProvider } from "@/presentation/hooks/useDashboardBreadcrumbs"
+import { useLocale } from "@/presentation/i18n/useLocale"
 
 export default function DashboardLayout({
   children,
@@ -24,6 +25,7 @@ export default function DashboardLayout({
 }) {
   const router = useRouter()
   const pathname = usePathname()
+  const { isRtl } = useLocale()
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -87,7 +89,7 @@ export default function DashboardLayout({
         <SidebarInset>
           <DashboardHeader />
           {children}
-          <Toaster />
+          <Toaster position={isRtl ? "top-left" : "top-right"} />
         </SidebarInset>
       </SidebarProvider>
     </DashboardBreadcrumbProvider>
