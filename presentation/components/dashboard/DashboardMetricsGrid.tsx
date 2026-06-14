@@ -17,7 +17,9 @@ import type {
   DashboardMetric,
   DashboardMetricTrend,
 } from "@/domain/entities/dashboard/DashboardSummary"
-
+import type { TranslationKey } from "@/presentation/i18n/messages"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
+import { Separator } from "@/components/ui/separator"
 type DashboardMetricsGridProps = {
   metrics: DashboardMetric[]
 }
@@ -43,32 +45,68 @@ function trendChangeClass(trend: DashboardMetricTrend): string {
   return "text-muted-foreground"
 }
 
+function trendBadgeClass(trend: DashboardMetricTrend): string {
+  if (trend === "up") return "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400"
+  if (trend === "down") return "bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-400"
+  return "bg-muted text-muted-foreground"
+}
+
+const METRIC_LABEL_KEYS: Record<string, { label: TranslationKey; helperText: TranslationKey }> = {
+  "metric-books": {
+    label: "dashboard.metrics.metric-books.label",
+    helperText: "dashboard.metrics.metric-books.helperText",
+  },
+  "metric-members": {
+    label: "dashboard.metrics.metric-members.label",
+    helperText: "dashboard.metrics.metric-members.helperText",
+  },
+  "metric-borrowings": {
+    label: "dashboard.metrics.metric-borrowings.label",
+    helperText: "dashboard.metrics.metric-borrowings.helperText",
+  },
+  "metric-overdue": {
+    label: "dashboard.metrics.metric-overdue.label",
+    helperText: "dashboard.metrics.metric-overdue.helperText",
+  },
+  "metric-sales": {
+    label: "dashboard.metrics.metric-sales.label",
+    helperText: "dashboard.metrics.metric-sales.helperText",
+  },
+  "metric-stock": {
+    label: "dashboard.metrics.metric-stock.label",
+    helperText: "dashboard.metrics.metric-stock.helperText",
+  },
+}
+
 export function DashboardMetricsGrid({ metrics }: DashboardMetricsGridProps) {
+  const { t } = useTranslation()
+
   return (
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
       {metrics.map((metric) => {
         const Icon = metricIconMap[metric.id] ?? BookOpenIcon
+        const labelKeys = METRIC_LABEL_KEYS[metric.id]
         return (
           <Card key={metric.id} className="rounded-xl">
-            <CardHeader className="flex-row items-start justify-between space-y-0 pb-2">
-              <CardDescription className="text-xs font-medium uppercase tracking-wide">
-                {metric.label}
+          <CardHeader className="flex items-center justify-between flex-row space-y-0 pb-3">
+            <span className="rounded-md bg-muted p-1.5">
+              <Icon className="size-4 text-muted-foreground" />
+            </span>
+            <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${trendBadgeClass(metric.trend)}`}>
+              {metric.change}
+            </span>
+          </CardHeader>
+        
+          <CardContent className="space-y-3">
+            <div>
+              <CardDescription className="text-xs font-medium uppercase tracking-wide mb-1">
+                {labelKeys ? t(labelKeys.label) : metric.label}
               </CardDescription>
-              <span className="rounded-md bg-muted p-1.5">
-                <Icon className="size-4 text-muted-foreground" />
-              </span>
-            </CardHeader>
-            <CardContent className="space-y-1.5">
               <div className="text-2xl font-bold tracking-tight">{metric.value}</div>
-              <div className="flex items-center gap-1.5 text-xs">
-                <TrendIcon trend={metric.trend} />
-                <span className={`font-semibold ${trendChangeClass(metric.trend)}`}>
-                  {metric.change}
-                </span>
-                <span className="text-muted-foreground">{metric.helperText}</span>
-              </div>
-            </CardContent>
-          </Card>
+            </div>
+        
+          </CardContent>
+        </Card>
         )
       })}
     </div>

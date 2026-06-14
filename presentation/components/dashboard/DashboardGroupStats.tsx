@@ -15,47 +15,53 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import type { DashboardSummary } from "@/domain/entities/dashboard/DashboardSummary"
+import type { TranslationKey } from "@/presentation/i18n/messages"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type DashboardGroupStatsProps = {
   groupStats: DashboardSummary["groupStats"]
 }
 
-const cards = [
+const cards: Array<{
+  key: keyof DashboardSummary["groupStats"]
+  titleKey: TranslationKey
+  descriptionKey: TranslationKey
+  icon: typeof LayersIcon
+  color: string
+}> = [
   {
     key: "totalGroups",
-    title: "Total Groups",
-    description: "Active groups in the system",
+    titleKey: "dashboard.groups.totalGroups",
+    descriptionKey: "dashboard.groups.totalGroupsDescription",
     icon: LayersIcon,
     color: "bg-sky-100 dark:bg-sky-900/40 text-sky-600 dark:text-sky-400",
-    getValue: (stats: DashboardSummary["groupStats"]) => stats.totalGroups,
   },
   {
     key: "activeGroups",
-    title: "Active Groups",
-    description: "Currently active",
+    titleKey: "dashboard.groups.activeGroups",
+    descriptionKey: "dashboard.groups.activeGroupsDescription",
     icon: UserCheckIcon,
     color: "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400",
-    getValue: (stats: DashboardSummary["groupStats"]) => stats.activeGroups,
   },
   {
     key: "totalAssignedBooks",
-    title: "Assigned Books",
-    description: "Books across all groups",
+    titleKey: "dashboard.groups.assignedBooks",
+    descriptionKey: "dashboard.groups.assignedBooksDescription",
     icon: BookOpenIcon,
     color: "bg-violet-100 dark:bg-violet-900/40 text-violet-600 dark:text-violet-400",
-    getValue: (stats: DashboardSummary["groupStats"]) => stats.totalAssignedBooks,
   },
   {
     key: "totalAssignedStaff",
-    title: "Assigned Staff",
-    description: "Staff across all groups",
+    titleKey: "dashboard.groups.assignedStaff",
+    descriptionKey: "dashboard.groups.assignedStaffDescription",
     icon: UsersIcon,
     color: "bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400",
-    getValue: (stats: DashboardSummary["groupStats"]) => stats.totalAssignedStaff,
   },
-] as const
+]
 
 export function DashboardGroupStats({ groupStats }: DashboardGroupStatsProps) {
+  const { t } = useTranslation()
+
   return (
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
       {cards.map((card) => {
@@ -70,15 +76,15 @@ export function DashboardGroupStats({ groupStats }: DashboardGroupStatsProps) {
                 <Icon className="size-4" />
               </span>
               <div className="min-w-0">
-                <CardTitle className="text-sm">{card.title}</CardTitle>
+                <CardTitle className="text-sm">{t(card.titleKey)}</CardTitle>
                 <CardDescription className="text-xs">
-                  {card.description}
+                  {t(card.descriptionKey)}
                 </CardDescription>
               </div>
             </CardHeader>
             <CardContent>
               <p className="text-3xl font-bold tabular-nums">
-                {card.getValue(groupStats).toLocaleString()}
+                {groupStats[card.key].toLocaleString()}
               </p>
             </CardContent>
           </Card>

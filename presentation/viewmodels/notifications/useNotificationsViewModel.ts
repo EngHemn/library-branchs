@@ -7,8 +7,8 @@ import type { NotificationsViewModelState } from "./NotificationsViewModelState"
 
 type NotificationsViewModel = {
   state: NotificationsViewModelState
-  markAsRead: (id: string) => void
-  markAllAsRead: () => void
+  markAsRead: (id: string, options?: any) => void
+  markAllAsRead: (options?: any) => void
 }
 
 export function useNotificationsViewModel(
@@ -61,7 +61,7 @@ export function useNotificationsViewModel(
       isError,
       error: isError ? (error as Error).message : null,
     },
-    markAsRead: (id: string) => markAsReadMutation.mutate(id),
-    markAllAsRead: () => markAllAsReadMutation.mutate(),
+    markAsRead: (id: string, options?: any) => markAsReadMutation.mutate(id, options),
+    markAllAsRead: (options?: any) => markAllAsReadMutation.mutate(undefined, options),
   }
 }

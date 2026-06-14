@@ -15,18 +15,11 @@ import type {
   DashboardStaffStatus,
 } from "@/domain/entities/dashboard/DashboardSummary"
 import { BranchDetailLink } from "@/presentation/components/shared/DashboardEntityLink"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type DashboardStaffTableProps = {
   staff: DashboardStaff[]
   showBranchColumn?: boolean
-}
-
-const roleLabel: Record<DashboardStaffRole, string> = {
-  manager: "Manager",
-  librarian: "Librarian",
-  assistant: "Assistant",
-  clerk: "Clerk",
-  security: "Security",
 }
 
 const roleVariant: Record<
@@ -52,18 +45,20 @@ export function DashboardStaffTable({
   staff,
   showBranchColumn = false,
 }: DashboardStaffTableProps) {
+  const { t } = useTranslation()
+
   return (
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Name</TableHead>
-          <TableHead className="hidden sm:table-cell">Staff ID</TableHead>
-          <TableHead>Role</TableHead>
+          <TableHead>{t("dashboard.tables.name")}</TableHead>
+          <TableHead className="hidden sm:table-cell">{t("dashboard.tables.staffId")}</TableHead>
+          <TableHead>{t("dashboard.tables.role")}</TableHead>
           {showBranchColumn ? (
-            <TableHead className="hidden md:table-cell">Branch</TableHead>
+            <TableHead className="hidden md:table-cell">{t("dashboard.tables.branch")}</TableHead>
           ) : null}
-          <TableHead className="hidden md:table-cell">Email</TableHead>
-          <TableHead>Status</TableHead>
+          <TableHead className="hidden md:table-cell">{t("dashboard.tables.email")}</TableHead>
+          <TableHead>{t("common.status")}</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -75,7 +70,7 @@ export function DashboardStaffTable({
             </TableCell>
             <TableCell>
               <Badge variant={roleVariant[member.role]} className="text-xs">
-                {roleLabel[member.role]}
+                {t(`dashboard.staffRole.${member.role}`)}
               </Badge>
             </TableCell>
             {showBranchColumn ? (
@@ -92,7 +87,7 @@ export function DashboardStaffTable({
             </TableCell>
             <TableCell>
               <Badge variant={statusVariant[member.status]} className="text-xs">
-                {member.status === "active" ? "Active" : "Inactive"}
+                {t(`common.${member.status}`)}
               </Badge>
             </TableCell>
           </TableRow>

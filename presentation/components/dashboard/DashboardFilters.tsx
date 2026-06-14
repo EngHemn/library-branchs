@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useMemo, useState } from "react"
 
 import {
   Combobox,
@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import type { DashboardBranch } from "@/domain/entities/dashboard/DashboardSummary"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import type { DateRangeFilter } from "@/presentation/viewmodels/dashboard/useDashboardViewModel"
 
 type DashboardFiltersProps = {
@@ -30,14 +31,7 @@ type DashboardFiltersProps = {
   onDateRangeChange: (range: DateRangeFilter) => void
 }
 
-const DATE_RANGE_OPTIONS: { value: DateRangeFilter; label: string }[] = [
-  { value: "all", label: "All time" },
-  { value: "today", label: "Today" },
-  { value: "week", label: "This week" },
-  { value: "month", label: "This month" },
-]
-
-const DATE_RANGE_VALUES = new Set<string>(DATE_RANGE_OPTIONS.map((o) => o.value))
+const DATE_RANGE_VALUES = new Set<string>(["all", "today", "week", "month"])
 
 function isDateRangeFilter(value: string): value is DateRangeFilter {
   return DATE_RANGE_VALUES.has(value)
@@ -52,10 +46,22 @@ export function DashboardFilters({
   onBranchChange,
   onDateRangeChange,
 }: DashboardFiltersProps) {
+  const { t } = useTranslation()
   const [inputValue, setInputValue] = useState("")
 
+  const dateRangeOptions = useMemo(
+    () =>
+      [
+        { value: "all" as const, label: t("dashboard.filters.allTime") },
+        { value: "today" as const, label: t("dashboard.filters.today") },
+        { value: "week" as const, label: t("dashboard.filters.thisWeek") },
+        { value: "month" as const, label: t("dashboard.filters.thisMonth") },
+      ],
+    [t]
+  )
+
   const allBranchOptions = [
-    ...(allowAllBranches ? [{ value: "all", label: "All branches" }] : []),
+    ...(allowAllBranches ? [{ value: "all", label: t("dashboard.filters.allBranches") }] : []),
     ...branches.map((b) => ({ value: b.id, label: b.name })),
   ]
 
@@ -101,7 +107,7 @@ export function DashboardFilters({
             htmlFor="dashboard-branch-filter"
             className="mb-1.5 block text-xs font-medium text-muted-foreground"
           >
-            Branch
+            {t("dashboard.filters.branch")}
           </Label>
           <Combobox
             value={selectedBranchId}
@@ -113,7 +119,7 @@ export function DashboardFilters({
             <ComboboxInput
               id="dashboard-branch-filter"
               className="h-9 w-full"
-              placeholder="Search branches..."
+              placeholder={t("dashboard.filters.searchBranches")}
               showClear={allowAllBranches && selectedBranchId !== "all"}
             />
             <ComboboxContent>
@@ -127,7 +133,7 @@ export function DashboardFilters({
                 </ComboboxList>
               ) : (
                 <div className="px-3 py-6 text-center text-sm text-muted-foreground">
-                  No branches found
+                  {t("dashboard.filters.noBranchesFound")}
                 </div>
               )}
             </ComboboxContent>
@@ -140,14 +146,14 @@ export function DashboardFilters({
           htmlFor="dashboard-date-filter"
           className="mb-1.5 block text-xs font-medium text-muted-foreground"
         >
-          Date range
+          {t("dashboard.filters.dateRange")}
         </Label>
         <Select value={dateRange} onValueChange={handleDateRangeChange}>
           <SelectTrigger id="dashboard-date-filter" className="h-9 w-full">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {DATE_RANGE_OPTIONS.map((option) => (
+            {dateRangeOptions.map((option) => (
               <SelectItem key={option.value} value={option.value}>
                 {option.label}
               </SelectItem>

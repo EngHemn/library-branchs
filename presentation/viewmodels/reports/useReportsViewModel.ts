@@ -23,6 +23,8 @@ import {
   resolveUserBranchId,
   type DashboardBranchScope,
 } from "@/lib/dashboardBranchScope"
+import type { TranslationKey } from "@/presentation/i18n/messages"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import type {
   AsyncStatus,
   ReportBranchFilter,
@@ -85,7 +87,10 @@ function resolveBranchFilterId(
   return branchFilter === "current" ? userBranchId : branchFilter
 }
 
-function getBranchFilterOptions(user: User): ReportBranchFilterOption[] {
+function getBranchFilterOptions(
+  user: User,
+  t: (key: TranslationKey) => string
+): ReportBranchFilterOption[] {
   if (user.branchType === "sub") {
     return []
   }
@@ -99,8 +104,8 @@ function getBranchFilterOptions(user: User): ReportBranchFilterOption[] {
     .sort((left, right) => left.label.localeCompare(right.label))
 
   return [
-    { value: "all", label: "All branches" },
-    { value: "current", label: "Current branch" },
+    { value: "all", label: t("reports.filters.allBranches") },
+    { value: "current", label: t("reports.filters.currentBranch") },
     ...otherBranches,
   ]
 }
@@ -137,6 +142,7 @@ export function useReportsViewModel(
   authUseCase: AuthUseCase,
   getReportsUseCase: GetReportsUseCase
 ): ReportsViewModel {
+  const { t } = useTranslation()
   const initialRange = getDateRangeForPeriod("30d")
 
   const [period, setPeriodState] = useState<ReportPeriod>("30d")
@@ -159,7 +165,7 @@ export function useReportsViewModel(
   const isSubBranch = user?.branchType === "sub"
   const branchScope = user ? getDashboardBranchScope(user, allDashboardBranches) : null
   const showBranchFilter = !isSubBranch
-  const branchFilterOptions = user ? getBranchFilterOptions(user) : []
+  const branchFilterOptions = user ? getBranchFilterOptions(user, t) : []
 
   useEffect(() => {
     if (!user || !branchScope) return

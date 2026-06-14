@@ -14,17 +14,11 @@ import type {
   DashboardBookStatus,
 } from "@/domain/entities/dashboard/DashboardSummary"
 import { BranchDetailLink } from "@/presentation/components/shared/DashboardEntityLink"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type DashboardRecentBooksTableProps = {
   books: DashboardBook[]
   showBranchColumn?: boolean
-}
-
-const statusLabel: Record<DashboardBookStatus, string> = {
-  available: "Available",
-  borrowed: "Borrowed",
-  reserved: "Reserved",
-  unavailable: "Unavailable",
 }
 
 const statusVariant: Record<
@@ -41,19 +35,21 @@ export function DashboardRecentBooksTable({
   books,
   showBranchColumn = false,
 }: DashboardRecentBooksTableProps) {
+  const { t } = useTranslation()
+
   return (
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Title</TableHead>
-          <TableHead className="hidden sm:table-cell">Author</TableHead>
-          <TableHead className="hidden md:table-cell">Category</TableHead>
+          <TableHead>{t("dashboard.tables.title")}</TableHead>
+          <TableHead className="hidden sm:table-cell">{t("dashboard.tables.author")}</TableHead>
+          <TableHead className="hidden md:table-cell">{t("dashboard.tables.category")}</TableHead>
           {showBranchColumn ? (
-            <TableHead className="hidden lg:table-cell">Branch</TableHead>
+            <TableHead className="hidden lg:table-cell">{t("dashboard.tables.branch")}</TableHead>
           ) : null}
-          <TableHead className="w-16 text-right">Stock</TableHead>
-          <TableHead className="w-20 text-right">Available</TableHead>
-          <TableHead>Status</TableHead>
+          <TableHead className="w-16 text-right">{t("dashboard.tables.stock")}</TableHead>
+          <TableHead className="w-20 text-right">{t("dashboard.tables.available")}</TableHead>
+          <TableHead>{t("common.status")}</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -83,7 +79,7 @@ export function DashboardRecentBooksTable({
             </TableCell>
             <TableCell>
               <Badge variant={statusVariant[book.status]} className="text-xs">
-                {statusLabel[book.status]}
+                {t(`dashboard.bookStatus.${book.status}`)}
               </Badge>
             </TableCell>
           </TableRow>

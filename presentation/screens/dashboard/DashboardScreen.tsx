@@ -35,6 +35,7 @@ import { DashboardRecentSalesTable } from "@/presentation/components/dashboard/D
 import { DashboardStaffCharts } from "@/presentation/components/dashboard/DashboardStaffCharts"
 import { DashboardStaffTable } from "@/presentation/components/dashboard/DashboardStaffTable"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import { useDashboardViewModel } from "@/presentation/viewmodels/dashboard/useDashboardViewModel"
 
 type DashboardScreenProps = {
@@ -79,11 +80,13 @@ function LoadingDashboard() {
   )
 }
 
-function EmptyTabContent({ label }: { label: string }) {
+function EmptyTabContent({ labelKey }: { labelKey: "bookings" | "books" | "members" | "sales" | "staff" }) {
+  const { t } = useTranslation()
+
   return (
     <div className="flex min-h-48 items-center justify-center rounded-xl border border-dashed">
       <p className="text-sm text-muted-foreground">
-        No {label} match the current filters.
+        {t("dashboard.emptyTab", { label: t(`dashboard.emptyLabels.${labelKey}`) })}
       </p>
     </div>
   )
@@ -94,6 +97,7 @@ export function DashboardScreen({
   getDashboardSummaryUseCase,
 }: DashboardScreenProps) {
   const router = useRouter()
+  const { t } = useTranslation()
   const viewModel = useDashboardViewModel(authUseCase, getDashboardSummaryUseCase)
   const { state } = viewModel
 
@@ -104,8 +108,8 @@ export function DashboardScreen({
   }, [router, state.isUnauthenticated])
 
   useDashboardBreadcrumbs([
-    { label: "Workspace", href: "/dashboard" },
-    { label: "Dashboard" },
+    { label: t("breadcrumbs.workspace"), href: "/dashboard" },
+    { label: t("dashboard.title") },
   ])
 
   const user = state.user
@@ -120,13 +124,13 @@ export function DashboardScreen({
         <div className="flex flex-1 items-center justify-center p-4">
           <Card className="w-full max-w-md rounded-xl">
             <CardHeader>
-              <CardTitle>Dashboard unavailable</CardTitle>
+              <CardTitle>{t("dashboard.unavailable")}</CardTitle>
               <CardDescription>{state.error}</CardDescription>
             </CardHeader>
             <CardContent>
               <Button onClick={viewModel.reload}>
                 <RefreshCwIcon />
-                Retry
+                {t("common.retry")}
               </Button>
             </CardContent>
           </Card>
@@ -137,9 +141,9 @@ export function DashboardScreen({
         <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
           <section className="flex flex-col gap-2 pt-4 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
+              <h1 className="text-2xl font-bold tracking-tight">{t("dashboard.title")}</h1>
               <p className="mt-1 text-sm text-muted-foreground">
-                Welcome back, {user.fullName}. Here is your library overview.
+                {t("dashboard.subtitle", { name: user.fullName })}
               </p>
             </div>
             <Button
@@ -149,7 +153,7 @@ export function DashboardScreen({
               className="shrink-0"
             >
               <RefreshCwIcon />
-              Refresh
+              {t("common.refresh")}
             </Button>
           </section>
 
@@ -165,9 +169,9 @@ export function DashboardScreen({
 
           <Tabs defaultValue="overview">
             <TabsList className="h-auto flex-wrap gap-1">
-              <TabsTrigger value="overview">Overview</TabsTrigger>
+              <TabsTrigger value="overview">{t("dashboard.tabs.overview")}</TabsTrigger>
               <TabsTrigger value="bookings">
-                Bookings
+                {t("dashboard.tabs.bookings")}
                 {state.filteredBookings.length > 0 && (
                   <span className="ml-1.5 rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
                     {state.filteredBookings.length}
@@ -175,7 +179,7 @@ export function DashboardScreen({
                 )}
               </TabsTrigger>
               <TabsTrigger value="books">
-                Books
+                {t("dashboard.tabs.books")}
                 {state.filteredBooks.length > 0 && (
                   <span className="ml-1.5 rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
                     {state.filteredBooks.length}
@@ -183,7 +187,7 @@ export function DashboardScreen({
                 )}
               </TabsTrigger>
               <TabsTrigger value="members">
-                Members
+                {t("dashboard.tabs.members")}
                 {state.filteredMembers.length > 0 && (
                   <span className="ml-1.5 rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
                     {state.filteredMembers.length}
@@ -191,7 +195,7 @@ export function DashboardScreen({
                 )}
               </TabsTrigger>
               <TabsTrigger value="sales">
-                Sales
+                {t("dashboard.tabs.sales")}
                 {state.filteredSales.length > 0 && (
                   <span className="ml-1.5 rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
                     {state.filteredSales.length}
@@ -199,7 +203,7 @@ export function DashboardScreen({
                 )}
               </TabsTrigger>
               <TabsTrigger value="staff">
-                Staff
+                {t("dashboard.tabs.staff")}
                 {state.filteredStaff.length > 0 && (
                   <span className="ml-1.5 rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
                     {state.filteredStaff.length}
@@ -228,9 +232,9 @@ export function DashboardScreen({
               <div className="grid gap-4 lg:grid-cols-[1fr_340px]">
                 <Card className="rounded-xl">
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-base">Recent Activity</CardTitle>
+                    <CardTitle className="text-base">{t("dashboard.overview.recentActivity")}</CardTitle>
                     <CardDescription>
-                      Operational events from the last few hours.
+                      {t("dashboard.overview.recentActivityDescription")}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -245,16 +249,16 @@ export function DashboardScreen({
                         <AlertTriangleIcon className="size-4 text-amber-600 dark:text-amber-400" />
                       </span>
                       <div className="min-w-0">
-                        <CardTitle className="text-sm">Stock Alerts</CardTitle>
+                        <CardTitle className="text-sm">{t("dashboard.overview.stockAlerts")}</CardTitle>
                         <CardDescription className="text-xs">
-                          Titles below minimum threshold
+                          {t("dashboard.overview.stockAlertsDescription")}
                         </CardDescription>
                       </div>
                     </CardHeader>
                     <CardContent>
                       <p className="text-3xl font-bold">{summary.stockAlerts}</p>
                       <p className="mt-1 text-xs text-muted-foreground">
-                        titles need restocking across branches
+                        {t("dashboard.overview.stockAlertsHelper")}
                       </p>
                     </CardContent>
                   </Card>
@@ -265,16 +269,16 @@ export function DashboardScreen({
                         <BookOpenIcon className="size-4 text-rose-600 dark:text-rose-400" />
                       </span>
                       <div className="min-w-0">
-                        <CardTitle className="text-sm">Overdue Returns</CardTitle>
+                        <CardTitle className="text-sm">{t("dashboard.overview.overdueReturns")}</CardTitle>
                         <CardDescription className="text-xs">
-                          Pending member follow-up
+                          {t("dashboard.overview.overdueReturnsDescription")}
                         </CardDescription>
                       </div>
                     </CardHeader>
                     <CardContent>
                       <p className="text-3xl font-bold">{summary.overdueBookings}</p>
                       <p className="mt-1 text-xs text-muted-foreground">
-                        members have not returned books on time
+                        {t("dashboard.overview.overdueReturnsHelper")}
                       </p>
                     </CardContent>
                   </Card>
@@ -288,13 +292,13 @@ export function DashboardScreen({
                 bookingsByType={summary.bookingsByType}
               />
               {state.filteredBookings.length === 0 ? (
-                <EmptyTabContent label="bookings" />
+                <EmptyTabContent labelKey="bookings" />
               ) : (
                 <Card className="rounded-xl">
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-base">Recent Bookings</CardTitle>
+                    <CardTitle className="text-base">{t("dashboard.sections.recentBookings")}</CardTitle>
                     <CardDescription>
-                      All borrowing and reservation records matching the current filters.
+                      {t("dashboard.sections.recentBookingsDescription")}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="p-0">
@@ -313,13 +317,13 @@ export function DashboardScreen({
                 booksByCategory={summary.booksByCategory}
               />
               {state.filteredBooks.length === 0 ? (
-                <EmptyTabContent label="books" />
+                <EmptyTabContent labelKey="books" />
               ) : (
                 <Card className="rounded-xl">
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-base">Recent Books</CardTitle>
+                    <CardTitle className="text-base">{t("dashboard.sections.recentBooks")}</CardTitle>
                     <CardDescription>
-                      Catalog entries matching the current filters.
+                      {t("dashboard.sections.recentBooksDescription")}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="p-0">
@@ -334,13 +338,13 @@ export function DashboardScreen({
 
             <TabsContent value="members" className="mt-5">
               {state.filteredMembers.length === 0 ? (
-                <EmptyTabContent label="members" />
+                <EmptyTabContent labelKey="members" />
               ) : (
                 <Card className="rounded-xl">
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-base">Members</CardTitle>
+                    <CardTitle className="text-base">{t("dashboard.sections.members")}</CardTitle>
                     <CardDescription>
-                      Member registrations matching the current filters.
+                      {t("dashboard.sections.membersDescription")}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="p-0">
@@ -355,13 +359,13 @@ export function DashboardScreen({
 
             <TabsContent value="sales" className="mt-5">
               {state.filteredSales.length === 0 ? (
-                <EmptyTabContent label="sales" />
+                <EmptyTabContent labelKey="sales" />
               ) : (
                 <Card className="rounded-xl">
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-base">Sales</CardTitle>
+                    <CardTitle className="text-base">{t("dashboard.sections.sales")}</CardTitle>
                     <CardDescription>
-                      Book purchase transactions matching the current filters.
+                      {t("dashboard.sections.salesDescription")}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="p-0">
@@ -381,13 +385,13 @@ export function DashboardScreen({
                 showBranchChart={showBranchColumn}
               />
               {state.filteredStaff.length === 0 ? (
-                <EmptyTabContent label="staff members" />
+                <EmptyTabContent labelKey="staff" />
               ) : (
                 <Card className="rounded-xl">
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-base">Staff Members</CardTitle>
+                    <CardTitle className="text-base">{t("dashboard.sections.staffMembers")}</CardTitle>
                     <CardDescription>
-                      All staff records matching the selected branch filter.
+                      {t("dashboard.sections.staffMembersDescription")}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="p-0">
