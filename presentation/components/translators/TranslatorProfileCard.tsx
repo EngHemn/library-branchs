@@ -13,6 +13,7 @@ import {
 import { Separator } from "@/components/ui/separator"
 import type { TranslatorDetail } from "@/domain/entities/translator/TranslatorDetail"
 import { BranchLink } from "@/presentation/components/branch-management/BranchLink"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type TranslatorProfileCardProps = {
   translator: TranslatorDetail
@@ -27,36 +28,46 @@ function getInitials(name: string): string {
     .slice(0, 2)
 }
 
-type ProfileRow = {
-  label: string
-  value: string
-}
+type ProfileRowKey =
+  | "id"
+  | "language"
+  | "branchAdded"
+  | "translatorCreated"
+  | "status"
 
 export function TranslatorProfileCard({ translator }: TranslatorProfileCardProps) {
-  const rows: ProfileRow[] = [
-    { label: "ID", value: translator.id },
-    { label: "Language", value: translator.language },
-    { label: "Branch Added", value: translator.branchName },
-    { label: "Translator Created", value: translator.createdAt },
-    { label: "Status", value: translator.status },
+  const { t } = useTranslation()
+
+  const rows: { key: ProfileRowKey; value: string }[] = [
+    { key: "id", value: translator.id },
+    { key: "language", value: translator.language },
+    { key: "branchAdded", value: translator.branchName },
+    { key: "translatorCreated", value: translator.createdAt },
+    {
+      key: "status",
+      value:
+        translator.status === "active"
+          ? t("common.active")
+          : t("common.inactive"),
+    },
   ]
 
   return (
     <Card className="rounded-lg">
       <CardHeader>
-        <CardTitle>Translator Profile</CardTitle>
+        <CardTitle>{t("translators.profile.title")}</CardTitle>
       </CardHeader>
       <CardContent>
         <dl className="flex flex-col">
           {rows.map((row, index) => (
-            <div key={row.label}>
+            <div key={row.key}>
               {index > 0 ? <Separator /> : null}
               <div className="flex items-center justify-between gap-4 py-3">
                 <dt className="shrink-0 text-sm text-muted-foreground">
-                  {row.label}
+                  {t(`translators.profile.${row.key}`)}
                 </dt>
                 <dd className="text-right text-sm font-medium">
-                  {row.label === "Status" ? (
+                  {row.key === "status" ? (
                     <Badge
                       variant="outline"
                       className={
@@ -67,7 +78,7 @@ export function TranslatorProfileCard({ translator }: TranslatorProfileCardProps
                     >
                       {row.value}
                     </Badge>
-                  ) : row.label === "Branch Added" ? (
+                  ) : row.key === "branchAdded" ? (
                     <BranchLink
                       branchId={translator.branchId}
                       branchName={translator.branchName}
@@ -81,7 +92,9 @@ export function TranslatorProfileCard({ translator }: TranslatorProfileCardProps
           ))}
           <Separator />
           <div className="flex items-center justify-between gap-4 py-3">
-            <dt className="shrink-0 text-sm text-muted-foreground">Added By</dt>
+            <dt className="shrink-0 text-sm text-muted-foreground">
+              {t("translators.profile.addedBy")}
+            </dt>
             <dd>
               <Link
                 href={`/dashboard/staff/${translator.createdBy.staffId}`}
@@ -98,7 +111,9 @@ export function TranslatorProfileCard({ translator }: TranslatorProfileCardProps
           </div>
           <Separator />
           <div className="py-3">
-            <dt className="text-sm text-muted-foreground">Biography</dt>
+            <dt className="text-sm text-muted-foreground">
+              {t("translators.profile.biography")}
+            </dt>
             <dd className="mt-2 text-sm leading-relaxed">{translator.biography}</dd>
           </div>
         </dl>

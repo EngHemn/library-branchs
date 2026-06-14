@@ -10,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type TranslatorsFiltersProps = {
   searchQuery: string
@@ -30,6 +31,8 @@ export function TranslatorsFilters({
   onStatusFilterChange,
   onLanguageFilterChange,
 }: TranslatorsFiltersProps) {
+  const { t } = useTranslation()
+
   return (
     <div className="flex flex-col gap-3 rounded-lg border bg-card p-4 sm:flex-row sm:flex-wrap sm:items-center">
       <div className="relative flex-1 sm:min-w-[200px]">
@@ -37,7 +40,7 @@ export function TranslatorsFilters({
         <Input
           value={searchQuery}
           onChange={(event) => onSearchQueryChange(event.target.value)}
-          placeholder="Search by name or ID..."
+          placeholder={t("translators.filters.searchPlaceholder")}
           className="pl-9"
         />
       </div>
@@ -50,7 +53,7 @@ export function TranslatorsFilters({
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Languages</SelectItem>
+            <SelectItem value="all">{t("translators.filters.allLanguages")}</SelectItem>
             {languages.map((language) => (
               <SelectItem key={language} value={language}>
                 {language}
@@ -68,9 +71,9 @@ export function TranslatorsFilters({
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Status</SelectItem>
-            <SelectItem value="active">Active</SelectItem>
-            <SelectItem value="inactive">Inactive</SelectItem>
+            <SelectItem value="all">{t("translators.filters.allStatus")}</SelectItem>
+            <SelectItem value="active">{t("common.active")}</SelectItem>
+            <SelectItem value="inactive">{t("common.inactive")}</SelectItem>
           </SelectContent>
         </Select>
       </div>

@@ -13,6 +13,7 @@ import {
 import { Separator } from "@/components/ui/separator"
 import type { AuthorDetail } from "@/domain/entities/author/AuthorDetail"
 import { BranchLink } from "@/presentation/components/branch-management/BranchLink"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type AuthorProfileCardProps = {
   author: AuthorDetail
@@ -27,37 +28,48 @@ function getInitials(name: string): string {
     .slice(0, 2)
 }
 
-type ProfileRow = {
-  label: string
-  value: string
-}
+type ProfileRowKey =
+  | "id"
+  | "nationality"
+  | "dateOfBirth"
+  | "branchAdded"
+  | "authorCreated"
+  | "status"
 
 export function AuthorProfileCard({ author }: AuthorProfileCardProps) {
-  const rows: ProfileRow[] = [
-    { label: "ID", value: author.id },
-    { label: "Nationality", value: author.nationality },
-    { label: "Date of Birth", value: author.dateOfBirth },
-    { label: "Branch Added", value: author.branchName },
-    { label: "Author Created", value: author.createdAt },
-    { label: "Status", value: author.status },
+  const { t } = useTranslation()
+
+  const rows: { key: ProfileRowKey; value: string }[] = [
+    { key: "id", value: author.id },
+    { key: "nationality", value: author.nationality },
+    { key: "dateOfBirth", value: author.dateOfBirth },
+    { key: "branchAdded", value: author.branchName },
+    { key: "authorCreated", value: author.createdAt },
+    {
+      key: "status",
+      value:
+        author.status === "active"
+          ? t("common.active")
+          : t("common.inactive"),
+    },
   ]
 
   return (
     <Card className="rounded-lg">
       <CardHeader>
-        <CardTitle>Author Profile</CardTitle>
+        <CardTitle>{t("authors.profile.title")}</CardTitle>
       </CardHeader>
       <CardContent>
         <dl className="flex flex-col">
           {rows.map((row, index) => (
-            <div key={row.label}>
+            <div key={row.key}>
               {index > 0 ? <Separator /> : null}
               <div className="flex items-center justify-between gap-4 py-3">
                 <dt className="shrink-0 text-sm text-muted-foreground">
-                  {row.label}
+                  {t(`authors.profile.${row.key}`)}
                 </dt>
                 <dd className="text-right text-sm font-medium">
-                  {row.label === "Status" ? (
+                  {row.key === "status" ? (
                     <Badge
                       variant="outline"
                       className={
@@ -68,7 +80,7 @@ export function AuthorProfileCard({ author }: AuthorProfileCardProps) {
                     >
                       {row.value}
                     </Badge>
-                  ) : row.label === "Branch Added" ? (
+                  ) : row.key === "branchAdded" ? (
                     <BranchLink
                       branchId={author.branchId}
                       branchName={author.branchName}
@@ -82,7 +94,9 @@ export function AuthorProfileCard({ author }: AuthorProfileCardProps) {
           ))}
           <Separator />
           <div className="flex items-center justify-between gap-4 py-3">
-            <dt className="shrink-0 text-sm text-muted-foreground">Added By</dt>
+            <dt className="shrink-0 text-sm text-muted-foreground">
+              {t("authors.profile.addedBy")}
+            </dt>
             <dd>
               <Link
                 href={`/dashboard/staff/${author.createdBy.staffId}`}
@@ -99,7 +113,9 @@ export function AuthorProfileCard({ author }: AuthorProfileCardProps) {
           </div>
           <Separator />
           <div className="py-3">
-            <dt className="text-sm text-muted-foreground">Biography</dt>
+            <dt className="text-sm text-muted-foreground">
+              {t("authors.profile.biography")}
+            </dt>
             <dd className="mt-2 text-sm leading-relaxed">{author.biography}</dd>
           </div>
         </dl>

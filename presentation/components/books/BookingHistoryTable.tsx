@@ -18,6 +18,7 @@ import {
 import type { BookingRecord, BookingStatus } from "@/domain/entities/book/BookDetail"
 import { BranchLink } from "@/presentation/components/branch-management/BranchLink"
 import { MemberLink } from "@/presentation/components/shared/DashboardEntityLink"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type BookingHistoryTableProps = {
   bookings: BookingRecord[]
@@ -31,45 +32,49 @@ const statusVariants: Record<BookingStatus, "default" | "secondary" | "outline" 
   cancelled: "outline",
 }
 
-const statusLabels: Record<BookingStatus, string> = {
-  active: "Active",
-  returned: "Returned",
-  overdue: "Overdue",
-  cancelled: "Cancelled",
-}
-
-const typeLabels: Record<string, string> = {
-  borrow: "Borrow",
-  reserve: "Reserve",
-}
-
 export function BookingHistoryTable({
   bookings,
   showBranchColumn = true,
 }: BookingHistoryTableProps) {
+  const { t } = useTranslation()
+
+  const statusLabels: Record<BookingStatus, string> = {
+    active: t("books.bookingHistory.statuses.active"),
+    returned: t("books.bookingHistory.statuses.returned"),
+    overdue: t("books.bookingHistory.statuses.overdue"),
+    cancelled: t("books.bookingHistory.statuses.cancelled"),
+  }
+
+  const typeLabels: Record<string, string> = {
+    borrow: t("books.bookingHistory.types.borrow"),
+    reserve: t("books.bookingHistory.types.reserve"),
+  }
+
   return (
     <Card className="rounded-lg">
       <CardHeader>
-        <CardTitle>Booking History</CardTitle>
+        <CardTitle>{t("books.bookingHistory.title")}</CardTitle>
       </CardHeader>
       <CardContent>
         {bookings.length === 0 ? (
           <p className="py-6 text-center text-sm text-muted-foreground">
-            No booking history for this book.
+            {t("books.bookingHistory.empty")}
           </p>
         ) : (
           <div className="overflow-x-auto">
             <Table className={showBranchColumn ? "min-w-[900px]" : "min-w-[760px]"}>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Booking ID</TableHead>
-                  <TableHead>Member</TableHead>
-                  {showBranchColumn ? <TableHead>Branch</TableHead> : null}
-                  <TableHead>Type</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Due</TableHead>
-                  <TableHead>Returned</TableHead>
-                  <TableHead>Status</TableHead>
+                  <TableHead>{t("books.bookingHistory.bookingId")}</TableHead>
+                  <TableHead>{t("books.bookingHistory.member")}</TableHead>
+                  {showBranchColumn ? (
+                    <TableHead>{t("books.bookingHistory.branch")}</TableHead>
+                  ) : null}
+                  <TableHead>{t("books.bookingHistory.type")}</TableHead>
+                  <TableHead>{t("books.bookingHistory.date")}</TableHead>
+                  <TableHead>{t("books.bookingHistory.due")}</TableHead>
+                  <TableHead>{t("books.bookingHistory.returned")}</TableHead>
+                  <TableHead>{t("books.bookingHistory.status")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

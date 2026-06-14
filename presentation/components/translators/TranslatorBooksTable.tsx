@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/data-table"
 import type { BookStatus } from "@/domain/entities/book/Book"
 import type { TranslatorBookItem } from "@/domain/entities/translator/TranslatorDetail"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type TranslatorBooksTableProps = {
   title: string
@@ -31,13 +32,6 @@ type TranslatorBookColumnKey =
   | "branch"
   | "status"
 
-const bookStatusLabels: Record<BookStatus, string> = {
-  available: "Available",
-  borrowed: "Borrowed",
-  reserved: "Reserved",
-  unavailable: "Unavailable",
-}
-
 const bookStatusVariants: Record<
   BookStatus,
   "default" | "secondary" | "outline" | "destructive"
@@ -54,24 +48,29 @@ export function TranslatorBooksTable({
   books,
   emptyDescription,
 }: TranslatorBooksTableProps) {
+  const { t } = useTranslation()
+
+  const bookStatusLabel = (status: BookStatus) =>
+    t(`translators.books.statuses.${status}`)
+
   const columns: DataTableColumn<TranslatorBookItem, TranslatorBookColumnKey>[] = [
     {
       key: "title",
-      header: "Title",
+      header: t("translators.books.title"),
       sortable: true,
       sortValue: (book) => book.title,
       cell: (book) => <span className="font-medium">{book.title}</span>,
     },
     {
       key: "author",
-      header: "Author",
+      header: t("translators.books.author"),
       sortable: true,
       sortValue: (book) => book.author,
       cell: (book) => book.author,
     },
     {
       key: "isbn",
-      header: "ISBN",
+      header: t("translators.books.isbn"),
       sortable: true,
       sortValue: (book) => book.isbn,
       cell: (book) => (
@@ -82,33 +81,33 @@ export function TranslatorBooksTable({
     },
     {
       key: "language",
-      header: "Language",
+      header: t("translators.books.language"),
       sortable: true,
       sortValue: (book) => book.language,
       cell: (book) => book.language,
     },
     {
       key: "category",
-      header: "Category",
+      header: t("translators.books.category"),
       sortable: true,
       sortValue: (book) => book.category,
       cell: (book) => book.category,
     },
     {
       key: "branch",
-      header: "Branch",
+      header: t("translators.books.branch"),
       sortable: true,
       sortValue: (book) => book.firstAddedBranch,
       cell: (book) => book.firstAddedBranch,
     },
     {
       key: "status",
-      header: "Status",
+      header: t("translators.books.status"),
       sortable: true,
-      sortValue: (book) => bookStatusLabels[book.status],
+      sortValue: (book) => bookStatusLabel(book.status),
       cell: (book) => (
         <Badge variant={bookStatusVariants[book.status]}>
-          {bookStatusLabels[book.status]}
+          {bookStatusLabel(book.status)}
         </Badge>
       ),
     },
@@ -125,7 +124,7 @@ export function TranslatorBooksTable({
           data={books}
           columns={columns}
           getRowId={(book) => book.id}
-          emptyTitle="No books found"
+          emptyTitle={t("translators.books.emptyTitle")}
           emptyDescription={emptyDescription}
           initialSort={{ key: "title", direction: "asc" }}
           initialPageSize={10}

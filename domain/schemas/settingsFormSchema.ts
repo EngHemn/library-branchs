@@ -1,28 +1,30 @@
 import * as z from "zod"
 
+import { validationKeys } from "@/domain/i18n/validationKeys"
+
 export const libraryInfoFormSchema = z.object({
-  name: z.string().min(1, "Library name is required"),
-  address: z.string().min(1, "Address is required"),
-  phone: z.string().min(1, "Phone number is required"),
-  email: z.string().email("Invalid email address"),
-  website: z.string().url("Invalid website URL").or(z.literal("")),
-  logoUrl: z.string().url("Invalid logo URL").or(z.literal("")),
+  name: z.string().min(1, validationKeys.libraryNameRequired),
+  address: z.string().min(1, validationKeys.addressRequired),
+  phone: z.string().min(1, validationKeys.phoneNumberRequired),
+  email: z.string().email(validationKeys.emailInvalid),
+  website: z.string().url(validationKeys.websiteInvalid).or(z.literal("")),
+  logoUrl: z.string().url(validationKeys.logoUrlInvalid).or(z.literal("")),
 })
 
 export const borrowingRulesFormSchema = z.object({
   loanDurationDays: z
     .number()
     .int()
-    .min(1, "Minimum 1 day")
-    .max(365, "Maximum 365 days"),
-  maxRenewals: z.number().int().min(0, "Cannot be negative").max(10),
+    .min(1, validationKeys.loanDurationMin)
+    .max(365, validationKeys.loanDurationMax),
+  maxRenewals: z.number().int().min(0, validationKeys.cannotBeNegative).max(10),
   maxActiveBookings: z
     .number()
     .int()
-    .min(1, "At least 1 booking allowed")
+    .min(1, validationKeys.atLeastOneBooking)
     .max(50),
-  finePerDay: z.number().min(0, "Cannot be negative"),
-  gracePeriodDays: z.number().int().min(0, "Cannot be negative").max(30),
+  finePerDay: z.number().min(0, validationKeys.cannotBeNegative),
+  gracePeriodDays: z.number().int().min(0, validationKeys.cannotBeNegative).max(30),
 })
 
 export const notificationsFormSchema = z.object({

@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/data-table"
 import type { Author } from "@/domain/entities/author/Author"
 import { AuthorActionButton } from "@/presentation/components/authors/AuthorActionButton"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type AuthorsTableProps = {
   authors: Author[]
@@ -33,21 +34,21 @@ type AuthorColumnKey =
   | "status"
   | "actions"
 
-const statusLabels = {
-  active: "active",
-  inactive: "inactive",
-}
-
 export function AuthorsTable({
   authors,
   onView,
   onEdit,
   onDelete,
 }: AuthorsTableProps) {
+  const { t } = useTranslation()
+
+  const statusLabel = (status: Author["status"]) =>
+    status === "active" ? t("common.active") : t("common.inactive")
+
   const columns: DataTableColumn<Author, AuthorColumnKey>[] = [
     {
       key: "name",
-      header: "Name",
+      header: t("authors.table.name"),
       sortable: true,
       sortValue: (author) => author.name,
       cell: (author) => (
@@ -69,21 +70,21 @@ export function AuthorsTable({
     },
     {
       key: "nationality",
-      header: "Nationality",
+      header: t("authors.table.nationality"),
       sortable: true,
       sortValue: (author) => author.nationality,
       cell: (author) => author.nationality,
     },
     {
       key: "dateOfBirth",
-      header: "Date of Birth",
+      header: t("authors.table.dateOfBirth"),
       sortable: true,
       sortValue: (author) => author.dateOfBirth,
       cell: (author) => author.dateOfBirth,
     },
     {
       key: "totalBooks",
-      header: "Books Count",
+      header: t("authors.table.booksCount"),
       sortable: true,
       sortValue: (author) => author.totalBooks,
       cell: (author) => (
@@ -91,15 +92,15 @@ export function AuthorsTable({
           variant="secondary"
           className="bg-violet-100 text-violet-700 dark:bg-violet-950 dark:text-violet-300"
         >
-          Authored {author.totalBooks}
+          {t("authors.table.authoredCount", { count: author.totalBooks })}
         </Badge>
       ),
     },
     {
       key: "status",
-      header: "Status",
+      header: t("authors.table.status"),
       sortable: true,
-      sortValue: (author) => statusLabels[author.status],
+      sortValue: (author) => statusLabel(author.status),
       cell: (author) => (
         <Badge
           variant="outline"
@@ -109,32 +110,32 @@ export function AuthorsTable({
               : "border-muted bg-muted text-muted-foreground"
           }
         >
-          {statusLabels[author.status]}
+          {statusLabel(author.status)}
         </Badge>
       ),
     },
     {
       key: "actions",
-      header: "Actions",
+      header: t("authors.table.actions"),
       headerClassName: "text-right",
       className: "text-right",
       cell: (author) => (
-        <div className="flex justify-end gap-1">
+        <div className="table-action-content">
           <AuthorActionButton
             icon={EyeIcon}
-            label="View"
+            label={t("authors.table.viewAuthor")}
             variant="outline"
             onClick={() => onView(author)}
           />
           <AuthorActionButton
             icon={PencilIcon}
-            label="Edit"
+            label={t("authors.table.editAuthor")}
             variant="outline"
             onClick={() => onEdit(author)}
           />
           <AuthorActionButton
             icon={Trash2Icon}
-            label="Delete"
+            label={t("authors.table.deleteAuthor")}
             variant="destructive"
             onClick={() => onDelete(author)}
           />
@@ -146,9 +147,9 @@ export function AuthorsTable({
   return (
     <Card className="rounded-lg">
       <CardHeader>
-        <CardTitle>All Authors</CardTitle>
+        <CardTitle>{t("authors.table.title")}</CardTitle>
         <CardDescription>
-          {authors.length.toLocaleString()} author records
+          {t("authors.table.recordCount", { count: authors.length.toLocaleString() })}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -156,8 +157,8 @@ export function AuthorsTable({
           data={authors}
           columns={columns}
           getRowId={(author) => author.id}
-          emptyTitle="No authors found"
-          emptyDescription="Try changing or clearing the active filters."
+          emptyTitle={t("authors.table.emptyTitle")}
+          emptyDescription={t("authors.table.emptyDescription")}
           initialSort={{ key: "name", direction: "asc" }}
           initialPageSize={10}
           tableClassName="min-w-[900px]"

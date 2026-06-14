@@ -25,6 +25,7 @@ import type { Book } from "@/domain/entities/book/Book"
 import { getAuthorViewHref } from "@/lib/authorLink"
 import { BookActionButton } from "@/presentation/components/books/BookActionButton"
 import { BookLocationCell } from "@/presentation/components/books/BookLocationCell"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 function PersonNameButton({
   name,
@@ -45,7 +46,7 @@ function PersonNameButton({
     <button
       type="button"
       onClick={() => onNavigate(href)}
-      className="block max-w-[9rem] truncate text-left font-medium text-primary underline-offset-4 hover:underline"
+      className="block max-w-[9rem] truncate text-start font-medium text-primary underline-offset-4 hover:underline"
     >
       {name}
     </button>
@@ -84,6 +85,7 @@ export function BooksTable({
   onDelete,
 }: BooksTableProps) {
   const router = useRouter()
+  const { t } = useTranslation()
 
   const navigateTo = (href: string) => {
     router.push(href)
@@ -92,7 +94,7 @@ export function BooksTable({
   const columns: DataTableColumn<Book, BookColumnKey>[] = [
     {
       key: "title",
-      header: "Title",
+      header: t("books.table.titleColumn"),
       sortable: true,
       sortValue: (book) => book.title,
       className: "w-[28%] max-w-0",
@@ -118,7 +120,7 @@ export function BooksTable({
     },
     {
       key: "author",
-      header: "Author",
+      header: t("books.table.author"),
       sortable: true,
       sortValue: (book) => book.author,
       className: "w-[14%] max-w-0",
@@ -132,7 +134,7 @@ export function BooksTable({
     },
     {
       key: "category",
-      header: "Category",
+      header: t("books.table.category"),
       sortable: true,
       sortValue: (book) => book.category,
       className: "w-[12%] max-w-0",
@@ -142,7 +144,7 @@ export function BooksTable({
     },
     {
       key: "location",
-      header: "Location",
+      header: t("books.table.location"),
       sortable: true,
       sortValue: (book) => book.shelfHint,
       className: "w-[18%] max-w-0 whitespace-normal",
@@ -150,7 +152,7 @@ export function BooksTable({
     },
     {
       key: "inventory",
-      header: "Avail / Stock",
+      header: t("books.table.inventory"),
       sortable: true,
       sortValue: (book) => book.available,
       headerClassName: "text-center",
@@ -167,7 +169,7 @@ export function BooksTable({
     },
     {
       key: "price",
-      header: "Price",
+      header: t("books.table.price"),
       sortable: true,
       sortValue: (book) => book.price,
       headerClassName: "text-center",
@@ -176,32 +178,32 @@ export function BooksTable({
     },
     {
       key: "actions",
-      header: "Actions",
+      header: t("books.table.actions"),
       headerClassName: "text-right",
       className: "w-[8%] text-right",
       cell: (book) => (
-        <div className="flex justify-end gap-0.5">
+        <div className="table-action-content gap-0.5">
           <BookActionButton
             icon={EyeIcon}
-            label="View Book"
+            label={t("books.table.viewBook")}
             variant="outline"
             onClick={() => onView(book)}
           />
           <BookActionButton
             icon={CalendarIcon}
             variant="outline"
-            label="Book / Reserve"
+            label={t("books.table.bookReserve")}
             onClick={() => onBooking(book)}
           />
           <BookActionButton
             icon={PencilIcon}
-            label="Edit Book"
+            label={t("books.table.editBook")}
             variant="outline"
             onClick={() => onEdit(book)}
           />
           <BookActionButton
             icon={Trash2Icon}
-            label="Delete Book"
+            label={t("books.table.deleteBook")}
             variant="destructive"
             onClick={() => onDelete(book)}
           />
@@ -213,9 +215,9 @@ export function BooksTable({
   return (
     <Card className="rounded-lg">
       <CardHeader>
-        <CardTitle>All Books</CardTitle>
+        <CardTitle>{t("books.table.title")}</CardTitle>
         <CardDescription>
-          {books.length.toLocaleString()} book records
+          {t("books.table.recordCount", { count: books.length.toLocaleString() })}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -223,8 +225,8 @@ export function BooksTable({
           data={books}
           columns={columns}
           getRowId={(book) => book.id}
-          emptyTitle="No books found"
-          emptyDescription="Try changing or clearing the active filters."
+          emptyTitle={t("books.table.emptyTitle")}
+          emptyDescription={t("books.table.emptyDescription")}
           initialSort={{ key: "title", direction: "asc" }}
           initialPageSize={10}
           tableClassName="table-fixed"

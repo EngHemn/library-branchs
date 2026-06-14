@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/table"
 import type { BranchStock } from "@/domain/entities/book/BookDetail"
 import { BranchLink } from "@/presentation/components/branch-management/BranchLink"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type BookBranchesTableProps = {
   branchStocks: BranchStock[]
@@ -23,23 +24,18 @@ type BookBranchesTableProps = {
   variant?: "table" | "summary"
 }
 
-const stockSummaryFields: {
-  key: keyof Omit<BranchStock, "branchId" | "branchName">
-  label: string
-}[] = [
-  { key: "available", label: "Available" },
-  { key: "reserved", label: "Reserved" },
-  { key: "borrowed", label: "Borrowed" },
-  { key: "event", label: "Event" },
-  { key: "sold", label: "Sold" },
-  { key: "damaged", label: "Damaged" },
-  { key: "lost", label: "Lost" },
-]
+type StockSummaryFieldKey = keyof Omit<BranchStock, "branchId" | "branchName">
 
-function BookBranchStockSummary({ stock }: { stock: BranchStock }) {
+function BookBranchStockSummary({
+  stock,
+  fields,
+}: {
+  stock: BranchStock
+  fields: { key: StockSummaryFieldKey; label: string }[]
+}) {
   return (
     <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-      {stockSummaryFields.map((field) => (
+      {fields.map((field) => (
         <div
           key={field.key}
           className="flex flex-col rounded-lg border bg-muted/30 px-4 py-3"
@@ -58,33 +54,44 @@ export function BookBranchesTable({
   branchStocks,
   variant = "table",
 }: BookBranchesTableProps) {
+  const { t } = useTranslation()
   const branchStock = branchStocks[0] ?? null
+
+  const stockSummaryFields: { key: StockSummaryFieldKey; label: string }[] = [
+    { key: "available", label: t("books.branches.available") },
+    { key: "reserved", label: t("books.branches.reserved") },
+    { key: "borrowed", label: t("books.branches.borrowed") },
+    { key: "event", label: t("books.branches.event") },
+    { key: "sold", label: t("books.branches.sold") },
+    { key: "damaged", label: t("books.branches.damaged") },
+    { key: "lost", label: t("books.branches.lost") },
+  ]
 
   return (
     <Card className="rounded-lg">
       <CardHeader>
-        <CardTitle>Branches Carrying This Book</CardTitle>
+        <CardTitle>{t("books.branches.title")}</CardTitle>
       </CardHeader>
       <CardContent>
         {branchStocks.length === 0 ? (
           <p className="py-6 text-center text-sm text-muted-foreground">
-            No branches carry this book yet.
+            {t("books.branches.empty")}
           </p>
         ) : variant === "summary" && branchStock ? (
-          <BookBranchStockSummary stock={branchStock} />
+          <BookBranchStockSummary stock={branchStock} fields={stockSummaryFields} />
         ) : (
           <div className="overflow-x-auto">
             <Table className="min-w-[700px]">
               <TableHeader>
                 <TableRow>
-                  <TableHead>Branch</TableHead>
-                  <TableHead>Available</TableHead>
-                  <TableHead>Reserved</TableHead>
-                  <TableHead>Borrowed</TableHead>
-                  <TableHead>Event</TableHead>
-                  <TableHead>Sold</TableHead>
-                  <TableHead>Damaged</TableHead>
-                  <TableHead>Lost</TableHead>
+                  <TableHead>{t("books.branches.branch")}</TableHead>
+                  <TableHead>{t("books.branches.available")}</TableHead>
+                  <TableHead>{t("books.branches.reserved")}</TableHead>
+                  <TableHead>{t("books.branches.borrowed")}</TableHead>
+                  <TableHead>{t("books.branches.event")}</TableHead>
+                  <TableHead>{t("books.branches.sold")}</TableHead>
+                  <TableHead>{t("books.branches.damaged")}</TableHead>
+                  <TableHead>{t("books.branches.lost")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

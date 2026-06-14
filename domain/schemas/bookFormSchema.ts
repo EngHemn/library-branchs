@@ -1,5 +1,6 @@
 import * as z from "zod"
 
+import { validationKeys } from "@/domain/i18n/validationKeys"
 import { optionalImageUrlSchema } from "@/domain/schemas/optionalImageSchema"
 
 const optionalString = z.preprocess(
@@ -16,10 +17,10 @@ const optionalNonNegativeNumber = z.preprocess(
 )
 
 export const bookFormSchema = z.object({
-  title: z.string().min(1, "Title is required"),
-  author: z.string().min(1, "Author is required"),
-  category: z.string().min(1, "Category is required"),
-  publicationDate: z.string().min(1, "Publication date is required"),
+  title: z.string().min(1, validationKeys.titleRequired),
+  author: z.string().min(1, validationKeys.authorRequired),
+  category: z.string().min(1, validationKeys.categoryRequired),
+  publicationDate: z.string().min(1, validationKeys.publicationDateRequired),
   language: optionalString,
   translator: optionalString,
   isbn: optionalString,

@@ -19,6 +19,7 @@ import {
   shelfHintFromLocationValues,
 } from "@/lib/bookLocationForm"
 import { BooksShelfFilterDialog } from "@/presentation/components/books/BooksShelfFilterDialog"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import type { BookBranchFilterOption } from "@/presentation/viewmodels/books/BooksViewModelState"
 
 type BooksFiltersProps = {
@@ -84,6 +85,7 @@ export function BooksFilters({
   onUpdateLocationStep,
   onDeleteLocationStep,
 }: BooksFiltersProps) {
+  const { t } = useTranslation()
   const [isShelfDialogOpen, setIsShelfDialogOpen] = useState(false)
 
   const selectedBranchLabel = branchFilterOptions.find(
@@ -109,7 +111,7 @@ export function BooksFilters({
     if (categoryFilter !== "all") {
       chips.push({
         key: `category-${categoryFilter}`,
-        label: `Category: ${categoryFilter}`,
+        label: t("books.filters.chipCategory", { value: categoryFilter }),
         onRemove: () => onCategoryFilterChange("all"),
       })
     }
@@ -117,7 +119,7 @@ export function BooksFilters({
     if (authorFilter !== "all") {
       chips.push({
         key: `author-${authorFilter}`,
-        label: `Author: ${authorFilter}`,
+        label: t("books.filters.chipAuthor", { value: authorFilter }),
         onRemove: () => onAuthorFilterChange("all"),
       })
     }
@@ -125,7 +127,7 @@ export function BooksFilters({
     if (translatorFilter !== "all") {
       chips.push({
         key: `translator-${translatorFilter}`,
-        label: `Translator: ${translatorFilter}`,
+        label: t("books.filters.chipTranslator", { value: translatorFilter }),
         onRemove: () => onTranslatorFilterChange("all"),
       })
     }
@@ -133,7 +135,7 @@ export function BooksFilters({
     if (showBranchFilter && branchFilter !== "all" && selectedBranchLabel) {
       chips.push({
         key: `branch-${branchFilter}`,
-        label: `Branch: ${selectedBranchLabel}`,
+        label: t("books.filters.chipBranch", { value: selectedBranchLabel }),
         onRemove: () => onBranchFilterChange("all"),
       })
     }
@@ -141,7 +143,7 @@ export function BooksFilters({
     if (shelfFilterLabel) {
       chips.push({
         key: "shelf-location",
-        label: `Shelf: ${shelfFilterLabel}`,
+        label: t("books.filters.chipShelf", { value: shelfFilterLabel }),
         onRemove: () => onLocationFilterChange({}),
       })
     }
@@ -160,6 +162,7 @@ export function BooksFilters({
     onTranslatorFilterChange,
     onBranchFilterChange,
     onLocationFilterChange,
+    t,
   ])
 
   const hasActiveFilters =
@@ -175,7 +178,7 @@ export function BooksFilters({
               id="books-search"
               value={searchQuery}
               onChange={(event) => onSearchQueryChange(event.target.value)}
-              placeholder="Search title, author, location..."
+              placeholder={t("books.filters.searchPlaceholder")}
               className="pl-9"
             />
           </div>
@@ -186,7 +189,7 @@ export function BooksFilters({
               onClick={() => setIsShelfDialogOpen(true)}
             >
               <MapPinIcon />
-              Shelf
+              {t("books.filters.shelf")}
               {activeShelfFilterCount > 0 ? (
                 <span className="ml-1 rounded-full bg-primary px-1.5 py-0.5 text-xs text-primary-foreground">
                   {activeShelfFilterCount}
@@ -200,7 +203,7 @@ export function BooksFilters({
               disabled={!hasActiveFilters}
             >
               <RotateCcwIcon />
-              Reset
+              {t("books.filters.reset")}
             </Button>
           </div>
         </div>
@@ -209,13 +212,13 @@ export function BooksFilters({
           className={`grid gap-3 ${showBranchFilter ? "sm:grid-cols-2 lg:grid-cols-4" : "sm:grid-cols-3"}`}
         >
           <div className="space-y-2">
-            <Label htmlFor="books-category-filter">Category</Label>
+            <Label htmlFor="books-category-filter">{t("books.filters.category")}</Label>
             <Select value={categoryFilter} onValueChange={onCategoryFilterChange}>
               <SelectTrigger id="books-category-filter" className="w-full">
-                <SelectValue placeholder="All categories" />
+                <SelectValue placeholder={t("books.filters.allCategories")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All categories</SelectItem>
+                <SelectItem value="all">{t("books.filters.allCategories")}</SelectItem>
                 {categories.map((category) => (
                   <SelectItem key={category} value={category}>
                     {category}
@@ -226,13 +229,13 @@ export function BooksFilters({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="books-author-filter">Author</Label>
+            <Label htmlFor="books-author-filter">{t("books.filters.author")}</Label>
             <Select value={authorFilter} onValueChange={onAuthorFilterChange}>
               <SelectTrigger id="books-author-filter" className="w-full">
-                <SelectValue placeholder="All authors" />
+                <SelectValue placeholder={t("books.filters.allAuthors")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All authors</SelectItem>
+                <SelectItem value="all">{t("books.filters.allAuthors")}</SelectItem>
                 {authors.map((author) => (
                   <SelectItem key={author} value={author}>
                     {author}
@@ -243,16 +246,16 @@ export function BooksFilters({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="books-translator-filter">Translator</Label>
+            <Label htmlFor="books-translator-filter">{t("books.filters.translator")}</Label>
             <Select
               value={translatorFilter}
               onValueChange={onTranslatorFilterChange}
             >
               <SelectTrigger id="books-translator-filter" className="w-full">
-                <SelectValue placeholder="All translators" />
+                <SelectValue placeholder={t("books.filters.allTranslators")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All translators</SelectItem>
+                <SelectItem value="all">{t("books.filters.allTranslators")}</SelectItem>
                 {translators.map((translator) => (
                   <SelectItem key={translator} value={translator}>
                     {translator}
@@ -264,10 +267,10 @@ export function BooksFilters({
 
           {showBranchFilter ? (
             <div className="space-y-2">
-              <Label htmlFor="books-branch-filter">Branch</Label>
+              <Label htmlFor="books-branch-filter">{t("books.filters.branch")}</Label>
               <Select value={branchFilter} onValueChange={onBranchFilterChange}>
                 <SelectTrigger id="books-branch-filter" className="w-full">
-                  <SelectValue placeholder="All branches" />
+                  <SelectValue placeholder={t("books.filters.allBranches")} />
                 </SelectTrigger>
                 <SelectContent>
                   {branchFilterOptions.map((option) => (
@@ -282,7 +285,9 @@ export function BooksFilters({
         </div>
 
         <div className="space-y-2">
-          <p className="text-sm font-medium text-muted-foreground">Filter by</p>
+          <p className="text-sm font-medium text-muted-foreground">
+            {t("books.filters.filterBy")}
+          </p>
           <div className="flex flex-wrap items-center gap-2">
             {activeFilterChips.length > 0 ? (
               activeFilterChips.map((chip) => (
@@ -295,7 +300,7 @@ export function BooksFilters({
                     type="button"
                     onClick={chip.onRemove}
                     className="rounded-full p-0.5 hover:bg-primary/20"
-                    aria-label={`Remove ${chip.label} filter`}
+                    aria-label={t("books.filters.clearFilter", { label: chip.label })}
                   >
                     <XIcon className="size-3" />
                   </button>
@@ -303,7 +308,7 @@ export function BooksFilters({
               ))
             ) : (
               <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
-                All
+                {t("books.filters.all")}
               </span>
             )}
           </div>

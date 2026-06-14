@@ -4,12 +4,15 @@ import { LanguagesIcon } from "lucide-react"
 
 import { Card, CardContent } from "@/components/ui/card"
 import type { TranslatorDetail } from "@/domain/entities/translator/TranslatorDetail"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type TranslatorSummaryCardsProps = {
   translator: TranslatorDetail
 }
 
 export function TranslatorSummaryCards({ translator }: TranslatorSummaryCardsProps) {
+  const { t } = useTranslation()
+
   return (
     <section className="grid gap-4 sm:grid-cols-1 max-w-sm">
       <Card className="rounded-lg">
@@ -18,7 +21,9 @@ export function TranslatorSummaryCards({ translator }: TranslatorSummaryCardsPro
             <LanguagesIcon className="size-5 text-muted-foreground" />
           </div>
           <div className="flex flex-col">
-            <span className="text-xs text-muted-foreground">Books Translated</span>
+            <span className="text-xs text-muted-foreground">
+              {t("translators.summary.booksTranslated")}
+            </span>
             <span className="text-xl font-bold">
               {translator.totalBooks.toLocaleString()}
             </span>

@@ -1,10 +1,12 @@
 import * as z from "zod"
 
+import { validationKeys } from "@/domain/i18n/validationKeys"
+
 export const memberFormSchema = z.object({
-  memberName: z.string().min(1, "Name is required"),
-  email: z.string().email("Enter a valid email"),
-  phone: z.string().min(1, "Phone is required"),
-  address: z.string().min(1, "Address is required"),
+  memberName: z.string().min(1, validationKeys.nameRequired),
+  email: z.string().email(validationKeys.emailInvalid),
+  phone: z.string().min(1, validationKeys.phoneRequired),
+  address: z.string().min(1, validationKeys.addressRequired),
   status: z.enum(["active", "inactive", "suspended"]),
 })
 

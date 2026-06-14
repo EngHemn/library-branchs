@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { EntityImage } from "@/components/ui/entity-image"
 import type { Translator } from "@/domain/entities/translator/Translator"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type TranslatorDetailHeaderProps = {
   translator: Translator
@@ -18,6 +19,8 @@ export function TranslatorDetailHeader({
   onBack,
   onEdit,
 }: TranslatorDetailHeaderProps) {
+  const { t } = useTranslation()
+
   return (
     <header className="flex flex-col gap-4 sm:flex-row sm:items-start">
       <EntityImage
@@ -43,7 +46,9 @@ export function TranslatorDetailHeader({
                   : "border-muted bg-muted text-muted-foreground"
               }
             >
-              {translator.status}
+              {translator.status === "active"
+                ? t("common.active")
+                : t("common.inactive")}
             </Badge>
           </div>
           <p className="mt-1 text-sm text-muted-foreground">
@@ -53,11 +58,11 @@ export function TranslatorDetailHeader({
         <div className="flex flex-wrap gap-2">
           <Button variant="outline" onClick={onBack}>
             <ArrowLeftIcon />
-            Back to Translators
+            {t("translators.view.backToTranslators")}
           </Button>
           <Button variant="outline" onClick={onEdit}>
             <PencilIcon />
-            Edit Translator
+            {t("translators.view.editTranslator")}
           </Button>
         </div>
       </div>

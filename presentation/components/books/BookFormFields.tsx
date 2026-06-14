@@ -32,6 +32,7 @@ import {
 } from "@/presentation/components/bookings/BookingSearchCombobox"
 import { BookFormLocationField } from "@/presentation/components/books/BookFormLocationField"
 import { BookTitleSearchCombobox } from "@/presentation/components/books/BookTitleSearchCombobox"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 const CREATE_AUTHOR_HREF = "/dashboard/authors/create"
 const CREATE_TRANSLATOR_HREF = "/dashboard/translators/create"
@@ -89,6 +90,7 @@ function SearchableCombobox({
   placeholder,
   disabled,
 }: SearchableComboboxProps) {
+  const { t } = useTranslation()
   const [inputValue, setInputValue] = useState("")
 
   const filteredOptions = options.filter((item) =>
@@ -136,7 +138,7 @@ function SearchableCombobox({
           </ComboboxList>
         ) : (
           <div className="flex flex-col items-center gap-3 px-3 py-6">
-            <p className="text-sm text-muted-foreground">No results found.</p>
+            <p className="text-sm text-muted-foreground">{t("common.noResults")}</p>
             {showAddButton ? (
               <Button
                 type="button"
@@ -149,7 +151,7 @@ function SearchableCombobox({
                 }}
               >
                 <PlusIcon className="mr-2 size-4" />
-                Add &quot;{inputValue.trim()}&quot;
+                {t("books.placeholders.addItem", { value: inputValue.trim() })}
               </Button>
             ) : null}
           </div>
@@ -182,6 +184,7 @@ export function BookFormFields({
   onDeleteLocationStep,
   children,
 }: BookFormFieldsProps) {
+  const { t } = useTranslation()
   const authorOptions = toComboboxOptions(authors)
   const translatorOptions = toComboboxOptions(translators)
   const categoryOptions = toComboboxOptions(categories)
@@ -198,7 +201,7 @@ export function BookFormFields({
             name="title"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Title *</FormLabel>
+                <FormLabel>{t("books.fields.title")} *</FormLabel>
                 <FormControl>
                   <BookTitleSearchCombobox
                     books={books}
@@ -207,7 +210,7 @@ export function BookFormFields({
                     onBookSelect={onBookSelect}
                     excludeBookId={excludeBookId}
                     disabled={disabled}
-                    placeholder="Search or enter book title"
+                    placeholder={t("books.placeholders.title")}
                   />
                 </FormControl>
                 <FormMessage />
@@ -220,10 +223,10 @@ export function BookFormFields({
             name="isbn"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>ISBN</FormLabel>
+                <FormLabel>{t("books.fields.isbn")}</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="978-0000000000"
+                    placeholder={t("books.placeholders.isbn")}
                     disabled={disabled}
                     {...field}
                   />
@@ -238,15 +241,15 @@ export function BookFormFields({
             name="author"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Author *</FormLabel>
+                <FormLabel>{t("books.fields.author")} *</FormLabel>
                 <BookingSearchCombobox
                   options={authorOptions}
                   value={field.value}
                   onValueChange={field.onChange}
-                  placeholder="Search author..."
+                  placeholder={t("books.placeholders.author")}
                   disabled={disabled}
                   createHref={CREATE_AUTHOR_HREF}
-                  addLabel="Add author"
+                  addLabel={t("books.placeholders.addAuthor")}
                 />
                 <FormMessage />
               </FormItem>
@@ -258,15 +261,15 @@ export function BookFormFields({
             name="translator"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Translator</FormLabel>
+                <FormLabel>{t("books.fields.translator")}</FormLabel>
                 <BookingSearchCombobox
                   options={translatorOptions}
                   value={field.value ?? ""}
                   onValueChange={field.onChange}
-                  placeholder="Search translator..."
+                  placeholder={t("books.placeholders.translator")}
                   disabled={disabled}
                   createHref={CREATE_TRANSLATOR_HREF}
-                  addLabel="Add translator"
+                  addLabel={t("books.placeholders.addTranslator")}
                 />
                 <FormMessage />
               </FormItem>
@@ -278,13 +281,13 @@ export function BookFormFields({
             name="language"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Language</FormLabel>
+                <FormLabel>{t("books.fields.language")}</FormLabel>
                 <SearchableCombobox
                   options={languages}
                   value={field.value}
                   onChange={field.onChange}
                   onAdd={onAddLanguage}
-                  placeholder="Search or add language"
+                  placeholder={t("books.placeholders.language")}
                   disabled={disabled}
                 />
                 <FormMessage />
@@ -297,15 +300,15 @@ export function BookFormFields({
             name="category"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Category *</FormLabel>
+                <FormLabel>{t("books.fields.category")} *</FormLabel>
                 <BookingSearchCombobox
                   options={categoryOptions}
                   value={field.value}
                   onValueChange={field.onChange}
-                  placeholder="Search category..."
+                  placeholder={t("books.placeholders.category")}
                   disabled={disabled}
                   createHref={CREATE_CATEGORY_HREF}
-                  addLabel="Add category"
+                  addLabel={t("books.placeholders.addCategory")}
                 />
                 <FormMessage />
               </FormItem>
@@ -317,7 +320,7 @@ export function BookFormFields({
             name="pages"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Pages</FormLabel>
+                <FormLabel>{t("books.fields.pages")}</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
@@ -336,7 +339,7 @@ export function BookFormFields({
             name="publicationDate"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Publication Date *</FormLabel>
+                <FormLabel>{t("books.fields.publicationDate")} *</FormLabel>
                 <FormControl>
                   <Input
                     type="date"
@@ -354,7 +357,7 @@ export function BookFormFields({
             name="stock"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Stock</FormLabel>
+                <FormLabel>{t("books.fields.stock")}</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
@@ -374,7 +377,7 @@ export function BookFormFields({
             name="available"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Availability</FormLabel>
+                <FormLabel>{t("books.fields.availability")}</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
@@ -394,7 +397,7 @@ export function BookFormFields({
             name="minAlert"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Min Alert</FormLabel>
+                <FormLabel>{t("books.fields.minAlert")}</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
@@ -414,7 +417,7 @@ export function BookFormFields({
             name="initialPrice"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Initial Price</FormLabel>
+                <FormLabel>{t("books.fields.initialPrice")}</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
@@ -435,7 +438,7 @@ export function BookFormFields({
             name="finalPrice"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Final Price</FormLabel>
+                <FormLabel>{t("books.fields.finalPrice")}</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
@@ -471,10 +474,10 @@ export function BookFormFields({
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Description</FormLabel>
+              <FormLabel>{t("books.fields.description")}</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Enter book description"
+                  placeholder={t("books.placeholders.description")}
                   rows={4}
                   disabled={disabled}
                   {...field}
@@ -492,8 +495,8 @@ export function BookFormFields({
             <FormItem>
               <FormControl>
                 <ImageUpload
-                  label="Book cover"
-                  previewAlt="Book cover preview"
+                  label={t("books.fields.cover")}
+                  previewAlt={t("books.fields.coverPreview")}
                   value={field.value ?? null}
                   onChange={field.onChange}
                   disabled={disabled}

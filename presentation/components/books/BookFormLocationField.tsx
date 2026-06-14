@@ -10,6 +10,7 @@ import {
   ShelfLocationStepFlow,
   type LocationFormValues,
 } from "@/presentation/components/shelves/ShelfLocationStepFlow"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type BookFormLocationFieldProps = {
   form: UseFormReturn<BookFormValues>
@@ -42,6 +43,7 @@ export function BookFormLocationField({
   onUpdateLocationStep,
   onDeleteLocationStep,
 }: BookFormLocationFieldProps) {
+  const { t } = useTranslation()
   const [locationStepIndex, setLocationStepIndex] = useState(0)
   const steps = locationOptions?.steps ?? []
 
@@ -66,15 +68,15 @@ export function BookFormLocationField({
   if (!locationOptions) {
     return (
       <div className="space-y-2">
-        <Label>Location</Label>
-        <p className="text-sm text-muted-foreground">Loading location options...</p>
+        <Label>{t("books.location.label")}</Label>
+        <p className="text-sm text-muted-foreground">{t("books.location.loading")}</p>
       </div>
     )
   }
 
   return (
     <div className="space-y-4">
-      <Label>Location</Label>
+      <Label>{t("books.location.label")}</Label>
 
       <ShelfLocationStepFlow
         form={form as unknown as UseFormReturn<LocationFormValues>}
