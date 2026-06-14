@@ -14,6 +14,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import type { Sale } from "@/domain/entities/sales/Sale"
 import { GroupSalesHistoryFilters } from "@/presentation/components/groups/GroupSalesHistoryFilters"
 import { SalesHistoryTable } from "@/presentation/components/sales/SalesHistoryTable"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import type {
   GroupBranchFilterOption,
   GroupSalesBranchFilter,
@@ -65,6 +66,8 @@ export function GroupSalesHistoryTab({
   onDateToChange,
   onRetry,
 }: GroupSalesHistoryTabProps) {
+  const { t } = useTranslation()
+
   if (isLoading) {
     return <LoadingState />
   }
@@ -73,13 +76,13 @@ export function GroupSalesHistoryTab({
     return (
       <Card className="rounded-lg border-destructive/40">
         <CardHeader>
-          <CardTitle className="text-base">Unable to load sales history</CardTitle>
+          <CardTitle className="text-base">{t("groups.sales.loadError")}</CardTitle>
           <CardDescription>{error}</CardDescription>
         </CardHeader>
         <CardContent>
           <Button type="button" variant="outline" onClick={onRetry}>
             <RefreshCwIcon />
-            Retry
+            {t("common.retry")}
           </Button>
         </CardContent>
       </Card>
@@ -91,7 +94,7 @@ export function GroupSalesHistoryTab({
       <Card className="rounded-lg">
         <CardContent className="flex min-h-48 items-center justify-center py-8">
           <p className="text-sm text-muted-foreground">
-            No sales recorded for books in this group yet.
+            {t("groups.sales.empty")}
           </p>
         </CardContent>
       </Card>
@@ -102,7 +105,7 @@ export function GroupSalesHistoryTab({
     <div className="flex flex-col gap-4">
       <Card className="rounded-lg">
         <CardHeader className="pb-3">
-          <CardTitle className="text-base">Filters</CardTitle>
+          <CardTitle className="text-base">{t("groups.filters.filters")}</CardTitle>
         </CardHeader>
         <CardContent>
           <GroupSalesHistoryFilters
@@ -122,7 +125,7 @@ export function GroupSalesHistoryTab({
         <Card className="rounded-lg">
           <CardContent className="flex min-h-48 items-center justify-center py-8">
             <p className="text-sm text-muted-foreground">
-              No sales match the current filters.
+              {t("groups.sales.noMatch")}
             </p>
           </CardContent>
         </Card>

@@ -10,6 +10,7 @@ import {
 
 import type { NeedActivityEntry } from "@/domain/entities/need/Need"
 import { formatNeedDateTime } from "@/presentation/components/needs/needDisplay"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type NeedActivityLogTabProps = {
   activityLog: NeedActivityEntry[]
@@ -23,19 +24,13 @@ const actionIcons = {
   completed: CheckCircleIcon,
 } as const
 
-const actionLabels = {
-  created: "Request Created",
-  updated: "Updated",
-  approved: "Approved",
-  rejected: "Rejected",
-  completed: "Completed",
-} as const
-
 export function NeedActivityLogTab({ activityLog }: NeedActivityLogTabProps) {
+  const { t } = useTranslation()
+
   if (activityLog.length === 0) {
     return (
       <p className="text-sm text-muted-foreground">
-        No activity recorded for this request.
+        {t("needs.activityLogTab.empty")}
       </p>
     )
   }
@@ -44,8 +39,8 @@ export function NeedActivityLogTab({ activityLog }: NeedActivityLogTabProps) {
     <div className="space-y-4">
       {[...activityLog]
         .sort(
-          (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         )
         .map((entry) => {
           const Icon = actionIcons[entry.action] ?? ClockIcon
@@ -57,7 +52,7 @@ export function NeedActivityLogTab({ activityLog }: NeedActivityLogTabProps) {
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="text-sm font-medium">
-                    {actionLabels[entry.action]}
+                    {t(`needs.activityLogTab.actions.${entry.action}` as any)}
                   </span>
                   <span className="text-xs text-muted-foreground">
                     {formatNeedDateTime(entry.createdAt)}
@@ -67,7 +62,7 @@ export function NeedActivityLogTab({ activityLog }: NeedActivityLogTabProps) {
                   {entry.description}
                 </p>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  By {entry.performedBy}
+                  {t("needs.activityLogTab.byUser", { user: entry.performedBy })}
                 </p>
               </div>
             </div>

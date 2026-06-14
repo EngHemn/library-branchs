@@ -26,6 +26,7 @@ import {
   StockBookSearchCombobox,
   type StockBookOption,
 } from "@/presentation/components/stock/StockBookSearchCombobox"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type SelectOption = {
   id: string
@@ -58,6 +59,8 @@ export function CreateStockFormFields({
   onSubmit,
   children,
 }: CreateStockFormFieldsProps) {
+  const { t } = useTranslation()
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -67,7 +70,7 @@ export function CreateStockFormFields({
             name="bookId"
             render={({ field }) => (
               <FormItem className="sm:col-span-2">
-                <FormLabel>Book</FormLabel>
+                <FormLabel>{t("stock.table.book")}</FormLabel>
                 <FormControl>
                   <StockBookSearchCombobox
                     books={books}
@@ -87,7 +90,7 @@ export function CreateStockFormFields({
               name="subBranchId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Sub Branch (optional)</FormLabel>
+                  <FormLabel>{t("stock.form.subBranchOptional")}</FormLabel>
                   <Select
                     disabled={disabled}
                     value={field.value}
@@ -95,11 +98,11 @@ export function CreateStockFormFields({
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="No sub branch" />
+                        <SelectValue placeholder={t("stock.form.noSubBranch")} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="none">No sub branch</SelectItem>
+                      <SelectItem value="none">{t("stock.form.noSubBranch")}</SelectItem>
                       {subBranches.map((subBranch) => (
                         <SelectItem key={subBranch.id} value={subBranch.id}>
                           {subBranch.name}
@@ -118,7 +121,7 @@ export function CreateStockFormFields({
             name="initialStock"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Initial Stock</FormLabel>
+                <FormLabel>{t("stock.form.initialStock")}</FormLabel>
                 <FormControl>
                   <Input type="number" min={0} disabled={disabled} {...field} />
                 </FormControl>
@@ -132,7 +135,7 @@ export function CreateStockFormFields({
             name="minStock"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Min Alert Stock</FormLabel>
+                <FormLabel>{t("stock.form.minAlertStock")}</FormLabel>
                 <FormControl>
                   <Input type="number" min={1} disabled={disabled} {...field} />
                 </FormControl>
@@ -154,6 +157,8 @@ export function EditStockFormFields({
   onSubmit,
   children,
 }: EditStockFormFieldsProps) {
+  const { t } = useTranslation()
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -163,7 +168,7 @@ export function EditStockFormFields({
             name="quantity"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Quantity</FormLabel>
+                <FormLabel>{t("stock.form.quantity")}</FormLabel>
                 <FormControl>
                   <Input type="number" min={0} disabled={disabled} {...field} />
                 </FormControl>
@@ -177,7 +182,7 @@ export function EditStockFormFields({
             name="minStock"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Min Alert Stock</FormLabel>
+                <FormLabel>{t("stock.form.minAlertStock")}</FormLabel>
                 <FormControl>
                   <Input type="number" min={1} disabled={disabled} {...field} />
                 </FormControl>
@@ -192,11 +197,11 @@ export function EditStockFormFields({
           name="notes"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Notes</FormLabel>
+              <FormLabel>{t("stock.form.notes")}</FormLabel>
               <FormControl>
                 <Textarea
                   rows={3}
-                  placeholder="Optional adjustment note..."
+                  placeholder={t("stock.form.notesPlaceholder")}
                   disabled={disabled}
                   {...field}
                 />

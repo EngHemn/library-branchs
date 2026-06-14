@@ -21,54 +21,61 @@ import {
   formatOrderPriceInDinar,
   formatOrderTime,
 } from "@/presentation/components/orders/orderDisplay"
+import { useLocale } from "@/presentation/i18n/useLocale"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type OrderSummaryCardsProps = {
   order: OrderDetail
 }
 
 export function OrderSummaryCards({ order }: OrderSummaryCardsProps) {
+  const { t } = useTranslation()
+  const { locale } = useLocale()
+
   const items = [
     {
       icon: Building2Icon,
-      label: "Branch",
+      label: t("orders.summary.branch"),
       value: order.branchName,
     },
     {
       icon: MapPinIcon,
-      label: "Location",
+      label: t("orders.summary.location"),
       value: order.branchLocation,
     },
     {
       icon: BookOpenIcon,
-      label: "Book Quantity",
-      value: formatBookQuantity(order.itemCount),
+      label: t("orders.summary.bookQuantity"),
+      value: t("orders.table.bookQuantityCount", {
+        count: formatBookQuantity(order.itemCount, locale),
+      }),
     },
     {
       icon: CalendarIcon,
-      label: "Order Date",
-      value: formatOrderDate(order.orderDate),
-      subValue: formatOrderTime(order.orderDate),
+      label: t("orders.summary.orderDate"),
+      value: formatOrderDate(order.orderDate, locale),
+      subValue: formatOrderTime(order.orderDate, locale),
     },
     {
       icon: TruckIcon,
-      label: "Expected Delivery",
-      value: formatOrderDate(order.expectedDeliveryDate),
-      subValue: formatOrderTime(order.expectedDeliveryDate),
+      label: t("orders.summary.expectedDelivery"),
+      value: formatOrderDate(order.expectedDeliveryDate, locale),
+      subValue: formatOrderTime(order.expectedDeliveryDate, locale),
     },
     {
       icon: PhoneIcon,
-      label: "Phone",
+      label: t("orders.summary.phone"),
       value: order.phoneNumber,
     },
     {
       icon: MailIcon,
-      label: "Email",
+      label: t("orders.summary.email"),
       value: order.supplierEmail ?? "—",
     },
     {
       icon: BookOpenIcon,
-      label: "Total (IQD)",
-      value: formatOrderPriceInDinar(order.totalAmount),
+      label: t("orders.summary.total"),
+      value: formatOrderPriceInDinar(order.totalAmount, locale),
     },
   ]
 

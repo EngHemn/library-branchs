@@ -16,6 +16,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Separator } from "@/components/ui/separator"
 import type { StockRow } from "@/domain/entities/stock/Stock"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type AddStockDialogProps = {
   isOpen: boolean
@@ -36,6 +37,7 @@ export function AddStockDialog({
   onClose,
   onSubmit,
 }: AddStockDialogProps) {
+  const { t } = useTranslation()
   const [quantity, setQuantity] = useState(1)
   const [notes, setNotes] = useState("")
 
@@ -70,26 +72,26 @@ export function AddStockDialog({
             ) : (
               <Plus className="h-5 w-5 text-emerald-600" />
             )}
-            {isReduce ? "Reduce Stock" : "Add Stock"}
+            {isReduce ? t("stock.addDialog.reduceTitle") : t("stock.addDialog.addTitle")}
           </DialogTitle>
           <DialogDescription>
             {isReduce
-              ? "Remove units from this stock record."
-              : "Add new units to this stock record."}
+              ? t("stock.addDialog.reduceDescription")
+              : t("stock.addDialog.addDescription")}
           </DialogDescription>
         </DialogHeader>
 
         {stockRow && (
           <div className="space-y-4">
             <div className="rounded-xl border border-slate-100 bg-slate-50 p-3">
-              <p className="text-xs text-slate-500">Book</p>
+              <p className="text-xs text-slate-500">{t("stock.table.book")}</p>
               <p className="font-semibold text-slate-900">{stockRow.bookTitle}</p>
               <p className="text-xs text-slate-400">{stockRow.isbn}</p>
             </div>
 
             <div className="grid grid-cols-3 gap-3 rounded-xl border border-slate-100 bg-white p-3 text-center">
               <div>
-                <p className="text-xs text-slate-500">Current</p>
+                <p className="text-xs text-slate-500">{t("stock.table.current")}</p>
                 <p className="text-lg font-bold text-slate-900">
                   {stockRow.currentStock}
                 </p>
@@ -98,7 +100,7 @@ export function AddStockDialog({
                 <span className="text-slate-300">→</span>
               </div>
               <div>
-                <p className="text-xs text-slate-500">After</p>
+                <p className="text-xs text-slate-500">{t("stock.addDialog.after")}</p>
                 <p
                   className={`text-lg font-bold ${
                     isReduce && previewStock <= stockRow.minStock
@@ -114,7 +116,7 @@ export function AddStockDialog({
             <Separator />
 
             <div className="space-y-2">
-              <Label>Quantity</Label>
+              <Label>{t("stock.form.quantity")}</Label>
               <div className="flex items-center gap-2">
                 <Button
                   variant="outline"
@@ -151,16 +153,16 @@ export function AddStockDialog({
                 </Button>
                 {isReduce && (
                   <span className="text-xs text-slate-400">
-                    max {maxReduce}
+                    {t("stock.addDialog.maxAvailable", { count: maxReduce })}
                   </span>
                 )}
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label>Notes</Label>
+              <Label>{t("stock.form.notes")}</Label>
               <Textarea
-                placeholder="Optional notes..."
+                placeholder={t("stock.addDialog.notesPlaceholder")}
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 rows={2}
@@ -178,7 +180,7 @@ export function AddStockDialog({
 
         <DialogFooter className="gap-2">
           <Button variant="outline" onClick={handleClose} disabled={isSubmitting}>
-            Cancel
+            {t("common.cancel")}
           </Button>
           <Button
             onClick={handleSubmit}
@@ -191,10 +193,10 @@ export function AddStockDialog({
           >
             <Package className="mr-2 h-4 w-4" />
             {isSubmitting
-              ? "Saving..."
+              ? t("common.saving")
               : isReduce
-                ? "Reduce Stock"
-                : "Add Stock"}
+                ? t("stock.addDialog.reduceTitle")
+                : t("stock.addDialog.addTitle")}
           </Button>
         </DialogFooter>
       </DialogContent>

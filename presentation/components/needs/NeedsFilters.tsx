@@ -11,12 +11,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { NEED_CATEGORIES, getNeedCategoryLabel } from "@/domain/entities/need/NeedCategory"
-import { NEED_PRIORITIES, getNeedPriorityLabel } from "@/domain/entities/need/NeedPriority"
-import { NEED_STATUSES, getNeedStatusLabel } from "@/domain/entities/need/NeedStatus"
+import { NEED_CATEGORIES } from "@/domain/entities/need/NeedCategory"
+import { NEED_PRIORITIES } from "@/domain/entities/need/NeedPriority"
+import { NEED_STATUSES } from "@/domain/entities/need/NeedStatus"
 import type { NeedCategory } from "@/domain/entities/need/NeedCategory"
 import type { NeedPriority } from "@/domain/entities/need/NeedPriority"
 import type { NeedStatus } from "@/domain/entities/need/NeedStatus"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 export type NeedCategoryFilter = "all" | NeedCategory
 export type NeedPriorityFilter = "all" | NeedPriority
@@ -60,6 +61,8 @@ export function NeedsFilters({
   onDateFromChange,
   onDateToChange,
 }: NeedsFiltersProps) {
+  const { t } = useTranslation()
+
   return (
     <div className="flex flex-col gap-4">
       <div className="relative flex-1">
@@ -67,14 +70,14 @@ export function NeedsFilters({
         <Input
           value={searchQuery}
           onChange={(event) => onSearchQueryChange(event.target.value)}
-          placeholder="Search by need name, requester, or branch..."
+          placeholder={t("needs.filters.searchPlaceholder")}
           className="pl-9"
         />
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
         <div className="space-y-2">
-          <Label>Category</Label>
+          <Label>{t("needs.table.columns.category")}</Label>
           <Select
             value={categoryFilter}
             onValueChange={(value) =>
@@ -82,13 +85,13 @@ export function NeedsFilters({
             }
           >
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="All categories" />
+              <SelectValue placeholder={t("needs.filters.allCategories")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All categories</SelectItem>
+              <SelectItem value="all">{t("needs.filters.allCategories")}</SelectItem>
               {NEED_CATEGORIES.map((category) => (
                 <SelectItem key={category} value={category}>
-                  {getNeedCategoryLabel(category)}
+                  {t(`needs.categories.${category}` as any)}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -97,7 +100,7 @@ export function NeedsFilters({
 
         {showBranchFilter ? (
           <div className="space-y-2">
-            <Label>Branch</Label>
+            <Label>{t("needs.table.columns.branch")}</Label>
             <Select
               value={branchFilter}
               onValueChange={(value) =>
@@ -105,10 +108,10 @@ export function NeedsFilters({
               }
             >
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="All branches" />
+                <SelectValue placeholder={t("needs.filters.allBranches")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All branches</SelectItem>
+                <SelectItem value="all">{t("needs.filters.allBranches")}</SelectItem>
                 {branchOptions.map((branch) => (
                   <SelectItem key={branch.id} value={branch.id}>
                     {branch.name}
@@ -120,7 +123,7 @@ export function NeedsFilters({
         ) : null}
 
         <div className="space-y-2">
-          <Label>Priority</Label>
+          <Label>{t("needs.table.columns.priority")}</Label>
           <Select
             value={priorityFilter}
             onValueChange={(value) =>
@@ -128,13 +131,13 @@ export function NeedsFilters({
             }
           >
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="All priorities" />
+              <SelectValue placeholder={t("needs.filters.allPriorities")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All priorities</SelectItem>
+              <SelectItem value="all">{t("needs.filters.allPriorities")}</SelectItem>
               {NEED_PRIORITIES.map((priority) => (
                 <SelectItem key={priority} value={priority}>
-                  {getNeedPriorityLabel(priority)}
+                  {t(`needs.priorities.${priority}` as any)}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -142,7 +145,7 @@ export function NeedsFilters({
         </div>
 
         <div className="space-y-2">
-          <Label>Status</Label>
+          <Label>{t("needs.table.columns.status")}</Label>
           <Select
             value={statusFilter}
             onValueChange={(value) =>
@@ -150,13 +153,13 @@ export function NeedsFilters({
             }
           >
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="All statuses" />
+              <SelectValue placeholder={t("needs.filters.allStatuses")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All statuses</SelectItem>
+              <SelectItem value="all">{t("needs.filters.allStatuses")}</SelectItem>
               {NEED_STATUSES.map((status) => (
                 <SelectItem key={status} value={status}>
-                  {getNeedStatusLabel(status)}
+                  {t(`needs.statuses.${status}` as any)}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -164,7 +167,7 @@ export function NeedsFilters({
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="needs-date-from">Date From</Label>
+          <Label htmlFor="needs-date-from">{t("needs.filters.dateFrom")}</Label>
           <Input
             id="needs-date-from"
             type="date"
@@ -177,7 +180,7 @@ export function NeedsFilters({
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="needs-date-to">Date To</Label>
+          <Label htmlFor="needs-date-to">{t("needs.filters.dateTo")}</Label>
           <Input
             id="needs-date-to"
             type="date"

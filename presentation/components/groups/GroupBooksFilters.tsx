@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import type {
   GroupBooksAuthorFilter,
   GroupBooksBranchFilter,
@@ -47,6 +48,8 @@ export function GroupBooksFilters({
   onAuthorFilterChange,
   onBranchFilterChange,
 }: GroupBooksFiltersProps) {
+  const { t } = useTranslation()
+
   return (
     <div className="flex flex-col gap-3">
       <div className="relative flex-1">
@@ -54,20 +57,24 @@ export function GroupBooksFilters({
         <Input
           value={searchQuery}
           onChange={(event) => onSearchQueryChange(event.target.value)}
-          placeholder="Search by book name..."
+          placeholder={t("groups.booksFilters.searchPlaceholder")}
           className="pl-9"
         />
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         <div className="space-y-2">
-          <Label htmlFor="group-books-category-filter">Category</Label>
+          <Label htmlFor="group-books-category-filter">
+            {t("groups.booksFilters.category")}
+          </Label>
           <Select value={categoryFilter} onValueChange={onCategoryFilterChange}>
             <SelectTrigger id="group-books-category-filter" className="w-full">
-              <SelectValue placeholder="All categories" />
+              <SelectValue placeholder={t("groups.booksFilters.allCategories")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Categories</SelectItem>
+              <SelectItem value="all">
+                {t("groups.booksFilters.allCategories")}
+              </SelectItem>
               {categories.map((category) => (
                 <SelectItem key={category} value={category}>
                   {category}
@@ -78,13 +85,17 @@ export function GroupBooksFilters({
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="group-books-author-filter">Author</Label>
+          <Label htmlFor="group-books-author-filter">
+            {t("groups.booksFilters.author")}
+          </Label>
           <Select value={authorFilter} onValueChange={onAuthorFilterChange}>
             <SelectTrigger id="group-books-author-filter" className="w-full">
-              <SelectValue placeholder="All authors" />
+              <SelectValue placeholder={t("groups.booksFilters.allAuthors")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Authors</SelectItem>
+              <SelectItem value="all">
+                {t("groups.booksFilters.allAuthors")}
+              </SelectItem>
               {authors.map((author) => (
                 <SelectItem key={author} value={author}>
                   {author}
@@ -96,10 +107,12 @@ export function GroupBooksFilters({
 
         {showBranchFilter ? (
           <div className="space-y-2">
-            <Label htmlFor="group-books-branch-filter">Branch</Label>
+            <Label htmlFor="group-books-branch-filter">
+              {t("groups.booksFilters.branch")}
+            </Label>
             <Select value={branchFilter} onValueChange={onBranchFilterChange}>
               <SelectTrigger id="group-books-branch-filter" className="w-full">
-                <SelectValue placeholder="Current branch" />
+                <SelectValue placeholder={t("groups.filters.currentBranch")} />
               </SelectTrigger>
               <SelectContent>
                 {branchFilterOptions.map((option) => (

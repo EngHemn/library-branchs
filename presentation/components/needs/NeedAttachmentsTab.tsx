@@ -5,16 +5,19 @@ import { FileIcon, ImageIcon } from "lucide-react"
 import { EntityImage } from "@/components/ui/entity-image"
 import type { NeedAttachment } from "@/domain/entities/need/Need"
 import { formatNeedDateTime } from "@/presentation/components/needs/needDisplay"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type NeedAttachmentsTabProps = {
   attachments: NeedAttachment[]
 }
 
 export function NeedAttachmentsTab({ attachments }: NeedAttachmentsTabProps) {
+  const { t } = useTranslation()
+
   if (attachments.length === 0) {
     return (
       <p className="text-sm text-muted-foreground">
-        No files or images have been uploaded.
+        {t("needs.attachmentsTab.empty")}
       </p>
     )
   }
@@ -42,7 +45,9 @@ export function NeedAttachmentsTab({ attachments }: NeedAttachmentsTabProps) {
           )}
           <p className="truncate text-sm font-medium">{attachment.name}</p>
           <p className="text-xs text-muted-foreground">
-            Uploaded {formatNeedDateTime(attachment.uploadedAt)}
+            {t("needs.attachmentsTab.uploadedAt", {
+              date: formatNeedDateTime(attachment.uploadedAt),
+            })}
           </p>
         </div>
       ))}

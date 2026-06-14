@@ -1,35 +1,40 @@
 import type { BookStatus } from "@/domain/entities/book/Book"
 
-export function formatGroupDate(isoDate: string): string {
-  return new Intl.DateTimeFormat("en-US", {
+export function formatGroupDate(isoDate: string, locale = "en"): string {
+  const date = new Date(isoDate)
+
+  if (Number.isNaN(date.getTime())) {
+    return isoDate
+  }
+
+  return date.toLocaleDateString(locale, {
     month: "short",
     day: "numeric",
     year: "numeric",
-  }).format(new Date(isoDate))
+  })
 }
 
-export function formatGroupDateTime(isoDate: string): string {
-  return new Intl.DateTimeFormat("en-US", {
+export function formatGroupDateTime(isoDate: string, locale = "en"): string {
+  const date = new Date(isoDate)
+
+  if (Number.isNaN(date.getTime())) {
+    return isoDate
+  }
+
+  return date.toLocaleString(locale, {
     month: "short",
     day: "numeric",
     year: "numeric",
     hour: "numeric",
     minute: "2-digit",
-  }).format(new Date(isoDate))
+  })
 }
 
-export function formatGroupBookPrice(price: number): string {
-  const formatted = new Intl.NumberFormat("en-US", {
+export function formatGroupBookPrice(price: number, locale = "en"): string {
+  const formatted = new Intl.NumberFormat(locale, {
     maximumFractionDigits: 0,
   }).format(price)
   return `${formatted} IQD`
-}
-
-export const groupBookStatusLabels: Record<BookStatus, string> = {
-  available: "Available",
-  borrowed: "Borrowed",
-  reserved: "Reserved",
-  unavailable: "Unavailable",
 }
 
 export const groupBookStatusVariants: Record<

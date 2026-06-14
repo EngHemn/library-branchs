@@ -2,7 +2,7 @@
 
 import { Badge } from "@/components/ui/badge"
 import type { OrderStatus } from "@/domain/entities/order/OrderStatus"
-import { getOrderStatusLabel } from "@/domain/entities/order/OrderStatus"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type OrderStatusBadgeProps = {
   status: OrderStatus
@@ -21,9 +21,11 @@ const statusStyles: Record<OrderStatus, string> = {
 }
 
 export function OrderStatusBadge({ status }: OrderStatusBadgeProps) {
+  const { t } = useTranslation()
+
   return (
     <Badge variant="secondary" className={statusStyles[status]}>
-      {getOrderStatusLabel(status)}
+      {t(`orders.status.${status}`)}
     </Badge>
   )
 }

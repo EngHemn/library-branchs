@@ -5,11 +5,12 @@ import { SearchIcon } from "lucide-react"
 
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
+import type { BookStatus } from "@/domain/entities/book/Book"
 import type { GroupBookOption } from "@/domain/repositories/GroupRepository"
-import {
-  formatGroupBookPrice,
-  groupBookStatusLabels,
-} from "@/presentation/components/groups/groupDisplay"
+import { formatGroupBookPrice } from "@/presentation/components/groups/groupDisplay"
+import type { TranslationKey } from "@/presentation/i18n/messages"
+import { useLocale } from "@/presentation/i18n/useLocale"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type GroupBooksSelectorProps = {
   bookOptions: GroupBookOption[]
@@ -35,7 +36,12 @@ export function GroupBooksSelector({
   onSelectedBookIdsChange,
   disabled = false,
 }: GroupBooksSelectorProps) {
+  const { t } = useTranslation()
+  const { locale } = useLocale()
   const [searchQuery, setSearchQuery] = useState("")
+
+  const bookStatusLabel = (status: BookStatus) =>
+    t(`groups.bookStatus.${status}` as TranslationKey)
 
   const filteredBooks = useMemo(
     () => bookOptions.filter((book) => matchesBook(book, searchQuery)),
@@ -58,7 +64,7 @@ export function GroupBooksSelector({
         <Input
           value={searchQuery}
           onChange={(event) => setSearchQuery(event.target.value)}
-          placeholder="Search books by title, ISBN, or author..."
+          placeholder={t("groups.booksSelector.searchPlaceholder")}
           disabled={disabled}
           className="pl-9"
         />
@@ -87,10 +93,12 @@ export function GroupBooksSelector({
                     {book.author} · {book.isbn}
                   </span>
                   <span className="mt-0.5 block text-xs text-muted-foreground">
-                    Stock {book.stock.toLocaleString()} · Available{" "}
-                    {book.available.toLocaleString()} ·{" "}
-                    {formatGroupBookPrice(book.price)} ·{" "}
-                    {groupBookStatusLabels[book.status]}
+                    {t("groups.booksSelector.meta", {
+                      stock: book.stock.toLocaleString(locale),
+                      available: book.available.toLocaleString(locale),
+                      price: formatGroupBookPrice(book.price, locale),
+                      status: bookStatusLabel(book.status),
+                    })}
                   </span>
                 </span>
               </label>
@@ -99,15 +107,14 @@ export function GroupBooksSelector({
         ) : (
           <p className="py-6 text-center text-sm text-muted-foreground">
             {searchQuery.trim()
-              ? "No books match your search."
-              : "No books available."}
+              ? t("groups.booksSelector.noMatch")
+              : t("groups.booksSelector.noAvailable")}
           </p>
         )}
       </div>
 
       <p className="text-sm text-muted-foreground">
-        {selectedBookIds.length} book{selectedBookIds.length === 1 ? "" : "s"}{" "}
-        selected
+        {t("groups.booksSelector.selected", { count: selectedBookIds.length })}
       </p>
     </div>
   )

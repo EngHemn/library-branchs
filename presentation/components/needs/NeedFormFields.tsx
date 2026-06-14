@@ -21,19 +21,14 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-import {
-  NEED_CATEGORIES,
-  getNeedCategoryLabel,
-} from "@/domain/entities/need/NeedCategory"
-import {
-  NEED_PRIORITIES,
-  getNeedPriorityLabel,
-} from "@/domain/entities/need/NeedPriority"
+import { NEED_CATEGORIES } from "@/domain/entities/need/NeedCategory"
+import { NEED_PRIORITIES } from "@/domain/entities/need/NeedPriority"
 import type {
   NeedBranchOption,
   NeedRequestedByOption,
 } from "@/domain/repositories/NeedRepository"
 import type { NeedFormValues } from "@/domain/schemas/needFormSchema"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type NeedFormFieldsProps = {
   form: UseFormReturn<NeedFormValues>
@@ -54,6 +49,8 @@ export function NeedFormFields({
   onSubmit,
   children,
 }: NeedFormFieldsProps) {
+  const { t } = useTranslation()
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -63,10 +60,10 @@ export function NeedFormFields({
             name="name"
             render={({ field }) => (
               <FormItem className="sm:col-span-2">
-                <FormLabel>Need Name</FormLabel>
+                <FormLabel>{t("needs.form.name")}</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="e.g. Laptop, Printer, Office Supplies"
+                    placeholder={t("needs.form.namePlaceholder")}
                     disabled={disabled}
                     {...field}
                   />
@@ -81,7 +78,7 @@ export function NeedFormFields({
             name="category"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Category</FormLabel>
+                <FormLabel>{t("needs.form.category")}</FormLabel>
                 <Select
                   value={field.value}
                   onValueChange={field.onChange}
@@ -89,13 +86,13 @@ export function NeedFormFields({
                 >
                   <FormControl>
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select category" />
+                      <SelectValue placeholder={t("needs.form.categoryPlaceholder")} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
                     {NEED_CATEGORIES.map((category) => (
                       <SelectItem key={category} value={category}>
-                        {getNeedCategoryLabel(category)}
+                        {t(`needs.categories.${category}` as any)}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -110,7 +107,7 @@ export function NeedFormFields({
             name="quantity"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Quantity</FormLabel>
+                <FormLabel>{t("needs.form.quantity")}</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
@@ -129,7 +126,7 @@ export function NeedFormFields({
             name="priority"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Priority</FormLabel>
+                <FormLabel>{t("needs.form.priority")}</FormLabel>
                 <Select
                   value={field.value}
                   onValueChange={field.onChange}
@@ -137,13 +134,13 @@ export function NeedFormFields({
                 >
                   <FormControl>
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select priority" />
+                      <SelectValue placeholder={t("needs.form.priorityPlaceholder")} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
                     {NEED_PRIORITIES.map((priority) => (
                       <SelectItem key={priority} value={priority}>
-                        {getNeedPriorityLabel(priority)}
+                        {t(`needs.priorities.${priority}` as any)}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -159,7 +156,7 @@ export function NeedFormFields({
               name="branchId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Branch</FormLabel>
+                  <FormLabel>{t("needs.form.branch")}</FormLabel>
                   <Select
                     value={field.value}
                     onValueChange={field.onChange}
@@ -167,7 +164,7 @@ export function NeedFormFields({
                   >
                     <FormControl>
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select branch" />
+                        <SelectValue placeholder={t("needs.form.branchPlaceholder")} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -189,7 +186,7 @@ export function NeedFormFields({
             name="requestedBy"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Requested By</FormLabel>
+                <FormLabel>{t("needs.form.requestedBy")}</FormLabel>
                 <Select
                   value={field.value}
                   onValueChange={field.onChange}
@@ -197,7 +194,7 @@ export function NeedFormFields({
                 >
                   <FormControl>
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select requester" />
+                      <SelectValue placeholder={t("needs.form.requestedByPlaceholder")} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -219,10 +216,10 @@ export function NeedFormFields({
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Description</FormLabel>
+              <FormLabel>{t("needs.form.description")}</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Describe the item or equipment needed..."
+                  placeholder={t("needs.form.descriptionPlaceholder")}
                   rows={4}
                   disabled={disabled}
                   {...field}
@@ -238,10 +235,10 @@ export function NeedFormFields({
           name="notes"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Notes</FormLabel>
+              <FormLabel>{t("needs.form.notes")}</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Additional notes or specifications..."
+                  placeholder={t("needs.form.notesPlaceholder")}
                   rows={3}
                   disabled={disabled}
                   {...field}
@@ -257,7 +254,7 @@ export function NeedFormFields({
           name="attachmentUrl"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Attachment / Image</FormLabel>
+              <FormLabel>{t("needs.form.attachment")}</FormLabel>
               <FormControl>
                 <ImageUpload
                   value={field.value}

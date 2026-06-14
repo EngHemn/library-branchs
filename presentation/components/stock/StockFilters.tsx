@@ -17,6 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type StockFiltersProps = {
   searchQuery: string
@@ -56,6 +57,8 @@ export function StockFilters({
   availableCategories,
   showSubBranchFilter,
 }: StockFiltersProps) {
+  const { t } = useTranslation()
+
   const statusFilterValue: StockStatusFilter = showOutOfStock
     ? "out_of_stock"
     : showLowStock
@@ -89,19 +92,19 @@ export function StockFilters({
   return (
     <Card className="rounded-lg">
       <CardHeader>
-        <CardTitle>Filters</CardTitle>
+        <CardTitle>{t("stock.filters.title")}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className={gridClassName}>
           <div className="space-y-2">
-            <Label htmlFor="stock-search">Search</Label>
+            <Label htmlFor="stock-search">{t("common.search")}</Label>
             <div className="relative">
               <SearchIcon className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 id="stock-search"
                 value={searchQuery}
                 onChange={(e) => onSearchChange(e.target.value)}
-                placeholder="Search book or ISBN..."
+                placeholder={t("stock.filters.searchPlaceholder")}
                 className="pl-8"
               />
             </div>
@@ -109,7 +112,7 @@ export function StockFilters({
 
           {showSubBranchFilter ? (
             <div className="space-y-2">
-              <Label htmlFor="sub-branch-filter">Sub Branch</Label>
+              <Label htmlFor="sub-branch-filter">{t("stock.table.subBranch")}</Label>
               <Select
                 value={selectedSubBranchId ?? "all"}
                 onValueChange={(v) => onSubBranchChange(v === "all" ? null : v)}
@@ -119,7 +122,7 @@ export function StockFilters({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All</SelectItem>
+                  <SelectItem value="all">{t("common.all")}</SelectItem>
                   {availableSubBranches.map((b) => (
                     <SelectItem key={b.id} value={b.id}>
                       {b.name}
@@ -131,7 +134,7 @@ export function StockFilters({
           ) : null}
 
           <div className="space-y-2">
-            <Label htmlFor="category-filter">Category</Label>
+            <Label htmlFor="category-filter">{t("stock.table.category")}</Label>
             <Select
               value={selectedCategory ?? "all"}
               onValueChange={(v) => onCategoryChange(v === "all" ? null : v)}
@@ -140,7 +143,7 @@ export function StockFilters({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All</SelectItem>
+                <SelectItem value="all">{t("common.all")}</SelectItem>
                 {availableCategories.map((cat) => (
                   <SelectItem key={cat} value={cat}>
                     {cat}
@@ -151,7 +154,7 @@ export function StockFilters({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="status-filter">Stock Status</Label>
+            <Label htmlFor="status-filter">{t("stock.filters.stockStatus")}</Label>
             <Select
               value={statusFilterValue}
               onValueChange={(v) => {
@@ -162,9 +165,9 @@ export function StockFilters({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All</SelectItem>
-                <SelectItem value="low_stock">Low Stock</SelectItem>
-                <SelectItem value="out_of_stock">Out of Stock</SelectItem>
+                <SelectItem value="all">{t("common.all")}</SelectItem>
+                <SelectItem value="low_stock">{t("stock.filters.lowStock")}</SelectItem>
+                <SelectItem value="out_of_stock">{t("stock.filters.outOfStock")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -177,7 +180,7 @@ export function StockFilters({
             className="w-full lg:w-auto"
           >
             <RotateCcwIcon />
-            Reset Filters
+            {t("stock.filters.reset")}
           </Button>
         </div>
       </CardContent>

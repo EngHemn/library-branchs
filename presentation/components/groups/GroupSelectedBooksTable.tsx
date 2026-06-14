@@ -12,12 +12,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import type { BookStatus } from "@/domain/entities/book/Book"
 import type { GroupBookOption } from "@/domain/repositories/GroupRepository"
 import {
   formatGroupBookPrice,
-  groupBookStatusLabels,
   groupBookStatusVariants,
 } from "@/presentation/components/groups/groupDisplay"
+import type { TranslationKey } from "@/presentation/i18n/messages"
+import { useLocale } from "@/presentation/i18n/useLocale"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type GroupSelectedBooksTableProps = {
   bookOptions: GroupBookOption[]
@@ -32,6 +35,12 @@ export function GroupSelectedBooksTable({
   onRemoveBook,
   disabled = false,
 }: GroupSelectedBooksTableProps) {
+  const { t } = useTranslation()
+  const { locale } = useLocale()
+
+  const bookStatusLabel = (status: BookStatus) =>
+    t(`groups.bookStatus.${status}` as TranslationKey)
+
   const selectedBooks = selectedBookIds
     .map((bookId) => bookOptions.find((book) => book.id === bookId))
     .filter((book): book is GroupBookOption => book !== undefined)
@@ -39,7 +48,7 @@ export function GroupSelectedBooksTable({
   if (selectedBooks.length === 0) {
     return (
       <p className="rounded-lg border border-dashed py-8 text-center text-sm text-muted-foreground">
-        No books assigned yet. Use the selector above to add books.
+        {t("groups.selectedBooks.empty")}
       </p>
     )
   }
@@ -49,14 +58,18 @@ export function GroupSelectedBooksTable({
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Title</TableHead>
-            <TableHead>Author</TableHead>
-            <TableHead>ISBN</TableHead>
-            <TableHead className="text-center">Stock</TableHead>
-            <TableHead className="text-center">Available</TableHead>
-            <TableHead className="text-center">Price</TableHead>
-            <TableHead>Availability</TableHead>
-            <TableHead className="w-16 text-right">Remove</TableHead>
+            <TableHead>{t("groups.books.title")}</TableHead>
+            <TableHead>{t("groups.books.author")}</TableHead>
+            <TableHead>{t("groups.books.isbn")}</TableHead>
+            <TableHead className="text-center">{t("groups.books.stock")}</TableHead>
+            <TableHead className="text-center">
+              {t("groups.books.available")}
+            </TableHead>
+            <TableHead className="text-center">{t("groups.books.price")}</TableHead>
+            <TableHead>{t("groups.books.availability")}</TableHead>
+            <TableHead className="w-16 text-right">
+              {t("groups.selectedBooks.remove")}
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -66,17 +79,17 @@ export function GroupSelectedBooksTable({
               <TableCell>{book.author}</TableCell>
               <TableCell className="font-mono text-xs">{book.isbn}</TableCell>
               <TableCell className="text-center tabular-nums">
-                {book.stock.toLocaleString()}
+                {book.stock.toLocaleString(locale)}
               </TableCell>
               <TableCell className="text-center tabular-nums">
-                {book.available.toLocaleString()}
+                {book.available.toLocaleString(locale)}
               </TableCell>
               <TableCell className="text-center tabular-nums">
-                {formatGroupBookPrice(book.price)}
+                {formatGroupBookPrice(book.price, locale)}
               </TableCell>
               <TableCell>
                 <Badge variant={groupBookStatusVariants[book.status]}>
-                  {groupBookStatusLabels[book.status]}
+                  {bookStatusLabel(book.status)}
                 </Badge>
               </TableCell>
               <TableCell className="text-right">
@@ -85,7 +98,9 @@ export function GroupSelectedBooksTable({
                   variant="ghost"
                   size="icon-sm"
                   disabled={disabled}
-                  aria-label={`Remove ${book.title}`}
+                  aria-label={t("groups.selectedBooks.removeAria", {
+                    title: book.title,
+                  })}
                   onClick={() => onRemoveBook(book.id)}
                 >
                   <Trash2Icon />

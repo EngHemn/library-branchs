@@ -12,6 +12,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Textarea } from "@/components/ui/textarea"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type NeedRejectDialogProps = {
   open: boolean
@@ -34,22 +35,22 @@ export function NeedRejectDialog({
   onClose,
   onConfirm,
 }: NeedRejectDialogProps) {
+  const { t } = useTranslation()
+
   return (
     <Dialog open={open} onOpenChange={(nextOpen) => !nextOpen && onClose()}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Reject need request?</DialogTitle>
+          <DialogTitle>{t("needs.rejectDialog.title")}</DialogTitle>
           <DialogDescription>
-            Reject{" "}
-            <span className="font-medium text-foreground">{needName}</span> and
-            optionally provide a reason for the requester.
+            {t("needs.rejectDialog.description", { needName })}
           </DialogDescription>
         </DialogHeader>
 
         <Textarea
           value={reason}
           onChange={(event) => onReasonChange(event.target.value)}
-          placeholder="Rejection reason (optional)"
+          placeholder={t("needs.rejectDialog.placeholder")}
           rows={3}
         />
 
@@ -57,11 +58,11 @@ export function NeedRejectDialog({
 
         <DialogFooter>
           <Button variant="outline" onClick={onClose} disabled={isRejecting}>
-            Cancel
+            {t("needs.rejectDialog.cancel")}
           </Button>
           <Button variant="destructive" onClick={onConfirm} disabled={isRejecting}>
             {isRejecting ? <Loader2Icon className="animate-spin" /> : null}
-            {isRejecting ? "Rejecting..." : "Reject"}
+            {isRejecting ? t("needs.rejectDialog.rejecting") : t("needs.rejectDialog.reject")}
           </Button>
         </DialogFooter>
       </DialogContent>

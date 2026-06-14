@@ -32,11 +32,9 @@ import { GroupBooksSelector } from "@/presentation/components/groups/GroupBooksS
 import { GroupSelectedBooksTable } from "@/presentation/components/groups/GroupSelectedBooksTable"
 import { GroupSelectedStaffTable } from "@/presentation/components/groups/GroupSelectedStaffTable"
 import { GroupStaffSelector } from "@/presentation/components/groups/GroupStaffSelector"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
-const statusOptions: { value: GroupStatus; label: string }[] = [
-  { value: "active", label: "Active" },
-  { value: "inactive", label: "Inactive" },
-]
+const statusOptions: GroupStatus[] = ["active", "inactive"]
 
 type GroupFormFieldsProps = {
   form: UseFormReturn<GroupFormValues>
@@ -59,8 +57,12 @@ export function GroupFormFields({
   onSubmit,
   children,
 }: GroupFormFieldsProps) {
+  const { t } = useTranslation()
   const selectedBookIds = form.watch("bookIds")
   const selectedStaffIds = form.watch("staffIds")
+
+  const statusLabel = (status: GroupStatus) =>
+    status === "active" ? t("common.active") : t("common.inactive")
 
   return (
     <Form {...form}>
@@ -71,10 +73,10 @@ export function GroupFormFields({
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Group name</FormLabel>
+                <FormLabel>{t("groups.fields.name")}</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Enter group name"
+                    placeholder={t("groups.placeholders.name")}
                     disabled={disabled}
                     {...field}
                   />
@@ -89,10 +91,10 @@ export function GroupFormFields({
             name="description"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Description</FormLabel>
+                <FormLabel>{t("groups.fields.description")}</FormLabel>
                 <FormControl>
                   <Textarea
-                    placeholder="Enter group description"
+                    placeholder={t("groups.placeholders.description")}
                     disabled={disabled}
                     rows={3}
                     {...field}
@@ -108,7 +110,7 @@ export function GroupFormFields({
             name="status"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Status</FormLabel>
+                <FormLabel>{t("groups.fields.status")}</FormLabel>
                 <Select
                   value={field.value}
                   onValueChange={field.onChange}
@@ -116,13 +118,13 @@ export function GroupFormFields({
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select status" />
+                      <SelectValue placeholder={t("groups.placeholders.selectStatus")} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
                     {statusOptions.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
+                      <SelectItem key={option} value={option}>
+                        {statusLabel(option)}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -138,7 +140,7 @@ export function GroupFormFields({
               name="branchId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Branch</FormLabel>
+                  <FormLabel>{t("groups.fields.branch")}</FormLabel>
                   <Select
                     value={field.value}
                     onValueChange={field.onChange}
@@ -146,7 +148,7 @@ export function GroupFormFields({
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select branch" />
+                        <SelectValue placeholder={t("groups.placeholders.selectBranch")} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -183,9 +185,11 @@ export function GroupFormFields({
 
         <div className="space-y-3">
           <div>
-            <h3 className="text-sm font-medium">Book assignment</h3>
+            <h3 className="text-sm font-medium">
+              {t("groups.fields.bookAssignment")}
+            </h3>
             <p className="text-sm text-muted-foreground">
-              Select books from the library to include in this group.
+              {t("groups.fields.bookAssignmentDescription")}
             </p>
           </div>
           <FormField
@@ -220,9 +224,11 @@ export function GroupFormFields({
 
         <div className="space-y-3">
           <div>
-            <h3 className="text-sm font-medium">Staff assignment</h3>
+            <h3 className="text-sm font-medium">
+              {t("groups.fields.staffAssignment")}
+            </h3>
             <p className="text-sm text-muted-foreground">
-              Assign one or more staff members to manage this group.
+              {t("groups.fields.staffAssignmentDescription")}
             </p>
           </div>
           <FormField

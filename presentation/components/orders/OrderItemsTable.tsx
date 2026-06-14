@@ -17,6 +17,8 @@ import {
 import type { OrderItem } from "@/domain/entities/order/OrderDetail"
 import { OrderActionButton } from "@/presentation/components/orders/OrderActionButton"
 import { formatOrderPriceInDinar } from "@/presentation/components/orders/orderDisplay"
+import { useLocale } from "@/presentation/i18n/useLocale"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import {
   AuthorLink,
   TranslatorLink,
@@ -38,70 +40,73 @@ type ItemColumnKey =
   | "actions"
 
 export function OrderItemsTable({ items, onView }: OrderItemsTableProps) {
+  const { t } = useTranslation()
+  const { locale } = useLocale()
+
   const columns = useMemo(() => {
     const allColumns: DataTableColumn<OrderItem, ItemColumnKey>[] = [
       {
         key: "title",
-        header: "Book",
+        header: t("orders.items.book"),
         sortable: true,
         sortValue: (item) => item.title,
         cell: (item) => <span className="font-medium">{item.title}</span>,
       },
       {
         key: "author",
-        header: "Author",
+        header: t("orders.items.author"),
         sortable: true,
         sortValue: (item) => item.author,
         cell: (item) => <AuthorLink name={item.author} />,
       },
       {
         key: "translator",
-        header: "Translator",
+        header: t("orders.items.translator"),
         sortable: true,
         sortValue: (item) => item.translator ?? "",
         cell: (item) => <TranslatorLink name={item.translator} />,
       },
       {
         key: "category",
-        header: "Category",
+        header: t("orders.items.category"),
         sortable: true,
         sortValue: (item) => item.category,
         cell: (item) => item.category,
       },
       {
         key: "quantity",
-        header: "Quantity",
+        header: t("orders.items.quantity"),
         sortable: true,
         sortValue: (item) => item.quantity,
         cell: (item) => (
-          <span className="font-semibold">{item.quantity.toLocaleString()}</span>
+          <span className="font-semibold">{item.quantity.toLocaleString(locale)}</span>
         ),
       },
       {
         key: "unitPrice",
-        header: "Unit Price (IQD)",
+        header: t("orders.items.unitPrice"),
         sortable: true,
         sortValue: (item) => item.unitPrice,
-        cell: (item) => formatOrderPriceInDinar(item.unitPrice),
+        cell: (item) => formatOrderPriceInDinar(item.unitPrice, locale),
       },
       {
         key: "lineTotal",
-        header: "Line Total (IQD)",
+        header: t("orders.items.lineTotal"),
         sortable: true,
         sortValue: (item) => item.unitPrice * item.quantity,
         cell: (item) =>
-          formatOrderPriceInDinar(item.unitPrice * item.quantity),
+          formatOrderPriceInDinar(item.unitPrice * item.quantity, locale),
       },
       {
         key: "actions",
-        header: "Actions",
+        header: t("orders.items.actions"),
         headerClassName: "text-right",
         className: "text-right",
         cell: (item) => (
-          <div className="flex justify-end">
+          <div className="table-action-content gap-0">
             <OrderActionButton
               icon={EyeIcon}
-              label="View Book"
+              label={t("orders.items.viewBook")}
               variant="outline"
               onClick={() => onView(item)}
             />
@@ -111,7 +116,7 @@ export function OrderItemsTable({ items, onView }: OrderItemsTableProps) {
     ]
 
     return allColumns
-  }, [onView])
+  }, [locale, onView, t])
 
   const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0)
   const totalAmount = items.reduce(
@@ -122,10 +127,12 @@ export function OrderItemsTable({ items, onView }: OrderItemsTableProps) {
   return (
     <Card className="rounded-lg">
       <CardHeader>
-        <CardTitle>Order Items</CardTitle>
+        <CardTitle>{t("orders.items.title")}</CardTitle>
         <CardDescription>
-          {totalQuantity.toLocaleString()} books ·{" "}
-          {formatOrderPriceInDinar(totalAmount)} total item value
+          {t("orders.items.recordCount", {
+            count: totalQuantity.toLocaleString(locale),
+            total: formatOrderPriceInDinar(totalAmount, locale),
+          })}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -133,8 +140,8 @@ export function OrderItemsTable({ items, onView }: OrderItemsTableProps) {
           data={items}
           columns={columns}
           getRowId={(item) => item.bookId}
-          emptyTitle="No items"
-          emptyDescription="This order has no linked books."
+          emptyTitle={t("orders.items.emptyTitle")}
+          emptyDescription={t("orders.items.emptyDescription")}
           initialSort={{ key: "title", direction: "asc" }}
           initialPageSize={10}
           tableClassName="min-w-[1050px]"

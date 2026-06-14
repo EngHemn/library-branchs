@@ -12,6 +12,7 @@ import {
   ComboboxItem,
   ComboboxList,
 } from "@/components/ui/combobox"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 const ADD_BOOK_HREF = "/dashboard/books/create"
 
@@ -47,6 +48,7 @@ export function StockBookSearchCombobox({
   disabled = false,
 }: StockBookSearchComboboxProps) {
   const router = useRouter()
+  const { t } = useTranslation()
   const [inputValue, setInputValue] = useState("")
 
   const bookMap = new Map(books.map((book) => [book.id, book]))
@@ -98,7 +100,7 @@ export function StockBookSearchCombobox({
       disabled={disabled}
     >
       <ComboboxInput
-        placeholder="Search for a book..."
+        placeholder={t("stock.bookSearch.placeholder")}
         disabled={disabled}
         className="w-full"
       />
@@ -119,7 +121,9 @@ export function StockBookSearchCombobox({
           </ComboboxList>
         ) : hasSearchQuery ? (
           <div className="flex flex-col items-center gap-3 px-3 py-4">
-            <p className="text-sm text-muted-foreground">No books found</p>
+            <p className="text-sm text-muted-foreground">
+              {t("stock.bookSearch.noBooksFound")}
+            </p>
             <Button
               type="button"
               variant="secondary"
@@ -131,12 +135,12 @@ export function StockBookSearchCombobox({
               }}
             >
               <PlusIcon className="mr-2 size-4" />
-              Add New Book
+              {t("stock.bookSearch.addNewBook")}
             </Button>
           </div>
         ) : (
           <div className="px-3 py-4 text-center text-sm text-muted-foreground">
-            Start typing to search books.
+            {t("stock.bookSearch.startTyping")}
           </div>
         )}
       </ComboboxContent>

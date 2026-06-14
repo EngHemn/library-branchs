@@ -25,6 +25,7 @@ import { TooltipProvider } from "@/components/ui/tooltip"
 import type { StockRow } from "@/domain/entities/stock/Stock"
 import { BranchLink } from "@/presentation/components/branch-management/BranchLink"
 import { StockStatusBadge } from "@/presentation/components/stock/StockStatusBadge"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type StockSubBranchesPanelProps = {
   bookTitle: string
@@ -58,6 +59,8 @@ export function StockRowActionsMenu({
   onTransfer: (row: StockRow) => void
   onEditStock: (row: StockRow) => void
 }) {
+  const { t } = useTranslation()
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -65,31 +68,31 @@ export function StockRowActionsMenu({
           type="button"
           variant="outline"
           size="icon-sm"
-          aria-label="Stock actions"
+          aria-label={t("stock.table.stockActions")}
         >
           <IoSettingsOutline className="size-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48">
-        <DropdownMenuLabel>Stock Actions</DropdownMenuLabel>
+        <DropdownMenuLabel>{t("stock.rowActions.label")}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => onAddStock(row)}>
           <PlusIcon className="mr-2 h-4 w-4 text-emerald-600" />
-          Add Stock
+          {t("stock.addStock")}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => onReduceStock(row)}>
           <MinusIcon className="mr-2 h-4 w-4 text-orange-500" />
-          Reduce Stock
+          {t("stock.rowActions.reduceStock")}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => onTransfer(row)}>
           <ArrowRightLeft className="mr-2 h-4 w-4 text-blue-600" />
-          Transfer
+          {t("stock.history.types.transfer")}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => onEditStock(row)}>
           <PencilIcon className="mr-2 h-4 w-4 text-muted-foreground" />
-          Edit Stock
+          {t("stock.rowActions.editStock")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -105,10 +108,12 @@ export function StockSubBranchesPanel({
   onTransfer,
   onEditStock,
 }: StockSubBranchesPanelProps) {
+  const { t } = useTranslation()
+
   const columns: DataTableColumn<StockRow, SubBranchColumnKey>[] = [
     {
       key: "subBranchName",
-      header: "Sub Branch",
+      header: t("stock.table.subBranch"),
       sortable: true,
       sortValue: (row) => row.subBranchName ?? "",
       cell: (row) =>
@@ -124,7 +129,7 @@ export function StockSubBranchesPanel({
     },
     {
       key: "currentStock",
-      header: "Current",
+      header: t("stock.table.current"),
       sortable: true,
       sortValue: (row) => row.currentStock,
       headerClassName: "text-right",
@@ -133,7 +138,7 @@ export function StockSubBranchesPanel({
     },
     {
       key: "reservedStock",
-      header: "Reserved",
+      header: t("stock.table.reserved"),
       sortable: true,
       sortValue: (row) => row.reservedStock,
       headerClassName: "text-right",
@@ -142,7 +147,7 @@ export function StockSubBranchesPanel({
     },
     {
       key: "availableStock",
-      header: "Available",
+      header: t("stock.table.available"),
       sortable: true,
       sortValue: (row) => row.availableStock,
       headerClassName: "text-right",
@@ -151,7 +156,7 @@ export function StockSubBranchesPanel({
     },
     {
       key: "minStock",
-      header: "Min Alert",
+      header: t("stock.table.minAlert"),
       sortable: true,
       sortValue: (row) => row.minStock,
       headerClassName: "text-right",
@@ -160,14 +165,14 @@ export function StockSubBranchesPanel({
     },
     {
       key: "status",
-      header: "Status",
+      header: t("stock.table.status"),
       sortable: true,
       sortValue: (row) => row.status,
       cell: (row) => <StockStatusBadge status={row.status} />,
     },
     {
       key: "actions",
-      header: "Actions",
+      header: t("stock.table.actions"),
       headerClassName: "text-right",
       className: "text-right",
       cell: (row) => (
@@ -186,14 +191,18 @@ export function StockSubBranchesPanel({
     <TooltipProvider>
       <div className="rounded-lg border bg-background p-3">
         <div className="mb-3 text-xs font-medium tracking-normal text-muted-foreground uppercase">
-          Sub branches for {bookTitle} at {branchName} ({subBranchRows.length})
+          {t("stock.subBranches.panelTitle", {
+            bookTitle,
+            branchName,
+            count: subBranchRows.length,
+          })}
         </div>
         <DataTable
           data={subBranchRows}
           columns={columns}
           getRowId={(row) => row.id}
-          emptyTitle="No sub branch stock"
-          emptyDescription="This location has no sub branch inventory yet."
+          emptyTitle={t("stock.subBranches.emptyTitle")}
+          emptyDescription={t("stock.subBranches.emptyDescription")}
           initialSort={{ key: "subBranchName", direction: "asc" }}
           initialPageSize={5}
           pageSizeOptions={[5, 10, 20]}
