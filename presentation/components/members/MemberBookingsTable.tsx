@@ -22,6 +22,8 @@ import type {
 } from "@/domain/entities/member/MemberDetail"
 import { BranchLink } from "@/presentation/components/branch-management/BranchLink"
 import { BookLink } from "@/presentation/components/shared/DashboardEntityLink"
+import type { TranslationKey } from "@/presentation/i18n/messages"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type MemberBookingsTableProps = {
   title: string
@@ -42,16 +44,16 @@ const statusVariants: Record<
   cancelled: "outline",
 }
 
-const statusLabels: Record<MemberBookingStatus, string> = {
-  active: "Active",
-  returned: "Returned",
-  overdue: "Overdue",
-  cancelled: "Cancelled",
+const STATUS_KEYS: Record<MemberBookingStatus, TranslationKey> = {
+  active: "members.bookings.statuses.active",
+  returned: "members.bookings.statuses.returned",
+  overdue: "members.bookings.statuses.overdue",
+  cancelled: "members.bookings.statuses.cancelled",
 }
 
-const typeLabels: Record<MemberBookingType, string> = {
-  borrow: "Borrow",
-  reserve: "Reserve",
+const TYPE_KEYS: Record<MemberBookingType, TranslationKey> = {
+  borrow: "members.bookings.types.borrow",
+  reserve: "members.bookings.types.reserve",
 }
 
 export function MemberBookingsTable({
@@ -62,6 +64,8 @@ export function MemberBookingsTable({
   showDaysOverdue = false,
   showReturnedDate = false,
 }: MemberBookingsTableProps) {
+  const { t } = useTranslation()
+
   return (
     <Card className="rounded-lg">
       <CardHeader>
@@ -77,19 +81,19 @@ export function MemberBookingsTable({
             <Table className={showBranchColumn ? "min-w-[860px]" : "min-w-[720px]"}>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Booking ID</TableHead>
-                  <TableHead>Book Title</TableHead>
-                  {showBranchColumn ? <TableHead>Branch</TableHead> : null}
-                  <TableHead>Type</TableHead>
-                  <TableHead>Borrowed</TableHead>
-                  <TableHead>Due</TableHead>
+                  <TableHead>{t("members.bookings.bookingId")}</TableHead>
+                  <TableHead>{t("members.bookings.bookTitle")}</TableHead>
+                  {showBranchColumn ? <TableHead>{t("members.bookings.branch")}</TableHead> : null}
+                  <TableHead>{t("members.bookings.type")}</TableHead>
+                  <TableHead>{t("members.bookings.borrowed")}</TableHead>
+                  <TableHead>{t("members.bookings.due")}</TableHead>
                   {showReturnedDate ? (
-                    <TableHead>Returned</TableHead>
+                    <TableHead>{t("members.bookings.returned")}</TableHead>
                   ) : null}
                   {showDaysOverdue ? (
-                    <TableHead>Days Overdue</TableHead>
+                    <TableHead>{t("members.bookings.daysOverdue")}</TableHead>
                   ) : null}
-                  <TableHead>Status</TableHead>
+                  <TableHead>{t("members.bookings.status")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -120,7 +124,7 @@ export function MemberBookingsTable({
                         )}
                       </TableCell>
                     ) : null}
-                    <TableCell>{typeLabels[booking.type]}</TableCell>
+                    <TableCell>{t(TYPE_KEYS[booking.type])}</TableCell>
                     <TableCell>{booking.borrowedDate}</TableCell>
                     <TableCell>{booking.dueDate}</TableCell>
                     {showReturnedDate ? (
@@ -135,7 +139,7 @@ export function MemberBookingsTable({
                     ) : null}
                     <TableCell>
                       <Badge variant={statusVariants[booking.status]}>
-                        {statusLabels[booking.status]}
+                        {t(STATUS_KEYS[booking.status])}
                       </Badge>
                     </TableCell>
                   </TableRow>

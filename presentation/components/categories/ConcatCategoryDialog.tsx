@@ -32,6 +32,7 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 import type { Category } from "@/domain/entities/category/Category"
 import type { ConcatCategoryFormValues } from "@/domain/schemas/concatCategoryFormSchema"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type ConcatCategoryDialogProps = {
   open: boolean
@@ -52,13 +53,15 @@ export function ConcatCategoryDialog({
   onOpenChange,
   onSubmit,
 }: ConcatCategoryDialogProps) {
+  const { t } = useTranslation()
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Concat Categories</DialogTitle>
+          <DialogTitle>{t("categories.concat.title")}</DialogTitle>
           <DialogDescription>
-            Select at least two categories to merge into one new category.
+            {t("categories.concat.description")}
           </DialogDescription>
         </DialogHeader>
 
@@ -69,7 +72,7 @@ export function ConcatCategoryDialog({
               name="sourceCategoryIds"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Categories to merge</FormLabel>
+                  <FormLabel>{t("categories.concat.categoriesToMerge")}</FormLabel>
                   <FormControl>
                     <div className="max-h-48 space-y-2 overflow-y-auto rounded-lg border p-3">
                       {categories.map((category) => {
@@ -105,7 +108,9 @@ export function ConcatCategoryDialog({
                               </span>
                             </span>
                             <span className="text-xs text-muted-foreground">
-                              {category.totalBooks} books
+                              {t("categories.concat.booksCount", {
+                                count: category.totalBooks,
+                              })}
                             </span>
                           </label>
                         )
@@ -122,10 +127,10 @@ export function ConcatCategoryDialog({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>New name</FormLabel>
+                  <FormLabel>{t("categories.concat.newName")}</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Enter merged category name"
+                      placeholder={t("categories.concat.newNamePlaceholder")}
                       disabled={isSaving}
                       {...field}
                     />
@@ -140,10 +145,10 @@ export function ConcatCategoryDialog({
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>New description</FormLabel>
+                  <FormLabel>{t("categories.concat.newDescription")}</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Enter merged category description"
+                      placeholder={t("categories.concat.newDescriptionPlaceholder")}
                       disabled={isSaving}
                       rows={3}
                       {...field}
@@ -159,7 +164,7 @@ export function ConcatCategoryDialog({
               name="status"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>New status</FormLabel>
+                  <FormLabel>{t("categories.concat.newStatus")}</FormLabel>
                   <Select
                     value={field.value}
                     onValueChange={field.onChange}
@@ -167,12 +172,16 @@ export function ConcatCategoryDialog({
                   >
                     <FormControl>
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select status" />
+                        <SelectValue
+                          placeholder={t("categories.concat.selectStatus")}
+                        />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="active">Active</SelectItem>
-                      <SelectItem value="inactive">Inactive</SelectItem>
+                      <SelectItem value="active">{t("common.active")}</SelectItem>
+                      <SelectItem value="inactive">
+                        {t("common.inactive")}
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -191,11 +200,13 @@ export function ConcatCategoryDialog({
                 disabled={isSaving}
                 onClick={() => onOpenChange(false)}
               >
-                Cancel
+                {t("common.cancel")}
               </Button>
               <Button type="submit" disabled={isSaving}>
                 {isSaving ? <Loader2Icon className="animate-spin" /> : null}
-                {isSaving ? "Merging..." : "Concat Categories"}
+                {isSaving
+                  ? t("categories.concat.merging")
+                  : t("categories.concat.submitButton")}
               </Button>
             </DialogFooter>
           </form>

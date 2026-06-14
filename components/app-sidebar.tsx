@@ -39,6 +39,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
+import { useLocale } from "@/presentation/i18n/useLocale"
 
 type AppSidebarProps = React.ComponentProps<typeof Sidebar> & {
   branchType?: BranchType
@@ -68,135 +69,135 @@ function buildTeams(branchType: BranchType | undefined) {
 
 const sidebarGroups: SidebarGroup[] = [
   {
-    title: "Main",
+    titleKey: "navGroups.main",
     items: [
       {
-        title: "Dashboard",
+        titleKey: "nav.dashboard",
         href: "/dashboard",
         icon: LayoutDashboardIcon,
       },
     ],
   },
   {
-    title: "Management",
+    titleKey: "navGroups.management",
     items: [
       {
-        title: "Branch Management",
+        titleKey: "nav.branches",
         href: "/dashboard/branches",
         icon: Building2Icon,
       },
       {
-        title: "Staff Management",
+        titleKey: "nav.staff",
         href: "/dashboard/staff",
         icon: UsersRoundIcon,
       },
       {
-        title: "Permissions",
+        titleKey: "nav.permissions",
         href: "/dashboard/permissions",
         icon: ShieldCheckIcon,
       },
     ],
   },
   {
-    title: "Library",
+    titleKey: "navGroups.library",
     items: [
       {
-        title: "Books",
+        titleKey: "nav.books",
         href: "/dashboard/books",
         icon: BookOpenIcon,
       },
       {
-        title: "Authors",
+        titleKey: "nav.authors",
         href: "/dashboard/authors",
         icon: PenLineIcon,
       },
       {
-        title: "Translators",
+        titleKey: "nav.translators",
         href: "/dashboard/translators",
         icon: LanguagesIcon,
       },
       {
-        title: "Categories",
+        titleKey: "nav.categories",
         href: "/dashboard/categories",
         icon: TagsIcon,
       },
       {
-        title: "Shelf Management",
+        titleKey: "nav.shelves",
         href: "/dashboard/shelves",
         icon: BookMarkedIcon,
       },
       {
-        title: "Members",
+        titleKey: "nav.members",
         href: "/dashboard/members",
         icon: UserRoundIcon,
       },
       {
-        title: "Bookings",
+        titleKey: "nav.bookings",
         href: "/dashboard/bookings",
         icon: CalendarCheckIcon,
       },
     ],
   },
   {
-    title: "Commerce",
+    titleKey: "navGroups.commerce",
     items: [
       {
-        title: "Shopping / Sales",
+        titleKey: "nav.sales",
         href: "/dashboard/sales",
         icon: ShoppingCartIcon,
       },
       {
-        title: "Stock Management",
+        titleKey: "nav.stock",
         href: "/dashboard/stock",
         icon: BoxesIcon,
       },
       {
-        title: "Bill Management",
+        titleKey: "nav.bills",
         href: "/dashboard/bills",
         icon: FileTextIcon,
       },
       {
-        title: "Order Management",
+        titleKey: "nav.orders",
         href: "/dashboard/orders",
         icon: ClipboardListIcon,
       },
       {
-        title: "Group Management",
+        titleKey: "nav.groups",
         href: "/dashboard/groups",
         icon: CalendarDaysIcon,
       },
       {
-        title: "Needs Management",
+        titleKey: "nav.needs",
         href: "/dashboard/needs",
         icon: PackageSearchIcon,
       },
       {
-        title: "Low Stock Alerts",
+        titleKey: "nav.alerts",
         href: "/dashboard/alerts/low-stock",
         icon: AlertTriangleIcon,
       },
     ],
   },
   {
-    title: "System",
+    titleKey: "navGroups.system",
     items: [
       {
-        title: "Reports",
+        titleKey: "nav.reports",
         href: "/dashboard/reports",
         icon: BarChart3Icon,
       },
       {
-        title: "Settings",
+        titleKey: "nav.settings",
         href: "/dashboard/settings",
         icon: Settings2Icon,
       },
       {
-        title: "Notifications",
+        titleKey: "nav.notifications",
         href: "/dashboard/notifications",
         icon: BellIcon,
       },
       {
-        title: "Activity Logs",
+        titleKey: "nav.activityLogs",
         href: "/dashboard/activity-logs",
         icon: ActivityIcon,
       },
@@ -220,7 +221,15 @@ function buildSidebarGroups(branchType: BranchType | undefined): SidebarGroup[] 
     .filter((group) => group.items.length > 0)
 }
 
-export function AppSidebar({ branchType, user, onLogout, ...props }: AppSidebarProps) {
+export function AppSidebar({
+  branchType,
+  user,
+  onLogout,
+  side,
+  dir,
+  ...props
+}: AppSidebarProps) {
+  const { isRtl, direction } = useLocale()
   const teams = React.useMemo(() => buildTeams(branchType), [branchType])
   const groups = React.useMemo(
     () => buildSidebarGroups(branchType),
@@ -228,7 +237,12 @@ export function AppSidebar({ branchType, user, onLogout, ...props }: AppSidebarP
   )
 
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar
+      collapsible="icon"
+      side={side ?? (isRtl ? "right" : "left")}
+      dir={dir ?? direction}
+      {...props}
+    >
       <SidebarHeader>
         <TeamSwitcher teams={teams} />
       </SidebarHeader>

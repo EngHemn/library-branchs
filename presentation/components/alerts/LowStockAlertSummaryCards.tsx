@@ -16,6 +16,8 @@ import {
 import { Skeleton } from "@/components/ui/skeleton"
 import type { LowStockAlertSummary } from "@/domain/entities/alert/LowStockAlert"
 
+import { useTranslation } from "@/presentation/i18n/useTranslation"
+
 type LowStockAlertSummaryCardsProps = {
   summary: LowStockAlertSummary | null
   isLoading?: boolean
@@ -24,24 +26,24 @@ type LowStockAlertSummaryCardsProps = {
 const cards = [
   {
     key: "activeAlerts",
-    title: "Active Alerts",
-    description: "Unresolved stock alerts",
+    titleKey: "alerts.activeAlerts" as const,
+    descriptionKey: "alerts.activeAlertsDesc" as const,
     icon: AlertTriangleIcon,
     color: "bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400",
     getValue: (summary: LowStockAlertSummary) => summary.activeAlerts,
   },
   {
     key: "lowStockBooks",
-    title: "Low Stock Books",
-    description: "Below minimum threshold",
+    titleKey: "alerts.lowStockBooks" as const,
+    descriptionKey: "alerts.lowStockBooksDesc" as const,
     icon: BookOpenIcon,
     color: "bg-orange-100 dark:bg-orange-900/40 text-orange-600 dark:text-orange-400",
     getValue: (summary: LowStockAlertSummary) => summary.lowStockBooks,
   },
   {
     key: "outOfStockBooks",
-    title: "Out Of Stock",
-    description: "Zero available copies",
+    titleKey: "alerts.outOfStock" as const,
+    descriptionKey: "alerts.outOfStockDesc" as const,
     icon: PackageXIcon,
     color: "bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-400",
     getValue: (summary: LowStockAlertSummary) => summary.outOfStockBooks,
@@ -52,6 +54,8 @@ export function LowStockAlertSummaryCards({
   summary,
   isLoading = false,
 }: LowStockAlertSummaryCardsProps) {
+  const { t } = useTranslation()
+
   if (isLoading) {
     return (
       <div className="grid gap-4 sm:grid-cols-3">
@@ -77,9 +81,9 @@ export function LowStockAlertSummaryCards({
                 <Icon className="size-4" />
               </span>
               <div className="min-w-0">
-                <CardTitle className="text-sm">{card.title}</CardTitle>
+                <CardTitle className="text-sm">{t(card.titleKey)}</CardTitle>
                 <CardDescription className="text-xs">
-                  {card.description}
+                  {t(card.descriptionKey)}
                 </CardDescription>
               </div>
             </CardHeader>

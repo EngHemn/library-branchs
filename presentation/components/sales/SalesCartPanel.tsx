@@ -17,6 +17,7 @@ import { Spinner } from "@/components/ui/spinner"
 import type { Branch } from "@/domain/entities/branch/Branch"
 import type { CartItem } from "@/domain/entities/sales/CartItem"
 import type { Sale } from "@/domain/entities/sales/Sale"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type SalesCartPanelProps = {
   cart: CartItem[]
@@ -39,15 +40,17 @@ function formatPrice(price: number): string {
 }
 
 function EmptyCart() {
+  const { t } = useTranslation()
+
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-3 p-6 text-center">
       <div className="rounded-full bg-muted p-3">
         <ShoppingCartIcon className="size-8 text-muted-foreground/50" />
       </div>
       <div>
-        <p className="text-sm font-medium">Cart is empty</p>
+        <p className="text-sm font-medium">{t("sales.cart.emptyTitle")}</p>
         <p className="mt-0.5 text-xs text-muted-foreground">
-          Select a branch and add books to get started.
+          {t("sales.cart.emptyDescription")}
         </p>
       </div>
     </div>
@@ -55,13 +58,16 @@ function EmptyCart() {
 }
 
 function SaleSuccess({ sale, onReset }: { sale: Sale; onReset: () => void }) {
+  const { t } = useTranslation()
+  const itemCount = sale.items.reduce((sum, item) => sum + item.quantity, 0)
+
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-4 p-6 text-center">
       <div className="rounded-full bg-emerald-100 p-3 dark:bg-emerald-900/30">
         <CheckCircleIcon className="size-10 text-emerald-600 dark:text-emerald-400" />
       </div>
       <div>
-        <p className="text-base font-semibold">Sale complete!</p>
+        <p className="text-base font-semibold">{t("sales.cart.saleComplete")}</p>
         <p className="mt-0.5 text-xs text-muted-foreground">
           {sale.id} · {sale.branchName}
         </p>
@@ -69,12 +75,12 @@ function SaleSuccess({ sale, onReset }: { sale: Sale; onReset: () => void }) {
           {formatPrice(sale.total)}
         </p>
         <p className="text-xs text-muted-foreground">
-          {sale.items.reduce((s, i) => s + i.quantity, 0)} items ·{" "}
+          {t("sales.cart.itemsCount", { count: itemCount })} ·{" "}
           {new Date(sale.createdAt).toLocaleTimeString()}
         </p>
       </div>
       <Button variant="outline" size="sm" onClick={onReset}>
-        New Sale
+        {t("sales.cart.newSale")}
       </Button>
     </div>
   )
@@ -95,6 +101,8 @@ export function SalesCartPanel({
   onPlaceSale,
   onResetSale,
 }: SalesCartPanelProps) {
+  const { t } = useTranslation()
+
   if (saleResult) {
     return <SaleSuccess sale={saleResult} onReset={onResetSale} />
   }
@@ -104,7 +112,7 @@ export function SalesCartPanel({
       <div className="flex items-center justify-between border-b p-4">
         <div className="flex items-center gap-2">
           <ShoppingCartIcon className="size-4" />
-          <span className="text-sm font-semibold">Cart</span>
+          <span className="text-sm font-semibold">{t("sales.cart.title")}</span>
           {cart.length > 0 && (
             <Badge variant="secondary" className="h-5 px-1.5 text-xs">
               {cart.reduce((s, i) => s + i.quantity, 0)}
@@ -119,7 +127,7 @@ export function SalesCartPanel({
             onClick={onClearCart}
           >
             <TrashIcon className="size-3.5" />
-            Clear
+            {t("sales.cart.clear")}
           </Button>
         )}
       </div>
@@ -127,7 +135,7 @@ export function SalesCartPanel({
       {shoppingBranch && (
         <div className="border-b px-4 py-2">
           <p className="truncate text-[11px] text-muted-foreground">
-            Shopping from:{" "}
+            {t("sales.cart.shoppingFrom")}{" "}
             <span className="font-medium text-foreground">
               {shoppingBranch.branchName}
             </span>
@@ -159,7 +167,9 @@ export function SalesCartPanel({
                         <div className="mt-0.5 flex items-center gap-1">
                           <TagIcon className="size-2.5 text-red-500" />
                           <span className="text-[10px] text-red-500">
-                            {item.book.discount}% off
+                            {t("sales.cart.percentOff", {
+                              discount: item.book.discount,
+                            })}
                           </span>
                         </div>
                       )}
@@ -213,21 +223,21 @@ export function SalesCartPanel({
           <div className="mt-auto border-t p-4">
             <div className="flex flex-col gap-1.5 text-sm">
               <div className="flex justify-between text-muted-foreground">
-                <span>Subtotal</span>
+                <span>{t("sales.cart.subtotal")}</span>
                 <span>{formatPrice(subtotal)}</span>
               </div>
               {discountAmount > 0 && (
                 <div className="flex justify-between text-red-500">
                   <span className="flex items-center gap-1">
                     <TagIcon className="size-3" />
-                    Discount saved
+                    {t("sales.cart.discountSaved")}
                   </span>
                   <span>-{formatPrice(discountAmount)}</span>
                 </div>
               )}
               <Separator className="my-1" />
               <div className="flex justify-between font-bold">
-                <span>Total</span>
+                <span>{t("sales.cart.total")}</span>
                 <span>{formatPrice(total)}</span>
               </div>
             </div>
@@ -244,12 +254,12 @@ export function SalesCartPanel({
               {isPlacingSale ? (
                 <>
                   <Spinner className="size-4" />
-                  Processing…
+                  {t("sales.cart.processing")}
                 </>
               ) : (
                 <>
                   <CheckCircleIcon className="size-4" />
-                  Complete Sale
+                  {t("sales.cart.completeSale")}
                 </>
               )}
             </Button>

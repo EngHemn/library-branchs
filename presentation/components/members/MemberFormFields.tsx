@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import type { MemberFormValues } from "@/domain/schemas/memberFormSchema"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type MemberFormFieldsProps = {
   form: UseFormReturn<MemberFormValues>
@@ -33,6 +34,8 @@ export function MemberFormFields({
   onSubmit,
   children,
 }: MemberFormFieldsProps) {
+  const { t } = useTranslation()
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -42,10 +45,10 @@ export function MemberFormFields({
             name="memberName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Full Name</FormLabel>
+                <FormLabel>{t("members.fields.fullName")}</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Enter member name"
+                    placeholder={t("members.placeholders.fullName")}
                     disabled={disabled}
                     {...field}
                   />
@@ -60,11 +63,11 @@ export function MemberFormFields({
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
+                <FormLabel>{t("members.fields.email")}</FormLabel>
                 <FormControl>
                   <Input
                     type="email"
-                    placeholder="member@example.com"
+                    placeholder={t("members.placeholders.email")}
                     disabled={disabled}
                     {...field}
                   />
@@ -79,10 +82,10 @@ export function MemberFormFields({
             name="phone"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Phone</FormLabel>
+                <FormLabel>{t("members.fields.phone")}</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Enter phone number"
+                    placeholder={t("members.placeholders.phone")}
                     disabled={disabled}
                     {...field}
                   />
@@ -97,7 +100,7 @@ export function MemberFormFields({
             name="status"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Status</FormLabel>
+                <FormLabel>{t("members.fields.status")}</FormLabel>
                 <Select
                   value={field.value}
                   onValueChange={field.onChange}
@@ -105,13 +108,13 @@ export function MemberFormFields({
                 >
                   <FormControl>
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select status" />
+                      <SelectValue placeholder={t("members.placeholders.selectStatus")} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="active">Active</SelectItem>
-                    <SelectItem value="inactive">Inactive</SelectItem>
-                    <SelectItem value="suspended">Suspended</SelectItem>
+                    <SelectItem value="active">{t("common.active")}</SelectItem>
+                    <SelectItem value="inactive">{t("common.inactive")}</SelectItem>
+                    <SelectItem value="suspended">{t("members.statuses.suspended")}</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -125,10 +128,10 @@ export function MemberFormFields({
           name="address"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Address</FormLabel>
+              <FormLabel>{t("members.fields.address")}</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="Enter member address"
+                  placeholder={t("members.placeholders.address")}
                   disabled={disabled}
                   {...field}
                 />

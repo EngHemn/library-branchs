@@ -5,6 +5,7 @@ import { Loader2Icon, PencilIcon, PlusIcon, Trash2Icon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type ShelfLocationContentPanelProps = {
   stepLabel: string
@@ -25,6 +26,7 @@ export function ShelfLocationContentPanel({
   onUpdate,
   onDelete,
 }: ShelfLocationContentPanelProps) {
+  const { t } = useTranslation()
   const [newName, setNewName] = useState("")
   const [editingName, setEditingName] = useState<string | null>(null)
   const [editValue, setEditValue] = useState("")
@@ -61,7 +63,9 @@ export function ShelfLocationContentPanel({
         <Input
           value={newName}
           onChange={(event) => setNewName(event.target.value)}
-          placeholder={`Add new ${stepLabel.toLowerCase()}...`}
+          placeholder={t("shelves.location.addPlaceholder", {
+            step: stepLabel.toLowerCase(),
+          })}
           disabled={disabled || isSaving}
           onKeyDown={(event) => {
             if (event.key === "Enter") {
@@ -76,14 +80,16 @@ export function ShelfLocationContentPanel({
           onClick={() => void handleAdd()}
         >
           {isSaving ? <Loader2Icon className="animate-spin" /> : <PlusIcon />}
-          Add
+          {t("shelves.location.add")}
         </Button>
       </div>
 
       <div className="space-y-2">
         {items.length === 0 ? (
           <p className="text-sm text-muted-foreground">
-            No {stepLabel.toLowerCase()} values yet. Add one above.
+            {t("shelves.location.noValuesForStep", {
+              step: stepLabel.toLowerCase(),
+            })}
           </p>
         ) : (
           items.map((item) => (
@@ -105,7 +111,7 @@ export function ShelfLocationContentPanel({
                       disabled={disabled || isSaving}
                       onClick={() => void saveEdit()}
                     >
-                      Save
+                      {t("common.save")}
                     </Button>
                     <Button
                       type="button"
@@ -114,7 +120,7 @@ export function ShelfLocationContentPanel({
                       disabled={disabled || isSaving}
                       onClick={cancelEdit}
                     >
-                      Cancel
+                      {t("common.cancel")}
                     </Button>
                   </div>
                 </div>
@@ -130,7 +136,7 @@ export function ShelfLocationContentPanel({
                       onClick={() => startEdit(item)}
                     >
                       <PencilIcon />
-                      Edit
+                      {t("common.edit")}
                     </Button>
                     <Button
                       type="button"
@@ -140,7 +146,7 @@ export function ShelfLocationContentPanel({
                       onClick={() => void onDelete(item)}
                     >
                       <Trash2Icon />
-                      Delete
+                      {t("common.delete")}
                     </Button>
                   </div>
                 </>

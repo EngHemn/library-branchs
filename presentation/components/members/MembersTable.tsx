@@ -32,6 +32,8 @@ import {
 import type { Member, MemberStatus } from "@/domain/entities/member/Member"
 import { BranchLink } from "@/presentation/components/branch-management/BranchLink"
 import { MemberActionButton } from "@/presentation/components/members/MemberActionButton"
+import type { TranslationKey } from "@/presentation/i18n/messages"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type MembersTableProps = {
   members: Member[]
@@ -52,13 +54,15 @@ type MemberColumnKey =
   | "status"
   | "actions"
 
-const memberStatusLabels: Record<MemberStatus, string> = {
-  active: "active",
-  inactive: "inactive",
-  suspended: "suspended",
+const STATUS_KEYS: Record<MemberStatus, TranslationKey> = {
+  active: "common.active",
+  inactive: "common.inactive",
+  suspended: "members.statuses.suspended",
 }
 
 function MemberStatusBadge({ status }: { status: MemberStatus }) {
+  const { t } = useTranslation()
+
   return (
     <Badge
       variant="outline"
@@ -70,7 +74,7 @@ function MemberStatusBadge({ status }: { status: MemberStatus }) {
             : "border-muted bg-muted text-muted-foreground"
       }
     >
-      {memberStatusLabels[status]}
+      {t(STATUS_KEYS[status])}
     </Badge>
   )
 }
@@ -120,8 +124,10 @@ function MemberBranchesUsedDropdown({
   branches: string[]
   branchNameToId?: Record<string, string>
 }) {
+  const { t } = useTranslation()
+
   if (branches.length === 0) {
-    return <span className="text-sm text-muted-foreground">None</span>
+    return <span className="text-sm text-muted-foreground">{t("common.none")}</span>
   }
 
   if (branches.length === 1) {
@@ -141,15 +147,17 @@ function MemberBranchesUsedDropdown({
           className={`inline-flex h-7 max-w-[200px] items-center gap-1.5 rounded-md px-2.5 text-xs font-medium transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none ${branchBadgeClassName}`}
         >
           <Building2Icon className="size-3.5 shrink-0" />
-          <span>{branches.length} branches</span>
+          <span>{t("members.branchesUsed.count", { count: branches.length })}</span>
           <ChevronDownIcon className="size-3 shrink-0 opacity-70" />
         </button>
       </PopoverTrigger>
       <PopoverContent align="start" className="w-72 p-0">
         <PopoverHeader className="border-b px-3 py-2.5">
-          <PopoverTitle className="text-sm">Branches Used</PopoverTitle>
+          <PopoverTitle className="text-sm">{t("members.branchesUsed.title")}</PopoverTitle>
           <PopoverDescription>
-            {branches.length} branch{branches.length === 1 ? "" : "es"} visited
+            {branches.length === 1
+              ? t("members.branchesUsed.visited", { count: branches.length })
+              : t("members.branchesUsed.visitedPlural", { count: branches.length })}
           </PopoverDescription>
         </PopoverHeader>
         <ul className="max-h-48 overflow-y-auto p-1.5">
@@ -196,10 +204,12 @@ export function MembersTable({
   onEdit,
   onDelete,
 }: MembersTableProps) {
+  const { t } = useTranslation()
+
   const columns: DataTableColumn<Member, MemberColumnKey>[] = [
     {
       key: "memberName",
-      header: "Full Name",
+      header: t("members.table.fullName"),
       sortable: true,
       sortValue: (member) => member.memberName,
       cell: (member) => (
@@ -210,7 +220,7 @@ export function MembersTable({
       ? [
           {
             key: "registerBranch" as const,
-            header: "Registered Branch",
+            header: t("members.table.registeredBranch"),
             sortable: true,
             sortValue: (member: Member) => member.registerBranch,
             cell: (member: Member) => (
@@ -227,7 +237,7 @@ export function MembersTable({
       ? [
           {
             key: "allBranchesUsed" as const,
-            header: "Branches Used",
+            header: t("members.table.branchesUsed"),
             sortable: true,
             sortValue: (member: Member) => member.allBranchesUsed.length,
             cell: (member: Member) => (
@@ -241,14 +251,14 @@ export function MembersTable({
       : []),
     {
       key: "registrationDate",
-      header: "Registration",
+      header: t("members.table.registration"),
       sortable: true,
       sortValue: (member) => member.registrationDate,
       cell: (member) => member.registrationDate,
     },
     {
       key: "activeBookings",
-      header: "Active Bookings",
+      header: t("members.table.activeBookings"),
       sortable: true,
       sortValue: (member) => member.activeBookings,
       cell: (member) => (
@@ -262,33 +272,33 @@ export function MembersTable({
     },
     {
       key: "status",
-      header: "Status",
+      header: t("common.status"),
       sortable: true,
-      sortValue: (member) => memberStatusLabels[member.status],
+      sortValue: (member) => t(STATUS_KEYS[member.status]),
       cell: (member) => <MemberStatusBadge status={member.status} />,
     },
     {
       key: "actions",
-      header: "Actions",
+      header: t("common.actions"),
       headerClassName: "text-right",
       className: "text-right",
       cell: (member) => (
-        <div className="flex justify-end gap-1">
+        <div className="table-action-content">
           <MemberActionButton
             icon={EyeIcon}
-            label="View"
+            label={t("common.view")}
             variant="outline"
             onClick={() => onView(member)}
           />
           <MemberActionButton
             icon={PencilIcon}
-            label="Edit"
+            label={t("common.edit")}
             variant="outline"
             onClick={() => onEdit(member)}
           />
           <MemberActionButton
             icon={Trash2Icon}
-            label="Delete"
+            label={t("common.delete")}
             variant="destructive"
             onClick={() => onDelete(member)}
           />
@@ -300,9 +310,9 @@ export function MembersTable({
   return (
     <Card className="rounded-lg">
       <CardHeader>
-        <CardTitle>Members</CardTitle>
+        <CardTitle>{t("members.table.title")}</CardTitle>
         <CardDescription>
-          {members.length.toLocaleString()} member records
+          {t("members.table.recordCount", { count: members.length.toLocaleString() })}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -310,8 +320,8 @@ export function MembersTable({
           data={members}
           columns={columns}
           getRowId={(member) => member.id}
-          emptyTitle="No members found"
-          emptyDescription="Try changing or clearing the active filters."
+          emptyTitle={t("members.table.emptyTitle")}
+          emptyDescription={t("members.table.emptyDescription")}
           initialSort={{ key: "memberName", direction: "asc" }}
           initialPageSize={10}
           tableClassName="min-w-[1100px]"

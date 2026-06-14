@@ -14,6 +14,7 @@ import type {
   ShelfBookCategoryFilter,
   ShelfBookLanguageFilter,
 } from "@/domain/services/shelves/filterShelfBooks"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type ShelfBooksFiltersProps = {
   searchQuery: string
@@ -36,6 +37,8 @@ export function ShelfBooksFilters({
   onCategoryFilterChange,
   onLanguageFilterChange,
 }: ShelfBooksFiltersProps) {
+  const { t } = useTranslation()
+
   return (
     <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
       <div className="relative min-w-0 flex-1">
@@ -43,7 +46,7 @@ export function ShelfBooksFilters({
         <Input
           value={searchQuery}
           onChange={(event) => onSearchQueryChange(event.target.value)}
-          placeholder="Search by title, author, ISBN, category, or location..."
+          placeholder={t("shelves.booksFilters.searchPlaceholder")}
           className="pl-9"
         />
       </div>
@@ -54,10 +57,10 @@ export function ShelfBooksFilters({
           onValueChange={(value) => onCategoryFilterChange(value)}
         >
           <SelectTrigger className="w-full sm:w-[180px]">
-            <SelectValue placeholder="All Categories" />
+            <SelectValue placeholder={t("shelves.booksFilters.allCategories")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Categories</SelectItem>
+            <SelectItem value="all">{t("shelves.booksFilters.allCategories")}</SelectItem>
             {categoryOptions.map((category) => (
               <SelectItem key={category} value={category}>
                 {category}
@@ -71,10 +74,10 @@ export function ShelfBooksFilters({
           onValueChange={(value) => onLanguageFilterChange(value)}
         >
           <SelectTrigger className="w-full sm:w-[160px]">
-            <SelectValue placeholder="All Languages" />
+            <SelectValue placeholder={t("shelves.booksFilters.allLanguages")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Languages</SelectItem>
+            <SelectItem value="all">{t("shelves.booksFilters.allLanguages")}</SelectItem>
             {languageOptions.map((language) => (
               <SelectItem key={language} value={language}>
                 {language}

@@ -20,8 +20,11 @@ import { BillActionButton } from "@/presentation/components/bills/BillActionButt
 import {
   billDateSortValue,
   formatBillDate,
+  formatBillPrice,
   formatBillTime,
 } from "@/presentation/components/bills/billDisplay"
+import { useLocale } from "@/presentation/i18n/useLocale"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type BillsTableProps = {
   bills: Bill[]
@@ -41,13 +44,6 @@ type BillColumnKey =
   | "productCount"
   | "actions"
 
-function formatPrice(price: number): string {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-  }).format(price)
-}
-
 export function BillsTable({
   bills,
   showBranchColumn = true,
@@ -55,11 +51,14 @@ export function BillsTable({
   onEdit,
   onDelete,
 }: BillsTableProps) {
+  const { t } = useTranslation()
+  const { locale } = useLocale()
+
   const columns = useMemo(() => {
     const allColumns: DataTableColumn<Bill, BillColumnKey>[] = [
       {
         key: "id",
-        header: "ID",
+        header: t("bills.table.id"),
         sortable: true,
         sortValue: (bill) => bill.id,
         cell: (bill) => (
@@ -68,53 +67,53 @@ export function BillsTable({
       },
       {
         key: "companyName",
-        header: "Company",
+        header: t("bills.table.company"),
         sortable: true,
         sortValue: (bill) => bill.companyName,
         cell: (bill) => <span className="font-semibold">{bill.companyName}</span>,
       },
       {
         key: "branchName",
-        header: "Branch",
+        header: t("bills.table.branch"),
         sortable: true,
         sortValue: (bill) => bill.branchName,
         cell: (bill) => bill.branchName,
       },
       {
         key: "billDate",
-        header: "Date & Time",
+        header: t("bills.table.dateTime"),
         sortable: true,
         sortValue: (bill) => billDateSortValue(bill.billDate),
         cell: (bill) => (
           <div className="text-sm">
-            <p className="font-medium">{formatBillDate(bill.billDate)}</p>
+            <p className="font-medium">{formatBillDate(bill.billDate, locale)}</p>
             <p className="text-xs text-muted-foreground">
-              {formatBillTime(bill.billDate)}
+              {formatBillTime(bill.billDate, locale)}
             </p>
           </div>
         ),
       },
       {
         key: "phoneNumber",
-        header: "Phone",
+        header: t("bills.table.phone"),
         sortable: true,
         sortValue: (bill) => bill.phoneNumber,
         cell: (bill) => bill.phoneNumber,
       },
       {
         key: "price",
-        header: "Price",
+        header: t("bills.table.price"),
         sortable: true,
         sortValue: (bill) => bill.price,
         cell: (bill) => (
           <span className="font-semibold text-emerald-700 dark:text-emerald-300">
-            {formatPrice(bill.price)}
+            {formatBillPrice(bill.price, locale)}
           </span>
         ),
       },
       {
         key: "productCount",
-        header: "Products",
+        header: t("bills.table.products"),
         sortable: true,
         sortValue: (bill) => bill.productCount,
         cell: (bill) => (
@@ -122,32 +121,32 @@ export function BillsTable({
             variant="secondary"
             className="bg-violet-100 text-violet-700 dark:bg-violet-950 dark:text-violet-300"
           >
-            {bill.productCount} books
+            {t("bills.table.productCount", { count: bill.productCount })}
           </Badge>
         ),
       },
       {
         key: "actions",
-        header: "Actions",
+        header: t("bills.table.actions"),
         headerClassName: "text-right",
         className: "text-right",
         cell: (bill) => (
-          <div className="flex justify-end gap-1">
+          <div className="table-action-content">
             <BillActionButton
               icon={EyeIcon}
-              label="View"
+              label={t("bills.table.view")}
               variant="outline"
               onClick={() => onView(bill)}
             />
             <BillActionButton
               icon={PencilIcon}
-              label="Edit"
+              label={t("bills.table.edit")}
               variant="outline"
               onClick={() => onEdit(bill)}
             />
             <BillActionButton
               icon={Trash2Icon}
-              label="Delete"
+              label={t("bills.table.delete")}
               variant="destructive"
               onClick={() => onDelete(bill)}
             />
@@ -159,14 +158,14 @@ export function BillsTable({
     return showBranchColumn
       ? allColumns
       : allColumns.filter((column) => column.key !== "branchName")
-  }, [showBranchColumn, onView, onEdit, onDelete])
+  }, [locale, onDelete, onEdit, onView, showBranchColumn, t])
 
   return (
     <Card className="rounded-lg">
       <CardHeader>
-        <CardTitle>All Bills</CardTitle>
+        <CardTitle>{t("bills.table.title")}</CardTitle>
         <CardDescription>
-          {bills.length.toLocaleString()} purchase bills for branch stock imports
+          {t("bills.table.recordCount", { count: bills.length.toLocaleString(locale) })}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -174,8 +173,8 @@ export function BillsTable({
           data={bills}
           columns={columns}
           getRowId={(bill) => bill.id}
-          emptyTitle="No bills found"
-          emptyDescription="Try changing or clearing the active filters."
+          emptyTitle={t("bills.table.emptyTitle")}
+          emptyDescription={t("bills.table.emptyDescription")}
           initialSort={{ key: "billDate", direction: "desc" }}
           initialPageSize={10}
           tableClassName="min-w-[1000px]"

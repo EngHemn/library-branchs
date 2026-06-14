@@ -27,6 +27,7 @@ import {
 } from "@/presentation/components/shelves/ShelfLocationStepFlow"
 import { ShelfReviewSummary } from "@/presentation/components/shelves/ShelfReviewSummary"
 import type { ShelfFormStep } from "@/presentation/viewmodels/shelves/CreateShelfViewModelState"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type ShelfFormWizardProps = {
   title: string
@@ -86,20 +87,21 @@ export function ShelfFormWizard({
   onDeleteLocationStep,
 }: ShelfFormWizardProps) {
   const router = useRouter()
+  const { t } = useTranslation()
 
   const stepTitle =
     currentStep === 1
-      ? "Shelf Details"
+      ? t("shelves.form.stepTitles.details")
       : currentStep === 2
-        ? "Build Location"
-        : "Review & Save"
+        ? t("shelves.form.stepTitles.buildLocation")
+        : t("shelves.form.stepTitles.reviewSave")
 
   const stepDescription =
     currentStep === 1
-      ? "Enter the shelf name, type, branch, capacity, and status."
+      ? t("shelves.form.stepDescriptions.details")
       : currentStep === 2
-        ? "Choose each location step one by one. Add or remove steps in the Steps tab."
-        : "Confirm everything before saving."
+        ? t("shelves.form.stepDescriptions.location")
+        : t("shelves.form.stepDescriptions.review")
 
   return (
     <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
@@ -110,7 +112,7 @@ export function ShelfFormWizard({
         </div>
         <Button variant="outline" onClick={() => router.push(backHref)}>
           <ArrowLeftIcon />
-          Back
+          {t("shelves.form.back")}
         </Button>
       </section>
 
@@ -172,12 +174,12 @@ export function ShelfFormWizard({
               onClick={onBack}
             >
               <ArrowLeftIcon />
-              Previous
+              {t("shelves.form.previous")}
             </Button>
 
             {currentStep < 3 ? (
               <Button type="button" disabled={isSaving} onClick={() => void onNext()}>
-                Next
+                {t("shelves.form.next")}
                 <ArrowRightIcon />
               </Button>
             ) : (
@@ -187,7 +189,7 @@ export function ShelfFormWizard({
                 ) : (
                   <SaveIcon />
                 )}
-                {isSaving ? "Saving..." : submitLabel}
+                {isSaving ? t("shelves.form.saving") : submitLabel}
               </Button>
             )}
           </div>

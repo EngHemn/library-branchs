@@ -16,6 +16,8 @@ import {
 import type { SubBranchRequest } from "@/domain/entities/branch/Branch"
 import { BranchActionButton } from "@/presentation/components/branch-management/BranchActionButton"
 import { BranchRequestExpandedDetails } from "@/presentation/components/branch-management/BranchRequestExpandedDetails"
+import { useLocale } from "@/presentation/i18n/useLocale"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type SubBranchRequestsTableProps = {
   requests: SubBranchRequest[]
@@ -34,18 +36,6 @@ type SubBranchRequestColumnKey =
   | "branchAdmin"
   | "submittedDate"
   | "actions"
-
-function formatSubmittedDate(submittedDate: string): string {
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(new Date(`${submittedDate}T00:00:00`))
-}
-
-function submittedDateTime(submittedDate: string): number {
-  return new Date(`${submittedDate}T00:00:00`).getTime()
-}
 
 function BranchAdminCell({
   name,
@@ -71,20 +61,35 @@ export function SubBranchRequestsTable({
   onViewLocation,
   onToggleNote,
 }: SubBranchRequestsTableProps) {
+  const { t } = useTranslation()
+  const { locale } = useLocale()
+
+  function formatSubmittedDate(submittedDate: string): string {
+    return new Intl.DateTimeFormat(locale, {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    }).format(new Date(`${submittedDate}T00:00:00`))
+  }
+
+  function submittedDateTime(submittedDate: string): number {
+    return new Date(`${submittedDate}T00:00:00`).getTime()
+  }
+
   const columns: DataTableColumn<
     SubBranchRequest,
     SubBranchRequestColumnKey
   >[] = [
     {
       key: "id",
-      header: "ID",
+      header: t("branches.table.id"),
       sortable: true,
       sortValue: (request) => request.id,
       cell: (request) => <span className="font-medium">{request.id}</span>,
     },
     {
       key: "branchName",
-      header: "Branch Name",
+      header: t("branches.table.branchName"),
       sortable: true,
       sortValue: (request) => request.branchName,
       cell: (request) => (
@@ -93,13 +98,13 @@ export function SubBranchRequestsTable({
     },
     {
       key: "phone",
-      header: "Phone",
+      header: t("branches.phone"),
       sortValue: (request) => request.phone,
       cell: (request) => request.phone,
     },
     {
       key: "branchAdmin",
-      header: "Branch Admin",
+      header: t("branches.requests.branchAdmin"),
       sortable: true,
       sortValue: (request) => request.adminName,
       cell: (request) => (
@@ -111,41 +116,43 @@ export function SubBranchRequestsTable({
     },
     {
       key: "submittedDate",
-      header: "Submitted Date",
+      header: t("branches.requests.submittedDate"),
       sortable: true,
       sortValue: (request) => submittedDateTime(request.submittedDate),
       cell: (request) => formatSubmittedDate(request.submittedDate),
     },
     {
       key: "actions",
-      header: "Actions",
+      header: t("common.actions"),
       headerClassName: "text-right",
       className: "text-right",
       cell: (request) => {
         const isExpanded = expandedRequestIds.includes(request.id)
-        const noteLabel = isExpanded ? "Hide Note" : "View Note"
+        const noteLabel = isExpanded
+          ? t("branches.requests.hideNote")
+          : t("branches.requests.viewNote")
 
         return (
-          <div className="flex justify-end gap-1">
+          <div className="table-action-content">
             <BranchActionButton
               icon={CheckIcon}
-              label="Approve"
+              label={t("branches.requests.approve")}
               onClick={() => onApprove(request)}
             />
             <BranchActionButton
               icon={MapPinIcon}
-              label="Location"
+              label={t("branches.requests.location")}
               onClick={() => onViewLocation(request)}
             />
             <BranchActionButton
               icon={XIcon}
-              label="Reject"
+              label={t("branches.requests.reject")}
               variant="destructive"
               onClick={() => onReject(request)}
             />
             <BranchActionButton
               icon={MessageSquareReplyIcon}
-              label="Reply"
+              label={t("branches.requests.reply")}
               onClick={() => onReply(request)}
             />
             <BranchActionButton
@@ -162,9 +169,9 @@ export function SubBranchRequestsTable({
   return (
     <Card className="rounded-lg">
       <CardHeader>
-        <CardTitle>Sub Branch Requests</CardTitle>
+        <CardTitle>{t("branches.requests.title")}</CardTitle>
         <CardDescription>
-          {requests.length.toLocaleString()} pending requests
+          {t("branches.requests.pendingCount", { count: requests.length.toLocaleString() })}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -172,8 +179,8 @@ export function SubBranchRequestsTable({
           data={requests}
           columns={columns}
           getRowId={(request) => request.id}
-          emptyTitle="No sub branch requests"
-          emptyDescription="New sub branch requests will appear here."
+          emptyTitle={t("branches.requests.emptyTitle")}
+          emptyDescription={t("branches.requests.emptyDescription")}
           initialSort={{ key: "submittedDate", direction: "desc" }}
           initialPageSize={5}
           tableClassName="min-w-[880px]"

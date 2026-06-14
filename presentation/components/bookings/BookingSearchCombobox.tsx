@@ -12,6 +12,7 @@ import {
   ComboboxItem,
   ComboboxList,
 } from "@/components/ui/combobox"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 export type BookingComboboxOption = {
   value: string
@@ -53,6 +54,7 @@ export function BookingSearchCombobox({
   onNavigateToCreate,
 }: BookingSearchComboboxProps) {
   const router = useRouter()
+  const { t } = useTranslation()
   const [inputValue, setInputValue] = useState("")
 
   const optionMap = new Map(options.map((o) => [o.value, o]))
@@ -125,7 +127,9 @@ export function BookingSearchCombobox({
         ) : (
           <div className="flex flex-col items-center gap-3 px-3 py-6">
             <p className="text-sm text-muted-foreground">
-              {hasSearchQuery ? "Not found" : "No items available"}
+              {hasSearchQuery
+                ? t("bookings.combobox.notFound")
+                : t("bookings.combobox.noItems")}
             </p>
             {showAddAction ? (
               <Button

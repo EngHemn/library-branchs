@@ -19,6 +19,8 @@ import { Input } from "@/components/ui/input"
 import type { Member, MemberStatus } from "@/domain/entities/member/Member"
 import type { BranchPermissions } from "@/domain/entities/permission/BranchPermissions"
 import { BranchActionButton } from "@/presentation/components/branch-management/BranchActionButton"
+import type { TranslationKey } from "@/presentation/i18n/messages"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type MembersTabProps = {
   members: Member[]
@@ -41,12 +43,6 @@ type MemberColumnKey =
   | "status"
   | "actions"
 
-const memberStatusLabels: Record<MemberStatus, string> = {
-  active: "Active",
-  inactive: "Inactive",
-  suspended: "Suspended",
-}
-
 const memberStatusVariants: Record<MemberStatus, "default" | "outline" | "destructive"> = {
   active: "default",
   inactive: "outline",
@@ -63,17 +59,26 @@ export function MembersTab({
   onDelete,
   onToggleStatus,
 }: MembersTabProps) {
+  const { t } = useTranslation()
+
+  function memberStatusLabel(status: MemberStatus): string {
+    if (status === "suspended") {
+      return t("branches.detail.shared.suspended")
+    }
+    return t(`common.${status}` as TranslationKey)
+  }
+
   const columns: DataTableColumn<Member, MemberColumnKey>[] = [
     {
       key: "memberName",
-      header: "Member Name",
+      header: t("branches.detail.shared.memberName"),
       sortable: true,
       sortValue: (m) => m.memberName,
       cell: (m) => <span className="font-medium">{m.memberName}</span>,
     },
     {
       key: "registerBranch",
-      header: "Register Branch",
+      header: t("branches.detail.shared.registerBranch"),
       sortable: true,
       sortValue: (m) => m.registerBranch,
       cell: (m) => (
@@ -84,66 +89,68 @@ export function MembersTab({
     },
     {
       key: "allBranchesUsed",
-      header: "Branches Used",
+      header: t("branches.detail.shared.branchesUsed"),
       sortable: true,
       sortValue: (m) => m.allBranchesUsed.length,
       cell: (m) => m.allBranchesUsed.length.toLocaleString(),
     },
     {
       key: "email",
-      header: "Email",
+      header: t("branches.create.fields.email"),
       cell: (m) => m.email,
     },
     {
       key: "phone",
-      header: "Phone",
+      header: t("branches.phone"),
       cell: (m) => m.phone,
     },
     {
       key: "activeBookings",
-      header: "Active Bookings",
+      header: t("branches.detail.shared.activeBookings"),
       sortable: true,
       sortValue: (m) => m.activeBookings,
       cell: (m) => m.activeBookings.toLocaleString(),
     },
     {
       key: "status",
-      header: "Status",
+      header: t("common.status"),
       sortable: true,
-      sortValue: (m) => memberStatusLabels[m.status],
+      sortValue: (m) => memberStatusLabel(m.status),
       cell: (m) => (
         <Badge variant={memberStatusVariants[m.status]}>
-          {memberStatusLabels[m.status]}
+          {memberStatusLabel(m.status)}
         </Badge>
       ),
     },
     {
       key: "actions",
-      header: "Actions",
+      header: t("common.actions"),
       headerClassName: "text-right",
       className: "text-right",
       cell: (m) => {
         const toggleLabel =
-          m.status === "active" ? "Deactivate" : "Activate"
+          m.status === "active"
+            ? t("branches.detail.shared.deactivate")
+            : t("branches.detail.shared.activate")
         const ToggleIcon = m.status === "active" ? PowerOffIcon : PowerIcon
 
         return (
-          <div className="flex justify-end gap-1">
+          <div className="table-action-content">
             <BranchActionButton
               icon={EyeIcon}
-              label="View"
+              label={t("common.view")}
               onClick={() => onView(m)}
             />
             {permissions.canManageMembers ? (
               <>
                 <BranchActionButton
                   icon={PencilIcon}
-                  label="Edit"
+                  label={t("common.edit")}
                   onClick={() => onEdit(m)}
                 />
                 <BranchActionButton
                   icon={Trash2Icon}
-                  label="Delete"
+                  label={t("common.delete")}
                   variant="destructive"
                   onClick={() => onDelete(m)}
                 />
@@ -163,11 +170,11 @@ export function MembersTab({
   return (
     <Card className="rounded-lg">
       <CardHeader className="flex-row items-center justify-between gap-4 space-y-0">
-        <CardTitle>Members</CardTitle>
+        <CardTitle>{t("branches.view.tabs.members")}</CardTitle>
         <div className="relative w-full max-w-xs">
           <SearchIcon className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Search members..."
+            placeholder={t("branches.detail.shared.searchMembers")}
             value={searchQuery}
             onChange={(e) => onSearchQueryChange(e.target.value)}
             className="pl-9"
@@ -179,8 +186,8 @@ export function MembersTab({
           data={members}
           columns={columns}
           getRowId={(m) => m.id}
-          emptyTitle="No members found"
-          emptyDescription="This branch does not have any members yet."
+          emptyTitle={t("branches.detail.empty.members.title")}
+          emptyDescription={t("branches.detail.empty.members.description")}
           initialSort={{ key: "memberName", direction: "asc" }}
           initialPageSize={5}
           tableClassName="min-w-[1050px]"

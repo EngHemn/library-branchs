@@ -23,6 +23,8 @@ import {
 } from "@/domain/entities/permission/Permission"
 import type { StaffMember, StaffRole } from "@/domain/entities/staff/StaffMember"
 import { BranchActionButton } from "@/presentation/components/branch-management/BranchActionButton"
+import type { TranslationKey } from "@/presentation/i18n/messages"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type StaffTabProps = {
   staff: StaffMember[]
@@ -45,8 +47,6 @@ type StaffColumnKey =
   | "status"
   | "actions"
 
-const statusLabels = { active: "Active", inactive: "Inactive" }
-
 const roleVariants: Record<PermissionStaffRole, "default" | "secondary" | "outline"> = {
   branch_admin: "default",
   sub_branch_admin: "secondary",
@@ -67,22 +67,24 @@ export function StaffTab({
   onDelete,
   onToggleStatus,
 }: StaffTabProps) {
+  const { t } = useTranslation()
+
   const columns: DataTableColumn<StaffMember, StaffColumnKey>[] = [
     {
       key: "staffName",
-      header: "Staff Name",
+      header: t("branches.detail.shared.staffName"),
       sortable: true,
       sortValue: (s) => s.staffName,
       cell: (s) => <span className="font-medium">{s.staffName}</span>,
     },
     {
       key: "staffId",
-      header: "Staff ID",
+      header: t("branches.detail.shared.staffId"),
       cell: (s) => <span className="font-mono text-xs">{s.staffId}</span>,
     },
     {
       key: "role",
-      header: "Role",
+      header: t("branches.detail.shared.role"),
       sortable: true,
       sortValue: (s) => getPermissionRoleLabel(s.role),
       cell: (s) => (
@@ -93,7 +95,7 @@ export function StaffTab({
     },
     {
       key: "branch",
-      header: "Branch",
+      header: t("branches.detail.shared.branch"),
       sortable: true,
       sortValue: (s) => s.branch,
       cell: (s) => (
@@ -102,52 +104,54 @@ export function StaffTab({
     },
     {
       key: "email",
-      header: "Email",
+      header: t("branches.create.fields.email"),
       cell: (s) => s.email,
     },
     {
       key: "phone",
-      header: "Phone",
+      header: t("branches.phone"),
       cell: (s) => s.phone,
     },
     {
       key: "status",
-      header: "Status",
+      header: t("common.status"),
       sortable: true,
-      sortValue: (s) => statusLabels[s.status],
+      sortValue: (s) => t(`common.${s.status}` as TranslationKey),
       cell: (s) => (
         <Badge variant={s.status === "active" ? "default" : "outline"}>
-          {statusLabels[s.status]}
+          {t(`common.${s.status}` as TranslationKey)}
         </Badge>
       ),
     },
     {
       key: "actions",
-      header: "Actions",
+      header: t("common.actions"),
       headerClassName: "text-right",
       className: "text-right",
       cell: (s) => {
         const toggleLabel =
-          s.status === "active" ? "Deactivate" : "Activate"
+          s.status === "active"
+            ? t("branches.detail.shared.deactivate")
+            : t("branches.detail.shared.activate")
         const ToggleIcon = s.status === "active" ? PowerOffIcon : PowerIcon
 
         return (
-          <div className="flex justify-end gap-1">
+          <div className="table-action-content">
             <BranchActionButton
               icon={EyeIcon}
-              label="View"
+              label={t("common.view")}
               onClick={() => onView(s)}
             />
             {permissions.canManageStaff ? (
               <>
                 <BranchActionButton
                   icon={PencilIcon}
-                  label="Edit"
+                  label={t("common.edit")}
                   onClick={() => onEdit(s)}
                 />
                 <BranchActionButton
                   icon={Trash2Icon}
-                  label="Delete"
+                  label={t("common.delete")}
                   variant="destructive"
                   onClick={() => onDelete(s)}
                 />
@@ -167,11 +171,11 @@ export function StaffTab({
   return (
     <Card className="rounded-lg">
       <CardHeader className="flex-row items-center justify-between gap-4 space-y-0">
-        <CardTitle>Staff</CardTitle>
+        <CardTitle>{t("branches.view.tabs.staff")}</CardTitle>
         <div className="relative w-full max-w-xs">
           <SearchIcon className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Search staff..."
+            placeholder={t("branches.detail.shared.searchStaff")}
             value={searchQuery}
             onChange={(e) => onSearchQueryChange(e.target.value)}
             className="pl-9"
@@ -183,8 +187,8 @@ export function StaffTab({
           data={staff}
           columns={columns}
           getRowId={(s) => s.id}
-          emptyTitle="No staff found"
-          emptyDescription="This branch does not have any staff members yet."
+          emptyTitle={t("branches.detail.empty.staff.title")}
+          emptyDescription={t("branches.detail.empty.staff.description")}
           initialSort={{ key: "staffName", direction: "asc" }}
           initialPageSize={5}
           tableClassName="min-w-[1050px]"

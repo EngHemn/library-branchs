@@ -6,6 +6,7 @@ import type { Shelf } from "@/domain/entities/shelf/Shelf"
 import { formatShelfLocationParts } from "@/lib/shelfLocationDisplay"
 import { ShelfStatusBadge } from "@/presentation/components/shelves/ShelfStatusBadge"
 import { ShelfTypeBadge } from "@/presentation/components/shelves/ShelfTypeBadge"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type ShelfDetailsTabProps = {
   shelf: Shelf
@@ -25,19 +26,21 @@ export function ShelfDetailsTab({
   shelf,
   showBranchField = true,
 }: ShelfDetailsTabProps) {
+  const { t } = useTranslation()
+
   return (
     <dl className="space-y-4">
-      <DetailRow label="Shelf ID" value={shelf.id} />
-      <DetailRow label="Shelf Name" value={shelf.name} />
+      <DetailRow label={t("shelves.detail.shelfId")} value={shelf.id} />
+      <DetailRow label={t("shelves.detail.shelfName")} value={shelf.name} />
       <DetailRow
-        label="Shelf Type"
+        label={t("shelves.detail.shelfType")}
         value={<ShelfTypeBadge shelfType={shelf.shelfType} />}
       />
       {showBranchField ? (
-        <DetailRow label="Branch" value={shelf.branchName} />
+        <DetailRow label={t("shelves.detail.branch")} value={shelf.branchName} />
       ) : null}
       <DetailRow
-        label="Location"
+        label={t("shelves.detail.location")}
         value={formatShelfLocationParts(shelf.locationParts)}
       />
       {shelf.locationParts.length > 0 ? (
@@ -51,10 +54,18 @@ export function ShelfDetailsTab({
           ))}
         </>
       ) : null}
-      <DetailRow label="Capacity" value={`${shelf.capacity.toLocaleString()} books`} />
-      <DetailRow label="Books on Shelf" value={shelf.bookCount.toLocaleString()} />
       <DetailRow
-        label="Status"
+        label={t("shelves.detail.capacity")}
+        value={t("shelves.detail.booksCount", {
+          count: shelf.capacity.toLocaleString(),
+        })}
+      />
+      <DetailRow
+        label={t("shelves.detail.booksOnShelf")}
+        value={shelf.bookCount.toLocaleString()}
+      />
+      <DetailRow
+        label={t("common.status")}
         value={<ShelfStatusBadge status={shelf.status} />}
       />
     </dl>

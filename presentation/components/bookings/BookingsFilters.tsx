@@ -1,5 +1,6 @@
 "use client"
 
+import { useMemo } from "react"
 import { SearchIcon } from "lucide-react"
 
 import { Input } from "@/components/ui/input"
@@ -10,6 +11,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import type { TranslationKey } from "@/presentation/i18n/messages"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import type {
   BookingBranchFilter,
   BookingBranchFilterOption,
@@ -30,20 +33,23 @@ type BookingsFiltersProps = {
   onBranchFilterChange: (branchFilter: BookingBranchFilter) => void
 }
 
-const statusOptions: { value: BookingStatusFilter; label: string }[] = [
-  { value: "all", label: "All Status" },
-  { value: "reserved", label: "Reserved" },
-  { value: "borrowed", label: "Borrowed" },
-  { value: "returned", label: "Returned" },
-  { value: "overdue", label: "Overdue" },
-  { value: "cancelled", label: "Cancelled" },
-]
+const STATUS_FILTER_KEYS: Record<
+  BookingStatusFilter,
+  TranslationKey
+> = {
+  all: "bookings.filters.allStatus",
+  reserved: "bookings.statuses.reserved",
+  borrowed: "bookings.statuses.borrowed",
+  returned: "bookings.statuses.returned",
+  overdue: "bookings.statuses.overdue",
+  cancelled: "bookings.statuses.cancelled",
+}
 
-const typeOptions: { value: BookingTypeFilter; label: string }[] = [
-  { value: "all", label: "All Types" },
-  { value: "inside", label: "Inside" },
-  { value: "outside", label: "Outside" },
-]
+const TYPE_FILTER_KEYS: Record<BookingTypeFilter, TranslationKey> = {
+  all: "bookings.filters.allTypes",
+  inside: "bookings.types.inside",
+  outside: "bookings.types.outside",
+}
 
 function isBookingStatusFilter(value: string): value is BookingStatusFilter {
   return (
@@ -72,6 +78,28 @@ export function BookingsFilters({
   onTypeFilterChange,
   onBranchFilterChange,
 }: BookingsFiltersProps) {
+  const { t } = useTranslation()
+
+  const statusOptions = useMemo(
+    () =>
+      (Object.keys(STATUS_FILTER_KEYS) as BookingStatusFilter[]).map(
+        (value) => ({
+          value,
+          label: t(STATUS_FILTER_KEYS[value]),
+        })
+      ),
+    [t]
+  )
+
+  const typeOptions = useMemo(
+    () =>
+      (Object.keys(TYPE_FILTER_KEYS) as BookingTypeFilter[]).map((value) => ({
+        value,
+        label: t(TYPE_FILTER_KEYS[value]),
+      })),
+    [t]
+  )
+
   return (
     <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
       <div className="relative flex-1">
@@ -79,7 +107,7 @@ export function BookingsFilters({
         <Input
           value={searchQuery}
           onChange={(event) => onSearchQueryChange(event.target.value)}
-          placeholder="Search bookings..."
+          placeholder={t("bookings.filters.searchPlaceholder")}
           className="pl-9"
         />
       </div>
@@ -130,7 +158,9 @@ export function BookingsFilters({
             <SelectContent>
               {branchFilterOptions.map((option) => (
                 <SelectItem key={option.value} value={option.value}>
-                  {option.label}
+                  {option.value === "current"
+                    ? t("bookings.filters.currentBranch")
+                    : option.label}
                 </SelectItem>
               ))}
             </SelectContent>

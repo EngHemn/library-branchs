@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/select"
 import { Spinner } from "@/components/ui/spinner"
 import type { BranchType } from "@/domain/entities/branch/Branch"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type LoginFormProps = {
   username: string
@@ -45,6 +46,8 @@ export function LoginForm({
   onSubmit,
   onLogout,
 }: LoginFormProps) {
+  const { t } = useTranslation()
+
   async function handleSubmit(
     event: FormEvent<HTMLFormElement>
   ): Promise<void> {
@@ -60,7 +63,7 @@ export function LoginForm({
     <form onSubmit={handleSubmit}>
       <FieldGroup>
         <Field>
-          <FieldLabel htmlFor="branch-type">Branch type</FieldLabel>
+          <FieldLabel htmlFor="branch-type">{t("auth.branchType")}</FieldLabel>
           <Select
             value={branchType}
             disabled={isLoading}
@@ -74,13 +77,13 @@ export function LoginForm({
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="main">Main Branch</SelectItem>
-              <SelectItem value="sub">Sub Branch</SelectItem>
+              <SelectItem value="main">{t("auth.mainBranch")}</SelectItem>
+              <SelectItem value="sub">{t("auth.subBranch")}</SelectItem>
             </SelectContent>
           </Select>
         </Field>
         <Field>
-          <FieldLabel htmlFor="username">Username</FieldLabel>
+          <FieldLabel htmlFor="username">{t("auth.username")}</FieldLabel>
           <Input
             id="username"
             name="username"
@@ -91,7 +94,7 @@ export function LoginForm({
           />
         </Field>
         <Field>
-          <FieldLabel htmlFor="password">Password</FieldLabel>
+          <FieldLabel htmlFor="password">{t("auth.password")}</FieldLabel>
           <Input
             id="password"
             name="password"
@@ -104,7 +107,7 @@ export function LoginForm({
         </Field>
         <Button type="submit" className="h-10 w-full" disabled={isLoading}>
           {isLoading ? <Spinner /> : <LogIn />}
-          Sign in
+          {t("auth.signIn")}
         </Button>
         {canLogout && (
           <Button
@@ -115,7 +118,7 @@ export function LoginForm({
             onClick={onLogout}
           >
             <LogOut />
-            Sign out
+            {t("auth.signOut")}
           </Button>
         )}
       </FieldGroup>

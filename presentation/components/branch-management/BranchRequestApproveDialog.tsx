@@ -19,6 +19,7 @@ import type {
   SubBranchRequest,
 } from "@/domain/entities/branch/Branch"
 import { generatePassword } from "@/lib/generatePassword"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 export type BranchRequestApproveAction =
   | { kind: "main"; request: MainBranchRequest }
@@ -52,6 +53,7 @@ export function BranchRequestApproveDialog({
   onCancel,
   onViewLocation,
 }: BranchRequestApproveDialogProps) {
+  const { t } = useTranslation()
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -66,7 +68,7 @@ export function BranchRequestApproveDialog({
 
   const handleConfirm = (): void => {
     if (password.trim().length < 6) {
-      setError("Password must be at least 6 characters.")
+      setError(t("branches.approveDialog.passwordMinLength"))
       return
     }
 
@@ -96,32 +98,36 @@ export function BranchRequestApproveDialog({
                   <CheckIcon className="size-5 text-green-600 dark:text-green-400" />
                 </div>
                 <DialogTitle>
-                  Approve {action.kind === "main" ? "main" : "sub"} branch request
+                  {action.kind === "main"
+                    ? t("branches.approveDialog.titleMain")
+                    : t("branches.approveDialog.titleSub")}
                 </DialogTitle>
               </div>
               <DialogDescription className="text-left">
-                Create the branch for <strong>{getRequestLabel(action)}</strong> (
-                {action.request.id}) and remove it from the pending queue.
+                {t("branches.approveDialog.description", {
+                  name: getRequestLabel(action),
+                  id: action.request.id,
+                })}
               </DialogDescription>
             </DialogHeader>
 
             <div className="space-y-4">
               <div className="rounded-lg border bg-muted/30 px-3 py-2 text-sm">
                 <p>
-                  <span className="text-muted-foreground">Admin:</span>{" "}
+                  <span className="text-muted-foreground">{t("branches.approveDialog.admin")}</span>{" "}
                   {action.request.adminName}
                 </p>
                 <p className="mt-1">
-                  <span className="text-muted-foreground">Address:</span>{" "}
-                  {action.request.address || "Not provided"}
+                  <span className="text-muted-foreground">{t("branches.approveDialog.address")}</span>{" "}
+                  {action.request.address || t("branches.approveDialog.notProvided")}
                 </p>
               </div>
 
               <div className="flex items-center justify-between gap-3">
                 <p className="text-sm text-muted-foreground">
                   {hasLocation
-                    ? "Review the proposed location before approving."
-                    : "This request has no map location."}
+                    ? t("branches.approveDialog.reviewLocation")
+                    : t("branches.approveDialog.noMapLocation")}
                 </p>
                 <Button
                   type="button"
@@ -136,12 +142,12 @@ export function BranchRequestApproveDialog({
                     })
                   }
                 >
-                  View location
+                  {t("branches.approveDialog.viewLocation")}
                 </Button>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="approvePassword">Admin password</Label>
+                <Label htmlFor="approvePassword">{t("branches.approveDialog.adminPassword")}</Label>
                 <div className="flex gap-2">
                   <div className="relative flex-1">
                     <Input
@@ -176,7 +182,7 @@ export function BranchRequestApproveDialog({
                     size="icon"
                     disabled={isSubmitting}
                     onClick={() => setPassword(generatePassword())}
-                    title="Auto-generate password"
+                    title={t("branches.approveDialog.autoGeneratePassword")}
                   >
                     <RefreshCwIcon className="h-4 w-4" />
                   </Button>
@@ -187,10 +193,10 @@ export function BranchRequestApproveDialog({
 
             <DialogFooter>
               <Button variant="outline" onClick={onCancel} disabled={isSubmitting}>
-                Cancel
+                {t("common.cancel")}
               </Button>
               <Button onClick={handleConfirm} disabled={isSubmitting || !hasLocation}>
-                {isSubmitting ? "Approving..." : "Approve request"}
+                {isSubmitting ? t("branches.approveDialog.approving") : t("branches.approveDialog.approveRequest")}
               </Button>
             </DialogFooter>
           </>

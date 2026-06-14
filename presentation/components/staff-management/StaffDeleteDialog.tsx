@@ -11,6 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type StaffDeleteDialogProps = {
   open: boolean
@@ -29,15 +30,15 @@ export function StaffDeleteDialog({
   onClose,
   onConfirm,
 }: StaffDeleteDialogProps) {
+  const { t } = useTranslation()
+
   return (
     <Dialog open={open} onOpenChange={(nextOpen) => !nextOpen && onClose()}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Delete Staff Member</DialogTitle>
+          <DialogTitle>{t("staff.deleteDialog.title")}</DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete{" "}
-            <span className="font-medium text-foreground">{staffName}</span>? This
-            removes the staff member from the workspace. This action cannot be undone.
+            {t("staff.deleteDialog.description", { name: staffName })}
           </DialogDescription>
         </DialogHeader>
 
@@ -45,11 +46,11 @@ export function StaffDeleteDialog({
 
         <DialogFooter>
           <Button variant="outline" onClick={onClose} disabled={isDeleting}>
-            Cancel
+            {t("common.cancel")}
           </Button>
           <Button variant="destructive" onClick={onConfirm} disabled={isDeleting}>
             {isDeleting ? <Loader2Icon className="animate-spin" /> : null}
-            {isDeleting ? "Deleting..." : "Delete Staff"}
+            {isDeleting ? t("staff.deleteDialog.deleting") : t("staff.deleteDialog.confirm")}
           </Button>
         </DialogFooter>
       </DialogContent>

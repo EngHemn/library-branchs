@@ -23,7 +23,10 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { PERMISSION_ROLE_LABELS } from "@/domain/entities/permission/Permission"
+import type { PermissionStaffRole } from "@/domain/entities/permission/Permission"
 import type { StaffRole, StaffStatus } from "@/domain/entities/staff/StaffMember"
+import type { TranslationKey } from "@/presentation/i18n/messages"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type StaffRoleFilter = "all" | StaffRole
 type StaffStatusFilter = "all" | StaffStatus
@@ -42,16 +45,11 @@ type StaffFiltersProps = {
   onStatusFilterChange: (statusFilter: StaffStatusFilter) => void
 }
 
-const roleOptions: { value: string; label: string }[] = [
-  { value: "all", label: "All Roles" },
-  ...Object.entries(PERMISSION_ROLE_LABELS).map(([value, label]) => ({ value, label })),
-]
-
-const statusOptions: { value: StaffStatusFilter; label: string }[] = [
-  { value: "all", label: "All Status" },
-  { value: "active", label: "Active" },
-  { value: "inactive", label: "Inactive" },
-]
+const STAFF_ROLE_KEYS: Record<PermissionStaffRole, TranslationKey> = {
+  branch_admin: "staff.roles.branchAdmin",
+  sub_branch_admin: "staff.roles.subBranchAdmin",
+  staff: "staff.roles.staff",
+}
 
 export function StaffFilters({
   searchQuery,
@@ -65,6 +63,22 @@ export function StaffFilters({
   onBranchFilterChange,
   onStatusFilterChange,
 }: StaffFiltersProps) {
+  const { t } = useTranslation()
+
+  const roleOptions: { value: string; label: string }[] = [
+    { value: "all", label: t("staff.filters.allRoles") },
+    ...Object.keys(PERMISSION_ROLE_LABELS).map((value) => ({
+      value,
+      label: t(STAFF_ROLE_KEYS[value as PermissionStaffRole]),
+    })),
+  ]
+
+  const statusOptions: { value: StaffStatusFilter; label: string }[] = [
+    { value: "all", label: t("staff.filters.allStatus") },
+    { value: "active", label: t("common.active") },
+    { value: "inactive", label: t("common.inactive") },
+  ]
+
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
       <div className="relative flex-1">
@@ -72,7 +86,7 @@ export function StaffFilters({
         <Input
           value={searchQuery}
           onChange={(event) => onSearchQueryChange(event.target.value)}
-          placeholder="Search by name or email..."
+          placeholder={t("staff.filters.searchPlaceholder")}
           className="pl-9"
         />
       </div>
@@ -101,7 +115,7 @@ export function StaffFilters({
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Branches</SelectItem>
+              <SelectItem value="all">{t("staff.filters.allBranches")}</SelectItem>
               {branches.map((branch) => (
                 <SelectItem key={branch} value={branch}>
                   {branch}

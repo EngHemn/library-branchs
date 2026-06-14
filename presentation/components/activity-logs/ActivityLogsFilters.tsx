@@ -16,6 +16,8 @@ import type {
   ActivityLogAction,
   ActivityLogStaffOption,
 } from "@/domain/entities/activity-log/ActivityLog"
+import type { TranslationKey } from "@/presentation/i18n/messages"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import type {
   ActivityActionFilter,
   ActivityBranchFilter,
@@ -78,6 +80,7 @@ function FilterOptionCombobox<T extends string>({
   prependAllOption = true,
   allLabel = "All",
 }: FilterOptionComboboxProps<T>) {
+  const { t } = useTranslation()
   const [inputValue, setInputValue] = useState("")
 
   const allOptions = prependAllOption
@@ -135,7 +138,7 @@ function FilterOptionCombobox<T extends string>({
             </ComboboxList>
           ) : (
             <div className="px-3 py-6 text-center text-sm text-muted-foreground">
-              No results found
+              {t("activityLogs.filters.noResults")}
             </div>
           )}
         </ComboboxContent>
@@ -157,24 +160,30 @@ export function ActivityLogsFilters({
   showBranchFilter = true,
   staffOptions,
 }: ActivityLogsFiltersProps) {
+  const { t } = useTranslation()
   const branchOptions = branchFilterOptions.map((option) => ({
     value: option.value,
     label: option.label,
   }))
   const staffFilterOptions = staffOptions.map((s) => ({ value: s.id, label: s.name }))
 
+  const localizedActionOptions = ACTION_OPTIONS.map((opt) => ({
+    ...opt,
+    label: t(`activityLogs.actions.${opt.value as ActivityLogAction}`),
+  }))
+
   return (
     <div className="flex flex-col gap-4">
       <div className="relative flex-1">
         <Label htmlFor="activity-log-search" className="sr-only">
-          Search activity logs
+          {t("activityLogs.filters.searchLabel")}
         </Label>
         <SearchIcon className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           id="activity-log-search"
           value={searchQuery}
           onChange={(event) => onSearchQueryChange(event.target.value)}
-          placeholder="Search by description, entity, staff, or branch..."
+          placeholder={t("activityLogs.filters.searchPlaceholder")}
           className="pl-9"
         />
       </div>
@@ -188,21 +197,21 @@ export function ActivityLogsFilters({
       >
         <FilterOptionCombobox<ActivityActionFilter>
           id="activity-action-filter"
-          label="Action"
+          label={t("activityLogs.filters.action")}
           value={actionFilter}
           onValueChange={onActionFilterChange}
-          placeholder="Search actions..."
-          allLabel="All actions"
-          options={ACTION_OPTIONS}
+          placeholder={t("activityLogs.filters.searchActions")}
+          allLabel={t("activityLogs.filters.allActions")}
+          options={localizedActionOptions}
         />
 
         {showBranchFilter ? (
           <FilterOptionCombobox<ActivityBranchFilter>
             id="activity-branch-filter"
-            label="Branch"
+            label={t("activityLogs.filters.branch")}
             value={branchFilter}
             onValueChange={onBranchFilterChange}
-            placeholder="Search branches..."
+            placeholder={t("activityLogs.filters.searchBranches")}
             prependAllOption={false}
             options={branchOptions}
           />
@@ -210,11 +219,11 @@ export function ActivityLogsFilters({
 
         <FilterOptionCombobox<ActivityStaffFilter>
           id="activity-staff-filter"
-          label="Staff"
+          label={t("activityLogs.filters.staff")}
           value={staffFilter}
           onValueChange={onStaffFilterChange}
-          placeholder="Search staff..."
-          allLabel="All staff"
+          placeholder={t("activityLogs.filters.searchStaff")}
+          allLabel={t("activityLogs.filters.allStaff")}
           options={staffFilterOptions}
         />
       </div>

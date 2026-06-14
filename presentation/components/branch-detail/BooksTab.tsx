@@ -34,6 +34,9 @@ import { getAuthorViewHref } from "@/lib/authorLink"
 import { getTranslatorViewHref } from "@/lib/translatorLink"
 import { CategoryDetailDialog } from "@/presentation/components/books/CategoryDetailDialog"
 import { BranchActionButton } from "@/presentation/components/branch-management/BranchActionButton"
+import type { TranslationKey } from "@/presentation/i18n/messages"
+import { useLocale } from "@/presentation/i18n/useLocale"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type BooksTabProps = {
   books: Book[]
@@ -61,21 +64,7 @@ type BookColumnKey =
   | "status"
   | "actions"
 
-function formatPrice(price: number): string {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-  }).format(price)
-}
-
 type BookFilter = "all" | string
-
-const bookStatusLabels: Record<BookStatus, string> = {
-  available: "Available",
-  borrowed: "Borrowed",
-  reserved: "Reserved",
-  unavailable: "Unavailable",
-}
 
 const bookStatusVariants: Record<
   BookStatus,
@@ -206,6 +195,8 @@ export function BooksTab({
   onToggleStatus,
 }: BooksTabProps) {
   const router = useRouter()
+  const { t } = useTranslation()
+  const { locale } = useLocale()
   const [categoryFilter, setCategoryFilter] = useState<BookFilter>("all")
   const [authorFilter, setAuthorFilter] = useState<BookFilter>("all")
   const [translatorFilter, setTranslatorFilter] = useState<BookFilter>("all")
@@ -231,10 +222,21 @@ export function BooksTab({
     router.push(href)
   }
 
+  function formatPrice(price: number): string {
+    return new Intl.NumberFormat(locale, {
+      style: "currency",
+      currency: "USD",
+    }).format(price)
+  }
+
+  function bookStatusLabel(status: BookStatus): string {
+    return t(`branches.detail.bookStatus.${status}` as TranslationKey)
+  }
+
   const columns: DataTableColumn<Book, BookColumnKey>[] = [
     {
       key: "cover",
-      header: "Cover",
+      header: t("branches.detail.shared.cover"),
       cell: (b) => (
         <EntityImage
           src={b.coverUrl}
@@ -244,21 +246,21 @@ export function BooksTab({
           className="size-10 rounded-md"
           imageClassName="rounded-md"
           fallback={
-            <span className="text-xs text-muted-foreground">N/A</span>
+            <span className="text-xs text-muted-foreground">{t("branches.detail.shared.notAvailable")}</span>
           }
         />
       ),
     },
     {
       key: "title",
-      header: "Title",
+      header: t("branches.detail.shared.title"),
       sortable: true,
       sortValue: (b) => b.title,
       cell: (b) => <span className="font-medium">{b.title}</span>,
     },
     {
       key: "category",
-      header: "Category",
+      header: t("branches.detail.shared.category"),
       sortable: true,
       sortValue: (b) => b.category,
       cell: (b) => (
@@ -273,7 +275,7 @@ export function BooksTab({
     },
     {
       key: "author",
-      header: "Author",
+      header: t("branches.detail.shared.author"),
       sortable: true,
       sortValue: (b) => b.author,
       cell: (b) => (
@@ -286,7 +288,7 @@ export function BooksTab({
     },
     {
       key: "translator",
-      header: "Translator",
+      header: t("branches.detail.shared.translator"),
       cell: (b) =>
         b.translator ? (
           <PersonNameButton
@@ -300,26 +302,26 @@ export function BooksTab({
     },
     {
       key: "isbn",
-      header: "ISBN",
+      header: t("branches.detail.shared.isbn"),
       cell: (b) => <span className="font-mono text-xs">{b.isbn}</span>,
     },
     {
       key: "stock",
-      header: "Stock",
+      header: t("branches.detail.shared.stock"),
       sortable: true,
       sortValue: (b) => b.stock,
       cell: (b) => b.stock.toLocaleString(),
     },
     {
       key: "available",
-      header: "Available",
+      header: t("branches.detail.shared.available"),
       sortable: true,
       sortValue: (b) => b.available,
       cell: (b) => b.available.toLocaleString(),
     },
     {
       key: "price",
-      header: "Price",
+      header: t("branches.detail.shared.price"),
       sortable: true,
       sortValue: (b) => b.price,
       headerClassName: "text-center",
@@ -328,43 +330,45 @@ export function BooksTab({
     },
     {
       key: "status",
-      header: "Status",
+      header: t("common.status"),
       sortable: true,
-      sortValue: (b) => bookStatusLabels[b.status],
+      sortValue: (b) => bookStatusLabel(b.status),
       cell: (b) => (
         <Badge variant={bookStatusVariants[b.status]}>
-          {bookStatusLabels[b.status]}
+          {bookStatusLabel(b.status)}
         </Badge>
       ),
     },
     {
       key: "actions",
-      header: "Actions",
+      header: t("common.actions"),
       headerClassName: "text-right",
       className: "text-right",
       cell: (b) => {
         const toggleLabel =
-          b.status === "available" ? "Deactivate" : "Activate"
+          b.status === "available"
+            ? t("branches.detail.shared.deactivate")
+            : t("branches.detail.shared.activate")
         const ToggleIcon =
           b.status === "available" ? PowerOffIcon : PowerIcon
 
         return (
-          <div className="flex justify-end gap-1">
+          <div className="table-action-content">
             <BranchActionButton
               icon={EyeIcon}
-              label="View"
+              label={t("common.view")}
               onClick={() => onView(b)}
             />
             {permissions.canManageBooks ? (
               <>
                 <BranchActionButton
                   icon={PencilIcon}
-                  label="Edit"
+                  label={t("common.edit")}
                   onClick={() => onEdit(b)}
                 />
                 <BranchActionButton
                   icon={Trash2Icon}
-                  label="Delete"
+                  label={t("common.delete")}
                   variant="destructive"
                   onClick={() => onDelete(b)}
                 />
@@ -385,12 +389,12 @@ export function BooksTab({
     <>
       <Card className="rounded-lg">
         <CardHeader className="gap-4 space-y-0">
-          <CardTitle>Books</CardTitle>
+          <CardTitle>{t("branches.view.tabs.books")}</CardTitle>
           <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
             <div className="relative w-full max-w-xs">
               <SearchIcon className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
               <Input
-                placeholder="Search books..."
+                placeholder={t("branches.detail.shared.searchBooks")}
                 value={searchQuery}
                 onChange={(e) => onSearchQueryChange(e.target.value)}
                 className="pl-9"
@@ -400,24 +404,24 @@ export function BooksTab({
               <FilterCombobox
                 value={categoryFilter}
                 onValueChange={setCategoryFilter}
-                placeholder="Category"
-                allLabel="All Categories"
+                placeholder={t("branches.detail.shared.category")}
+                allLabel={t("branches.detail.shared.allCategories")}
                 options={categories}
                 widthClassName="w-[170px]"
               />
               <FilterCombobox
                 value={authorFilter}
                 onValueChange={setAuthorFilter}
-                placeholder="Author"
-                allLabel="All Authors"
+                placeholder={t("branches.detail.shared.author")}
+                allLabel={t("branches.detail.shared.allAuthors")}
                 options={authorOptions}
                 widthClassName="w-[180px]"
               />
               <FilterCombobox
                 value={translatorFilter}
                 onValueChange={setTranslatorFilter}
-                placeholder="Translator"
-                allLabel="All Translators"
+                placeholder={t("branches.detail.shared.translator")}
+                allLabel={t("branches.detail.shared.allTranslators")}
                 options={translatorOptions}
                 widthClassName="w-[180px]"
               />
@@ -429,8 +433,8 @@ export function BooksTab({
             data={filteredBooks}
             columns={columns}
             getRowId={(b) => b.id}
-            emptyTitle="No books found"
-            emptyDescription="This branch does not have any books yet."
+            emptyTitle={t("branches.detail.empty.books.title")}
+            emptyDescription={t("branches.detail.empty.books.description")}
             initialSort={{ key: "title", direction: "asc" }}
             initialPageSize={5}
             tableClassName="min-w-[1100px]"

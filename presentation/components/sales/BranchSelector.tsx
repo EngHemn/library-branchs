@@ -18,6 +18,8 @@ import {
 } from "@/components/ui/collapsible"
 import { Skeleton } from "@/components/ui/skeleton"
 import { cn } from "@/lib/utils"
+import type { TranslationKey } from "@/presentation/i18n/messages"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import type { BranchNode } from "@/presentation/viewmodels/sales/useSalesViewModel"
 
 type BranchSelectorProps = {
@@ -55,6 +57,10 @@ function BranchItem({
   onViewBooks,
   onRequestShopFromBranch,
 }: BranchItemProps) {
+  const { t } = useTranslation()
+  const statusKey: TranslationKey =
+    status === "active" ? "common.active" : "common.inactive"
+
   return (
     <div
       className={cn(
@@ -90,7 +96,7 @@ function BranchItem({
                 variant={status === "active" ? "default" : "secondary"}
                 className="h-4 px-1.5 text-[10px]"
               >
-                {status}
+                {t(statusKey)}
               </Badge>
               <span className="flex items-center gap-0.5 text-[10px] text-muted-foreground">
                 <BookOpenIcon className="size-2.5" />
@@ -106,7 +112,7 @@ function BranchItem({
             className="shrink-0 gap-1 border-primary/30 text-[10px] text-primary"
           >
             <ShoppingCartIcon className="size-2.5" />
-            {cartItemCount > 0 ? cartItemCount : "Active"}
+            {cartItemCount > 0 ? cartItemCount : t("sales.branches.active")}
           </Badge>
         )}
       </div>
@@ -120,7 +126,7 @@ function BranchItem({
           className="h-7 flex-1 px-2 text-xs"
           onClick={onViewBooks}
         >
-          View Books
+          {t("sales.branches.viewBooks")}
         </Button>
 
         {!isShoppingBranch && (
@@ -131,7 +137,7 @@ function BranchItem({
             onClick={onRequestShopFromBranch}
           >
             <ShoppingCartIcon className="size-3" />
-            Shop Here
+            {t("sales.branches.shopHere")}
           </Button>
         )}
       </div>
@@ -156,8 +162,13 @@ function MainBranchGroup({
   onViewBooks,
   onRequestShopFromBranch,
 }: MainBranchGroupProps) {
+  const { t } = useTranslation()
   const { branch, subBranches } = node
   const [open, setOpen] = useState(true)
+  const subBranchLabel =
+    subBranches.length === 1
+      ? t("sales.branches.subBranchCount", { count: subBranches.length })
+      : t("sales.branches.subBranchCountPlural", { count: subBranches.length })
 
   return (
     <div className="flex flex-col gap-1.5">
@@ -186,8 +197,7 @@ function MainBranchGroup({
                   !open && "-rotate-90"
                 )}
               />
-              {subBranches.length} sub-branch
-              {subBranches.length > 1 ? "es" : ""}
+              {subBranchLabel}
             </button>
           </CollapsibleTrigger>
 

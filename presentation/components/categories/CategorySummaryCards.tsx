@@ -2,12 +2,15 @@
 
 import { Card, CardContent } from "@/components/ui/card"
 import type { Category } from "@/domain/entities/category/Category"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type CategorySummaryCardsProps = {
   categories: Category[]
 }
 
 export function CategorySummaryCards({ categories }: CategorySummaryCardsProps) {
+  const { t } = useTranslation()
+
   if (categories.length === 0) {
     return null
   }
@@ -27,7 +30,9 @@ export function CategorySummaryCards({ categories }: CategorySummaryCardsProps) 
               <span className="text-2xl font-bold text-violet-600 dark:text-violet-400">
                 {category.totalBooks}
               </span>
-              <span className="text-xs text-muted-foreground">books</span>
+              <span className="text-xs text-muted-foreground">
+                {t("categories.summary.books")}
+              </span>
             </div>
           </CardContent>
         </Card>

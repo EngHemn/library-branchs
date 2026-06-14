@@ -18,6 +18,7 @@ import type {
   MainBranchRequest,
   SubBranchRequest,
 } from "@/domain/entities/branch/Branch"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 export type BranchRequestConfirmAction =
   | { kind: "reject-main"; request: MainBranchRequest }
@@ -29,40 +30,38 @@ type BranchRequestConfirmDialogProps = {
   onCancel: () => void
 }
 
-function getDialogContent(action: BranchRequestConfirmAction): {
-  title: string
-  description: string
-  confirmLabel: string
-} {
-  switch (action.kind) {
-    case "reject-main":
-      return {
-        title: "Reject main branch request?",
-        description: `Reject the request from "${action.request.branchName}" (${action.request.id})? It will be removed from the pending queue.`,
-        confirmLabel: "Reject request",
-      }
-    case "reject-sub":
-      return {
-        title: "Reject sub branch request?",
-        description: `Reject the request for "${action.request.branchName}" under "${action.request.parentBranchName}" (${action.request.id})? It will be removed from the pending queue.`,
-        confirmLabel: "Reject request",
-      }
-  }
-}
-
 export function BranchRequestConfirmDialog({
   action,
   onConfirm,
   onCancel,
 }: BranchRequestConfirmDialogProps) {
+  const { t } = useTranslation()
   const [message, setMessage] = useState("")
-  const content = action ? getDialogContent(action) : null
 
   useEffect(() => {
     if (action) {
       setMessage("")
     }
   }, [action])
+
+  const title = action
+    ? action.kind === "reject-main"
+      ? t("branches.rejectDialog.titleMain")
+      : t("branches.rejectDialog.titleSub")
+    : ""
+
+  const description = action
+    ? action.kind === "reject-main"
+      ? t("branches.rejectDialog.descriptionMain", {
+          name: action.request.branchName,
+          id: action.request.id,
+        })
+      : t("branches.rejectDialog.descriptionSub", {
+          name: action.request.branchName,
+          parent: action.request.parentBranchName,
+          id: action.request.id,
+        })
+    : ""
 
   return (
     <Dialog
@@ -74,30 +73,30 @@ export function BranchRequestConfirmDialog({
       }}
     >
       <DialogContent className="min-w-lg">
-        {content ? (
+        {action ? (
           <>
             <DialogHeader>
               <div className="mb-2 flex items-center gap-2">
                 <div className="rounded-full bg-red-100 p-2 dark:bg-red-900/30">
                   <AlertTriangleIcon className="size-5 text-red-600 dark:text-red-400" />
                 </div>
-                <DialogTitle>{content.title}</DialogTitle>
+                <DialogTitle>{title}</DialogTitle>
               </div>
               <DialogDescription className="text-left">
-                {content.description}
+                {description}
               </DialogDescription>
             </DialogHeader>
 
             <div className="space-y-2">
               <Label htmlFor="rejectMessage">
-                Message to requester{" "}
+                {t("branches.rejectDialog.messageToRequester")}{" "}
                 <span className="text-xs font-normal text-muted-foreground">
-                  (optional)
+                  {t("branches.rejectDialog.optional")}
                 </span>
               </Label>
               <Textarea
                 id="rejectMessage"
-                placeholder="Explain why the request was rejected..."
+                placeholder={t("branches.rejectDialog.messagePlaceholder")}
                 value={message}
                 onChange={(event) => setMessage(event.target.value)}
                 rows={3}
@@ -106,10 +105,10 @@ export function BranchRequestConfirmDialog({
 
             <DialogFooter>
               <Button variant="outline" onClick={onCancel}>
-                Cancel
+                {t("common.cancel")}
               </Button>
               <Button variant="destructive" onClick={() => onConfirm(message)}>
-                {content.confirmLabel}
+                {t("branches.rejectDialog.confirmLabel")}
               </Button>
             </DialogFooter>
           </>

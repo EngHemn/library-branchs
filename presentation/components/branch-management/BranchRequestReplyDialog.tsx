@@ -18,6 +18,7 @@ import type {
   MainBranchRequest,
   SubBranchRequest,
 } from "@/domain/entities/branch/Branch"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 export type BranchRequestReplyAction =
   | { kind: "main"; request: MainBranchRequest }
@@ -48,6 +49,7 @@ export function BranchRequestReplyDialog({
   onConfirm,
   onCancel,
 }: BranchRequestReplyDialogProps) {
+  const { t } = useTranslation()
   const [message, setMessage] = useState("")
   const [error, setError] = useState<string | null>(null)
 
@@ -62,7 +64,7 @@ export function BranchRequestReplyDialog({
     const trimmedMessage = message.trim()
 
     if (!trimmedMessage) {
-      setError("Message is required.")
+      setError(t("branches.replyDialog.messageRequired"))
       return
     }
 
@@ -86,21 +88,23 @@ export function BranchRequestReplyDialog({
                 <div className="rounded-full bg-blue-100 p-2 dark:bg-blue-900/30">
                   <MessageSquareReplyIcon className="size-5 text-blue-600 dark:text-blue-400" />
                 </div>
-                <DialogTitle>Reply to branch request</DialogTitle>
+                <DialogTitle>{t("branches.replyDialog.title")}</DialogTitle>
               </div>
               <DialogDescription className="text-left">
-                Send a message to{" "}
-                <strong>{action.request.adminName}</strong> at{" "}
-                <strong>{getRecipientEmail(action)}</strong> about{" "}
-                <strong>{getRequestLabel(action)}</strong> ({action.request.id}).
+                {t("branches.replyDialog.description", {
+                  adminName: action.request.adminName,
+                  email: getRecipientEmail(action),
+                  name: getRequestLabel(action),
+                  id: action.request.id,
+                })}
               </DialogDescription>
             </DialogHeader>
 
             <div className="space-y-2">
-              <Label htmlFor="replyMessage">Message</Label>
+              <Label htmlFor="replyMessage">{t("branches.replyDialog.message")}</Label>
               <Textarea
                 id="replyMessage"
-                placeholder="Write your reply to the requester..."
+                placeholder={t("branches.replyDialog.messagePlaceholder")}
                 value={message}
                 disabled={isSending}
                 onChange={(event) => {
@@ -116,10 +120,10 @@ export function BranchRequestReplyDialog({
 
             <DialogFooter>
               <Button variant="outline" onClick={onCancel} disabled={isSending}>
-                Cancel
+                {t("common.cancel")}
               </Button>
               <Button onClick={handleConfirm} disabled={isSending}>
-                {isSending ? "Sending..." : "Send reply"}
+                {isSending ? t("branches.replyDialog.sending") : t("branches.replyDialog.sendReply")}
               </Button>
             </DialogFooter>
           </>

@@ -25,6 +25,8 @@ import {
 import type { Branch } from "@/domain/entities/branch/Branch"
 import { BranchActionButton } from "@/presentation/components/branch-management/BranchActionButton"
 import { BranchAdminLink } from "@/presentation/components/branch-management/BranchAdminLink"
+import type { TranslationKey } from "@/presentation/i18n/messages"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type BranchesTableProps = {
   branches: Branch[]
@@ -45,28 +47,22 @@ type BranchColumnKey =
   | "status"
   | "actions"
 
-const branchTypeLabels = {
-  main: "Main Branch",
-  sub: "Sub Branch",
-}
-
-const branchStatusLabels = {
-  active: "Active",
-  inactive: "Inactive",
-}
-
 function BranchTypeBadge({ branch }: { branch: Branch }) {
+  const { t } = useTranslation()
+
   return (
     <Badge variant={branch.type === "main" ? "default" : "secondary"}>
-      {branchTypeLabels[branch.type]}
+      {t(`branches.types.${branch.type}` as TranslationKey)}
     </Badge>
   )
 }
 
 function BranchStatusBadge({ branch }: { branch: Branch }) {
+  const { t } = useTranslation()
+
   return (
     <Badge variant={branch.status === "active" ? "default" : "outline"}>
-      {branchStatusLabels[branch.status]}
+      {t(`common.${branch.status}` as TranslationKey)}
     </Badge>
   )
 }
@@ -79,10 +75,12 @@ export function BranchesTable({
   onDelete,
   onToggleStatus,
 }: BranchesTableProps) {
+  const { t } = useTranslation()
+
   const columns: DataTableColumn<Branch, BranchColumnKey>[] = [
     {
       key: "photo",
-      header: "Photo",
+      header: t("branches.table.photo"),
       cell: (branch) => (
         <EntityImage
           src={branch.imageUrl}
@@ -97,14 +95,14 @@ export function BranchesTable({
     },
     {
       key: "id",
-      header: "ID",
+      header: t("branches.table.id"),
       sortable: true,
       sortValue: (branch) => branch.id,
       cell: (branch) => <span className="font-medium">{branch.id}</span>,
     },
     {
       key: "branchName",
-      header: "Branch Name",
+      header: t("branches.table.branchName"),
       sortable: true,
       sortValue: (branch) => branch.branchName,
       cell: (branch) => (
@@ -115,16 +113,17 @@ export function BranchesTable({
       ? [
           {
             key: "type" as const,
-            header: "Type",
+            header: t("branches.table.type"),
             sortable: true,
-            sortValue: (branch: Branch) => branchTypeLabels[branch.type],
+            sortValue: (branch: Branch) =>
+              t(`branches.types.${branch.type}` as TranslationKey),
             cell: (branch: Branch) => <BranchTypeBadge branch={branch} />,
           },
         ]
       : []),
     {
       key: "adminName",
-      header: "Admin Name",
+      header: t("branches.table.adminName"),
       sortable: true,
       sortValue: (branch) => branch.adminName,
       cell: (branch) => (
@@ -133,43 +132,45 @@ export function BranchesTable({
     },
     {
       key: "bookCount",
-      header: "Book Count",
+      header: t("branches.table.bookCount"),
       sortable: true,
       sortValue: (branch) => branch.bookCount,
       cell: (branch) => branch.bookCount.toLocaleString(),
     },
     {
       key: "status",
-      header: "Status",
+      header: t("common.status"),
       sortable: true,
-      sortValue: (branch) => branchStatusLabels[branch.status],
+      sortValue: (branch) => t(`common.${branch.status}` as TranslationKey),
       cell: (branch) => <BranchStatusBadge branch={branch} />,
     },
     {
       key: "actions",
-      header: "Actions",
+      header: t("common.actions"),
       headerClassName: "text-right",
       className: "text-right",
       cell: (branch) => {
         const toggleLabel =
-          branch.status === "active" ? "Deactivate Branch" : "Activate Branch"
+          branch.status === "active"
+            ? t("branches.table.deactivateBranch")
+            : t("branches.table.activateBranch")
         const ToggleIcon = branch.status === "active" ? PowerOffIcon : PowerIcon
 
         return (
-          <div className="flex justify-end gap-1">
+          <div className="table-action-content">
             <BranchActionButton
               icon={EyeIcon}
-              label="View Branch"
+              label={t("branches.table.viewBranch")}
               onClick={() => onView(branch)}
             />
             <BranchActionButton
               icon={PencilIcon}
-              label="Edit Branch"
+              label={t("branches.table.editBranch")}
               onClick={() => onEdit(branch)}
             />
             <BranchActionButton
               icon={Trash2Icon}
-              label="Delete Branch"
+              label={t("branches.table.deleteBranch")}
               variant="destructive"
               onClick={() => onDelete(branch)}
             />
@@ -187,9 +188,9 @@ export function BranchesTable({
   return (
     <Card className="rounded-lg">
       <CardHeader>
-        <CardTitle>Branches</CardTitle>
+        <CardTitle>{t("branches.table.title")}</CardTitle>
         <CardDescription>
-          {branches.length.toLocaleString()} branch records
+          {t("branches.table.recordCount", { count: branches.length.toLocaleString() })}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -197,8 +198,8 @@ export function BranchesTable({
           data={branches}
           columns={columns}
           getRowId={(branch) => branch.id}
-          emptyTitle="No branches found"
-          emptyDescription="Try changing or clearing the active filters."
+          emptyTitle={t("branches.table.emptyTitle")}
+          emptyDescription={t("branches.table.emptyDescription")}
           initialSort={{ key: "branchName", direction: "asc" }}
           initialPageSize={5}
           tableClassName=""

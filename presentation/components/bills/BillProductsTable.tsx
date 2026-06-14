@@ -16,6 +16,8 @@ import {
 } from "@/components/ui/data-table"
 import type { BillProduct } from "@/domain/entities/bill/BillDetail"
 import { BillActionButton } from "@/presentation/components/bills/BillActionButton"
+import { useLocale } from "@/presentation/i18n/useLocale"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type BillProductsTableProps = {
   products: BillProduct[]
@@ -25,18 +27,21 @@ type BillProductsTableProps = {
 type ProductColumnKey = "title" | "isbn" | "bookId" | "actions"
 
 export function BillProductsTable({ products, onView }: BillProductsTableProps) {
+  const { t } = useTranslation()
+  const { locale } = useLocale()
+
   const columns = useMemo(() => {
     const allColumns: DataTableColumn<BillProduct, ProductColumnKey>[] = [
     {
       key: "title",
-      header: "Book",
+      header: t("bills.products.book"),
       sortable: true,
       sortValue: (product) => product.title,
       cell: (product) => <span className="font-medium">{product.title}</span>,
     },
     {
       key: "isbn",
-      header: "ISBN",
+      header: t("bills.products.isbn"),
       sortable: true,
       sortValue: (product) => product.isbn,
       cell: (product) => (
@@ -45,7 +50,7 @@ export function BillProductsTable({ products, onView }: BillProductsTableProps) 
     },
     {
       key: "bookId",
-      header: "Book ID",
+      header: t("bills.products.bookId"),
       sortable: true,
       sortValue: (product) => product.bookId,
       cell: (product) => (
@@ -54,14 +59,14 @@ export function BillProductsTable({ products, onView }: BillProductsTableProps) 
     },
     {
       key: "actions",
-      header: "Actions",
+      header: t("bills.products.actions"),
       headerClassName: "text-right",
       className: "text-right",
       cell: (product) => (
-        <div className="flex justify-end">
+        <div className="table-action-content gap-0">
           <BillActionButton
             icon={EyeIcon}
-            label="View Book"
+            label={t("bills.products.viewBook")}
             variant="outline"
             onClick={() => onView(product)}
           />
@@ -71,14 +76,16 @@ export function BillProductsTable({ products, onView }: BillProductsTableProps) 
     ]
 
     return allColumns
-  }, [onView])
+  }, [onView, t])
 
   return (
     <Card className="rounded-lg">
       <CardHeader>
-        <CardTitle>Imported Products</CardTitle>
+        <CardTitle>{t("bills.products.title")}</CardTitle>
         <CardDescription>
-          {products.length.toLocaleString()} books on this bill
+          {t("bills.products.recordCount", {
+            count: products.length.toLocaleString(locale),
+          })}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -86,8 +93,8 @@ export function BillProductsTable({ products, onView }: BillProductsTableProps) 
           data={products}
           columns={columns}
           getRowId={(product) => product.bookId}
-          emptyTitle="No products"
-          emptyDescription="This bill has no linked books."
+          emptyTitle={t("bills.products.emptyTitle")}
+          emptyDescription={t("bills.products.emptyDescription")}
           initialSort={{ key: "title", direction: "asc" }}
           initialPageSize={10}
         />

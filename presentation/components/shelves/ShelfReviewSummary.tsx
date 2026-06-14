@@ -7,6 +7,7 @@ import type { ShelfLocationStepDefinition } from "@/domain/entities/shelf/ShelfL
 import { getShelfTypeLabel } from "@/domain/entities/shelf/ShelfType"
 import type { ShelfFormValues } from "@/domain/schemas/shelfFormSchema"
 import { formatShelfLocationParts } from "@/lib/shelfLocationDisplay"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type ShelfReviewSummaryProps = {
   values: ShelfFormValues
@@ -19,6 +20,7 @@ export function ShelfReviewSummary({
   branchName,
   locationSteps,
 }: ShelfReviewSummaryProps) {
+  const { t } = useTranslation()
   const locationParts = buildLocationParts(
     locationSteps,
     values.locationValues
@@ -27,7 +29,9 @@ export function ShelfReviewSummary({
   return (
     <div className="space-y-4 rounded-lg border bg-muted/20 p-4">
       <div>
-        <p className="text-sm font-medium text-muted-foreground">Shelf Name</p>
+        <p className="text-sm font-medium text-muted-foreground">
+          {t("shelves.form.review.shelfName")}
+        </p>
         <p className="text-base font-semibold">{values.name}</p>
       </div>
 
@@ -35,21 +39,33 @@ export function ShelfReviewSummary({
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <p className="text-sm font-medium text-muted-foreground">Shelf Type</p>
+          <p className="text-sm font-medium text-muted-foreground">
+            {t("shelves.form.review.shelfType")}
+          </p>
           <Badge variant="outline" className="mt-1">
             {getShelfTypeLabel(values.shelfType)}
           </Badge>
         </div>
         <div>
-          <p className="text-sm font-medium text-muted-foreground">Branch</p>
+          <p className="text-sm font-medium text-muted-foreground">
+            {t("shelves.form.review.branch")}
+          </p>
           <p className="text-sm">{branchName}</p>
         </div>
         <div>
-          <p className="text-sm font-medium text-muted-foreground">Capacity</p>
-          <p className="text-sm">{values.capacity.toLocaleString()} books</p>
+          <p className="text-sm font-medium text-muted-foreground">
+            {t("shelves.form.review.capacity")}
+          </p>
+          <p className="text-sm">
+            {t("shelves.form.review.booksCount", {
+              count: values.capacity.toLocaleString(),
+            })}
+          </p>
         </div>
         <div>
-          <p className="text-sm font-medium text-muted-foreground">Status</p>
+          <p className="text-sm font-medium text-muted-foreground">
+            {t("shelves.form.review.status")}
+          </p>
           <Badge
             variant="outline"
             className={
@@ -58,7 +74,9 @@ export function ShelfReviewSummary({
                 : "mt-1"
             }
           >
-            {values.status}
+            {values.status === "active"
+              ? t("common.active")
+              : t("common.inactive")}
           </Badge>
         </div>
       </div>
@@ -66,7 +84,9 @@ export function ShelfReviewSummary({
       <Separator />
 
       <div>
-        <p className="text-sm font-medium text-muted-foreground">Location</p>
+        <p className="text-sm font-medium text-muted-foreground">
+          {t("shelves.form.review.location")}
+        </p>
         <p className="text-sm font-medium">
           {formatShelfLocationParts(locationParts)}
         </p>

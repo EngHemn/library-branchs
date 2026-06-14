@@ -22,10 +22,12 @@ import {
   DataTable,
   type DataTableColumn,
 } from "@/components/ui/data-table"
-import { getPermissionRoleLabel } from "@/domain/entities/permission/Permission"
+import type { PermissionStaffRole } from "@/domain/entities/permission/Permission"
 import type { StaffMember, StaffRole } from "@/domain/entities/staff/StaffMember"
 import { BranchLink } from "@/presentation/components/branch-management/BranchLink"
 import { StaffActionButton } from "@/presentation/components/staff-management/StaffActionButton"
+import type { TranslationKey } from "@/presentation/i18n/messages"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type StaffTableProps = {
   staff: StaffMember[]
@@ -44,20 +46,30 @@ type StaffColumnKey =
   | "status"
   | "actions"
 
-const statusLabels: Record<string, string> = {
-  active: "Active",
-  inactive: "Inactive",
+const STAFF_ROLE_KEYS: Record<PermissionStaffRole, TranslationKey> = {
+  branch_admin: "staff.roles.branchAdmin",
+  sub_branch_admin: "staff.roles.subBranchAdmin",
+  staff: "staff.roles.staff",
 }
 
 function StaffRoleBadge({ role }: { role: StaffRole }) {
+  const { t } = useTranslation()
   const variant = role === "branch_admin" ? "default" : "secondary"
-  return <Badge variant={variant}>{getPermissionRoleLabel(role)}</Badge>
+  const label = STAFF_ROLE_KEYS[role as PermissionStaffRole]
+    ? t(STAFF_ROLE_KEYS[role as PermissionStaffRole])
+    : role
+  return <Badge variant={variant}>{label}</Badge>
 }
 
 function StaffStatusBadge({ status }: { status: string }) {
+  const { t } = useTranslation()
+  const label =
+    status === "active" || status === "inactive"
+      ? t(`common.${status}` as TranslationKey)
+      : status
   return (
     <Badge variant={status === "active" ? "default" : "outline"}>
-      {statusLabels[status] ?? status}
+      {label}
     </Badge>
   )
 }
@@ -70,10 +82,12 @@ export function StaffTable({
   onDelete,
   onToggleStatus,
 }: StaffTableProps) {
+  const { t } = useTranslation()
+
   const columns: DataTableColumn<StaffMember, StaffColumnKey>[] = [
     {
       key: "staffName",
-      header: "Name",
+      header: t("staff.table.name"),
       sortable: true,
       sortValue: (member) => member.staffName,
       cell: (member) => (
@@ -95,21 +109,24 @@ export function StaffTable({
     },
     {
       key: "phone",
-      header: "Phone",
+      header: t("staff.table.phone"),
       cell: (member) => member.phone,
     },
     {
       key: "role",
-      header: "Role",
+      header: t("staff.table.role"),
       sortable: true,
-      sortValue: (member) => getPermissionRoleLabel(member.role),
+      sortValue: (member) =>
+        STAFF_ROLE_KEYS[member.role as PermissionStaffRole]
+          ? t(STAFF_ROLE_KEYS[member.role as PermissionStaffRole])
+          : member.role,
       cell: (member) => <StaffRoleBadge role={member.role} />,
     },
     ...(showBranchColumn
       ? [
           {
             key: "branch" as const,
-            header: "Branch",
+            header: t("staff.table.branch"),
             sortable: true,
             sortValue: (member: StaffMember) => member.branch,
             cell: (member: StaffMember) => (
@@ -124,37 +141,39 @@ export function StaffTable({
       : []),
     {
       key: "status",
-      header: "Status",
+      header: t("common.status"),
       sortable: true,
-      sortValue: (member) => statusLabels[member.status] ?? member.status,
+      sortValue: (member) => t(`common.${member.status}` as TranslationKey),
       cell: (member) => <StaffStatusBadge status={member.status} />,
     },
     {
       key: "actions",
-      header: "Actions",
+      header: t("common.actions"),
       headerClassName: "text-right",
       className: "text-right",
       cell: (member) => {
         const toggleLabel =
-          member.status === "active" ? "Deactivate Staff" : "Activate Staff"
+          member.status === "active"
+            ? t("staff.table.deactivateStaff")
+            : t("staff.table.activateStaff")
         const ToggleIcon =
           member.status === "active" ? PowerOffIcon : PowerIcon
 
         return (
-          <div className="flex justify-end gap-1">
+          <div className="table-action-content">
             <StaffActionButton
               icon={EyeIcon}
-              label="View Staff"
+              label={t("staff.table.viewStaff")}
               onClick={() => onView(member)}
             />
             <StaffActionButton
               icon={PencilIcon}
-              label="Edit Staff"
+              label={t("staff.table.editStaff")}
               onClick={() => onEdit(member)}
             />
             <StaffActionButton
               icon={Trash2Icon}
-              label="Delete Staff"
+              label={t("staff.table.deleteStaff")}
               variant="destructive"
               onClick={() => onDelete(member)}
             />
@@ -172,9 +191,9 @@ export function StaffTable({
   return (
     <Card className="rounded-lg">
       <CardHeader>
-        <CardTitle>Staff Members</CardTitle>
+        <CardTitle>{t("staff.table.title")}</CardTitle>
         <CardDescription>
-          {staff.length.toLocaleString()} staff records. Permissions are inherited from each member&apos;s role.
+          {t("staff.table.recordCount", { count: staff.length.toLocaleString() })}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -182,8 +201,8 @@ export function StaffTable({
           data={staff}
           columns={columns}
           getRowId={(member) => member.id}
-          emptyTitle="No staff found"
-          emptyDescription="Try changing or clearing the active filters."
+          emptyTitle={t("staff.table.emptyTitle")}
+          emptyDescription={t("staff.table.emptyDescription")}
           initialSort={{ key: "staffName", direction: "asc" }}
           initialPageSize={10}
           tableClassName=""

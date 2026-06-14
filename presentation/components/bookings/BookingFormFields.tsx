@@ -34,6 +34,7 @@ import {
   BookingSearchCombobox,
   type BookingComboboxOption,
 } from "@/presentation/components/bookings/BookingSearchCombobox"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 const CREATE_BOOK_HREF = "/dashboard/books/create"
 const CREATE_BRANCH_HREF = "/dashboard/branches/create"
@@ -60,6 +61,7 @@ export function BookingFormFields({
   onSubmit,
   children,
 }: BookingFormFieldsProps) {
+  const { t } = useTranslation()
   const branchId = form.watch("branchId")
 
   const memberOptionsForBranch: BookingComboboxOption[] = branchId
@@ -81,17 +83,17 @@ export function BookingFormFields({
             name="bookId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Book *</FormLabel>
+                <FormLabel>{t("bookings.fields.book")} *</FormLabel>
                 <FormControl>
                   <BookingSearchCombobox
                     id="booking-book"
                     options={bookOptions}
                     value={field.value}
                     onValueChange={field.onChange}
-                    placeholder="Search book..."
+                    placeholder={t("bookings.placeholders.searchBook")}
                     disabled={disabled}
                     createHref={CREATE_BOOK_HREF}
-                    addLabel="Add book"
+                    addLabel={t("bookings.placeholders.addBook")}
                   />
                 </FormControl>
                 <FormMessage />
@@ -105,7 +107,7 @@ export function BookingFormFields({
               name="branchId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Branch *</FormLabel>
+                  <FormLabel>{t("bookings.fields.branch")} *</FormLabel>
                   <FormControl>
                     <BookingSearchCombobox
                       id="booking-branch"
@@ -115,10 +117,10 @@ export function BookingFormFields({
                         field.onChange(value)
                         form.setValue("memberId", "")
                       }}
-                      placeholder="Search branch..."
+                      placeholder={t("bookings.placeholders.searchBranch")}
                       disabled={disabled}
                       createHref={CREATE_BRANCH_HREF}
-                      addLabel="Add branch"
+                      addLabel={t("bookings.placeholders.addBranch")}
                     />
                   </FormControl>
                   <FormMessage />
@@ -134,17 +136,17 @@ export function BookingFormFields({
             name="memberId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Member *</FormLabel>
+                <FormLabel>{t("bookings.fields.member")} *</FormLabel>
                 <FormControl>
                   <BookingSearchCombobox
                     id="booking-member"
                     options={memberOptionsForBranch}
                     value={field.value}
                     onValueChange={field.onChange}
-                    placeholder="Search member..."
+                    placeholder={t("bookings.placeholders.searchMember")}
                     disabled={disabled || !branchId}
                     createHref={CREATE_MEMBER_HREF}
-                    addLabel="Add member"
+                    addLabel={t("bookings.placeholders.addMember")}
                   />
                 </FormControl>
                 <FormMessage />
@@ -157,7 +159,7 @@ export function BookingFormFields({
             name="bookingType"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Booking Type *</FormLabel>
+                <FormLabel>{t("bookings.fields.bookingType")} *</FormLabel>
                 <Select
                   value={field.value}
                   onValueChange={field.onChange}
@@ -165,12 +167,12 @@ export function BookingFormFields({
                 >
                   <FormControl>
                     <SelectTrigger id="booking-type" className="w-full">
-                      <SelectValue placeholder="Select type" />
+                      <SelectValue placeholder={t("bookings.placeholders.selectType")} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="outside">Outside</SelectItem>
-                    <SelectItem value="inside">Inside</SelectItem>
+                    <SelectItem value="outside">{t("bookings.types.outside")}</SelectItem>
+                    <SelectItem value="inside">{t("bookings.types.inside")}</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -185,7 +187,7 @@ export function BookingFormFields({
             name="dueDate"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Due Date *</FormLabel>
+                <FormLabel>{t("bookings.fields.dueDate")} *</FormLabel>
                 <Popover>
                   <PopoverTrigger asChild>
                     <FormControl>
@@ -201,7 +203,7 @@ export function BookingFormFields({
                         <CalendarIcon className="mr-2 size-4" />
                         {field.value
                           ? format(parseISO(field.value), "MM/dd/yyyy")
-                          : "Pick a date"}
+                          : t("bookings.placeholders.pickDate")}
                       </Button>
                     </FormControl>
                   </PopoverTrigger>
@@ -226,7 +228,7 @@ export function BookingFormFields({
             name="status"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Status</FormLabel>
+                <FormLabel>{t("bookings.fields.status")}</FormLabel>
                 <Select
                   value={field.value}
                   onValueChange={field.onChange}
@@ -234,15 +236,15 @@ export function BookingFormFields({
                 >
                   <FormControl>
                     <SelectTrigger id="booking-status" className="w-full">
-                      <SelectValue placeholder="Select status" />
+                      <SelectValue placeholder={t("bookings.placeholders.selectStatus")} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="reserved">Reserved</SelectItem>
-                    <SelectItem value="borrowed">Borrowed</SelectItem>
-                    <SelectItem value="returned">Returned</SelectItem>
-                    <SelectItem value="overdue">Overdue</SelectItem>
-                    <SelectItem value="cancelled">Cancelled</SelectItem>
+                    <SelectItem value="reserved">{t("bookings.statuses.reserved")}</SelectItem>
+                    <SelectItem value="borrowed">{t("bookings.statuses.borrowed")}</SelectItem>
+                    <SelectItem value="returned">{t("bookings.statuses.returned")}</SelectItem>
+                    <SelectItem value="overdue">{t("bookings.statuses.overdue")}</SelectItem>
+                    <SelectItem value="cancelled">{t("bookings.statuses.cancelled")}</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -256,11 +258,11 @@ export function BookingFormFields({
           name="notes"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Notes</FormLabel>
+              <FormLabel>{t("bookings.fields.notes")}</FormLabel>
               <FormControl>
                 <Textarea
                   id="booking-notes"
-                  placeholder="Add any notes about this booking..."
+                  placeholder={t("bookings.placeholders.notes")}
                   disabled={disabled}
                   rows={3}
                   {...field}

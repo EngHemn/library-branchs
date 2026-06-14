@@ -6,6 +6,7 @@ import { Loader2Icon, PencilIcon, PlusIcon, Trash2Icon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import type { ShelfLocationStepDefinition } from "@/domain/entities/shelf/ShelfLocationOptions"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type ShelfLocationStepsPanelProps = {
   steps: ShelfLocationStepDefinition[]
@@ -24,6 +25,7 @@ export function ShelfLocationStepsPanel({
   onUpdateStep,
   onDeleteStep,
 }: ShelfLocationStepsPanelProps) {
+  const { t } = useTranslation()
   const [newStepLabel, setNewStepLabel] = useState("")
   const [editingStepId, setEditingStepId] = useState<string | null>(null)
   const [editValue, setEditValue] = useState("")
@@ -57,14 +59,14 @@ export function ShelfLocationStepsPanel({
   return (
     <div className="space-y-4">
       <p className="text-sm text-muted-foreground">
-        Add, rename, or remove location steps. Shelves follow these steps in order.
+        {t("shelves.location.stepsPanel.description")}
       </p>
 
       <div className="flex flex-col gap-2 sm:flex-row">
         <Input
           value={newStepLabel}
           onChange={(event) => setNewStepLabel(event.target.value)}
-          placeholder="Add new step, e.g. Aisle or Bay..."
+          placeholder={t("shelves.location.stepsPanel.placeholder")}
           disabled={disabled || isSaving}
           onKeyDown={(event) => {
             if (event.key === "Enter") {
@@ -79,7 +81,7 @@ export function ShelfLocationStepsPanel({
           onClick={() => void handleAddStep()}
         >
           {isSaving ? <Loader2Icon className="animate-spin" /> : <PlusIcon />}
-          Add Step
+          {t("shelves.location.stepsPanel.addStep")}
         </Button>
       </div>
 
@@ -103,7 +105,7 @@ export function ShelfLocationStepsPanel({
                     disabled={disabled || isSaving}
                     onClick={() => void saveEdit()}
                   >
-                    Save
+                    {t("common.save")}
                   </Button>
                   <Button
                     type="button"
@@ -112,7 +114,7 @@ export function ShelfLocationStepsPanel({
                     disabled={disabled || isSaving}
                     onClick={cancelEdit}
                   >
-                    Cancel
+                    {t("common.cancel")}
                   </Button>
                 </div>
               </div>
@@ -133,7 +135,7 @@ export function ShelfLocationStepsPanel({
                     onClick={() => startEdit(step)}
                   >
                     <PencilIcon />
-                    Edit
+                    {t("common.edit")}
                   </Button>
                   <Button
                     type="button"
@@ -143,7 +145,7 @@ export function ShelfLocationStepsPanel({
                     onClick={() => void onDeleteStep(step.id)}
                   >
                     <Trash2Icon />
-                    Delete
+                    {t("common.delete")}
                   </Button>
                 </div>
               </>

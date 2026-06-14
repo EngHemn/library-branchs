@@ -19,6 +19,8 @@ import { Input } from "@/components/ui/input"
 import type { BranchPermissions } from "@/domain/entities/permission/BranchPermissions"
 import type { Translator } from "@/domain/entities/translator/Translator"
 import { BranchActionButton } from "@/presentation/components/branch-management/BranchActionButton"
+import type { TranslationKey } from "@/presentation/i18n/messages"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type TranslatorsTabProps = {
   translators: Translator[]
@@ -38,8 +40,6 @@ type TranslatorColumnKey =
   | "status"
   | "actions"
 
-const statusLabels = { active: "Active", inactive: "Inactive" }
-
 export function TranslatorsTab({
   translators,
   permissions,
@@ -50,73 +50,77 @@ export function TranslatorsTab({
   onDelete,
   onToggleStatus,
 }: TranslatorsTabProps) {
+  const { t } = useTranslation()
+
   const columns: DataTableColumn<Translator, TranslatorColumnKey>[] = [
     {
       key: "name",
-      header: "Name",
+      header: t("branches.detail.shared.name"),
       sortable: true,
-      sortValue: (t) => t.name,
-      cell: (t) => <span className="font-medium">{t.name}</span>,
+      sortValue: (item) => item.name,
+      cell: (item) => <span className="font-medium">{item.name}</span>,
     },
     {
       key: "language",
-      header: "Language",
+      header: t("branches.detail.shared.language"),
       sortable: true,
-      sortValue: (t) => t.language,
-      cell: (t) => t.language,
+      sortValue: (item) => item.language,
+      cell: (item) => item.language,
     },
     {
       key: "totalBooks",
-      header: "Total Books",
+      header: t("branches.detail.stats.totalBooks"),
       sortable: true,
-      sortValue: (t) => t.totalBooks,
-      cell: (t) => t.totalBooks.toLocaleString(),
+      sortValue: (item) => item.totalBooks,
+      cell: (item) => item.totalBooks.toLocaleString(),
     },
     {
       key: "status",
-      header: "Status",
+      header: t("common.status"),
       sortable: true,
-      sortValue: (t) => statusLabels[t.status],
-      cell: (t) => (
-        <Badge variant={t.status === "active" ? "default" : "outline"}>
-          {statusLabels[t.status]}
+      sortValue: (item) => t(`common.${item.status}` as TranslationKey),
+      cell: (item) => (
+        <Badge variant={item.status === "active" ? "default" : "outline"}>
+          {t(`common.${item.status}` as TranslationKey)}
         </Badge>
       ),
     },
     {
       key: "actions",
-      header: "Actions",
+      header: t("common.actions"),
       headerClassName: "text-right",
       className: "text-right",
-      cell: (t) => {
+      cell: (item) => {
         const toggleLabel =
-          t.status === "active" ? "Deactivate" : "Activate"
-        const ToggleIcon = t.status === "active" ? PowerOffIcon : PowerIcon
+          item.status === "active"
+            ? t("branches.detail.shared.deactivate")
+            : t("branches.detail.shared.activate")
+        const ToggleIcon = item.status === "active" ? PowerOffIcon : PowerIcon
 
         return (
-          <div className="flex justify-end gap-1">
+          <div className="table-action-content">
             <BranchActionButton
               icon={EyeIcon}
-              label="View"
-              onClick={() => onView(t)}
+              label={t("common.view")}
+              onClick={() => onView(item)}
             />
             {permissions.canManageTranslators ? (
               <>
                 <BranchActionButton
                   icon={PencilIcon}
-                  label="Edit"
-                  onClick={() => onEdit(t)}
+                  label={t("common.edit")}
+                  onClick={() => onEdit(item)}
                 />
                 <BranchActionButton
                   icon={Trash2Icon}
-                  label="Delete"
+                  label={t("common.delete")}
                   variant="destructive"
-                  onClick={() => onDelete(t)}
+                  onClick={() => onDelete(item)}
                 />
                 <BranchActionButton
                   icon={ToggleIcon}
                   label={toggleLabel}
-                  onClick={() => onToggleStatus(t)}
+                  onClick={() => onToggleStatus(item)}
                 />
               </>
             ) : null}
@@ -129,11 +133,11 @@ export function TranslatorsTab({
   return (
     <Card className="rounded-lg">
       <CardHeader className="flex-row items-center justify-between gap-4 space-y-0">
-        <CardTitle>Translators</CardTitle>
+        <CardTitle>{t("branches.view.tabs.translators")}</CardTitle>
         <div className="relative w-full max-w-xs">
           <SearchIcon className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Search translators..."
+            placeholder={t("branches.detail.shared.searchTranslators")}
             value={searchQuery}
             onChange={(e) => onSearchQueryChange(e.target.value)}
             className="pl-9"
@@ -144,9 +148,9 @@ export function TranslatorsTab({
         <DataTable
           data={translators}
           columns={columns}
-          getRowId={(t) => t.id}
-          emptyTitle="No translators found"
-          emptyDescription="This branch does not have any translators yet."
+          getRowId={(item) => item.id}
+          emptyTitle={t("branches.detail.empty.translators.title")}
+          emptyDescription={t("branches.detail.empty.translators.description")}
           initialSort={{ key: "name", direction: "asc" }}
           initialPageSize={5}
           tableClassName="min-w-[700px]"

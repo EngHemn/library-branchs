@@ -11,6 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type ShelfDeleteDialogProps = {
   open: boolean
@@ -29,6 +30,8 @@ export function ShelfDeleteDialog({
   onClose,
   onConfirm,
 }: ShelfDeleteDialogProps) {
+  const { t } = useTranslation()
+
   return (
     <Dialog
       open={open}
@@ -38,10 +41,9 @@ export function ShelfDeleteDialog({
     >
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Delete Shelf</DialogTitle>
+          <DialogTitle>{t("shelves.deleteDialog.title")}</DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete &ldquo;{shelfName}&rdquo;? Shelves
-            with assigned books cannot be deleted.
+            {t("shelves.deleteDialog.description", { name: shelfName })}
           </DialogDescription>
         </DialogHeader>
 
@@ -49,7 +51,7 @@ export function ShelfDeleteDialog({
 
         <DialogFooter>
           <Button type="button" variant="outline" onClick={onClose}>
-            Cancel
+            {t("common.cancel")}
           </Button>
           <Button
             type="button"
@@ -58,7 +60,7 @@ export function ShelfDeleteDialog({
             onClick={onConfirm}
           >
             {isDeleting ? <Loader2Icon className="animate-spin" /> : null}
-            {isDeleting ? "Deleting..." : "Delete"}
+            {isDeleting ? t("shelves.deleteDialog.deleting") : t("common.delete")}
           </Button>
         </DialogFooter>
       </DialogContent>

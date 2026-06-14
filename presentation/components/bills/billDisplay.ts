@@ -46,29 +46,36 @@ export function billDateSortValue(value: string): number {
   return Number.isNaN(date.getTime()) ? 0 : date.getTime()
 }
 
-export function formatBillDate(value: string): string {
+export function formatBillDate(value: string, locale = "en"): string {
   const date = parseBillDate(value)
 
   if (Number.isNaN(date.getTime())) {
     return value
   }
 
-  return date.toLocaleDateString("en-US", {
+  return date.toLocaleDateString(locale, {
     month: "short",
     day: "numeric",
     year: "numeric",
   })
 }
 
-export function formatBillTime(value: string): string {
+export function formatBillTime(value: string, locale = "en"): string {
   const date = parseBillDate(value)
 
   if (Number.isNaN(date.getTime())) {
     return "—"
   }
 
-  return date.toLocaleTimeString("en-US", {
+  return date.toLocaleTimeString(locale, {
     hour: "2-digit",
     minute: "2-digit",
   })
+}
+
+export function formatBillPrice(price: number, locale = "en"): string {
+  return new Intl.NumberFormat(locale, {
+    style: "currency",
+    currency: "USD",
+  }).format(price)
 }

@@ -11,27 +11,32 @@ import {
   formatBillDate,
   formatBillTime,
 } from "@/presentation/components/bills/billDisplay"
+import { useLocale } from "@/presentation/i18n/useLocale"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type BillSummaryCardsProps = {
   bill: BillDetail
 }
 
 export function BillSummaryCards({ bill }: BillSummaryCardsProps) {
+  const { t } = useTranslation()
+  const { locale } = useLocale()
+
   const items = [
     {
       icon: Building2Icon,
-      label: "Branch",
+      label: t("bills.detail.branch"),
       value: bill.branchName,
     },
     {
       icon: CalendarIcon,
-      label: "Bill Date",
-      value: formatBillDate(bill.billDate),
-      subValue: formatBillTime(bill.billDate),
+      label: t("bills.detail.billDate"),
+      value: formatBillDate(bill.billDate, locale),
+      subValue: formatBillTime(bill.billDate, locale),
     },
     {
       icon: PhoneIcon,
-      label: "Phone",
+      label: t("bills.detail.phone"),
       value: bill.phoneNumber,
     },
   ]

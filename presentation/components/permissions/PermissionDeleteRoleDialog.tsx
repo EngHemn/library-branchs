@@ -11,6 +11,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
+import { translatePermissionError } from "@/presentation/components/permissions/permissionI18n"
 
 type PermissionDeleteRoleDialogProps = {
   open: boolean
@@ -31,35 +33,33 @@ export function PermissionDeleteRoleDialog({
   onClose,
   onConfirm,
 }: PermissionDeleteRoleDialogProps) {
+  const { t } = useTranslation()
+
   return (
     <Dialog open={open} onOpenChange={(nextOpen) => !nextOpen && onClose()}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            {isSystem ? "Cannot Delete Role" : "Delete Role"}
+            {isSystem
+              ? t("permissions.deleteDialog.cannotDeleteTitle")
+              : t("permissions.deleteDialog.deleteTitle")}
           </DialogTitle>
           <DialogDescription>
-            {isSystem ? (
-              <>
-                <span className="font-medium text-foreground">{roleName}</span> is a
-                system role and cannot be deleted.
-              </>
-            ) : (
-              <>
-                Are you sure you want to delete{" "}
-                <span className="font-medium text-foreground">{roleName}</span>? Staff
-                members assigned to this role must be reassigned first. This action
-                cannot be undone.
-              </>
-            )}
+            {isSystem
+              ? t("permissions.deleteDialog.systemDescription", { name: roleName })
+              : t("permissions.deleteDialog.confirmDescription", { name: roleName })}
           </DialogDescription>
         </DialogHeader>
 
-        {error ? <p className="text-sm text-destructive">{error}</p> : null}
+        {error ? (
+          <p className="text-sm text-destructive">
+            {translatePermissionError(error, t)}
+          </p>
+        ) : null}
 
         <DialogFooter>
           <Button variant="outline" onClick={onClose} disabled={isDeleting}>
-            {isSystem ? "Close" : "Cancel"}
+            {isSystem ? t("common.close") : t("common.cancel")}
           </Button>
           {!isSystem ? (
             <Button
@@ -68,7 +68,9 @@ export function PermissionDeleteRoleDialog({
               disabled={isDeleting}
             >
               {isDeleting ? <Loader2Icon className="animate-spin" /> : null}
-              {isDeleting ? "Deleting..." : "Delete Role"}
+              {isDeleting
+                ? t("permissions.deleteDialog.deleting")
+                : t("permissions.deleteDialog.confirm")}
             </Button>
           ) : null}
         </DialogFooter>
