@@ -1,22 +1,25 @@
 import * as z from "zod"
 
+import { validationKeys } from "@/domain/i18n/validationKeys"
 import { ORDER_STATUSES } from "@/domain/entities/order/OrderStatus"
 
 export const orderFormSchema = z.object({
-  branchId: z.string().min(1, "Branch is required"),
-  supplierName: z.string().min(1, "Supplier name is required"),
-  orderDate: z.string().min(1, "Order date is required"),
-  expectedDeliveryDate: z.string().min(1, "Expected delivery date is required"),
+  branchId: z.string().min(1, validationKeys.branchRequired),
+  supplierName: z.string().min(1, validationKeys.supplierNameRequired),
+  orderDate: z.string().min(1, validationKeys.orderDateRequired),
+  expectedDeliveryDate: z
+    .string()
+    .min(1, validationKeys.expectedDeliveryDateRequired),
   status: z.enum(ORDER_STATUSES),
-  phoneNumber: z.string().min(1, "Phone number is required"),
+  phoneNumber: z.string().min(1, validationKeys.phoneNumberRequired),
   supplierEmail: z
     .string()
-    .email("Enter a valid email")
+    .email(validationKeys.emailInvalid)
     .optional()
     .or(z.literal("")),
-  totalAmount: z.number().positive("Total amount must be greater than zero"),
+  totalAmount: z.number().positive(validationKeys.totalAmountPositive),
   notes: z.string().optional(),
-  bookIds: z.array(z.string()).min(1, "Select at least one book"),
+  bookIds: z.array(z.string()).min(1, validationKeys.selectAtLeastOneBook),
   latitude: z.number().nullable(),
   longitude: z.number().nullable(),
 })

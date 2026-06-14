@@ -2,7 +2,7 @@
 
 import { Badge } from "@/components/ui/badge"
 import type { NeedPriority } from "@/domain/entities/need/NeedPriority"
-import { getNeedPriorityLabel } from "@/domain/entities/need/NeedPriority"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type NeedPriorityBadgeProps = {
   priority: NeedPriority
@@ -19,9 +19,11 @@ const priorityStyles: Record<NeedPriority, string> = {
 }
 
 export function NeedPriorityBadge({ priority }: NeedPriorityBadgeProps) {
+  const { t } = useTranslation()
+
   return (
     <Badge variant="secondary" className={priorityStyles[priority]}>
-      {getNeedPriorityLabel(priority)}
+      {t(`needs.priorities.${priority}` as any)}
     </Badge>
   )
 }

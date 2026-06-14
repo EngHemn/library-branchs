@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { OrderLocationMap } from "@/presentation/components/orders/OrderLocationMap"
 import { normalizeCoordinate } from "@/presentation/components/orders/orderDisplay"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type OrderLocationPickerDialogProps = {
   open: boolean
@@ -34,6 +35,7 @@ export function OrderLocationPickerDialog({
   address,
   onApply,
 }: OrderLocationPickerDialogProps) {
+  const { t } = useTranslation()
   const [draftLatitude, setDraftLatitude] = useState<number | null>(latitude)
   const [draftLongitude, setDraftLongitude] = useState<number | null>(longitude)
   const [searchQuery, setSearchQuery] = useState(address ?? "")
@@ -70,7 +72,7 @@ export function OrderLocationPickerDialog({
       const results = (await response.json()) as NominatimResult[]
 
       if (!results.length) {
-        setSearchError("No location found for that address.")
+        setSearchError(t("orders.location.searchNotFound"))
         setIsSearching(false)
         return
       }
@@ -78,7 +80,7 @@ export function OrderLocationPickerDialog({
       setDraftLatitude(Math.round(parseFloat(results[0].lat) * 1e6) / 1e6)
       setDraftLongitude(Math.round(parseFloat(results[0].lon) * 1e6) / 1e6)
     } catch {
-      setSearchError("Location search failed. Please try again.")
+      setSearchError(t("orders.location.searchFailed"))
     }
 
     setIsSearching(false)
@@ -88,18 +90,18 @@ export function OrderLocationPickerDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Select delivery location</DialogTitle>
+          <DialogTitle>{t("orders.location.pickerTitle")}</DialogTitle>
           <DialogDescription>
-            Search an address or click on the map to place the marker.
+            {t("orders.location.pickerDescription")}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label>Search by address</Label>
+            <Label>{t("orders.location.searchByAddress")}</Label>
             <div className="flex gap-2">
               <Input
-                placeholder="Enter an address to search..."
+                placeholder={t("orders.location.searchPlaceholder")}
                 value={searchQuery}
                 onChange={(event) => setSearchQuery(event.target.value)}
                 onKeyDown={(event) => {
@@ -123,7 +125,7 @@ export function OrderLocationPickerDialog({
               <p className="text-sm text-destructive">{searchError}</p>
             ) : (
               <p className="text-xs text-muted-foreground">
-                Click on the map to select or adjust the delivery point.
+                {t("orders.location.clickToSelect")}
               </p>
             )}
           </div>
@@ -141,20 +143,20 @@ export function OrderLocationPickerDialog({
 
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="space-y-1.5">
-              <Label>Latitude</Label>
+              <Label>{t("orders.location.latitude")}</Label>
               <Input
                 value={draftLatitude !== null ? String(draftLatitude) : ""}
                 readOnly
-                placeholder="Select on map"
+                placeholder={t("orders.location.selectOnMapPlaceholder")}
                 className="bg-muted/40 font-mono text-sm"
               />
             </div>
             <div className="space-y-1.5">
-              <Label>Longitude</Label>
+              <Label>{t("orders.location.longitude")}</Label>
               <Input
                 value={draftLongitude !== null ? String(draftLongitude) : ""}
                 readOnly
-                placeholder="Select on map"
+                placeholder={t("orders.location.selectOnMapPlaceholder")}
                 className="bg-muted/40 font-mono text-sm"
               />
             </div>
@@ -163,7 +165,7 @@ export function OrderLocationPickerDialog({
 
         <DialogFooter className="gap-2 sm:gap-0">
           <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-            Cancel
+            {t("common.cancel")}
           </Button>
           <Button
             type="button"
@@ -172,7 +174,7 @@ export function OrderLocationPickerDialog({
               onOpenChange(false)
             }}
           >
-            Apply location
+            {t("orders.location.applyLocation")}
           </Button>
         </DialogFooter>
       </DialogContent>

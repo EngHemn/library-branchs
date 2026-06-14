@@ -51,6 +51,8 @@ import { StaffTab } from "@/presentation/components/branch-detail/StaffTab"
 import { SubBranchesTab } from "@/presentation/components/branch-detail/SubBranchesTab"
 import { TranslatorsTab } from "@/presentation/components/branch-detail/TranslatorsTab"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
+import type { TranslationKey } from "@/presentation/i18n/messages"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import { useBranchDetailViewModel } from "@/presentation/viewmodels/branch-management/useBranchDetailViewModel"
 import type { TabKey } from "@/presentation/viewmodels/branch-management/BranchDetailViewModelState"
 
@@ -82,41 +84,47 @@ type PendingDelete =
   | { kind: "staff"; item: StaffMember }
   | { kind: "member"; item: Member }
 
-function getDeleteDialogContent(pendingDelete: PendingDelete | null) {
+function getDeleteDialogContent(
+  pendingDelete: PendingDelete | null,
+  t: (key: TranslationKey, params?: Record<string, string | number>) => string
+) {
   if (!pendingDelete) {
     return null
   }
 
+  const deleteConfirm = (name: string) =>
+    t("branches.view.deleteConfirm", { name })
+
   switch (pendingDelete.kind) {
     case "subBranch":
       return {
-        title: "Delete Sub Branch",
-        description: `Are you sure you want to delete "${pendingDelete.item.branchName}"? This action cannot be undone.`,
+        title: t("branches.view.deleteSubBranch"),
+        description: deleteConfirm(pendingDelete.item.branchName),
       }
     case "book":
       return {
-        title: "Delete Book",
-        description: `Are you sure you want to delete "${pendingDelete.item.title}"? This action cannot be undone.`,
+        title: t("branches.view.deleteBook"),
+        description: deleteConfirm(pendingDelete.item.title),
       }
     case "author":
       return {
-        title: "Delete Author",
-        description: `Are you sure you want to delete "${pendingDelete.item.name}"? This action cannot be undone.`,
+        title: t("branches.view.deleteAuthor"),
+        description: deleteConfirm(pendingDelete.item.name),
       }
     case "translator":
       return {
-        title: "Delete Translator",
-        description: `Are you sure you want to delete "${pendingDelete.item.name}"? This action cannot be undone.`,
+        title: t("branches.view.deleteTranslator"),
+        description: deleteConfirm(pendingDelete.item.name),
       }
     case "staff":
       return {
-        title: "Delete Staff Member",
-        description: `Are you sure you want to delete "${pendingDelete.item.staffName}"? This action cannot be undone.`,
+        title: t("branches.view.deleteStaff"),
+        description: deleteConfirm(pendingDelete.item.staffName),
       }
     case "member":
       return {
-        title: "Delete Member",
-        description: `Are you sure you want to delete "${pendingDelete.item.memberName}"? This action cannot be undone.`,
+        title: t("branches.view.deleteMember"),
+        description: deleteConfirm(pendingDelete.item.memberName),
       }
   }
 }
@@ -150,10 +158,11 @@ function LoadingState() {
 export function ViewBranchScreen({ branchId, branchDetailUseCase }: ViewBranchScreenProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const { t } = useTranslation()
   const viewModel = useBranchDetailViewModel(branchId, branchDetailUseCase)
   const { state } = viewModel
   const [pendingDelete, setPendingDelete] = useState<PendingDelete | null>(null)
-  const deleteDialog = getDeleteDialogContent(pendingDelete)
+  const deleteDialog = getDeleteDialogContent(pendingDelete, t)
 
   useEffect(() => {
     const tab = searchParams.get("tab")
@@ -192,9 +201,9 @@ export function ViewBranchScreen({ branchId, branchDetailUseCase }: ViewBranchSc
   }
 
   useDashboardBreadcrumbs([
-    { label: "Workspace", href: "/dashboard" },
-    { label: "Branch Management", href: "/dashboard/branches" },
-    { label: state.branchDetail?.branchName ?? "Branch Details" },
+    { label: t("breadcrumbs.workspace"), href: "/dashboard" },
+    { label: t("nav.branches"), href: "/dashboard/branches" },
+    { label: state.branchDetail?.branchName ?? t("branches.view.breadcrumb") },
   ])
 
   const goBack = () => router.back()
@@ -207,15 +216,15 @@ export function ViewBranchScreen({ branchId, branchDetailUseCase }: ViewBranchSc
         <div className="flex flex-1 items-center justify-center p-4">
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
-              <CardTitle>Branch not found</CardTitle>
+              <CardTitle>{t("branches.view.notFoundTitle")}</CardTitle>
               <CardDescription>
-                The branch you are looking for does not exist or has been removed.
+                {t("branches.view.notFoundDescription")}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Button variant="outline" onClick={goBack}>
                 <ArrowLeftIcon />
-                Back to branches
+                {t("branches.view.backToBranches")}
               </Button>
             </CardContent>
           </Card>
@@ -226,17 +235,17 @@ export function ViewBranchScreen({ branchId, branchDetailUseCase }: ViewBranchSc
         <div className="flex flex-1 items-center justify-center p-4">
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
-              <CardTitle>Something went wrong</CardTitle>
+              <CardTitle>{t("common.somethingWentWrong")}</CardTitle>
               <CardDescription>{state.error}</CardDescription>
             </CardHeader>
             <CardContent className="flex gap-3">
               <Button variant="outline" onClick={goBack}>
                 <ArrowLeftIcon />
-                Back to branches
+                {t("branches.view.backToBranches")}
               </Button>
               <Button onClick={() => router.refresh()}>
                 <RefreshCwIcon />
-                Retry
+                {t("common.retry")}
               </Button>
             </CardContent>
           </Card>
@@ -262,13 +271,13 @@ export function ViewBranchScreen({ branchId, branchDetailUseCase }: ViewBranchSc
                     {state.branchDetail.branchName}
                   </h1>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    View and manage branch details, resources, and team.
+                    {t("branches.view.subtitle")}
                   </p>
                 </div>
               </div>
               <Button variant="outline" onClick={goBack}>
                 <ArrowLeftIcon />
-                Back
+                {t("common.back")}
               </Button>
             </section>
 
@@ -281,37 +290,37 @@ export function ViewBranchScreen({ branchId, branchDetailUseCase }: ViewBranchSc
               <TabsList className="flex h-auto w-full flex-wrap justify-start gap-1 sm:w-fit">
                 <TabsTrigger value="details" className="gap-1.5">
                   <Building2Icon className="size-3.5" />
-                  <span className="hidden sm:inline">Details</span>
+                  <span className="hidden sm:inline">{t("branches.view.tabs.details")}</span>
                 </TabsTrigger>
                 <TabsTrigger value="location" className="gap-1.5">
                   <MapPinIcon className="size-3.5" />
-                  <span className="hidden sm:inline">Location</span>
+                  <span className="hidden sm:inline">{t("branches.view.tabs.location")}</span>
                 </TabsTrigger>
                 {state.branchDetail.type === "main" ? (
                   <TabsTrigger value="sub-branches" className="gap-1.5">
                     <GitBranchIcon className="size-3.5" />
-                    <span className="hidden sm:inline">Sub Branches</span>
+                    <span className="hidden sm:inline">{t("branches.view.tabs.subBranches")}</span>
                   </TabsTrigger>
                 ) : null}
                 <TabsTrigger value="books" className="gap-1.5">
                   <BookOpenIcon className="size-3.5" />
-                  <span className="hidden sm:inline">Books</span>
+                  <span className="hidden sm:inline">{t("branches.view.tabs.books")}</span>
                 </TabsTrigger>
                 <TabsTrigger value="authors" className="gap-1.5">
                   <PenLineIcon className="size-3.5" />
-                  <span className="hidden sm:inline">Authors</span>
+                  <span className="hidden sm:inline">{t("branches.view.tabs.authors")}</span>
                 </TabsTrigger>
                 <TabsTrigger value="translators" className="gap-1.5">
                   <LanguagesIcon className="size-3.5" />
-                  <span className="hidden sm:inline">Translators</span>
+                  <span className="hidden sm:inline">{t("branches.view.tabs.translators")}</span>
                 </TabsTrigger>
                 <TabsTrigger value="staff" className="gap-1.5">
                   <UsersRoundIcon className="size-3.5" />
-                  <span className="hidden sm:inline">Staff</span>
+                  <span className="hidden sm:inline">{t("branches.view.tabs.staff")}</span>
                 </TabsTrigger>
                 <TabsTrigger value="members" className="gap-1.5">
                   <UserRoundIcon className="size-3.5" />
-                  <span className="hidden sm:inline">Members</span>
+                  <span className="hidden sm:inline">{t("branches.view.tabs.members")}</span>
                 </TabsTrigger>
               </TabsList>
 
@@ -430,10 +439,10 @@ export function ViewBranchScreen({ branchId, branchDetailUseCase }: ViewBranchSc
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setPendingDelete(null)}>
-              Cancel
+              {t("common.cancel")}
             </Button>
             <Button variant="destructive" onClick={handleConfirmDelete}>
-              Delete
+              {t("common.delete")}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -1,8 +1,10 @@
 import * as z from "zod"
 
+import { validationKeys } from "@/domain/i18n/validationKeys"
+
 export const categoryFormSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  description: z.string().min(1, "Description is required"),
+  name: z.string().min(1, validationKeys.nameRequired),
+  description: z.string().min(1, validationKeys.descriptionRequired),
 })
 
 export type CategoryFormInput = z.input<typeof categoryFormSchema>

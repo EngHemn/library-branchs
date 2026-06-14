@@ -2,16 +2,19 @@
 
 import type { NeedNote } from "@/domain/entities/need/Need"
 import { formatNeedDateTime } from "@/presentation/components/needs/needDisplay"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type NeedNotesTabProps = {
   comments: NeedNote[]
 }
 
 export function NeedNotesTab({ comments }: NeedNotesTabProps) {
+  const { t } = useTranslation()
+
   if (comments.length === 0) {
     return (
       <p className="text-sm text-muted-foreground">
-        No comments or notes have been added yet.
+        {t("needs.notesTab.empty")}
       </p>
     )
   }

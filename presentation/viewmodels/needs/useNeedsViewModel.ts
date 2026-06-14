@@ -34,9 +34,9 @@ type NeedsViewModel = {
   openRejectNeedDialog: (needId: string, needName: string) => void
   closeRejectNeedDialog: () => void
   setRejectReason: (value: string) => void
-  confirmDeleteNeed: () => Promise<void>
-  confirmRejectNeed: () => Promise<void>
-  approveNeed: (needId: string) => Promise<void>
+  confirmDeleteNeed: () => Promise<boolean>
+  confirmRejectNeed: () => Promise<boolean>
+  approveNeed: (needId: string) => Promise<boolean>
   reload: () => Promise<void>
 }
 
@@ -263,21 +263,34 @@ export function useNeedsViewModel(
       setRejectNeedError(null)
     },
     setRejectReason,
-    confirmDeleteNeed: async () => {
-      if (!deleteNeedDialog) return
-      await deleteMutation.mutateAsync(deleteNeedDialog.needId).catch(() => undefined)
+    confirmDeleteNeed: async (): Promise<boolean> => {
+      if (!deleteNeedDialog) return false
+      try {
+        await deleteMutation.mutateAsync(deleteNeedDialog.needId)
+        return true
+      } catch {
+        return false
+      }
     },
-    confirmRejectNeed: async () => {
-      if (!rejectNeedDialog) return
-      await rejectMutation
-        .mutateAsync({
+    confirmRejectNeed: async (): Promise<boolean> => {
+      if (!rejectNeedDialog) return false
+      try {
+        await rejectMutation.mutateAsync({
           needId: rejectNeedDialog.needId,
           reason: rejectReason,
         })
-        .catch(() => undefined)
+        return true
+      } catch {
+        return false
+      }
     },
-    approveNeed: async (needId) => {
-      await approveMutation.mutateAsync(needId).catch(() => undefined)
+    approveNeed: async (needId): Promise<boolean> => {
+      try {
+        await approveMutation.mutateAsync(needId)
+        return true
+      } catch {
+        return false
+      }
     },
     reload: async () => {
       await Promise.all([userQuery.refetch(), needsQuery.refetch()])

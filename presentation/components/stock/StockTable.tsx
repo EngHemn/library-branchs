@@ -35,6 +35,7 @@ import {
   hasSubBranches,
   type StockTableGroup,
 } from "@/presentation/components/stock/stockTableGrouping"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type StockTableProps = {
   rows: StockRow[]
@@ -72,16 +73,17 @@ function StockTableSkeleton() {
 }
 
 function SubBranchCell({ group }: { group: StockTableGroup }) {
+  const { t } = useTranslation()
+
   if (!hasSubBranches(group)) {
     return <span className="text-sm text-muted-foreground">—</span>
   }
 
-  return (
-    <Badge variant="secondary">
-      {group.subBranchRows.length} sub-branch
-      {group.subBranchRows.length === 1 ? "" : "es"}
-    </Badge>
-  )
+  const count = group.subBranchRows.length
+  const labelKey =
+    count === 1 ? "stock.table.subBranchCount" : "stock.table.subBranchCountPlural"
+
+  return <Badge variant="secondary">{t(labelKey, { count })}</Badge>
 }
 
 export function StockTable({
@@ -96,6 +98,7 @@ export function StockTable({
   showSubBranchColumn,
   showStockGroupAccordion,
 }: StockTableProps) {
+  const { t } = useTranslation()
   const groups = groupStockRows(rows)
 
   const allColumns: DataTableColumn<StockTableGroup, StockColumnKey>[] = [
@@ -120,8 +123,8 @@ export function StockTable({
             onClick={() => onToggleGroupExpanded(group.id)}
             aria-label={
               isExpanded
-                ? `Hide sub branches for ${group.bookTitle}`
-                : `Show sub branches for ${group.bookTitle}`
+                ? t("stock.table.collapseSubBranches", { title: group.bookTitle })
+                : t("stock.table.expandSubBranches", { title: group.bookTitle })
             }
             aria-expanded={isExpanded}
           >
@@ -136,7 +139,7 @@ export function StockTable({
     },
     {
       key: "book",
-      header: "Book",
+      header: t("stock.table.book"),
       sortable: true,
       sortValue: (group) => group.bookTitle,
       cell: (group) => {
@@ -169,7 +172,7 @@ export function StockTable({
     },
     {
       key: "category",
-      header: "Category",
+      header: t("stock.table.category"),
       sortable: true,
       sortValue: (group) => group.category,
       cell: (group) => (
@@ -180,12 +183,12 @@ export function StockTable({
     },
     {
       key: "subBranch",
-      header: "Sub Branch",
+      header: t("stock.table.subBranch"),
       cell: (group) => <SubBranchCell group={group} />,
     },
     {
       key: "currentStock",
-      header: "Current",
+      header: t("stock.table.current"),
       sortable: true,
       sortValue: (group) => getParentStockRow(group).currentStock,
       headerClassName: "text-right",
@@ -194,7 +197,7 @@ export function StockTable({
     },
     {
       key: "reservedStock",
-      header: "Reserved",
+      header: t("stock.table.reserved"),
       sortable: true,
       sortValue: (group) => getParentStockRow(group).reservedStock,
       headerClassName: "text-right",
@@ -203,7 +206,7 @@ export function StockTable({
     },
     {
       key: "availableStock",
-      header: "Available",
+      header: t("stock.table.available"),
       sortable: true,
       sortValue: (group) => getParentStockRow(group).availableStock,
       headerClassName: "text-right",
@@ -212,7 +215,7 @@ export function StockTable({
     },
     {
       key: "minStock",
-      header: "Min Alert",
+      header: t("stock.table.minAlert"),
       sortable: true,
       sortValue: (group) => getParentStockRow(group).minStock,
       headerClassName: "text-right",
@@ -221,7 +224,7 @@ export function StockTable({
     },
     {
       key: "status",
-      header: "Status",
+      header: t("stock.table.status"),
       sortable: true,
       sortValue: (group) => getParentStockRow(group).status,
       cell: (group) => (
@@ -230,7 +233,7 @@ export function StockTable({
     },
     {
       key: "actions",
-      header: "Actions",
+      header: t("stock.table.actions"),
       headerClassName: "text-right",
       className: "text-right",
       cell: (group) => {
@@ -278,9 +281,9 @@ export function StockTable({
           <div className="mb-3 rounded-full bg-muted p-4">
             <PackageIcon className="h-8 w-8 text-muted-foreground" />
           </div>
-          <p className="text-base font-semibold">No inventory found</p>
+          <p className="text-base font-semibold">{t("stock.table.emptyTitle")}</p>
           <p className="mt-1 text-sm text-muted-foreground">
-            Try adjusting the filters or add new stock.
+            {t("stock.table.emptyDescription")}
           </p>
         </div>
       </Card>
@@ -288,14 +291,22 @@ export function StockTable({
   }
 
   const cardDescription = showStockGroupAccordion
-    ? `${groups.length.toLocaleString()} location${groups.length === 1 ? "" : "s"} — expand rows with sub-branches to manage stock per sub branch`
-    : `${groups.length.toLocaleString()} stock record${groups.length === 1 ? "" : "s"}`
+    ? t(
+        groups.length === 1
+          ? "stock.table.recordCountLocations"
+          : "stock.table.recordCountLocationsPlural",
+        { count: groups.length.toLocaleString() }
+      )
+    : t(
+        groups.length === 1 ? "stock.table.recordCount" : "stock.table.recordCountPlural",
+        { count: groups.length.toLocaleString() }
+      )
 
   return (
     <TooltipProvider>
       <Card className="rounded-lg">
         <CardHeader>
-          <CardTitle>Inventory</CardTitle>
+          <CardTitle>{t("stock.table.title")}</CardTitle>
           <CardDescription>{cardDescription}</CardDescription>
         </CardHeader>
         <CardContent>
@@ -303,8 +314,8 @@ export function StockTable({
             data={groups}
             columns={columns}
             getRowId={(group) => group.id}
-            emptyTitle="No inventory found"
-            emptyDescription="Try adjusting the filters or add new stock."
+            emptyTitle={t("stock.table.emptyTitle")}
+            emptyDescription={t("stock.table.emptyDescription")}
             initialSort={{ key: "book", direction: "asc" }}
             initialPageSize={10}
             pageSizeOptions={[10, 20, 50]}

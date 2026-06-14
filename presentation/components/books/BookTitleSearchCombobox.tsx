@@ -10,6 +10,7 @@ import {
   ComboboxList,
 } from "@/components/ui/combobox"
 import type { Book } from "@/domain/entities/book/Book"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type BookTitleSearchComboboxProps = {
   books: Book[]
@@ -37,10 +38,12 @@ export function BookTitleSearchCombobox({
   title,
   onTitleChange,
   onBookSelect,
-  placeholder = "Search or enter book title",
+  placeholder,
   disabled = false,
   excludeBookId,
 }: BookTitleSearchComboboxProps) {
+  const { t } = useTranslation()
+  const resolvedPlaceholder = placeholder ?? t("books.placeholders.title")
   const [selectedBookId, setSelectedBookId] = useState<string | null>(null)
   const inputValue = title ?? ""
 
@@ -100,7 +103,7 @@ export function BookTitleSearchCombobox({
       disabled={disabled}
     >
       <ComboboxInput
-        placeholder={placeholder}
+        placeholder={resolvedPlaceholder}
         disabled={disabled}
         className="w-full"
       />
@@ -121,11 +124,11 @@ export function BookTitleSearchCombobox({
           </ComboboxList>
         ) : hasSearchQuery ? (
           <div className="px-3 py-4 text-center text-sm text-muted-foreground">
-            No existing books found. Continue typing to add a new title.
+            {t("books.placeholders.titleSearchEmpty")}
           </div>
         ) : (
           <div className="px-3 py-4 text-center text-sm text-muted-foreground">
-            Start typing to search existing books.
+            {t("books.placeholders.titleSearchStart")}
           </div>
         )}
       </ComboboxContent>

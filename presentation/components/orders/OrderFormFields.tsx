@@ -19,10 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-import {
-  ORDER_STATUSES,
-  getOrderStatusLabel,
-} from "@/domain/entities/order/OrderStatus"
+import { ORDER_STATUSES } from "@/domain/entities/order/OrderStatus"
 import type {
   OrderBookOption,
   OrderBranchOption,
@@ -30,6 +27,7 @@ import type {
 import type { OrderFormValues } from "@/domain/schemas/orderFormSchema"
 import { OrderBooksSelector } from "@/presentation/components/orders/OrderBooksSelector"
 import { OrderFormLocationField } from "@/presentation/components/orders/OrderFormLocationField"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type OrderFormFieldsProps = {
   form: UseFormReturn<OrderFormValues>
@@ -52,6 +50,8 @@ export function OrderFormFields({
   onSubmit,
   children,
 }: OrderFormFieldsProps) {
+  const { t } = useTranslation()
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -62,7 +62,7 @@ export function OrderFormFields({
               name="branchId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Branch</FormLabel>
+                  <FormLabel>{t("orders.form.branch")}</FormLabel>
                   <Select
                     value={field.value}
                     onValueChange={(value) => {
@@ -77,7 +77,7 @@ export function OrderFormFields({
                   >
                     <FormControl>
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select branch for this order" />
+                        <SelectValue placeholder={t("orders.form.branchPlaceholder")} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -99,10 +99,10 @@ export function OrderFormFields({
             name="supplierName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Supplier Name</FormLabel>
+                <FormLabel>{t("orders.form.supplierName")}</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Supplier or vendor name"
+                    placeholder={t("orders.form.supplierNamePlaceholder")}
                     disabled={disabled}
                     {...field}
                   />
@@ -117,7 +117,7 @@ export function OrderFormFields({
             name="orderDate"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Order Date</FormLabel>
+                <FormLabel>{t("orders.form.orderDate")}</FormLabel>
                 <FormControl>
                   <Input type="date" disabled={disabled} {...field} />
                 </FormControl>
@@ -131,7 +131,7 @@ export function OrderFormFields({
             name="expectedDeliveryDate"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Expected Delivery</FormLabel>
+                <FormLabel>{t("orders.form.expectedDelivery")}</FormLabel>
                 <FormControl>
                   <Input type="date" disabled={disabled} {...field} />
                 </FormControl>
@@ -145,7 +145,7 @@ export function OrderFormFields({
             name="status"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Status</FormLabel>
+                <FormLabel>{t("orders.form.status")}</FormLabel>
                 <Select
                   value={field.value}
                   onValueChange={field.onChange}
@@ -153,13 +153,13 @@ export function OrderFormFields({
                 >
                   <FormControl>
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select order status" />
+                      <SelectValue placeholder={t("orders.form.statusPlaceholder")} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
                     {ORDER_STATUSES.map((status) => (
                       <SelectItem key={status} value={status}>
-                        {getOrderStatusLabel(status)}
+                        {t(`orders.status.${status}`)}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -174,7 +174,7 @@ export function OrderFormFields({
             name="phoneNumber"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Phone Number</FormLabel>
+                <FormLabel>{t("orders.form.phoneNumber")}</FormLabel>
                 <FormControl>
                   <Input
                     placeholder="+1 (555) 000-0000"
@@ -192,11 +192,11 @@ export function OrderFormFields({
             name="supplierEmail"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Supplier Email (optional)</FormLabel>
+                <FormLabel>{t("orders.form.supplierEmail")}</FormLabel>
                 <FormControl>
                   <Input
                     type="email"
-                    placeholder="orders@supplier.com"
+                    placeholder={t("orders.form.supplierEmailPlaceholder")}
                     disabled={disabled}
                     {...field}
                   />
@@ -211,7 +211,7 @@ export function OrderFormFields({
             name="totalAmount"
             render={({ field }) => (
               <FormItem className="sm:col-span-2">
-                <FormLabel>Total Amount (IQD)</FormLabel>
+                <FormLabel>{t("orders.form.totalAmount")}</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
@@ -233,10 +233,10 @@ export function OrderFormFields({
           name="notes"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Notes (optional)</FormLabel>
+              <FormLabel>{t("orders.form.notes")}</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Additional order notes or delivery instructions..."
+                  placeholder={t("orders.form.notesPlaceholder")}
                   disabled={disabled}
                   rows={3}
                   {...field}
@@ -258,7 +258,7 @@ export function OrderFormFields({
           name="bookIds"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Order Items (Books)</FormLabel>
+              <FormLabel>{t("orders.form.orderItems")}</FormLabel>
               <FormControl>
                 <OrderBooksSelector
                   bookOptions={bookOptions}

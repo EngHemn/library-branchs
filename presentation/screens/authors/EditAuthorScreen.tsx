@@ -17,6 +17,7 @@ import type { GetAuthorsUseCase } from "@/domain/usecases/authors/GetAuthorsUseC
 import { AuthorFormFields } from "@/presentation/components/authors/AuthorFormFields"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
 import { useFormSubmitSuccess } from "@/presentation/hooks/useFormSubmitSuccess"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import { useEditAuthorViewModel } from "@/presentation/viewmodels/authors/useEditAuthorViewModel"
 
 type EditAuthorScreenProps = {
@@ -51,18 +52,19 @@ function LoadingState() {
 
 export function EditAuthorScreen({ authorId, getAuthorsUseCase }: EditAuthorScreenProps) {
   const router = useRouter()
+  const { t } = useTranslation()
   const viewModel = useEditAuthorViewModel(authorId, getAuthorsUseCase)
   const { state, form } = viewModel
 
   useDashboardBreadcrumbs([
-    { label: "Workspace", href: "/dashboard" },
-    { label: "Authors", href: "/dashboard/authors" },
-    { label: "Edit Author" },
+    { label: t("breadcrumbs.workspace"), href: "/dashboard" },
+    { label: t("nav.authors"), href: "/dashboard/authors" },
+    { label: t("authors.editTitle") },
   ])
 
   const goBack = () => router.back()
 
-  useFormSubmitSuccess(state.isSaved, "Author updated successfully.")
+  useFormSubmitSuccess(state.isSaved, t("authors.updateSuccess"))
 
   return (
     <>
@@ -72,15 +74,15 @@ export function EditAuthorScreen({ authorId, getAuthorsUseCase }: EditAuthorScre
         <div className="flex flex-1 items-center justify-center p-4">
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
-              <CardTitle>Author not found</CardTitle>
+              <CardTitle>{t("authors.notFoundTitle")}</CardTitle>
               <CardDescription>
-                The author you are looking for does not exist or has been removed.
+                {t("authors.notFoundDescription")}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Button variant="outline" onClick={() => router.back()}>
                 <ArrowLeftIcon />
-                Back to authors
+                {t("authors.backToAuthors")}
               </Button>
             </CardContent>
           </Card>
@@ -91,17 +93,17 @@ export function EditAuthorScreen({ authorId, getAuthorsUseCase }: EditAuthorScre
         <div className="flex flex-1 items-center justify-center p-4">
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
-              <CardTitle>Something went wrong</CardTitle>
+              <CardTitle>{t("authors.somethingWentWrong")}</CardTitle>
               <CardDescription>{state.error}</CardDescription>
             </CardHeader>
             <CardContent className="flex gap-3">
               <Button variant="outline" onClick={() => router.back()}>
                 <ArrowLeftIcon />
-                Back to authors
+                {t("authors.backToAuthors")}
               </Button>
               <Button onClick={() => router.refresh()}>
                 <RefreshCwIcon />
-                Retry
+                {t("common.retry")}
               </Button>
             </CardContent>
           </Card>
@@ -112,14 +114,16 @@ export function EditAuthorScreen({ authorId, getAuthorsUseCase }: EditAuthorScre
         <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
           <section className="flex items-center justify-between pt-4">
             <div>
-              <h1 className="text-2xl font-semibold tracking-normal">Edit Author</h1>
+              <h1 className="text-2xl font-semibold tracking-normal">
+                {t("authors.editTitle")}
+              </h1>
               <p className="mt-1 text-sm text-muted-foreground">
-                Update the author information.
+                {t("authors.editDescription")}
               </p>
             </div>
             <Button variant="outline" onClick={goBack}>
               <ArrowLeftIcon />
-              Back
+              {t("common.back")}
             </Button>
           </section>
 
@@ -135,8 +139,8 @@ export function EditAuthorScreen({ authorId, getAuthorsUseCase }: EditAuthorScre
 
           <Card className="rounded-lg">
             <CardHeader>
-              <CardTitle>Author Details</CardTitle>
-              <CardDescription>Modify the author details below.</CardDescription>
+              <CardTitle>{t("authors.detailsTitle")}</CardTitle>
+              <CardDescription>{t("authors.editDetailsDescription")}</CardDescription>
             </CardHeader>
             <CardContent>
               <AuthorFormFields
@@ -152,11 +156,11 @@ export function EditAuthorScreen({ authorId, getAuthorsUseCase }: EditAuthorScre
                     onClick={goBack}
                     disabled={state.isSaving}
                   >
-                    Cancel
+                    {t("common.cancel")}
                   </Button>
                   <Button type="submit" disabled={state.isSaving || state.isSaved}>
                     {state.isSaving ? <Loader2Icon className="animate-spin" /> : <SaveIcon />}
-                    {state.isSaving ? "Saving..." : "Save Changes"}
+                    {state.isSaving ? t("common.saving") : t("authors.saveChanges")}
                   </Button>
                 </div>
               </AuthorFormFields>

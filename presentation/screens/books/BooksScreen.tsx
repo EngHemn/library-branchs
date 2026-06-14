@@ -31,6 +31,7 @@ import { BooksFilters } from "@/presentation/components/books/BooksFilters"
 import { BooksTable } from "@/presentation/components/books/BooksTable"
 import { CreateBookingDialog } from "@/presentation/components/bookings/CreateBookingDialog"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import { useBooksViewModel } from "@/presentation/viewmodels/books/useBooksViewModel"
 
 type BooksScreenProps = {
@@ -60,6 +61,7 @@ export function BooksScreen({
   bookingManagementUseCase,
 }: BooksScreenProps) {
   const router = useRouter()
+  const { t } = useTranslation()
   const viewModel = useBooksViewModel(
     authUseCase,
     getBooksUseCase,
@@ -77,8 +79,8 @@ export function BooksScreen({
   }, [router, state.isUnauthenticated])
 
   useDashboardBreadcrumbs([
-    { label: "Workspace", href: "/dashboard" },
-    { label: "Books" },
+    { label: t("breadcrumbs.workspace"), href: "/dashboard" },
+    { label: t("nav.books") },
   ])
 
   const user = state.user
@@ -98,13 +100,13 @@ export function BooksScreen({
         <div className="flex flex-1 items-center justify-center p-4">
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
-              <CardTitle>Books unavailable</CardTitle>
+              <CardTitle>{t("books.unavailable")}</CardTitle>
               <CardDescription>{state.error}</CardDescription>
             </CardHeader>
             <CardContent>
               <Button onClick={viewModel.reload}>
                 <RefreshCwIcon />
-                Retry
+                {t("common.retry")}
               </Button>
             </CardContent>
           </Card>
@@ -116,15 +118,16 @@ export function BooksScreen({
           <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
             <section className="flex flex-col gap-3 pt-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <h1 className="text-2xl font-bold tracking-normal">Books</h1>
+                <h1 className="text-2xl font-bold tracking-normal">
+                  {t("books.title")}
+                </h1>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Books are independent records; branches only hold stock
-                  references.
+                  {t("books.subtitle")}
                 </p>
               </div>
               <Button onClick={() => router.push("/dashboard/books/create")}>
                 <PlusIcon />
-                Add Book
+                {t("books.addBook")}
               </Button>
             </section>
 
@@ -195,17 +198,19 @@ export function BooksScreen({
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete Book</DialogTitle>
+            <DialogTitle>{t("books.deleteDialog.title")}</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete &ldquo;{deleteBook?.title}&rdquo;? This action cannot be undone.
+              {t("books.deleteDialog.description", {
+                title: deleteBook?.title ?? "",
+              })}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeleteBook(null)}>
-              Cancel
+              {t("common.cancel")}
             </Button>
             <Button variant="destructive" onClick={handleConfirmDelete}>
-              Delete
+              {t("common.delete")}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -18,6 +18,7 @@ import type { GetBooksUseCase } from "@/domain/usecases/books/GetBooksUseCase"
 import type { StockUseCase } from "@/domain/usecases/stock/StockUseCase"
 import { CreateStockFormFields } from "@/presentation/components/stock/StockFormFields"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import { useCreateStockViewModel } from "@/presentation/viewmodels/stock/useCreateStockViewModel"
 
 type CreateStockScreenProps = {
@@ -62,12 +63,13 @@ export function CreateStockScreen({
     getBooksUseCase,
     stockUseCase
   )
+  const { t } = useTranslation()
   const { state, form } = viewModel
 
   useDashboardBreadcrumbs([
-    { label: "Workspace", href: "/dashboard" },
-    { label: "Stock", href: "/dashboard/stock" },
-    { label: "Add Stock" },
+    { label: t("breadcrumbs.workspace"), href: "/dashboard" },
+    { label: t("nav.stock"), href: "/dashboard/stock" },
+    { label: t("stock.create.breadcrumb") },
   ])
 
   const goBack = () => router.push("/dashboard/stock")
@@ -80,14 +82,16 @@ export function CreateStockScreen({
         <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
           <section className="flex items-center justify-between pt-4">
             <div>
-              <h1 className="text-2xl font-semibold tracking-normal">Add Stock</h1>
+              <h1 className="text-2xl font-semibold tracking-normal">
+                {t("stock.create.title")}
+              </h1>
               <p className="mt-1 text-sm text-muted-foreground">
-                Create a new stock record for a branch.
+                {t("stock.create.subtitle")}
               </p>
             </div>
             <Button variant="outline" onClick={goBack}>
               <ArrowLeftIcon />
-              Back
+              {t("common.back")}
             </Button>
           </section>
 
@@ -95,10 +99,10 @@ export function CreateStockScreen({
             <Card className="rounded-lg border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-950">
               <CardContent className="flex items-center gap-3 py-3">
                 <p className="text-sm font-medium text-green-800 dark:text-green-200">
-                  Stock created successfully.
+                  {t("stock.create.createSuccess")}
                 </p>
                 <Button size="sm" variant="outline" onClick={goBack}>
-                  Back to stock management
+                  {t("stock.create.backToStock")}
                 </Button>
               </CardContent>
             </Card>
@@ -114,8 +118,8 @@ export function CreateStockScreen({
 
           <Card className="rounded-lg">
             <CardHeader>
-              <CardTitle>Stock Details</CardTitle>
-              <CardDescription>Fill in the details to create a stock record.</CardDescription>
+              <CardTitle>{t("stock.create.detailsTitle")}</CardTitle>
+              <CardDescription>{t("stock.create.detailsDescription")}</CardDescription>
             </CardHeader>
             <CardContent>
               <CreateStockFormFields
@@ -129,11 +133,11 @@ export function CreateStockScreen({
                 <Separator />
                 <div className="flex justify-end gap-3">
                   <Button type="button" variant="outline" onClick={goBack} disabled={state.isSaving}>
-                    Cancel
+                    {t("common.cancel")}
                   </Button>
                   <Button type="submit" disabled={state.isSaving || state.isSaved}>
                     {state.isSaving ? <Loader2Icon className="animate-spin" /> : <PlusIcon />}
-                    {state.isSaving ? "Creating..." : "Create Stock"}
+                    {state.isSaving ? t("common.creating") : t("stock.create.createButton")}
                   </Button>
                 </div>
               </CreateStockFormFields>

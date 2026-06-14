@@ -24,6 +24,7 @@ import type {
   TranslatorFormInput,
   TranslatorFormValues,
 } from "@/domain/schemas/translatorFormSchema"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type TranslatorFormFieldsProps = {
   form: UseFormReturn<TranslatorFormInput, unknown, TranslatorFormValues>
@@ -38,6 +39,8 @@ export function TranslatorFormFields({
   onSubmit,
   children,
 }: TranslatorFormFieldsProps) {
+  const { t } = useTranslation()
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -47,10 +50,10 @@ export function TranslatorFormFields({
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Name</FormLabel>
+                <FormLabel>{t("translators.fields.name")}</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Enter translator name"
+                    placeholder={t("translators.placeholders.name")}
                     disabled={disabled}
                     {...field}
                   />
@@ -65,10 +68,10 @@ export function TranslatorFormFields({
             name="language"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Language</FormLabel>
+                <FormLabel>{t("translators.fields.language")}</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Enter primary language"
+                    placeholder={t("translators.placeholders.language")}
                     disabled={disabled}
                     {...field}
                   />
@@ -83,7 +86,7 @@ export function TranslatorFormFields({
             name="status"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Status</FormLabel>
+                <FormLabel>{t("translators.fields.status")}</FormLabel>
                 <Select
                   value={field.value}
                   onValueChange={field.onChange}
@@ -91,12 +94,12 @@ export function TranslatorFormFields({
                 >
                   <FormControl>
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select status" />
+                      <SelectValue placeholder={t("translators.placeholders.status")} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="active">Active</SelectItem>
-                    <SelectItem value="inactive">Inactive</SelectItem>
+                    <SelectItem value="active">{t("common.active")}</SelectItem>
+                    <SelectItem value="inactive">{t("common.inactive")}</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -110,10 +113,10 @@ export function TranslatorFormFields({
           name="biography"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Biography</FormLabel>
+              <FormLabel>{t("translators.fields.biography")}</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Enter translator biography"
+                  placeholder={t("translators.placeholders.biography")}
                   rows={5}
                   disabled={disabled}
                   {...field}
@@ -131,8 +134,8 @@ export function TranslatorFormFields({
             <FormItem>
               <FormControl>
                 <ImageUpload
-                  label="Translator photo"
-                  previewAlt="Translator photo preview"
+                  label={t("translators.photoLabel")}
+                  previewAlt={t("translators.photoPreviewAlt")}
                   value={field.value ?? null}
                   onChange={field.onChange}
                   disabled={disabled}

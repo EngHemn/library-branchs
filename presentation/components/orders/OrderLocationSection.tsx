@@ -19,12 +19,14 @@ import {
   hasValidMapCoordinates,
   normalizeCoordinate,
 } from "@/presentation/components/orders/orderDisplay"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type OrderLocationSectionProps = {
   order: OrderDetail
 }
 
 export function OrderLocationSection({ order }: OrderLocationSectionProps) {
+  const { t } = useTranslation()
   const latitude = normalizeCoordinate(order.latitude)
   const longitude = normalizeCoordinate(order.longitude)
   const hasLocation = hasValidMapCoordinates(latitude, longitude)
@@ -35,7 +37,7 @@ export function OrderLocationSection({ order }: OrderLocationSectionProps) {
         <div>
           <CardTitle className="flex items-center gap-2 text-base">
             <MapPinIcon className="size-4" />
-            Delivery Location
+            {t("orders.location.deliveryTitle")}
           </CardTitle>
           <CardDescription>{order.branchLocation}</CardDescription>
         </div>
@@ -47,13 +49,13 @@ export function OrderLocationSection({ order }: OrderLocationSectionProps) {
               rel="noopener noreferrer"
             >
               <ExternalLinkIcon className="size-4" />
-              Open order in map
+              {t("orders.location.openInMap")}
             </a>
           </Button>
         ) : (
           <Button variant="outline" size="sm" disabled>
             <ExternalLinkIcon className="size-4" />
-            Open order in map
+            {t("orders.location.openInMap")}
           </Button>
         )}
       </CardHeader>
@@ -68,14 +70,14 @@ export function OrderLocationSection({ order }: OrderLocationSectionProps) {
           <div className="flex flex-col items-center justify-center gap-2 rounded-md border border-dashed py-12 text-center">
             <MapPinIcon className="size-8 text-muted-foreground/50" />
             <p className="text-sm text-muted-foreground">
-              No map coordinates set for this order.
+              {t("orders.location.noCoordinates")}
             </p>
           </div>
         )}
 
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-1.5">
-            <Label htmlFor="order-view-latitude">Latitude</Label>
+            <Label htmlFor="order-view-latitude">{t("orders.location.latitude")}</Label>
             <Input
               id="order-view-latitude"
               value={latitude !== null ? String(latitude) : "—"}
@@ -84,7 +86,7 @@ export function OrderLocationSection({ order }: OrderLocationSectionProps) {
             />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="order-view-longitude">Longitude</Label>
+            <Label htmlFor="order-view-longitude">{t("orders.location.longitude")}</Label>
             <Input
               id="order-view-longitude"
               value={longitude !== null ? String(longitude) : "—"}

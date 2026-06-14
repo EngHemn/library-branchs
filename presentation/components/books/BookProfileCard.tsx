@@ -14,6 +14,7 @@ import { Separator } from "@/components/ui/separator"
 import type { BookDetail } from "@/domain/entities/book/BookDetail"
 import { getAuthorViewHref } from "@/lib/authorLink"
 import { getTranslatorViewHref } from "@/lib/translatorLink"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type BookProfileCardProps = {
   book: BookDetail
@@ -50,39 +51,41 @@ function ProfileValue({ value, href }: { value: string; href?: string | null }) 
 }
 
 export function BookProfileCard({ book }: BookProfileCardProps) {
+  const { t } = useTranslation()
+
   const rows: ProfileRow[] = [
-    { label: "ID", value: book.id },
-    { label: "ISBN", value: book.isbn },
+    { label: t("books.profile.id"), value: book.id },
+    { label: t("books.profile.isbn"), value: book.isbn },
     {
-      label: "Author",
+      label: t("books.profile.author"),
       value: book.author,
       href: getAuthorViewHref(book.author),
     },
     {
-      label: "Translator",
+      label: t("books.profile.translator"),
       value: book.translator ?? "—",
       href: book.translator ? getTranslatorViewHref(book.translator) : null,
     },
-    { label: "Category", value: book.category },
+    { label: t("books.profile.category"), value: book.category },
     {
-      label: "Location",
+      label: t("books.profile.location"),
       value: book.shelfHint.trim().length > 0 ? book.shelfHint : "—",
     },
-    { label: "Language", value: book.language },
-    { label: "Pages", value: book.pages.toLocaleString() },
-    { label: "Publication Date", value: book.publicationDate },
+    { label: t("books.profile.language"), value: book.language },
+    { label: t("books.profile.pages"), value: book.pages.toLocaleString() },
+    { label: t("books.profile.publicationDate"), value: book.publicationDate },
     {
-      label: "First Added Branch",
+      label: t("books.profile.firstAddedBranch"),
       value: book.firstAddedBranch,
       href: `/dashboard/branches/${book.branchId}`,
     },
-    { label: "Book Created", value: book.createdAt },
+    { label: t("books.profile.bookCreated"), value: book.createdAt },
   ]
 
   return (
     <Card className="rounded-lg">
       <CardHeader>
-        <CardTitle>Book Profile</CardTitle>
+        <CardTitle>{t("books.profile.title")}</CardTitle>
       </CardHeader>
       <CardContent>
         <dl className="flex flex-col">
@@ -102,7 +105,7 @@ export function BookProfileCard({ book }: BookProfileCardProps) {
           <Separator />
           <div className="flex items-center justify-between gap-4 py-3">
             <dt className="shrink-0 text-sm text-muted-foreground">
-              Added By
+              {t("books.profile.addedBy")}
             </dt>
             <dd>
               <Link

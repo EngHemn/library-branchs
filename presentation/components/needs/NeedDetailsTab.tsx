@@ -3,10 +3,10 @@
 import type { ReactNode } from "react"
 
 import type { NeedDetail } from "@/domain/entities/need/Need"
-import { getNeedCategoryLabel } from "@/domain/entities/need/NeedCategory"
 import { NeedPriorityBadge } from "@/presentation/components/needs/NeedPriorityBadge"
 import { NeedStatusBadge } from "@/presentation/components/needs/NeedStatusBadge"
 import { formatNeedDateTime } from "@/presentation/components/needs/needDisplay"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type NeedDetailsTabProps = {
   need: NeedDetail
@@ -22,27 +22,29 @@ function DetailRow({ label, value }: { label: string; value: ReactNode }) {
 }
 
 export function NeedDetailsTab({ need }: NeedDetailsTabProps) {
+  const { t } = useTranslation()
+
   return (
     <dl className="space-y-4">
-      <DetailRow label="Need Name" value={need.name} />
-      <DetailRow label="Category" value={getNeedCategoryLabel(need.category)} />
+      <DetailRow label={t("needs.detailsTab.name")} value={need.name} />
+      <DetailRow label={t("needs.detailsTab.category")} value={t(`needs.categories.${need.category}` as any)} />
       <DetailRow
-        label="Description"
+        label={t("needs.detailsTab.description")}
         value={need.description || "—"}
       />
-      <DetailRow label="Quantity" value={need.quantity.toLocaleString()} />
-      <DetailRow label="Branch" value={need.branchName} />
-      <DetailRow label="Requested By" value={need.requestedBy} />
+      <DetailRow label={t("needs.detailsTab.quantity")} value={need.quantity.toLocaleString()} />
+      <DetailRow label={t("needs.detailsTab.branch")} value={need.branchName} />
+      <DetailRow label={t("needs.detailsTab.requestedBy")} value={need.requestedBy} />
       <DetailRow
-        label="Priority"
+        label={t("needs.detailsTab.priority")}
         value={<NeedPriorityBadge priority={need.priority} />}
       />
       <DetailRow
-        label="Status"
+        label={t("needs.detailsTab.status")}
         value={<NeedStatusBadge status={need.status} />}
       />
       <DetailRow
-        label="Created Date"
+        label={t("needs.detailsTab.createdDate")}
         value={formatNeedDateTime(need.createdAt)}
       />
     </dl>

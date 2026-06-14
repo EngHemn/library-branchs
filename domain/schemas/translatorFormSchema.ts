@@ -1,12 +1,13 @@
 import * as z from "zod"
 
+import { validationKeys } from "@/domain/i18n/validationKeys"
 import { optionalImageUrlSchema } from "@/domain/schemas/optionalImageSchema"
 
 export const translatorFormSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  language: z.string().min(1, "Language is required"),
+  name: z.string().min(1, validationKeys.nameRequired),
+  language: z.string().min(1, validationKeys.languageRequired),
   status: z.enum(["active", "inactive"]),
-  biography: z.string().min(1, "Biography is required"),
+  biography: z.string().min(1, validationKeys.biographyRequired),
   imageUrl: optionalImageUrlSchema,
 })
 

@@ -16,6 +16,8 @@ import type { GetActivityLogsUseCase } from "@/domain/usecases/activityLogs/GetA
 import { ActivityLogsFilters } from "@/presentation/components/activity-logs/ActivityLogsFilters"
 import { ActivityLogsTable } from "@/presentation/components/activity-logs/ActivityLogsTable"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
+import type { TranslationKey } from "@/presentation/i18n/messages"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import { useActivityLogsViewModel } from "@/presentation/viewmodels/activityLogs/useActivityLogsViewModel"
 
 type ActivityLogsScreenProps = {
@@ -40,12 +42,13 @@ export function ActivityLogsScreen({
   authUseCase,
   getActivityLogsUseCase,
 }: ActivityLogsScreenProps) {
+  const { t } = useTranslation()
   const viewModel = useActivityLogsViewModel(authUseCase, getActivityLogsUseCase)
   const { state } = viewModel
 
   useDashboardBreadcrumbs([
-    { label: "Workspace", href: "/dashboard" },
-    { label: "Activity Logs" },
+    { label: t("breadcrumbs.workspace"), href: "/dashboard" },
+    { label: t("nav.activityLogs") },
   ])
 
   if (state.isLoading) {
@@ -57,15 +60,17 @@ export function ActivityLogsScreen({
       <div className="flex flex-1 flex-col gap-4 p-4 pt-0 md:p-6 md:pt-0">
         <Card className="mt-4 rounded-lg border-destructive/40">
           <CardHeader>
-            <CardTitle>Unable to load activity logs</CardTitle>
+            <CardTitle>{t("activityLogs.screen.unableToLoad")}</CardTitle>
             <CardDescription>
-              {state.error ?? "Something went wrong. Please try again."}
+              {state.error === "Failed to load activity logs"
+                ? t("activityLogs.screen.unableToLoad")
+                : (state.error ?? t("common.somethingWentWrong"))}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Button type="button" onClick={() => void viewModel.reload()}>
               <RefreshCwIcon />
-              Retry
+              {t("common.retry")}
             </Button>
           </CardContent>
         </Card>
@@ -78,11 +83,10 @@ export function ActivityLogsScreen({
       <div className="flex flex-col gap-4 pt-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="space-y-1">
           <h1 className="text-2xl font-semibold tracking-tight">
-            Activity Logs
+            {t("activityLogs.screen.title")}
           </h1>
           <p className="text-sm text-muted-foreground">
-            Review staff actions across branches. Filter by action, branch,
-            or staff member and search by description or entity.
+            {t("activityLogs.screen.subtitle")}
           </p>
         </div>
         <Button
@@ -92,13 +96,13 @@ export function ActivityLogsScreen({
           onClick={() => void viewModel.reload()}
         >
           <RefreshCwIcon />
-          Refresh
+          {t("common.refresh")}
         </Button>
       </div>
 
       <Card className="rounded-lg">
         <CardHeader className="pb-3">
-          <CardTitle className="text-base">Filters</CardTitle>
+          <CardTitle className="text-base">{t("activityLogs.filters.title")}</CardTitle>
         </CardHeader>
         <CardContent>
           <ActivityLogsFilters

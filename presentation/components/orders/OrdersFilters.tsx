@@ -28,10 +28,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import {
-  ORDER_STATUSES,
-  getOrderStatusLabel,
-} from "@/domain/entities/order/OrderStatus"
+import { ORDER_STATUSES } from "@/domain/entities/order/OrderStatus"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import type {
   OrderBranchFilter,
   OrderBranchFilterOption,
@@ -138,6 +136,7 @@ export function OrdersFilters({
   onDateToChange,
   onClearFilters,
 }: OrdersFiltersProps) {
+  const { t } = useTranslation()
   const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false)
   const [draftStatusFilter, setDraftStatusFilter] =
     useState<OrdersFilterState["statusFilter"]>(statusFilter)
@@ -193,7 +192,9 @@ export function OrdersFilters({
     if (statusFilter !== "all") {
       chips.push({
         key: `status-${statusFilter}`,
-        label: `Status: ${getOrderStatusLabel(statusFilter)}`,
+        label: t("orders.filters.filterChipStatus", {
+          label: t(`orders.status.${statusFilter}`),
+        }),
         onRemove: () => onStatusFilterChange("all"),
       })
     }
@@ -201,7 +202,7 @@ export function OrdersFilters({
     if (showSubBranchFilter && branchFilter !== "current" && selectedBranchLabel) {
       chips.push({
         key: `branch-${branchFilter}`,
-        label: `Branch: ${selectedBranchLabel}`,
+        label: t("orders.filters.filterChipBranch", { name: selectedBranchLabel }),
         onRemove: () => onBranchFilterChange("current"),
       })
     }
@@ -209,7 +210,7 @@ export function OrdersFilters({
     if (categoryFilter !== "all") {
       chips.push({
         key: `category-${categoryFilter}`,
-        label: `Category: ${categoryFilter}`,
+        label: t("orders.filters.filterChipCategory", { label: categoryFilter }),
         onRemove: () => onCategoryFilterChange("all"),
       })
     }
@@ -217,7 +218,7 @@ export function OrdersFilters({
     if (authorFilter !== "all") {
       chips.push({
         key: `author-${authorFilter}`,
-        label: `Author: ${authorFilter}`,
+        label: t("orders.filters.filterChipAuthor", { label: authorFilter }),
         onRemove: () => onAuthorFilterChange("all"),
       })
     }
@@ -225,7 +226,7 @@ export function OrdersFilters({
     if (showTranslatorFilter && translatorFilter !== "all") {
       chips.push({
         key: `translator-${translatorFilter}`,
-        label: `Translator: ${translatorFilter}`,
+        label: t("orders.filters.filterChipTranslator", { label: translatorFilter }),
         onRemove: () => onTranslatorFilterChange("all"),
       })
     }
@@ -233,7 +234,7 @@ export function OrdersFilters({
     if (dateFrom) {
       chips.push({
         key: `from-${dateFrom}`,
-        label: `From: ${dateFrom}`,
+        label: t("orders.filters.filterChipFrom", { date: dateFrom }),
         onRemove: () => onDateFromChange(null),
       })
     }
@@ -241,7 +242,7 @@ export function OrdersFilters({
     if (dateTo) {
       chips.push({
         key: `to-${dateTo}`,
-        label: `To: ${dateTo}`,
+        label: t("orders.filters.filterChipTo", { date: dateTo }),
         onRemove: () => onDateToChange(null),
       })
     }
@@ -265,6 +266,7 @@ export function OrdersFilters({
     onTranslatorFilterChange,
     onDateFromChange,
     onDateToChange,
+    t,
   ])
 
   function applyFilters(): void {
@@ -302,7 +304,7 @@ export function OrdersFilters({
               id="orders-search"
               value={searchQuery}
               onChange={(event) => onSearchQueryChange(event.target.value)}
-              placeholder="Search by supplier, branch, or ID..."
+              placeholder={t("orders.filters.searchPlaceholder")}
               className="pl-9"
             />
           </div>
@@ -310,7 +312,7 @@ export function OrdersFilters({
           <div className="flex items-center justify-end gap-2">
             <Button variant="outline" onClick={() => setIsFilterDialogOpen(true)}>
               <ListFilterIcon />
-              Filters
+              {t("orders.filters.filters")}
               {activeFilterCount > 0 ? (
                 <span className="ml-1 rounded-full bg-primary px-1.5 py-0.5 text-xs text-primary-foreground">
                   {activeFilterCount}
@@ -324,13 +326,13 @@ export function OrdersFilters({
               disabled={activeFilterCount === 0 && searchQuery === ""}
             >
               <RotateCcwIcon />
-              Reset
+              {t("orders.filters.reset")}
             </Button>
           </div>
         </div>
 
         <div className="space-y-2">
-          <p className="text-sm font-medium text-muted-foreground">Filter by</p>
+          <p className="text-sm font-medium text-muted-foreground">{t("orders.filters.filterBy")}</p>
           <div className="flex flex-wrap items-center gap-2">
             {activeFilterChips.length > 0 ? (
               activeFilterChips.map((chip) => (
@@ -343,7 +345,7 @@ export function OrdersFilters({
                     type="button"
                     onClick={chip.onRemove}
                     className="rounded-full p-0.5 hover:bg-primary/20"
-                    aria-label={`Remove ${chip.label} filter`}
+                    aria-label={t("orders.filters.removeFilter", { label: chip.label })}
                   >
                     <XIcon className="size-3" />
                   </button>
@@ -351,7 +353,7 @@ export function OrdersFilters({
               ))
             ) : (
               <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
-                All
+                {t("common.all")}
               </span>
             )}
           </div>
@@ -361,16 +363,16 @@ export function OrdersFilters({
       <Dialog open={isFilterDialogOpen} onOpenChange={setIsFilterDialogOpen}>
         <DialogContent className="sm:min-w-[600px]">
           <DialogHeader>
-            <DialogTitle>Filter Orders</DialogTitle>
+            <DialogTitle>{t("orders.filters.filterDialogTitle")}</DialogTitle>
             <DialogDescription>
-              Select filters and click Apply to update the orders table.
+              {t("orders.filters.filterDialogDescription")}
             </DialogDescription>
           </DialogHeader>
 
           <div className="grid gap-4 py-2">
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="orders-dialog-status-filter">Status</Label>
+                <Label htmlFor="orders-dialog-status-filter">{t("orders.filters.status")}</Label>
                 <Select
                   value={draftStatusFilter}
                   onValueChange={(value) =>
@@ -381,10 +383,10 @@ export function OrdersFilters({
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All statuses</SelectItem>
+                    <SelectItem value="all">{t("orders.filters.allStatuses")}</SelectItem>
                     {ORDER_STATUSES.map((status) => (
                       <SelectItem key={status} value={status}>
-                        {getOrderStatusLabel(status)}
+                        {t(`orders.status.${status}`)}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -394,16 +396,16 @@ export function OrdersFilters({
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="orders-dialog-category-filter">Category</Label>
+                <Label htmlFor="orders-dialog-category-filter">{t("orders.filters.category")}</Label>
                 <Select
                   value={draftCategoryFilter}
                   onValueChange={setDraftCategoryFilter}
                 >
                   <SelectTrigger id="orders-dialog-category-filter" className="w-full">
-                    <SelectValue placeholder="All categories" />
+                    <SelectValue placeholder={t("orders.filters.allCategories")} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All categories</SelectItem>
+                    <SelectItem value="all">{t("orders.filters.allCategories")}</SelectItem>
                     {categories.map((category) => (
                       <SelectItem key={category} value={category}>
                         {category}
@@ -415,11 +417,11 @@ export function OrdersFilters({
 
               <FilterCombobox
                 id="orders-dialog-author-filter"
-                label="Author"
+                label={t("orders.filters.author")}
                 value={draftAuthorFilter}
                 onValueChange={setDraftAuthorFilter}
-                placeholder="Search author..."
-                allLabel="All authors"
+                placeholder={t("orders.filters.searchAuthor")}
+                allLabel={t("orders.filters.allAuthors")}
                 options={authors}
               />
             </div>
@@ -427,7 +429,7 @@ export function OrdersFilters({
             <div className="grid gap-4 sm:grid-cols-2">
               {showSubBranchFilter ? (
                 <div className="space-y-2">
-                  <Label htmlFor="orders-dialog-sub-branch-filter">Branch</Label>
+                  <Label htmlFor="orders-dialog-sub-branch-filter">{t("orders.filters.branch")}</Label>
                   <Select
                     value={draftBranchFilter}
                     onValueChange={(value) =>
@@ -449,17 +451,17 @@ export function OrdersFilters({
               ) : showTranslatorFilter ? (
                 <FilterCombobox
                   id="orders-dialog-translator-filter"
-                  label="Translator"
+                  label={t("orders.filters.translator")}
                   value={draftTranslatorFilter}
                   onValueChange={setDraftTranslatorFilter}
-                  placeholder="Search translator..."
-                  allLabel="All translators"
+                  placeholder={t("orders.filters.searchTranslator")}
+                  allLabel={t("orders.filters.allTranslators")}
                   options={translators}
                 />
               ) : null}
 
               <div className="space-y-2">
-                <Label htmlFor="orders-dialog-date-from">Date From</Label>
+                <Label htmlFor="orders-dialog-date-from">{t("orders.filters.dateFrom")}</Label>
                 <Input
                   id="orders-dialog-date-from"
                   type="date"
@@ -474,7 +476,7 @@ export function OrdersFilters({
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="orders-dialog-date-to">Date To</Label>
+                <Label htmlFor="orders-dialog-date-to">{t("orders.filters.dateTo")}</Label>
                 <Input
                   id="orders-dialog-date-to"
                   type="date"
@@ -488,17 +490,17 @@ export function OrdersFilters({
 
           <DialogFooter className="gap-2 sm:gap-0">
             <Button type="button" variant="outline" onClick={clearDraftFilters}>
-              Clear
+              {t("orders.filters.clear")}
             </Button>
             <Button
               type="button"
               variant="ghost"
               onClick={() => setIsFilterDialogOpen(false)}
             >
-              Cancel
+              {t("common.cancel")}
             </Button>
             <Button type="button" onClick={applyFilters}>
-              Apply
+              {t("orders.filters.apply")}
             </Button>
           </DialogFooter>
         </DialogContent>

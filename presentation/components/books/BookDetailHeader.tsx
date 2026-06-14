@@ -11,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { EntityImage } from "@/components/ui/entity-image"
 import type { BookDetail } from "@/domain/entities/book/BookDetail"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type BookDetailHeaderProps = {
   book: BookDetail
@@ -25,6 +26,8 @@ export function BookDetailHeader({
   onCreateBooking,
   onEdit,
 }: BookDetailHeaderProps) {
+  const { t } = useTranslation()
+
   return (
     <header className="flex flex-col gap-4 sm:flex-row sm:items-start">
       <EntityImage
@@ -45,22 +48,24 @@ export function BookDetailHeader({
           <p className="mt-2 flex items-center gap-1.5 text-sm text-muted-foreground">
             <MapPinIcon className="size-4 shrink-0" />
             <span>
-              {book.shelfHint.trim().length > 0 ? book.shelfHint : "No location set"}
+              {book.shelfHint.trim().length > 0
+                ? book.shelfHint
+                : t("books.view.noLocationSet")}
             </span>
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
           <Button variant="outline" onClick={onBack}>
             <ArrowLeftIcon />
-            Back to Books
+            {t("books.view.backToBooksButton")}
           </Button>
           <Button variant="outline" onClick={onCreateBooking}>
             <CalendarIcon />
-            Create Booking
+            {t("books.view.createBooking")}
           </Button>
           <Button variant="outline" onClick={onEdit}>
             <PencilIcon />
-            Edit Book
+            {t("books.view.editBook")}
           </Button>
         </div>
       </div>

@@ -24,6 +24,7 @@ import type {
   AuthorFormInput,
   AuthorFormValues,
 } from "@/domain/schemas/authorFormSchema"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type AuthorFormFieldsProps = {
   form: UseFormReturn<AuthorFormInput, unknown, AuthorFormValues>
@@ -38,6 +39,8 @@ export function AuthorFormFields({
   onSubmit,
   children,
 }: AuthorFormFieldsProps) {
+  const { t } = useTranslation()
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -47,10 +50,10 @@ export function AuthorFormFields({
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Name</FormLabel>
+                <FormLabel>{t("authors.fields.name")}</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Enter author name"
+                    placeholder={t("authors.placeholders.name")}
                     disabled={disabled}
                     {...field}
                   />
@@ -65,10 +68,10 @@ export function AuthorFormFields({
             name="nationality"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Nationality</FormLabel>
+                <FormLabel>{t("authors.fields.nationality")}</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Enter nationality"
+                    placeholder={t("authors.placeholders.nationality")}
                     disabled={disabled}
                     {...field}
                   />
@@ -83,7 +86,7 @@ export function AuthorFormFields({
             name="dateOfBirth"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Date of Birth</FormLabel>
+                <FormLabel>{t("authors.fields.dateOfBirth")}</FormLabel>
                 <FormControl>
                   <Input type="date" disabled={disabled} {...field} />
                 </FormControl>
@@ -97,7 +100,7 @@ export function AuthorFormFields({
             name="status"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Status</FormLabel>
+                <FormLabel>{t("authors.fields.status")}</FormLabel>
                 <Select
                   value={field.value}
                   onValueChange={field.onChange}
@@ -105,12 +108,12 @@ export function AuthorFormFields({
                 >
                   <FormControl>
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select status" />
+                      <SelectValue placeholder={t("authors.placeholders.status")} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="active">Active</SelectItem>
-                    <SelectItem value="inactive">Inactive</SelectItem>
+                    <SelectItem value="active">{t("common.active")}</SelectItem>
+                    <SelectItem value="inactive">{t("common.inactive")}</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -124,10 +127,10 @@ export function AuthorFormFields({
           name="biography"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Biography</FormLabel>
+              <FormLabel>{t("authors.fields.biography")}</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Enter author biography"
+                  placeholder={t("authors.placeholders.biography")}
                   rows={5}
                   disabled={disabled}
                   {...field}
@@ -145,8 +148,8 @@ export function AuthorFormFields({
             <FormItem>
               <FormControl>
                 <ImageUpload
-                  label="Author photo"
-                  previewAlt="Author photo preview"
+                  label={t("authors.photoLabel")}
+                  previewAlt={t("authors.photoPreviewAlt")}
                   value={field.value ?? null}
                   onChange={field.onChange}
                   disabled={disabled}

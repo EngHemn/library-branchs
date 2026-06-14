@@ -13,6 +13,7 @@ import {
   RefreshCwIcon,
   XIcon,
 } from "lucide-react"
+import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -35,6 +36,7 @@ import { NeedPriorityBadge } from "@/presentation/components/needs/NeedPriorityB
 import { NeedRejectDialog } from "@/presentation/components/needs/NeedRejectDialog"
 import { NeedStatusBadge } from "@/presentation/components/needs/NeedStatusBadge"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import { useNeedDetailViewModel } from "@/presentation/viewmodels/needs/useNeedDetailViewModel"
 
 type ViewNeedScreenProps = {
@@ -74,10 +76,12 @@ export function ViewNeedScreen({
     setActiveTab(parseNeedDetailTab(searchParams.get("tab")))
   }, [searchParams])
 
+  const { t } = useTranslation()
+
   useDashboardBreadcrumbs([
-    { label: "Workspace", href: "/dashboard" },
-    { label: "Needs Management", href: dashboardPaths.needs.list },
-    { label: state.need?.name ?? "Need Details" },
+    { label: t("breadcrumbs.workspace"), href: "/dashboard" },
+    { label: t("nav.needs"), href: dashboardPaths.needs.list },
+    { label: state.need?.name ?? t("needs.view.breadcrumbFallback") },
   ])
 
   if (state.isLoading) {
@@ -95,15 +99,15 @@ export function ViewNeedScreen({
       <div className="flex flex-1 flex-col gap-4 p-4 pt-0 md:p-6 md:pt-0">
         <Card className="mt-4 rounded-lg">
           <CardHeader>
-            <CardTitle>Need request not found</CardTitle>
+            <CardTitle>{t("needs.view.notFoundTitle")}</CardTitle>
             <CardDescription>
-              The requested need could not be found or may have been deleted.
+              {t("needs.view.notFoundDescription")}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Button onClick={() => router.push(dashboardPaths.needs.list)}>
               <ArrowLeftIcon />
-              Back to Needs
+              {t("needs.view.backToNeeds")}
             </Button>
           </CardContent>
         </Card>
@@ -132,7 +136,7 @@ export function ViewNeedScreen({
             onClick={() => void viewModel.reload()}
           >
             <RefreshCwIcon />
-            Refresh
+            {t("needs.refresh")}
           </Button>
           <Button
             variant="outline"
@@ -140,14 +144,14 @@ export function ViewNeedScreen({
             onClick={() => router.push(dashboardPaths.needs.list)}
           >
             <ArrowLeftIcon />
-            Back
+            {t("needs.back")}
           </Button>
           <Button
             size="sm"
             onClick={() => router.push(dashboardPaths.needs.edit(needId))}
           >
             <PencilIcon />
-            Edit
+            {t("common.edit")}
           </Button>
           {need.status === "pending" ? (
             <>
@@ -155,10 +159,15 @@ export function ViewNeedScreen({
                 size="sm"
                 variant="outline"
                 disabled={state.isApproving}
-                onClick={() => void viewModel.approveNeed()}
+                onClick={async () => {
+                  const success = await viewModel.approveNeed()
+                  if (success) {
+                    toast.success(t("needs.approveSuccess"))
+                  }
+                }}
               >
                 <CheckIcon />
-                Approve
+                {t("needs.approve")}
               </Button>
               <Button
                 size="sm"
@@ -167,7 +176,7 @@ export function ViewNeedScreen({
                 onClick={viewModel.openRejectDialog}
               >
                 <XIcon />
-                Reject
+                {t("needs.reject")}
               </Button>
             </>
           ) : null}
@@ -181,19 +190,19 @@ export function ViewNeedScreen({
         <TabsList className="h-auto flex-wrap gap-1">
           <TabsTrigger value="details">
             <FileTextIcon className="size-4" />
-            Details
+            {t("needs.tabs.details")}
           </TabsTrigger>
           <TabsTrigger value="notes">
             <MessageSquareIcon className="size-4" />
-            Notes
+            {t("needs.tabs.notes")}
           </TabsTrigger>
           <TabsTrigger value="attachments">
             <PaperclipIcon className="size-4" />
-            Attachments
+            {t("needs.tabs.attachments")}
           </TabsTrigger>
           <TabsTrigger value="activity">
             <HistoryIcon className="size-4" />
-            Activity Log
+            {t("needs.tabs.activityLog")}
           </TabsTrigger>
         </TabsList>
 
@@ -238,7 +247,12 @@ export function ViewNeedScreen({
         isRejecting={state.isRejecting}
         onReasonChange={viewModel.setRejectReason}
         onClose={viewModel.closeRejectDialog}
-        onConfirm={() => void viewModel.confirmRejectNeed()}
+        onConfirm={async () => {
+          const success = await viewModel.confirmRejectNeed()
+          if (success) {
+            toast.success(t("needs.rejectSuccess"))
+          }
+        }}
       />
     </div>
   )

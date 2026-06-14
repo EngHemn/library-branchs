@@ -2,7 +2,7 @@
 
 import { Badge } from "@/components/ui/badge"
 import type { NeedStatus } from "@/domain/entities/need/NeedStatus"
-import { getNeedStatusLabel } from "@/domain/entities/need/NeedStatus"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type NeedStatusBadgeProps = {
   status: NeedStatus
@@ -24,9 +24,11 @@ const statusStyles: Record<NeedStatus, string> = {
 }
 
 export function NeedStatusBadge({ status }: NeedStatusBadgeProps) {
+  const { t } = useTranslation()
+
   return (
     <Badge variant="secondary" className={statusStyles[status]}>
-      {getNeedStatusLabel(status)}
+      {t(`needs.statuses.${status}` as any)}
     </Badge>
   )
 }

@@ -12,6 +12,7 @@ import { Card } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { cn } from "@/lib/utils"
 import type { NeedSummary } from "@/domain/entities/need/Need"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type NeedsSummaryCardsProps = {
   summary: NeedSummary | null
@@ -20,8 +21,8 @@ type NeedsSummaryCardsProps = {
 
 type SummaryCardConfig = {
   key: keyof NeedSummary
-  label: string
-  hint: string
+  translationKey: string
+  translationHintKey: string
   icon: ElementType
   iconClassName: string
   accentClassName: string
@@ -30,8 +31,8 @@ type SummaryCardConfig = {
 const cards: SummaryCardConfig[] = [
   {
     key: "totalRequests",
-    label: "Total Requests",
-    hint: "All submitted needs",
+    translationKey: "needs.summary.totalRequests",
+    translationHintKey: "needs.summary.totalRequestsHint",
     icon: ClipboardListIcon,
     iconClassName:
       "bg-sky-100 text-sky-600 dark:bg-sky-950 dark:text-sky-400",
@@ -39,8 +40,8 @@ const cards: SummaryCardConfig[] = [
   },
   {
     key: "pendingRequests",
-    label: "Pending",
-    hint: "Awaiting approval",
+    translationKey: "needs.summary.pending",
+    translationHintKey: "needs.summary.pendingHint",
     icon: ClockIcon,
     iconClassName:
       "bg-amber-100 text-amber-600 dark:bg-amber-950 dark:text-amber-400",
@@ -48,8 +49,8 @@ const cards: SummaryCardConfig[] = [
   },
   {
     key: "approvedRequests",
-    label: "Approved",
-    hint: "Ready to order",
+    translationKey: "needs.summary.approved",
+    translationHintKey: "needs.summary.approvedHint",
     icon: CheckCircleIcon,
     iconClassName:
       "bg-emerald-100 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400",
@@ -57,8 +58,8 @@ const cards: SummaryCardConfig[] = [
   },
   {
     key: "criticalRequests",
-    label: "Critical",
-    hint: "Needs immediate action",
+    translationKey: "needs.summary.critical",
+    translationHintKey: "needs.summary.criticalHint",
     icon: AlertTriangleIcon,
     iconClassName:
       "bg-red-100 text-red-600 dark:bg-red-950 dark:text-red-400",
@@ -83,6 +84,8 @@ export function NeedsSummaryCards({
   summary,
   isLoading = false,
 }: NeedsSummaryCardsProps) {
+  const { t } = useTranslation()
+
   if (isLoading) {
     return (
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -119,13 +122,13 @@ export function NeedsSummaryCards({
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-sm font-medium text-muted-foreground">
-                {card.label}
+                {t(card.translationKey as any)}
               </p>
               <p className="text-2xl font-bold tabular-nums tracking-tight">
                 {value.toLocaleString()}
               </p>
               <p className="truncate text-xs text-muted-foreground">
-                {card.hint}
+                {t(card.translationHintKey as any)}
               </p>
             </div>
           </Card>

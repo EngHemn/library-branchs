@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/table"
 import { getPermissionRoleLabel } from "@/domain/entities/permission/Permission"
 import type { GroupStaffOption } from "@/domain/repositories/GroupRepository"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type GroupSelectedStaffTableProps = {
   staffOptions: GroupStaffOption[]
@@ -28,6 +29,8 @@ export function GroupSelectedStaffTable({
   onRemoveStaff,
   disabled = false,
 }: GroupSelectedStaffTableProps) {
+  const { t } = useTranslation()
+
   const selectedStaff = selectedStaffIds
     .map((staffId) => staffOptions.find((member) => member.id === staffId))
     .filter((member): member is GroupStaffOption => member !== undefined)
@@ -35,7 +38,7 @@ export function GroupSelectedStaffTable({
   if (selectedStaff.length === 0) {
     return (
       <p className="rounded-lg border border-dashed py-8 text-center text-sm text-muted-foreground">
-        No staff assigned yet. Use the selector above to add staff members.
+        {t("groups.selectedStaff.empty")}
       </p>
     )
   }
@@ -45,11 +48,13 @@ export function GroupSelectedStaffTable({
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Staff Name</TableHead>
-            <TableHead>Role</TableHead>
-            <TableHead>Email</TableHead>
-            <TableHead>Phone</TableHead>
-            <TableHead className="w-16 text-right">Remove</TableHead>
+            <TableHead>{t("groups.selectedStaff.staffName")}</TableHead>
+            <TableHead>{t("groups.staff.role")}</TableHead>
+            <TableHead>{t("groups.staff.email")}</TableHead>
+            <TableHead>{t("groups.staff.phone")}</TableHead>
+            <TableHead className="w-16 text-right">
+              {t("groups.selectedStaff.remove")}
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -69,7 +74,9 @@ export function GroupSelectedStaffTable({
                   variant="ghost"
                   size="icon-sm"
                   disabled={disabled}
-                  aria-label={`Remove ${member.staffName}`}
+                  aria-label={t("groups.selectedStaff.removeAria", {
+                    name: member.staffName,
+                  })}
                   onClick={() => onRemoveStaff(member.id)}
                 >
                   <Trash2Icon />

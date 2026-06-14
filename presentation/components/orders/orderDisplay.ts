@@ -43,42 +43,42 @@ export function orderDateSortValue(value: string): number {
   return Number.isNaN(date.getTime()) ? 0 : date.getTime()
 }
 
-export function formatOrderDate(value: string): string {
+export function formatOrderDate(value: string, locale = "en"): string {
   const date = parseOrderDate(value)
 
   if (Number.isNaN(date.getTime())) {
     return value
   }
 
-  return date.toLocaleDateString("en-US", {
+  return date.toLocaleDateString(locale, {
     month: "short",
     day: "numeric",
     year: "numeric",
   })
 }
 
-export function formatOrderTime(value: string): string {
+export function formatOrderTime(value: string, locale = "en"): string {
   const date = parseOrderDate(value)
 
   if (Number.isNaN(date.getTime())) {
     return "—"
   }
 
-  return date.toLocaleTimeString("en-US", {
+  return date.toLocaleTimeString(locale, {
     hour: "2-digit",
     minute: "2-digit",
   })
 }
 
-export function formatOrderPriceInDinar(price: number): string {
-  const formatted = new Intl.NumberFormat("en-US", {
+export function formatOrderPriceInDinar(price: number, locale = "en"): string {
+  const formatted = new Intl.NumberFormat(locale, {
     maximumFractionDigits: 0,
   }).format(price)
   return `${formatted} IQD`
 }
 
-export function formatBookQuantity(count: number): string {
-  return `${count.toLocaleString()} ${count === 1 ? "book" : "books"}`
+export function formatBookQuantity(count: number, locale = "en"): string {
+  return count.toLocaleString(locale)
 }
 
 export function normalizeCoordinate(value: unknown): number | null {

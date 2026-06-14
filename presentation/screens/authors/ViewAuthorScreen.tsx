@@ -18,6 +18,7 @@ import { AuthorDetailHeader } from "@/presentation/components/authors/AuthorDeta
 import { AuthorProfileCard } from "@/presentation/components/authors/AuthorProfileCard"
 import { AuthorSummaryCards } from "@/presentation/components/authors/AuthorSummaryCards"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import { useAuthorDetailViewModel } from "@/presentation/viewmodels/authors/useAuthorDetailViewModel"
 
 type ViewAuthorScreenProps = {
@@ -59,13 +60,14 @@ function LoadingState() {
 
 export function ViewAuthorScreen({ authorId, getAuthorsUseCase }: ViewAuthorScreenProps) {
   const router = useRouter()
+  const { t } = useTranslation()
   const viewModel = useAuthorDetailViewModel(authorId, getAuthorsUseCase)
   const { state } = viewModel
 
   useDashboardBreadcrumbs([
-    { label: "Workspace", href: "/dashboard" },
-    { label: "Authors", href: "/dashboard/authors" },
-    { label: state.author?.name ?? "Author Details" },
+    { label: t("breadcrumbs.workspace"), href: "/dashboard" },
+    { label: t("nav.authors"), href: "/dashboard/authors" },
+    { label: state.author?.name ?? t("authors.view.breadcrumbFallback") },
   ])
 
   const goBack = () => router.back()
@@ -78,15 +80,15 @@ export function ViewAuthorScreen({ authorId, getAuthorsUseCase }: ViewAuthorScre
         <div className="flex flex-1 items-center justify-center p-4">
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
-              <CardTitle>Author not found</CardTitle>
+              <CardTitle>{t("authors.notFoundTitle")}</CardTitle>
               <CardDescription>
-                The author you are looking for does not exist or has been removed.
+                {t("authors.notFoundDescription")}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Button variant="outline" onClick={goBack}>
                 <ArrowLeftIcon />
-                Back to authors
+                {t("authors.backToAuthors")}
               </Button>
             </CardContent>
           </Card>
@@ -97,17 +99,17 @@ export function ViewAuthorScreen({ authorId, getAuthorsUseCase }: ViewAuthorScre
         <div className="flex flex-1 items-center justify-center p-4">
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
-              <CardTitle>Something went wrong</CardTitle>
+              <CardTitle>{t("authors.somethingWentWrong")}</CardTitle>
               <CardDescription>{state.error}</CardDescription>
             </CardHeader>
             <CardContent className="flex gap-3">
               <Button variant="outline" onClick={goBack}>
                 <ArrowLeftIcon />
-                Back to authors
+                {t("authors.backToAuthors")}
               </Button>
               <Button onClick={() => void viewModel.reload()}>
                 <RefreshCwIcon />
-                Retry
+                {t("common.retry")}
               </Button>
             </CardContent>
           </Card>

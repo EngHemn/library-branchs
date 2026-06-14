@@ -18,6 +18,7 @@ import { TranslatorProfileCard } from "@/presentation/components/translators/Tra
 import { TranslatorBooksTable } from "@/presentation/components/translators/TranslatorBooksTable"
 import { TranslatorSummaryCards } from "@/presentation/components/translators/TranslatorSummaryCards"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import { useTranslatorDetailViewModel } from "@/presentation/viewmodels/translators/useTranslatorDetailViewModel"
 
 type ViewTranslatorScreenProps = {
@@ -47,13 +48,14 @@ function LoadingState() {
 
 export function ViewTranslatorScreen({ translatorId, getTranslatorsUseCase }: ViewTranslatorScreenProps) {
   const router = useRouter()
+  const { t } = useTranslation()
   const viewModel = useTranslatorDetailViewModel(translatorId, getTranslatorsUseCase)
   const { state } = viewModel
 
   useDashboardBreadcrumbs([
-    { label: "Workspace", href: "/dashboard" },
-    { label: "Translators", href: "/dashboard/translators" },
-    { label: state.translator?.name ?? "Translator Details" },
+    { label: t("breadcrumbs.workspace"), href: "/dashboard" },
+    { label: t("nav.translators"), href: "/dashboard/translators" },
+    { label: state.translator?.name ?? t("translators.view.breadcrumbFallback") },
   ])
 
   const goBack = () => router.back()
@@ -66,15 +68,15 @@ export function ViewTranslatorScreen({ translatorId, getTranslatorsUseCase }: Vi
         <div className="flex flex-1 items-center justify-center p-4">
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
-              <CardTitle>Translator not found</CardTitle>
+              <CardTitle>{t("translators.notFoundTitle")}</CardTitle>
               <CardDescription>
-                The translator you are looking for does not exist or has been removed.
+                {t("translators.notFoundDescription")}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Button variant="outline" onClick={goBack}>
                 <ArrowLeftIcon />
-                Back to translators
+                {t("translators.backToTranslators")}
               </Button>
             </CardContent>
           </Card>
@@ -85,17 +87,17 @@ export function ViewTranslatorScreen({ translatorId, getTranslatorsUseCase }: Vi
         <div className="flex flex-1 items-center justify-center p-4">
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
-              <CardTitle>Something went wrong</CardTitle>
+              <CardTitle>{t("translators.somethingWentWrong")}</CardTitle>
               <CardDescription>{state.error}</CardDescription>
             </CardHeader>
             <CardContent className="flex gap-3">
               <Button variant="outline" onClick={goBack}>
                 <ArrowLeftIcon />
-                Back to translators
+                {t("translators.backToTranslators")}
               </Button>
               <Button onClick={() => void viewModel.reload()}>
                 <RefreshCwIcon />
-                Retry
+                {t("common.retry")}
               </Button>
             </CardContent>
           </Card>
@@ -119,10 +121,12 @@ export function ViewTranslatorScreen({ translatorId, getTranslatorsUseCase }: Vi
 
           <section>
             <TranslatorBooksTable
-              title="Translated Books"
-              description={`${state.translator.translatedBooks.length.toLocaleString()} book records`}
+              title={t("translators.books.translatedTitle")}
+              description={t("translators.books.recordCount", {
+                count: state.translator.translatedBooks.length.toLocaleString(),
+              })}
               books={state.translator.translatedBooks}
-              emptyDescription="This translator has not translated any books yet."
+              emptyDescription={t("translators.books.emptyTranslated")}
             />
           </section>
         </main>

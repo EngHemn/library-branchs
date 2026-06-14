@@ -12,6 +12,8 @@ import {
   formatGroupDate,
   formatGroupDateTime,
 } from "@/presentation/components/groups/groupDisplay"
+import { useLocale } from "@/presentation/i18n/useLocale"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type GroupDetailsTabProps = {
   group: GroupDetail
@@ -25,36 +27,46 @@ const statusVariants: Record<
   inactive: "outline",
 }
 
-const statusLabels: Record<GroupStatus, string> = {
-  active: "Active",
-  inactive: "Inactive",
-}
-
 export function GroupDetailsTab({ group }: GroupDetailsTabProps) {
+  const { t } = useTranslation()
+  const { locale } = useLocale()
+
+  const statusLabel = (status: GroupStatus) =>
+    status === "active" ? t("common.active") : t("common.inactive")
+
   const fields = [
-    { label: "Group Name", value: group.name },
-    { label: "Description", value: group.description || "—" },
+    { label: t("groups.details.groupName"), value: group.name },
+    { label: t("groups.details.description"), value: group.description || "—" },
     {
-      label: "Status",
+      label: t("groups.details.status"),
       value: (
         <Badge variant={statusVariants[group.status]}>
-          {statusLabels[group.status]}
+          {statusLabel(group.status)}
         </Badge>
       ),
     },
-    { label: "Created Date", value: formatGroupDate(group.createdAt) },
-    { label: "Last Updated", value: formatGroupDateTime(group.updatedAt) },
-    { label: "Books", value: group.totalBooks.toLocaleString() },
     {
-      label: "Staff",
-      value: group.totalAssignedStaff.toLocaleString(),
+      label: t("groups.details.createdDate"),
+      value: formatGroupDate(group.createdAt, locale),
+    },
+    {
+      label: t("groups.details.lastUpdated"),
+      value: formatGroupDateTime(group.updatedAt, locale),
+    },
+    {
+      label: t("groups.details.books"),
+      value: group.totalBooks.toLocaleString(locale),
+    },
+    {
+      label: t("groups.details.staff"),
+      value: group.totalAssignedStaff.toLocaleString(locale),
     },
   ]
 
   return (
     <Card className="rounded-lg">
       <CardHeader>
-        <CardTitle className="text-base">Group Information</CardTitle>
+        <CardTitle className="text-base">{t("groups.details.title")}</CardTitle>
       </CardHeader>
       <CardContent>
         <dl className="grid gap-4 sm:grid-cols-2">

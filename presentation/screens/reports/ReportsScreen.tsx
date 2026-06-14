@@ -39,6 +39,8 @@ import { ReportRechart } from "@/presentation/components/reports/ReportRechart"
 import { ReportsFilters } from "@/presentation/components/reports/ReportsFilters"
 import { ReportsSummaryCards } from "@/presentation/components/reports/ReportsSummaryCards"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
+import type { TranslationKey } from "@/presentation/i18n/messages"
 import { useReportsViewModel } from "@/presentation/viewmodels/reports/useReportsViewModel"
 
 type ReportsScreenProps = {
@@ -48,19 +50,19 @@ type ReportsScreenProps = {
 
 const reportTabs: {
   value: ReportCategory
-  label: string
+  labelKey: TranslationKey
   icon: typeof BarChart3Icon
 }[] = [
-  { value: "overview", label: "Overview", icon: BarChart3Icon },
-  { value: "sales", label: "Sales", icon: ShoppingCartIcon },
-  { value: "inventory", label: "Inventory", icon: BoxesIcon },
-  { value: "groups", label: "Groups", icon: LayersIcon },
-  { value: "members", label: "Members", icon: UsersIcon },
-  { value: "authors", label: "Authors", icon: PenLineIcon },
-  { value: "translators", label: "Translators", icon: LanguagesIcon },
-  { value: "bookings", label: "Bookings", icon: CalendarCheckIcon },
-  { value: "books", label: "Books", icon: BookOpenIcon },
-  { value: "orders", label: "Orders", icon: ClipboardListIcon },
+  { value: "overview", labelKey: "reports.tabs.overview", icon: BarChart3Icon },
+  { value: "sales", labelKey: "reports.tabs.sales", icon: ShoppingCartIcon },
+  { value: "inventory", labelKey: "reports.tabs.inventory", icon: BoxesIcon },
+  { value: "groups", labelKey: "reports.tabs.groups", icon: LayersIcon },
+  { value: "members", labelKey: "reports.tabs.members", icon: UsersIcon },
+  { value: "authors", labelKey: "reports.tabs.authors", icon: PenLineIcon },
+  { value: "translators", labelKey: "reports.tabs.translators", icon: LanguagesIcon },
+  { value: "bookings", labelKey: "reports.tabs.bookings", icon: CalendarCheckIcon },
+  { value: "books", labelKey: "reports.tabs.books", icon: BookOpenIcon },
+  { value: "orders", labelKey: "reports.tabs.orders", icon: ClipboardListIcon },
 ]
 
 function chartsForTab(charts: ReportChart[], category: ReportCategory): ReportChart[] {
@@ -103,13 +105,14 @@ function LoadingReportsScreen() {
 }
 
 export function ReportsScreen({ authUseCase, getReportsUseCase }: ReportsScreenProps) {
+  const { t } = useTranslation()
   const viewModel = useReportsViewModel(authUseCase, getReportsUseCase)
   const { state } = viewModel
   const reports = state.isReady ? state.reports : null
 
   useDashboardBreadcrumbs([
-    { label: "Workspace", href: "/dashboard" },
-    { label: "Reports" },
+    { label: t("breadcrumbs.workspace"), href: "/dashboard" },
+    { label: t("nav.reports") },
   ])
 
   return (
@@ -120,13 +123,13 @@ export function ReportsScreen({ authUseCase, getReportsUseCase }: ReportsScreenP
         <div className="flex flex-1 items-center justify-center p-4">
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
-              <CardTitle>Reports unavailable</CardTitle>
+              <CardTitle>{t("reports.unableToLoad")}</CardTitle>
               <CardDescription>{state.error}</CardDescription>
             </CardHeader>
             <CardContent>
               <Button onClick={viewModel.reload}>
                 <RefreshCwIcon />
-                Retry
+                {t("common.retry")}
               </Button>
             </CardContent>
           </Card>
@@ -138,16 +141,15 @@ export function ReportsScreen({ authUseCase, getReportsUseCase }: ReportsScreenP
           <section className="flex flex-col gap-3 pt-4 md:flex-row md:items-center md:justify-between">
             <div>
               <h1 className="text-2xl font-semibold tracking-normal">
-                Reports & Analytics
+                {t("reports.title")}
               </h1>
               <p className="mt-1 text-sm text-muted-foreground">
-                Recharts dashboards with branch and date filters across all
-                library modules.
+                {t("reports.subtitle")}
               </p>
             </div>
             <Button variant="outline" size="sm" onClick={viewModel.reload}>
               <RefreshCwIcon />
-              Refresh
+              {t("common.refresh")}
             </Button>
           </section>
 
@@ -182,7 +184,7 @@ export function ReportsScreen({ authUseCase, getReportsUseCase }: ReportsScreenP
                 {reportTabs.map((tab) => (
                   <TabsTrigger key={tab.value} value={tab.value}>
                     <tab.icon className="size-4" />
-                    {tab.label}
+                    {t(tab.labelKey)}
                   </TabsTrigger>
                 ))}
               </TabsList>
@@ -202,8 +204,10 @@ export function ReportsScreen({ authUseCase, getReportsUseCase }: ReportsScreenP
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <BookMarkedIcon className="size-4" />
                     <span>
-                      {tabCharts.length} charts · {reports.branchName} ·{" "}
-                      {state.dateFrom} → {state.dateTo}
+                      {tabCharts.length === 1
+                        ? t("reports.chartsCountOne", { count: tabCharts.length })
+                        : t("reports.chartsCountOther", { count: tabCharts.length })}{" "}
+                      · {reports.branchName} · {state.dateFrom} → {state.dateTo}
                     </span>
                   </div>
 
@@ -218,9 +222,9 @@ export function ReportsScreen({ authUseCase, getReportsUseCase }: ReportsScreenP
                   ) : (
                     <Card className="rounded-lg">
                       <CardHeader>
-                        <CardTitle>No charts for this tab</CardTitle>
+                        <CardTitle>{t("reports.noCharts")}</CardTitle>
                         <CardDescription>
-                          Adjust branch or date filters and refresh.
+                          {t("reports.adjustFilters")}
                         </CardDescription>
                       </CardHeader>
                     </Card>

@@ -1,11 +1,13 @@
 import * as z from "zod"
 
+import { validationKeys } from "@/domain/i18n/validationKeys"
+
 export const bookingFormSchema = z.object({
-  bookId: z.string().min(1, "Book is required"),
-  branchId: z.string().min(1, "Branch is required"),
-  memberId: z.string().min(1, "Member is required"),
+  bookId: z.string().min(1, validationKeys.bookRequired),
+  branchId: z.string().min(1, validationKeys.branchRequired),
+  memberId: z.string().min(1, validationKeys.memberRequired),
   bookingType: z.enum(["inside", "outside"]),
-  dueDate: z.string().min(1, "Due date is required"),
+  dueDate: z.string().min(1, validationKeys.dueDateRequired),
   status: z.enum(["reserved", "borrowed", "returned", "overdue", "cancelled"]),
   notes: z.string(),
 })

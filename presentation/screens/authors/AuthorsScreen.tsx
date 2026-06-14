@@ -27,6 +27,7 @@ import type { GetAuthorsUseCase } from "@/domain/usecases/authors/GetAuthorsUseC
 import { AuthorsFilters } from "@/presentation/components/authors/AuthorsFilters"
 import { AuthorsTable } from "@/presentation/components/authors/AuthorsTable"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import { useAuthorsViewModel } from "@/presentation/viewmodels/authors/useAuthorsViewModel"
 
 type AuthorsScreenProps = {
@@ -48,13 +49,14 @@ function LoadingAuthorsScreen() {
 
 export function AuthorsScreen({ getAuthorsUseCase }: AuthorsScreenProps) {
   const router = useRouter()
+  const { t } = useTranslation()
   const viewModel = useAuthorsViewModel(getAuthorsUseCase)
   const { state } = viewModel
   const [deleteAuthor, setDeleteAuthor] = useState<Author | null>(null)
 
   useDashboardBreadcrumbs([
-    { label: "Workspace", href: "/dashboard" },
-    { label: "Authors" },
+    { label: t("breadcrumbs.workspace"), href: "/dashboard" },
+    { label: t("nav.authors") },
   ])
 
   const handleConfirmDelete = () => {
@@ -73,13 +75,13 @@ export function AuthorsScreen({ getAuthorsUseCase }: AuthorsScreenProps) {
         <div className="flex flex-1 items-center justify-center p-4">
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
-              <CardTitle>Authors unavailable</CardTitle>
+              <CardTitle>{t("authors.unavailable")}</CardTitle>
               <CardDescription>{state.error}</CardDescription>
             </CardHeader>
             <CardContent>
               <Button onClick={() => void viewModel.reload()}>
                 <RefreshCwIcon />
-                Retry
+                {t("common.retry")}
               </Button>
             </CardContent>
           </Card>
@@ -91,14 +93,14 @@ export function AuthorsScreen({ getAuthorsUseCase }: AuthorsScreenProps) {
           <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
             <section className="flex flex-col gap-3 pt-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <h1 className="text-2xl font-bold tracking-normal">Authors</h1>
+                <h1 className="text-2xl font-bold tracking-normal">{t("authors.title")}</h1>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Manage authors and their biographies.
+                  {t("authors.subtitle")}
                 </p>
               </div>
               <Button onClick={() => router.push("/dashboard/authors/create")}>
                 <PlusIcon />
-                Add Author
+                {t("authors.addAuthor")}
               </Button>
             </section>
 
@@ -127,22 +129,23 @@ export function AuthorsScreen({ getAuthorsUseCase }: AuthorsScreenProps) {
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete Author</DialogTitle>
+            <DialogTitle>{t("authors.deleteDialog.title")}</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete &ldquo;{deleteAuthor?.name}
-              &rdquo;? This action cannot be undone.
+              {t("authors.deleteDialog.description", {
+                name: deleteAuthor?.name ?? "",
+              })}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeleteAuthor(null)}>
-              Cancel
+              {t("common.cancel")}
             </Button>
             <Button
               variant="destructive"
               onClick={handleConfirmDelete}
               disabled={state.isDeleting}
             >
-              Delete
+              {t("common.delete")}
             </Button>
           </DialogFooter>
         </DialogContent>

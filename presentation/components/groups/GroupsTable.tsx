@@ -25,6 +25,8 @@ import type { GroupListItem, GroupStatus } from "@/domain/entities/group/Group"
 import { GroupActionButton } from "@/presentation/components/groups/GroupActionButton"
 import { formatGroupDate } from "@/presentation/components/groups/groupDisplay"
 import { GroupLink } from "@/presentation/components/shared/DashboardEntityLink"
+import { useLocale } from "@/presentation/i18n/useLocale"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type GroupsTableProps = {
   groups: GroupListItem[]
@@ -50,21 +52,22 @@ const statusVariants: Record<
   inactive: "outline",
 }
 
-const statusLabels: Record<GroupStatus, string> = {
-  active: "Active",
-  inactive: "Inactive",
-}
-
 export function GroupsTable({
   groups,
   onView,
   onEdit,
   onDelete,
 }: GroupsTableProps) {
+  const { t } = useTranslation()
+  const { locale } = useLocale()
+
+  const statusLabel = (status: GroupStatus) =>
+    status === "active" ? t("common.active") : t("common.inactive")
+
   const columns: DataTableColumn<GroupListItem, GroupColumnKey>[] = [
     {
       key: "name",
-      header: "Group Name",
+      header: t("groups.table.name"),
       sortable: true,
       sortValue: (group) => group.name,
       cell: (group) => (
@@ -85,7 +88,7 @@ export function GroupsTable({
     },
     {
       key: "description",
-      header: "Description",
+      header: t("groups.table.description"),
       sortable: true,
       sortValue: (group) => group.description,
       cell: (group) => (
@@ -96,63 +99,63 @@ export function GroupsTable({
     },
     {
       key: "totalBooks",
-      header: "Books",
+      header: t("groups.table.books"),
       sortable: true,
       sortValue: (group) => group.totalBooks,
       cell: (group) => (
-        <span className="tabular-nums">{group.totalBooks.toLocaleString()}</span>
+        <span className="tabular-nums">{group.totalBooks.toLocaleString(locale)}</span>
       ),
     },
     {
       key: "assignedStaff",
-      header: "Staff",
+      header: t("groups.table.staff"),
       sortable: true,
       sortValue: (group) => group.assignedStaff,
       cell: (group) => (
         <span className="tabular-nums">
-          {group.assignedStaff.toLocaleString()}
+          {group.assignedStaff.toLocaleString(locale)}
         </span>
       ),
     },
     {
       key: "createdAt",
-      header: "Created Date",
+      header: t("groups.table.createdAt"),
       sortable: true,
       sortValue: (group) => new Date(group.createdAt).getTime(),
-      cell: (group) => formatGroupDate(group.createdAt),
+      cell: (group) => formatGroupDate(group.createdAt, locale),
     },
     {
       key: "status",
-      header: "Status",
+      header: t("groups.table.status"),
       sortable: true,
       sortValue: (group) => group.status,
       cell: (group) => (
         <Badge variant={statusVariants[group.status]}>
-          {statusLabels[group.status]}
+          {statusLabel(group.status)}
         </Badge>
       ),
     },
     {
       key: "actions",
-      header: "Actions",
+      header: t("groups.table.actions"),
       headerClassName: "text-right",
       className: "text-right",
       cell: (group) => (
-        <div className="flex items-center justify-end gap-1">
+        <div className="table-action-content">
           <GroupActionButton
             icon={EyeIcon}
-            label="View group"
+            label={t("groups.table.viewGroup")}
             onClick={() => onView(group)}
           />
           <GroupActionButton
             icon={PencilIcon}
-            label="Edit group"
+            label={t("groups.table.editGroup")}
             variant="outline"
             onClick={() => onEdit(group)}
           />
           <GroupActionButton
             icon={Trash2Icon}
-            label="Delete group"
+            label={t("groups.table.deleteGroup")}
             variant="destructive"
             onClick={() => onDelete(group)}
           />
@@ -165,11 +168,13 @@ export function GroupsTable({
     <TooltipProvider>
       <Card className="rounded-lg">
         <CardHeader className="pb-3">
-          <CardTitle className="text-base">Groups</CardTitle>
+          <CardTitle className="text-base">{t("groups.table.title")}</CardTitle>
           <CardDescription>
             {groups.length === 0
-              ? "No groups match the current filters."
-              : `${groups.length} group${groups.length === 1 ? "" : "s"} shown`}
+              ? t("groups.table.recordCountZero")
+              : t("groups.table.recordCount", {
+                  count: groups.length.toLocaleString(locale),
+                })}
           </CardDescription>
         </CardHeader>
         <CardContent className="p-0">
@@ -177,8 +182,8 @@ export function GroupsTable({
             data={groups}
             columns={columns}
             getRowId={(group) => group.id}
-            emptyTitle="No groups found"
-            emptyDescription="Try changing or clearing the active filters."
+            emptyTitle={t("groups.table.emptyTitle")}
+            emptyDescription={t("groups.table.emptyDescription")}
             initialSort={{ key: "name", direction: "asc" }}
             initialPageSize={10}
           />

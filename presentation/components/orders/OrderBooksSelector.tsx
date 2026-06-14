@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import type { OrderBookOption } from "@/domain/repositories/OrderManagementRepository"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type OrderBooksSelectorProps = {
   bookOptions: OrderBookOption[]
@@ -37,6 +38,7 @@ export function OrderBooksSelector({
   createBookHref,
 }: OrderBooksSelectorProps) {
   const router = useRouter()
+  const { t } = useTranslation()
   const [searchQuery, setSearchQuery] = useState("")
 
   const filteredBooks = useMemo(
@@ -68,7 +70,7 @@ export function OrderBooksSelector({
         <Input
           value={searchQuery}
           onChange={(event) => setSearchQuery(event.target.value)}
-          placeholder="Search books by title, author, or category..."
+          placeholder={t("orders.booksSelector.searchPlaceholder")}
           disabled={disabled}
           className="pl-9"
         />
@@ -93,7 +95,10 @@ export function OrderBooksSelector({
                   <span className="block font-medium">{book.title}</span>
                   <span className="text-xs text-muted-foreground">
                     {book.author}
-                    {book.translator ? ` · tr. ${book.translator}` : ""} · {book.category}
+                    {book.translator
+                      ? ` · ${t("orders.booksSelector.translatorPrefix")} ${book.translator}`
+                      : ""}{" "}
+                    · {book.category}
                   </span>
                 </span>
               </label>
@@ -103,8 +108,8 @@ export function OrderBooksSelector({
           <div className="flex flex-col items-center gap-3 py-6 text-center">
             <p className="text-sm text-muted-foreground">
               {hasSearchQuery
-                ? "No books match your search."
-                : "No books available to order."}
+                ? t("orders.booksSelector.noMatch")
+                : t("orders.booksSelector.noAvailable")}
             </p>
             {showAddBook ? (
               <Button
@@ -115,7 +120,7 @@ export function OrderBooksSelector({
                 onClick={handleAddBook}
               >
                 <PlusIcon />
-                Add Book
+                {t("orders.booksSelector.addBook")}
               </Button>
             ) : null}
           </div>
@@ -124,9 +129,9 @@ export function OrderBooksSelector({
 
       <div className="flex items-center justify-between text-xs text-muted-foreground">
         <span>
-          {selectedBookIds.length} selected
+          {t("orders.booksSelector.selected", { count: selectedBookIds.length })}
           {hasSearchQuery && filteredBooks.length > 0
-            ? ` · ${filteredBooks.length} shown`
+            ? ` · ${t("orders.booksSelector.shown", { count: filteredBooks.length })}`
             : ""}
         </span>
         <Button
@@ -138,7 +143,7 @@ export function OrderBooksSelector({
           onClick={handleAddBook}
         >
           <PlusIcon className="size-3.5" />
-          Add new book
+          {t("orders.booksSelector.addNewBook")}
         </Button>
       </div>
     </div>

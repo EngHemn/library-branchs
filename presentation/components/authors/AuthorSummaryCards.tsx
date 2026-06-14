@@ -4,22 +4,25 @@ import { BookOpenIcon, LanguagesIcon } from "lucide-react"
 
 import { Card, CardContent } from "@/components/ui/card"
 import type { AuthorDetail } from "@/domain/entities/author/AuthorDetail"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type AuthorSummaryCardsProps = {
   author: AuthorDetail
 }
 
 export function AuthorSummaryCards({ author }: AuthorSummaryCardsProps) {
+  const { t } = useTranslation()
+
   const cards = [
     {
-      label: "Books Authored",
+      label: t("authors.summary.booksAuthored"),
       value: author.totalBooks,
       icon: BookOpenIcon,
     },
     ...(author.totalBooksTranslated > 0
       ? [
           {
-            label: "Books Translated",
+            label: t("authors.summary.booksTranslated"),
             value: author.totalBooksTranslated,
             icon: LanguagesIcon,
           },

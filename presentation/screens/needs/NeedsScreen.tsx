@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation"
 import { PlusIcon, RefreshCwIcon } from "lucide-react"
+import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -21,6 +22,7 @@ import { NeedsFilters } from "@/presentation/components/needs/NeedsFilters"
 import { NeedsSummaryCards } from "@/presentation/components/needs/NeedsSummaryCards"
 import { NeedsTable } from "@/presentation/components/needs/NeedsTable"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import { useNeedsViewModel } from "@/presentation/viewmodels/needs/useNeedsViewModel"
 
 type NeedsScreenProps = {
@@ -52,11 +54,12 @@ export function NeedsScreen({
 }: NeedsScreenProps) {
   const router = useRouter()
   const viewModel = useNeedsViewModel(authUseCase, needManagementUseCase)
+  const { t } = useTranslation()
   const { state } = viewModel
 
   useDashboardBreadcrumbs([
-    { label: "Workspace", href: "/dashboard" },
-    { label: "Needs Management" },
+    { label: t("breadcrumbs.workspace"), href: "/dashboard" },
+    { label: t("nav.needs") },
   ])
 
   if (state.isLoading) {
@@ -68,15 +71,15 @@ export function NeedsScreen({
       <div className="flex flex-1 flex-col gap-4 p-4 pt-0 md:p-6 md:pt-0">
         <Card className="mt-4 rounded-lg border-destructive/40">
           <CardHeader>
-            <CardTitle>Unable to load need requests</CardTitle>
+            <CardTitle>{t("needs.loadError")}</CardTitle>
             <CardDescription>
-              {state.needsError ?? "Something went wrong. Please try again."}
+              {state.needsError ?? t("common.somethingWentWrong")}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Button type="button" onClick={() => void viewModel.reload()}>
               <RefreshCwIcon />
-              Retry
+              {t("common.retry")}
             </Button>
           </CardContent>
         </Card>
@@ -89,11 +92,10 @@ export function NeedsScreen({
       <div className="flex flex-col gap-4 pt-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="space-y-1">
           <h1 className="text-2xl font-semibold tracking-tight">
-            Needs Management
+            {t("needs.title")}
           </h1>
           <p className="text-sm text-muted-foreground">
-            Manage equipment, supplies, and resource requests from branches and
-            staff.
+            {t("needs.subtitle")}
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -104,7 +106,7 @@ export function NeedsScreen({
             onClick={() => void viewModel.reload()}
           >
             <RefreshCwIcon />
-            Refresh
+            {t("needs.refresh")}
           </Button>
           <Button
             type="button"
@@ -112,7 +114,7 @@ export function NeedsScreen({
             onClick={() => router.push(dashboardPaths.needs.create)}
           >
             <PlusIcon />
-            New Request
+            {t("needs.newRequest")}
           </Button>
         </div>
       </div>
@@ -124,7 +126,7 @@ export function NeedsScreen({
 
       <Card className="rounded-lg">
         <CardHeader className="pb-3">
-          <CardTitle className="text-base">Filters</CardTitle>
+          <CardTitle className="text-base">{t("needs.filters.title")}</CardTitle>
         </CardHeader>
         <CardContent>
           <NeedsFilters
@@ -156,7 +158,12 @@ export function NeedsScreen({
         onDelete={(need) =>
           viewModel.openDeleteNeedDialog(need.id, need.name)
         }
-        onApprove={(need) => void viewModel.approveNeed(need.id)}
+        onApprove={async (need) => {
+          const success = await viewModel.approveNeed(need.id)
+          if (success) {
+            toast.success(t("needs.approveSuccess"))
+          }
+        }}
         onReject={(need) =>
           viewModel.openRejectNeedDialog(need.id, need.name)
         }
@@ -168,7 +175,12 @@ export function NeedsScreen({
         error={state.deleteNeedError}
         isDeleting={state.isDeletingNeed}
         onClose={viewModel.closeDeleteNeedDialog}
-        onConfirm={() => void viewModel.confirmDeleteNeed()}
+        onConfirm={async () => {
+          const success = await viewModel.confirmDeleteNeed()
+          if (success) {
+            toast.success(t("needs.deleteSuccess"))
+          }
+        }}
       />
 
       <NeedRejectDialog
@@ -179,7 +191,12 @@ export function NeedsScreen({
         isRejecting={state.isRejectingNeed}
         onReasonChange={viewModel.setRejectReason}
         onClose={viewModel.closeRejectNeedDialog}
-        onConfirm={() => void viewModel.confirmRejectNeed()}
+        onConfirm={async () => {
+          const success = await viewModel.confirmRejectNeed()
+          if (success) {
+            toast.success(t("needs.rejectSuccess"))
+          }
+        }}
       />
     </div>
   )

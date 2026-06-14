@@ -17,6 +17,7 @@ import type { GetTranslatorsUseCase } from "@/domain/usecases/translators/GetTra
 import { TranslatorFormFields } from "@/presentation/components/translators/TranslatorFormFields"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
 import { useFormSubmitSuccess } from "@/presentation/hooks/useFormSubmitSuccess"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import { useEditTranslatorViewModel } from "@/presentation/viewmodels/translators/useEditTranslatorViewModel"
 
 type EditTranslatorScreenProps = {
@@ -51,18 +52,19 @@ function LoadingState() {
 
 export function EditTranslatorScreen({ translatorId, getTranslatorsUseCase }: EditTranslatorScreenProps) {
   const router = useRouter()
+  const { t } = useTranslation()
   const viewModel = useEditTranslatorViewModel(translatorId, getTranslatorsUseCase)
   const { state, form } = viewModel
 
   useDashboardBreadcrumbs([
-    { label: "Workspace", href: "/dashboard" },
-    { label: "Translators", href: "/dashboard/translators" },
-    { label: "Edit Translator" },
+    { label: t("breadcrumbs.workspace"), href: "/dashboard" },
+    { label: t("nav.translators"), href: "/dashboard/translators" },
+    { label: t("translators.editTitle") },
   ])
 
   const goBack = () => router.back()
 
-  useFormSubmitSuccess(state.isSaved, "Translator updated successfully.")
+  useFormSubmitSuccess(state.isSaved, t("translators.updateSuccess"))
 
   return (
     <>
@@ -72,15 +74,15 @@ export function EditTranslatorScreen({ translatorId, getTranslatorsUseCase }: Ed
         <div className="flex flex-1 items-center justify-center p-4">
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
-              <CardTitle>Translator not found</CardTitle>
+              <CardTitle>{t("translators.notFoundTitle")}</CardTitle>
               <CardDescription>
-                The translator you are looking for does not exist or has been removed.
+                {t("translators.notFoundDescription")}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Button variant="outline" onClick={() => router.back()}>
                 <ArrowLeftIcon />
-                Back to translators
+                {t("translators.backToTranslators")}
               </Button>
             </CardContent>
           </Card>
@@ -91,17 +93,17 @@ export function EditTranslatorScreen({ translatorId, getTranslatorsUseCase }: Ed
         <div className="flex flex-1 items-center justify-center p-4">
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
-              <CardTitle>Something went wrong</CardTitle>
+              <CardTitle>{t("translators.somethingWentWrong")}</CardTitle>
               <CardDescription>{state.error}</CardDescription>
             </CardHeader>
             <CardContent className="flex gap-3">
               <Button variant="outline" onClick={() => router.back()}>
                 <ArrowLeftIcon />
-                Back to translators
+                {t("translators.backToTranslators")}
               </Button>
               <Button onClick={() => router.refresh()}>
                 <RefreshCwIcon />
-                Retry
+                {t("common.retry")}
               </Button>
             </CardContent>
           </Card>
@@ -112,12 +114,16 @@ export function EditTranslatorScreen({ translatorId, getTranslatorsUseCase }: Ed
         <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
           <section className="flex items-center justify-between pt-4">
             <div>
-              <h1 className="text-2xl font-semibold tracking-normal">Edit Translator</h1>
-              <p className="mt-1 text-sm text-muted-foreground">Update the translator information.</p>
+              <h1 className="text-2xl font-semibold tracking-normal">
+                {t("translators.editTitle")}
+              </h1>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {t("translators.editDescription")}
+              </p>
             </div>
             <Button variant="outline" onClick={goBack}>
               <ArrowLeftIcon />
-              Back
+              {t("common.back")}
             </Button>
           </section>
 
@@ -131,8 +137,8 @@ export function EditTranslatorScreen({ translatorId, getTranslatorsUseCase }: Ed
 
           <Card className="rounded-lg">
             <CardHeader>
-              <CardTitle>Translator Details</CardTitle>
-              <CardDescription>Modify the translator details below.</CardDescription>
+              <CardTitle>{t("translators.detailsTitle")}</CardTitle>
+              <CardDescription>{t("translators.editDetailsDescription")}</CardDescription>
             </CardHeader>
             <CardContent>
               <TranslatorFormFields
@@ -143,11 +149,11 @@ export function EditTranslatorScreen({ translatorId, getTranslatorsUseCase }: Ed
                 <Separator />
                 <div className="flex justify-end gap-3">
                   <Button type="button" variant="outline" onClick={goBack} disabled={state.isSaving}>
-                    Cancel
+                    {t("common.cancel")}
                   </Button>
                   <Button type="submit" disabled={state.isSaving || state.isSaved}>
                     {state.isSaving ? <Loader2Icon className="animate-spin" /> : <SaveIcon />}
-                    {state.isSaving ? "Saving..." : "Save Changes"}
+                    {state.isSaving ? t("common.saving") : t("translators.saveChanges")}
                   </Button>
                 </div>
               </TranslatorFormFields>

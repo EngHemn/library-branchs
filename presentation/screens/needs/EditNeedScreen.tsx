@@ -17,6 +17,7 @@ import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { NeedManagementUseCase } from "@/domain/usecases/needs/NeedManagementUseCase"
 import { NeedFormFields } from "@/presentation/components/needs/NeedFormFields"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import { useFormSubmitSuccess } from "@/presentation/hooks/useFormSubmitSuccess"
 import { useEditNeedViewModel } from "@/presentation/viewmodels/needs/useEditNeedViewModel"
 
@@ -39,15 +40,17 @@ export function EditNeedScreen({
   )
   const { state, form } = viewModel
 
+  const { t } = useTranslation()
+
   useDashboardBreadcrumbs([
-    { label: "Workspace", href: "/dashboard" },
-    { label: "Needs Management", href: dashboardPaths.needs.list },
-    { label: "Edit Request" },
+    { label: t("breadcrumbs.workspace"), href: "/dashboard" },
+    { label: t("nav.needs"), href: dashboardPaths.needs.list },
+    { label: t("needs.edit.breadcrumb") },
   ])
 
   useFormSubmitSuccess(
     state.isSaved,
-    "Need request updated successfully.",
+    t("needs.updateSuccess"),
     dashboardPaths.needs.detail(needId)
   )
 
@@ -65,10 +68,10 @@ export function EditNeedScreen({
       <section className="flex items-center justify-between pt-4">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">
-            Edit Need Request
+            {t("needs.edit.title")}
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Update request details and save changes.
+            {t("needs.edit.subtitle")}
           </p>
         </div>
         <Button
@@ -76,7 +79,7 @@ export function EditNeedScreen({
           onClick={() => router.push(dashboardPaths.needs.detail(needId))}
         >
           <ArrowLeftIcon />
-          Back
+          {t("needs.back")}
         </Button>
       </section>
 
@@ -90,8 +93,8 @@ export function EditNeedScreen({
 
       <Card className="rounded-lg">
         <CardHeader>
-          <CardTitle>Request Details</CardTitle>
-          <CardDescription>Modify the need request information.</CardDescription>
+          <CardTitle>{t("needs.edit.detailsTitle")}</CardTitle>
+          <CardDescription>{t("needs.edit.detailsDescription")}</CardDescription>
         </CardHeader>
         <CardContent>
           <NeedFormFields
@@ -107,7 +110,7 @@ export function EditNeedScreen({
                 {state.isSaving ? (
                   <Loader2Icon className="animate-spin" />
                 ) : null}
-                Save Changes
+                {t("needs.saveChanges")}
               </Button>
             </div>
           </NeedFormFields>

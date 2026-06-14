@@ -11,6 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import type { GroupStatus } from "@/domain/entities/group/Group"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 export type GroupStatusFilter = "all" | GroupStatus
 
@@ -27,6 +28,8 @@ export function GroupsFilters({
   statusFilter,
   onStatusFilterChange,
 }: GroupsFiltersProps) {
+  const { t } = useTranslation()
+
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
       <div className="relative flex-1">
@@ -34,7 +37,7 @@ export function GroupsFilters({
         <Input
           value={searchQuery}
           onChange={(event) => onSearchQueryChange(event.target.value)}
-          placeholder="Search groups by name or description..."
+          placeholder={t("groups.filters.searchPlaceholder")}
           className="pl-9"
         />
       </div>
@@ -45,12 +48,12 @@ export function GroupsFilters({
         }
       >
         <SelectTrigger className="w-full sm:w-44">
-          <SelectValue placeholder="Status" />
+          <SelectValue placeholder={t("common.status")} />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">All statuses</SelectItem>
-          <SelectItem value="active">Active</SelectItem>
-          <SelectItem value="inactive">Inactive</SelectItem>
+          <SelectItem value="all">{t("groups.filters.allStatuses")}</SelectItem>
+          <SelectItem value="active">{t("common.active")}</SelectItem>
+          <SelectItem value="inactive">{t("common.inactive")}</SelectItem>
         </SelectContent>
       </Select>
     </div>

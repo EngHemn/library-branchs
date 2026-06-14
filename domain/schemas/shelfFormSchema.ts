@@ -1,5 +1,6 @@
 import * as z from "zod"
 
+import { validationKeys } from "@/domain/i18n/validationKeys"
 import { SHELF_TYPES } from "@/domain/entities/shelf/ShelfType"
 
 const positiveNumber = z.preprocess(
@@ -7,15 +8,15 @@ const positiveNumber = z.preprocess(
     if (value === "" || value === null || value === undefined) return 1
     return value
   },
-  z.coerce.number().min(1, "Capacity must be at least 1")
+  z.coerce.number().min(1, validationKeys.capacityMin)
 )
 
 export const shelfDetailsStepSchema = z.object({
-  name: z.string().min(1, "Shelf name is required"),
+  name: z.string().min(1, validationKeys.shelfNameRequired),
   shelfType: z.enum(SHELF_TYPES, {
-    message: "Shelf type is required",
+    message: validationKeys.shelfTypeRequired,
   }),
-  branchId: z.string().min(1, "Branch is required"),
+  branchId: z.string().min(1, validationKeys.branchRequired),
   capacity: positiveNumber,
   status: z.enum(["active", "inactive"]),
 })

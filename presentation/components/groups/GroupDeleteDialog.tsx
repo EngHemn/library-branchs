@@ -11,6 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type GroupDeleteDialogProps = {
   open: boolean
@@ -29,16 +30,15 @@ export function GroupDeleteDialog({
   onClose,
   onConfirm,
 }: GroupDeleteDialogProps) {
+  const { t } = useTranslation()
+
   return (
     <Dialog open={open} onOpenChange={(nextOpen) => !nextOpen && onClose()}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Delete Group</DialogTitle>
+          <DialogTitle>{t("groups.deleteDialog.title")}</DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete{" "}
-            <span className="font-medium text-foreground">{groupName}</span>? The
-            group will be marked as inactive and removed from the list. This action
-            cannot be undone.
+            {t("groups.deleteDialog.description", { name: groupName })}
           </DialogDescription>
         </DialogHeader>
 
@@ -46,11 +46,13 @@ export function GroupDeleteDialog({
 
         <DialogFooter>
           <Button variant="outline" onClick={onClose} disabled={isDeleting}>
-            Cancel
+            {t("common.cancel")}
           </Button>
           <Button variant="destructive" onClick={onConfirm} disabled={isDeleting}>
             {isDeleting ? <Loader2Icon className="animate-spin" /> : null}
-            {isDeleting ? "Deleting..." : "Delete Group"}
+            {isDeleting
+              ? t("groups.deleteDialog.deleting")
+              : t("groups.deleteDialog.confirm")}
           </Button>
         </DialogFooter>
       </DialogContent>

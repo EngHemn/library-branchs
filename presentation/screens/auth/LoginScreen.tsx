@@ -12,6 +12,7 @@ import {
 import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import { LoginForm } from "@/presentation/components/auth/LoginForm"
 import { LoginStatusMessage } from "@/presentation/components/auth/LoginStatusMessage"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import { useLoginViewModel } from "@/presentation/viewmodels/auth/useLoginViewModel"
 
 type LoginScreenProps = {
@@ -20,6 +21,7 @@ type LoginScreenProps = {
 
 export function LoginScreen({ authUseCase }: LoginScreenProps) {
   const router = useRouter()
+  const { t } = useTranslation()
   const viewModel = useLoginViewModel(authUseCase)
 
   useEffect(() => {
@@ -33,32 +35,30 @@ export function LoginScreen({ authUseCase }: LoginScreenProps) {
       <section className="grid w-full max-w-5xl overflow-hidden rounded-lg border bg-background shadow-sm lg:grid-cols-[1fr_420px]">
         <div className="hidden flex-col justify-between border-r bg-foreground p-8 text-background lg:flex">
           <div>
-            <p className="text-sm font-medium text-background/70">Liba</p>
+            <p className="text-sm font-medium text-background/70">
+              {t("auth.brand")}
+            </p>
             <h1 className="mt-6 max-w-md text-3xl font-semibold tracking-normal">
-              Secure access for your workspace
+              {t("auth.heroTitle")}
             </h1>
           </div>
           <p className="max-w-sm text-sm leading-6 text-background/70">
-            Work confidently with a protected workspace built for focused daily
-            operations.
+            {t("auth.heroSubtitle")}
           </p>
         </div>
         <div className="flex items-center justify-center p-4 sm:p-8">
           <Card className="w-full max-w-sm rounded-lg">
             <CardHeader>
-              <CardTitle>Sign in</CardTitle>
+              <CardTitle>{t("auth.signInTitle")}</CardTitle>
               <CardDescription>
-                Access your account. Demo: username{" "}
-                <span className="font-medium text-foreground">hemn</span>, password{" "}
-                <span className="font-medium text-foreground">1234</span> — match the
-                branch type you select.
+                {t("auth.demoHint", { username: "hemn", password: "1234" })}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {viewModel.state.status === "loading" && (
                 <LoginStatusMessage
                   status="loading"
-                  message="Checking credentials"
+                  message={t("auth.checkingCredentials")}
                 />
               )}
               {viewModel.state.error && (

@@ -11,6 +11,7 @@ import {
 import { Card } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import type { StockSummary } from "@/domain/entities/stock/Stock"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type StockSummaryCardsProps = {
   summary: StockSummary | null
@@ -40,51 +41,53 @@ export function StockSummaryCards({
   summary,
   isLoading,
 }: StockSummaryCardsProps) {
+  const { t } = useTranslation()
+
   const cards: CardItem[] = [
     {
-      label: "Available",
+      label: t("stock.summary.available"),
       value: summary?.totalAvailable ?? 0,
       icon: BoxesIcon,
       className: "bg-emerald-100 text-emerald-600",
     },
     {
-      label: "Reserved",
+      label: t("stock.summary.reserved"),
       value: summary?.totalReserved ?? 0,
       icon: BookOpenIcon,
       className: "bg-amber-100 text-amber-600",
     },
     {
-      label: "Borrowed",
+      label: t("stock.summary.borrowed"),
       value: summary?.totalBorrowed ?? 0,
       icon: PackageIcon,
       className: "bg-blue-100 text-blue-600",
     },
     {
-      label: "Sold",
+      label: t("stock.summary.sold"),
       value: summary?.totalSold ?? 0,
       icon: ShoppingCartIcon,
       className: "bg-violet-100 text-violet-600",
     },
     {
-      label: "Event Stock",
+      label: t("stock.summary.eventStock"),
       value: summary?.totalEventStock ?? 0,
       icon: StarIcon,
       className: "bg-yellow-100 text-yellow-600",
     },
     {
-      label: "Damaged",
+      label: t("stock.summary.damaged"),
       value: summary?.totalDamaged ?? 0,
       icon: AlertTriangleIcon,
       className: "bg-rose-100 text-rose-600",
     },
     {
-      label: "Lost",
+      label: t("stock.summary.lost"),
       value: summary?.totalLost ?? 0,
       icon: XIcon,
       className: "bg-red-100 text-red-500",
     },
     {
-      label: "Low Stock Items",
+      label: t("stock.summary.lowStockItems"),
       value: summary?.lowStockItems ?? 0,
       icon: Trash2Icon,
       className: "bg-orange-100 text-orange-600",

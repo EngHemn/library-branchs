@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { EntityImage } from "@/components/ui/entity-image"
 import type { Author } from "@/domain/entities/author/Author"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type AuthorDetailHeaderProps = {
   author: Author
@@ -18,6 +19,8 @@ export function AuthorDetailHeader({
   onBack,
   onEdit,
 }: AuthorDetailHeaderProps) {
+  const { t } = useTranslation()
+
   return (
     <header className="flex flex-col gap-4 sm:flex-row sm:items-start">
       <EntityImage
@@ -43,21 +46,26 @@ export function AuthorDetailHeader({
                   : "border-muted bg-muted text-muted-foreground"
               }
             >
-              {author.status}
+              {author.status === "active"
+                ? t("common.active")
+                : t("common.inactive")}
             </Badge>
           </div>
           <p className="mt-1 text-sm text-muted-foreground">
-            {author.nationality} · Born {author.dateOfBirth}
+            {t("authors.view.bornOn", {
+              nationality: author.nationality,
+              dateOfBirth: author.dateOfBirth,
+            })}
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
           <Button variant="outline" onClick={onBack}>
             <ArrowLeftIcon />
-            Back to Authors
+            {t("authors.view.backToAuthors")}
           </Button>
           <Button variant="outline" onClick={onEdit}>
             <PencilIcon />
-            Edit Author
+            {t("authors.view.editAuthor")}
           </Button>
         </div>
       </div>

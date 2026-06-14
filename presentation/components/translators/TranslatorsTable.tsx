@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/data-table"
 import type { Translator } from "@/domain/entities/translator/Translator"
 import { TranslatorActionButton } from "@/presentation/components/translators/TranslatorActionButton"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type TranslatorsTableProps = {
   translators: Translator[]
@@ -32,21 +33,21 @@ type TranslatorColumnKey =
   | "status"
   | "actions"
 
-const statusLabels = {
-  active: "active",
-  inactive: "inactive",
-}
-
 export function TranslatorsTable({
   translators,
   onView,
   onEdit,
   onDelete,
 }: TranslatorsTableProps) {
+  const { t } = useTranslation()
+
+  const statusLabel = (status: Translator["status"]) =>
+    status === "active" ? t("common.active") : t("common.inactive")
+
   const columns: DataTableColumn<Translator, TranslatorColumnKey>[] = [
     {
       key: "name",
-      header: "Name",
+      header: t("translators.table.name"),
       sortable: true,
       sortValue: (translator) => translator.name,
       cell: (translator) => (
@@ -68,14 +69,14 @@ export function TranslatorsTable({
     },
     {
       key: "language",
-      header: "Language",
+      header: t("translators.table.language"),
       sortable: true,
       sortValue: (translator) => translator.language,
       cell: (translator) => translator.language,
     },
     {
       key: "totalBooks",
-      header: "Books Count",
+      header: t("translators.table.booksCount"),
       sortable: true,
       sortValue: (translator) => translator.totalBooks,
       cell: (translator) => (
@@ -83,15 +84,15 @@ export function TranslatorsTable({
           variant="secondary"
           className="bg-violet-100 text-violet-700 dark:bg-violet-950 dark:text-violet-300"
         >
-          Translated {translator.totalBooks}
+          {t("translators.table.translatedCount", { count: translator.totalBooks })}
         </Badge>
       ),
     },
     {
       key: "status",
-      header: "Status",
+      header: t("translators.table.status"),
       sortable: true,
-      sortValue: (translator) => statusLabels[translator.status],
+      sortValue: (translator) => statusLabel(translator.status),
       cell: (translator) => (
         <Badge
           variant="outline"
@@ -101,32 +102,32 @@ export function TranslatorsTable({
               : "border-muted bg-muted text-muted-foreground"
           }
         >
-          {statusLabels[translator.status]}
+          {statusLabel(translator.status)}
         </Badge>
       ),
     },
     {
       key: "actions",
-      header: "Actions",
+      header: t("translators.table.actions"),
       headerClassName: "text-right",
       className: "text-right",
       cell: (translator) => (
-        <div className="flex justify-end gap-1">
+        <div className="table-action-content">
           <TranslatorActionButton
             icon={EyeIcon}
-            label="View"
+            label={t("translators.table.viewTranslator")}
             variant="outline"
             onClick={() => onView(translator)}
           />
           <TranslatorActionButton
             icon={PencilIcon}
-            label="Edit"
+            label={t("translators.table.editTranslator")}
             variant="outline"
             onClick={() => onEdit(translator)}
           />
           <TranslatorActionButton
             icon={Trash2Icon}
-            label="Delete"
+            label={t("translators.table.deleteTranslator")}
             variant="destructive"
             onClick={() => onDelete(translator)}
           />
@@ -138,9 +139,11 @@ export function TranslatorsTable({
   return (
     <Card className="rounded-lg">
       <CardHeader>
-        <CardTitle>All Translators</CardTitle>
+        <CardTitle>{t("translators.table.title")}</CardTitle>
         <CardDescription>
-          {translators.length.toLocaleString()} translator records
+          {t("translators.table.recordCount", {
+            count: translators.length.toLocaleString(),
+          })}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -148,8 +151,8 @@ export function TranslatorsTable({
           data={translators}
           columns={columns}
           getRowId={(translator) => translator.id}
-          emptyTitle="No translators found"
-          emptyDescription="Try changing or clearing the active filters."
+          emptyTitle={t("translators.table.emptyTitle")}
+          emptyDescription={t("translators.table.emptyDescription")}
           initialSort={{ key: "name", direction: "asc" }}
           initialPageSize={10}
           tableClassName="min-w-[800px]"

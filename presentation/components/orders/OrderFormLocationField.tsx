@@ -19,6 +19,7 @@ import type { OrderFormValues } from "@/domain/schemas/orderFormSchema"
 import { OrderLocationMap } from "@/presentation/components/orders/OrderLocationMap"
 import { OrderLocationPickerDialog } from "@/presentation/components/orders/OrderLocationPickerDialog"
 import { normalizeCoordinate } from "@/presentation/components/orders/orderDisplay"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type OrderFormLocationFieldProps = {
   form: UseFormReturn<OrderFormValues>
@@ -31,6 +32,7 @@ export function OrderFormLocationField({
   branchOptions,
   disabled = false,
 }: OrderFormLocationFieldProps) {
+  const { t } = useTranslation()
   const [isMapDialogOpen, setIsMapDialogOpen] = useState(false)
   const branchId = form.watch("branchId")
   const latitude = normalizeCoordinate(form.watch("latitude"))
@@ -49,10 +51,10 @@ export function OrderFormLocationField({
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-base">
             <MapPinIcon className="size-4" />
-            Delivery Location
+            {t("orders.location.deliveryTitle")}
           </CardTitle>
           <CardDescription>
-            {address || "Select a branch, then choose the delivery point on the map."}
+            {address || t("orders.location.selectDescription")}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -64,7 +66,7 @@ export function OrderFormLocationField({
               onClick={() => setIsMapDialogOpen(true)}
             >
               <MapPinIcon className="size-4" />
-              Select on map
+              {t("orders.location.selectOnMap")}
             </Button>
             {selectedBranch ? (
               <Button
@@ -73,7 +75,7 @@ export function OrderFormLocationField({
                 disabled={disabled}
                 onClick={() => applyBranchLocation(selectedBranch)}
               >
-                Use branch location
+                {t("orders.location.useBranchLocation")}
               </Button>
             ) : null}
           </div>
@@ -86,22 +88,22 @@ export function OrderFormLocationField({
 
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="space-y-1.5">
-              <Label htmlFor="order-form-latitude">Latitude</Label>
+              <Label htmlFor="order-form-latitude">{t("orders.location.latitude")}</Label>
               <Input
                 id="order-form-latitude"
                 value={latitude !== null ? String(latitude) : ""}
                 readOnly
-                placeholder="Select on map"
+                placeholder={t("orders.location.selectOnMapPlaceholder")}
                 className="bg-muted/40 font-mono text-sm"
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="order-form-longitude">Longitude</Label>
+              <Label htmlFor="order-form-longitude">{t("orders.location.longitude")}</Label>
               <Input
                 id="order-form-longitude"
                 value={longitude !== null ? String(longitude) : ""}
                 readOnly
-                placeholder="Select on map"
+                placeholder={t("orders.location.selectOnMapPlaceholder")}
                 className="bg-muted/40 font-mono text-sm"
               />
             </div>

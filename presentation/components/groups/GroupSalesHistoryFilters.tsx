@@ -9,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import type {
   GroupBranchFilterOption,
   GroupSalesBranchFilter,
@@ -35,14 +36,18 @@ export function GroupSalesHistoryFilters({
   onDateFromChange,
   onDateToChange,
 }: GroupSalesHistoryFiltersProps) {
+  const { t } = useTranslation()
+
   return (
     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
       {showBranchFilter ? (
         <div className="space-y-2">
-          <Label htmlFor="group-sales-branch-filter">Branch</Label>
+          <Label htmlFor="group-sales-branch-filter">
+            {t("groups.filters.branch")}
+          </Label>
           <Select value={branchFilter} onValueChange={onBranchFilterChange}>
             <SelectTrigger id="group-sales-branch-filter" className="w-full">
-              <SelectValue placeholder="Current branch" />
+              <SelectValue placeholder={t("groups.filters.currentBranch")} />
             </SelectTrigger>
             <SelectContent>
               {branchFilterOptions.map((option) => (
@@ -56,7 +61,9 @@ export function GroupSalesHistoryFilters({
       ) : null}
 
       <div className="space-y-2">
-        <Label htmlFor="group-sales-date-from">Date From</Label>
+        <Label htmlFor="group-sales-date-from">
+          {t("groups.filters.dateFrom")}
+        </Label>
         <Input
           id="group-sales-date-from"
           type="date"
@@ -67,7 +74,7 @@ export function GroupSalesHistoryFilters({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="group-sales-date-to">Date To</Label>
+        <Label htmlFor="group-sales-date-to">{t("groups.filters.dateTo")}</Label>
         <Input
           id="group-sales-date-to"
           type="date"

@@ -15,43 +15,48 @@ import {
 } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import type { GroupSummary } from "@/domain/entities/group/Group"
+import { useLocale } from "@/presentation/i18n/useLocale"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type GroupSummaryCardsProps = {
   summary: GroupSummary | null
   isLoading: boolean
 }
 
-const cards = [
-  {
-    key: "totalGroups",
-    title: "Total Groups",
-    icon: LayersIcon,
-    getValue: (summary: GroupSummary) => summary.totalGroups,
-  },
-  {
-    key: "activeGroups",
-    title: "Active Groups",
-    icon: UserCheckIcon,
-    getValue: (summary: GroupSummary) => summary.activeGroups,
-  },
-  {
-    key: "totalAssignedBooks",
-    title: "Assigned Books",
-    icon: BookOpenIcon,
-    getValue: (summary: GroupSummary) => summary.totalAssignedBooks,
-  },
-  {
-    key: "totalAssignedStaff",
-    title: "Staff",
-    icon: UsersIcon,
-    getValue: (summary: GroupSummary) => summary.totalAssignedStaff,
-  },
-] as const
-
 export function GroupSummaryCards({
   summary,
   isLoading,
 }: GroupSummaryCardsProps) {
+  const { t } = useTranslation()
+  const { locale } = useLocale()
+
+  const cards = [
+    {
+      key: "totalGroups",
+      title: t("groups.summary.totalGroups"),
+      icon: LayersIcon,
+      getValue: (groupSummary: GroupSummary) => groupSummary.totalGroups,
+    },
+    {
+      key: "activeGroups",
+      title: t("groups.summary.activeGroups"),
+      icon: UserCheckIcon,
+      getValue: (groupSummary: GroupSummary) => groupSummary.activeGroups,
+    },
+    {
+      key: "totalAssignedBooks",
+      title: t("groups.summary.assignedBooks"),
+      icon: BookOpenIcon,
+      getValue: (groupSummary: GroupSummary) => groupSummary.totalAssignedBooks,
+    },
+    {
+      key: "totalAssignedStaff",
+      title: t("groups.summary.staff"),
+      icon: UsersIcon,
+      getValue: (groupSummary: GroupSummary) => groupSummary.totalAssignedStaff,
+    },
+  ] as const
+
   return (
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
       {cards.map((card) => {
@@ -68,7 +73,7 @@ export function GroupSummaryCards({
                 <Skeleton className="h-7 w-12" />
               ) : (
                 <div className="text-2xl font-semibold tabular-nums">
-                  {card.getValue(summary).toLocaleString()}
+                  {card.getValue(summary).toLocaleString(locale)}
                 </div>
               )}
             </CardContent>

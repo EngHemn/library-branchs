@@ -18,6 +18,7 @@ import type { ShelfManagementUseCase } from "@/domain/usecases/shelves/ShelfMana
 import { BookFormFields } from "@/presentation/components/books/BookFormFields"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
 import { useFormSubmitSuccess } from "@/presentation/hooks/useFormSubmitSuccess"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import { useEditBookViewModel } from "@/presentation/viewmodels/books/useEditBookViewModel"
 
 type EditBookScreenProps = {
@@ -57,6 +58,7 @@ export function EditBookScreen({
   shelfManagementUseCase,
 }: EditBookScreenProps) {
   const router = useRouter()
+  const { t } = useTranslation()
   const viewModel = useEditBookViewModel(
     bookId,
     getBooksUseCase,
@@ -65,14 +67,14 @@ export function EditBookScreen({
   const { state, form } = viewModel
 
   useDashboardBreadcrumbs([
-    { label: "Workspace", href: "/dashboard" },
-    { label: "Books", href: "/dashboard/books" },
-    { label: "Edit Book" },
+    { label: t("breadcrumbs.workspace"), href: "/dashboard" },
+    { label: t("nav.books"), href: "/dashboard/books" },
+    { label: t("books.edit.breadcrumb") },
   ])
 
   const goBack = () => router.push(`/dashboard/books/${bookId}`)
 
-  useFormSubmitSuccess(state.isSaved, "Book updated successfully.")
+  useFormSubmitSuccess(state.isSaved, t("books.edit.updateSuccess"))
 
   return (
     <>
@@ -82,15 +84,15 @@ export function EditBookScreen({
         <div className="flex flex-1 items-center justify-center p-4">
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
-              <CardTitle>Book not found</CardTitle>
+              <CardTitle>{t("books.view.notFoundTitle")}</CardTitle>
               <CardDescription>
-                The book you are looking for does not exist or has been removed.
+                {t("books.view.notFoundDescription")}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Button variant="outline" onClick={() => router.back()}>
                 <ArrowLeftIcon />
-                Back to books
+                {t("books.view.backToBooks")}
               </Button>
             </CardContent>
           </Card>
@@ -101,17 +103,17 @@ export function EditBookScreen({
         <div className="flex flex-1 items-center justify-center p-4">
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
-              <CardTitle>Something went wrong</CardTitle>
+              <CardTitle>{t("common.somethingWentWrong")}</CardTitle>
               <CardDescription>{state.error}</CardDescription>
             </CardHeader>
             <CardContent className="flex gap-3">
               <Button variant="outline" onClick={() => router.back()}>
                 <ArrowLeftIcon />
-                Back to books
+                {t("books.view.backToBooks")}
               </Button>
               <Button onClick={() => router.refresh()}>
                 <RefreshCwIcon />
-                Retry
+                {t("common.retry")}
               </Button>
             </CardContent>
           </Card>
@@ -122,14 +124,16 @@ export function EditBookScreen({
         <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
           <section className="flex items-center justify-between pt-4">
             <div>
-              <h1 className="text-2xl font-semibold tracking-normal">Edit Book</h1>
+              <h1 className="text-2xl font-semibold tracking-normal">
+                {t("books.edit.title")}
+              </h1>
               <p className="mt-1 text-sm text-muted-foreground">
-                Update the book information.
+                {t("books.edit.description")}
               </p>
             </div>
             <Button variant="outline" onClick={goBack}>
               <ArrowLeftIcon />
-              Back
+              {t("common.back")}
             </Button>
           </section>
 
@@ -145,8 +149,8 @@ export function EditBookScreen({
 
           <Card className="rounded-lg">
             <CardHeader>
-              <CardTitle>Book Details</CardTitle>
-              <CardDescription>Modify the book details below.</CardDescription>
+              <CardTitle>{t("books.edit.detailsTitle")}</CardTitle>
+              <CardDescription>{t("books.edit.detailsDescription")}</CardDescription>
             </CardHeader>
             <CardContent>
               <BookFormFields
@@ -179,7 +183,7 @@ export function EditBookScreen({
                     onClick={() => router.back()}
                     disabled={state.isSaving}
                   >
-                    Cancel
+                    {t("common.cancel")}
                   </Button>
                   <Button type="submit" disabled={state.isSaving || state.isSaved}>
                     {state.isSaving ? (
@@ -187,7 +191,7 @@ export function EditBookScreen({
                     ) : (
                       <SaveIcon />
                     )}
-                    {state.isSaving ? "Saving..." : "Save Changes"}
+                    {state.isSaving ? t("common.saving") : t("common.saveChanges")}
                   </Button>
                 </div>
               </BookFormFields>

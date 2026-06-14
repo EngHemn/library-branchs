@@ -23,6 +23,7 @@ import { BranchSelector } from "@/presentation/components/sales/BranchSelector"
 import { BooksForSaleGrid } from "@/presentation/components/sales/BooksForSaleGrid"
 import { SalesCartPanel } from "@/presentation/components/sales/SalesCartPanel"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import { useSalesViewModel } from "@/presentation/viewmodels/sales/useSalesViewModel"
 
 type SalesScreenProps = {
@@ -31,13 +32,14 @@ type SalesScreenProps = {
 }
 
 export function SalesScreen({ authUseCase, salesUseCase }: SalesScreenProps) {
+  const { t } = useTranslation()
   const viewModel = useSalesViewModel(authUseCase, salesUseCase)
   const { state } = viewModel
   const [isCartOpen, setIsCartOpen] = useState(false)
 
   useDashboardBreadcrumbs([
-    { label: "Workspace", href: "/dashboard" },
-    { label: "Sales" },
+    { label: t("breadcrumbs.workspace"), href: "/dashboard" },
+    { label: t("nav.sales") },
   ])
 
   const branchSelectorPanel = (
@@ -110,14 +112,14 @@ export function SalesScreen({ authUseCase, salesUseCase }: SalesScreenProps) {
       <div className="flex flex-1 flex-col overflow-hidden">
         <div className="flex shrink-0 items-center justify-end gap-2 border-b px-4 py-2">
           <Button variant="outline" size="sm" asChild>
-            <Link href="/dashboard/sales/history">Sales History</Link>
+            <Link href="/dashboard/sales/history">{t("sales.screen.salesHistory")}</Link>
           </Button>
 
           <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
             <SheetTrigger asChild>
               <Button variant="outline" size="sm" className="gap-2">
                 <ShoppingCartIcon className="size-4" />
-                Cart
+                {t("sales.screen.cart")}
                 {state.cartItemCount > 0 && (
                   <Badge variant="secondary" className="h-5 px-1.5 text-[10px]">
                     {state.cartItemCount}
@@ -127,7 +129,7 @@ export function SalesScreen({ authUseCase, salesUseCase }: SalesScreenProps) {
             </SheetTrigger>
             <SheetContent className="w-full p-0 sm:max-w-md">
               <SheetHeader className="border-b px-4 py-3">
-                <SheetTitle>Cart</SheetTitle>
+                <SheetTitle>{t("sales.screen.cart")}</SheetTitle>
               </SheetHeader>
               <div className="h-[calc(100vh-3.5rem)] overflow-hidden">
                 {cartPanel}
@@ -146,7 +148,7 @@ export function SalesScreen({ authUseCase, salesUseCase }: SalesScreenProps) {
             <aside className="flex w-1/4 shrink-0 flex-col border-r">
               <div className="border-b px-4 py-3">
                 <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Branches
+                  {t("sales.screen.branches")}
                 </p>
               </div>
               <ScrollArea className="flex-1">{branchSelectorPanel}</ScrollArea>
@@ -163,10 +165,10 @@ export function SalesScreen({ authUseCase, salesUseCase }: SalesScreenProps) {
             <Tabs defaultValue="books" className="flex flex-1 flex-col">
               <TabsList className="mx-4 mt-3 w-auto justify-start rounded-lg">
                 <TabsTrigger value="branches" className="text-xs">
-                  Branches
+                  {t("sales.screen.branches")}
                 </TabsTrigger>
                 <TabsTrigger value="books" className="text-xs">
-                  Books
+                  {t("sales.screen.books")}
                 </TabsTrigger>
               </TabsList>
 

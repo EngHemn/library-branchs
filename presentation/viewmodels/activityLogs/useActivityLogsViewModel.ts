@@ -18,6 +18,8 @@ import {
   resolveUserBranchId,
   type DashboardBranchScope,
 } from "@/lib/dashboardBranchScope"
+import type { TranslationKey } from "@/presentation/i18n/messages"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import type {
   ActivityActionFilter,
   ActivityBranchFilter,
@@ -70,7 +72,10 @@ function resolveBranchFilterId(
   return branchFilter === "current" ? userBranchId : branchFilter
 }
 
-function getBranchFilterOptions(user: User): ActivityBranchFilterOption[] {
+function getBranchFilterOptions(
+  user: User,
+  t: (key: TranslationKey) => string
+): ActivityBranchFilterOption[] {
   if (user.branchType === "sub") {
     return []
   }
@@ -84,8 +89,8 @@ function getBranchFilterOptions(user: User): ActivityBranchFilterOption[] {
     .sort((left, right) => left.label.localeCompare(right.label))
 
   return [
-    { value: "all", label: "All branches" },
-    { value: "current", label: "Current branch" },
+    { value: "all", label: t("activityLogs.filters.allBranches") },
+    { value: "current", label: t("activityLogs.filters.currentBranch") },
     ...otherBranches,
   ]
 }
@@ -148,6 +153,7 @@ export function useActivityLogsViewModel(
   authUseCase: AuthUseCase,
   getActivityLogsUseCase: GetActivityLogsUseCase
 ): ActivityLogsViewModel {
+  const { t } = useTranslation()
   const [searchQuery, setSearchQuery] = useState("")
   const [actionFilter, setActionFilter] = useState<ActivityActionFilter>("all")
   const [branchFilter, setBranchFilterState] = useState<ActivityBranchFilter>("current")
@@ -183,7 +189,7 @@ export function useActivityLogsViewModel(
   const branchScope = user ? getDashboardBranchScope(user, allDashboardBranches) : null
   const scopedBranchIds = branchScope?.branchIds ?? []
   const showBranchFilter = !isSubBranch
-  const branchFilterOptions = user ? getBranchFilterOptions(user) : []
+  const branchFilterOptions = user ? getBranchFilterOptions(user, t) : []
 
   useEffect(() => {
     if (!user || !branchScope) return

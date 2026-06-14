@@ -25,6 +25,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type { GroupSalesReport } from "@/domain/entities/group/GroupSalesReport"
 import { GroupSalesHistoryFilters } from "@/presentation/components/groups/GroupSalesHistoryFilters"
 import { formatGroupBookPrice } from "@/presentation/components/groups/groupDisplay"
+import { useLocale } from "@/presentation/i18n/useLocale"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import type {
   GroupBranchFilterOption,
   GroupSalesBranchFilter,
@@ -90,6 +92,9 @@ export function GroupReportHistoryTab({
   onDateToChange,
   onRetry,
 }: GroupReportHistoryTabProps) {
+  const { t } = useTranslation()
+  const { locale } = useLocale()
+
   if (isLoading) {
     return <LoadingState />
   }
@@ -98,13 +103,13 @@ export function GroupReportHistoryTab({
     return (
       <Card className="rounded-lg border-destructive/40">
         <CardHeader>
-          <CardTitle className="text-base">Unable to load report history</CardTitle>
+          <CardTitle className="text-base">{t("groups.reports.loadError")}</CardTitle>
           <CardDescription>{error}</CardDescription>
         </CardHeader>
         <CardContent>
           <Button type="button" variant="outline" onClick={onRetry}>
             <RefreshCwIcon />
-            Retry
+            {t("common.retry")}
           </Button>
         </CardContent>
       </Card>
@@ -116,7 +121,7 @@ export function GroupReportHistoryTab({
       <Card className="rounded-lg">
         <CardContent className="flex min-h-48 items-center justify-center py-8">
           <p className="text-sm text-muted-foreground">
-            No sales recorded for this group yet.
+            {t("groups.reports.empty")}
           </p>
         </CardContent>
       </Card>
@@ -129,58 +134,58 @@ export function GroupReportHistoryTab({
   >[] = [
     {
       key: "title",
-      header: "Book",
+      header: t("groups.reports.columns.book"),
       sortable: true,
       sortValue: (row) => row.title,
       cell: (row) => <span className="font-medium">{row.title}</span>,
     },
     {
       key: "author",
-      header: "Author",
+      header: t("groups.reports.columns.author"),
       sortable: true,
       sortValue: (row) => row.author,
       cell: (row) => row.author,
     },
     {
       key: "translator",
-      header: "Translator",
+      header: t("groups.reports.columns.translator"),
       sortable: true,
       sortValue: (row) => row.translator ?? "",
       cell: (row) => row.translator ?? "—",
     },
     {
       key: "category",
-      header: "Category",
+      header: t("groups.reports.columns.category"),
       sortable: true,
       sortValue: (row) => row.category,
       cell: (row) => row.category,
     },
     {
       key: "unitsSold",
-      header: "Units Sold",
+      header: t("groups.reports.columns.unitsSold"),
       sortable: true,
       sortValue: (row) => row.unitsSold,
       headerClassName: "text-right",
       className: "text-right tabular-nums",
-      cell: (row) => row.unitsSold.toLocaleString(),
+      cell: (row) => row.unitsSold.toLocaleString(locale),
     },
     {
       key: "totalRevenue",
-      header: "Revenue",
+      header: t("groups.reports.columns.revenue"),
       sortable: true,
       sortValue: (row) => row.totalRevenue,
       headerClassName: "text-right",
       className: "text-right tabular-nums",
-      cell: (row) => formatGroupBookPrice(row.totalRevenue),
+      cell: (row) => formatGroupBookPrice(row.totalRevenue, locale),
     },
     {
       key: "saleCount",
-      header: "Sales",
+      header: t("groups.reports.columns.sales"),
       sortable: true,
       sortValue: (row) => row.saleCount,
       headerClassName: "text-right",
       className: "text-right tabular-nums",
-      cell: (row) => row.saleCount.toLocaleString(),
+      cell: (row) => row.saleCount.toLocaleString(locale),
     },
   ]
 
@@ -190,46 +195,46 @@ export function GroupReportHistoryTab({
   >[] = [
     {
       key: "name",
-      header: "Author",
+      header: t("groups.reports.columns.author"),
       sortable: true,
       sortValue: (row) => row.author,
       cell: (row) => <span className="font-medium">{row.author}</span>,
     },
     {
       key: "bookCount",
-      header: "Books",
+      header: t("groups.reports.columns.books"),
       sortable: true,
       sortValue: (row) => row.bookCount,
       headerClassName: "text-right",
       className: "text-right tabular-nums",
-      cell: (row) => row.bookCount.toLocaleString(),
+      cell: (row) => row.bookCount.toLocaleString(locale),
     },
     {
       key: "unitsSold",
-      header: "Units Sold",
+      header: t("groups.reports.columns.unitsSold"),
       sortable: true,
       sortValue: (row) => row.unitsSold,
       headerClassName: "text-right",
       className: "text-right tabular-nums",
-      cell: (row) => row.unitsSold.toLocaleString(),
+      cell: (row) => row.unitsSold.toLocaleString(locale),
     },
     {
       key: "totalRevenue",
-      header: "Revenue",
+      header: t("groups.reports.columns.revenue"),
       sortable: true,
       sortValue: (row) => row.totalRevenue,
       headerClassName: "text-right",
       className: "text-right tabular-nums",
-      cell: (row) => formatGroupBookPrice(row.totalRevenue),
+      cell: (row) => formatGroupBookPrice(row.totalRevenue, locale),
     },
     {
       key: "saleCount",
-      header: "Sales",
+      header: t("groups.reports.columns.sales"),
       sortable: true,
       sortValue: (row) => row.saleCount,
       headerClassName: "text-right",
       className: "text-right tabular-nums",
-      cell: (row) => row.saleCount.toLocaleString(),
+      cell: (row) => row.saleCount.toLocaleString(locale),
     },
   ]
 
@@ -239,46 +244,46 @@ export function GroupReportHistoryTab({
   >[] = [
     {
       key: "name",
-      header: "Translator",
+      header: t("groups.reports.columns.translator"),
       sortable: true,
       sortValue: (row) => row.translator,
       cell: (row) => <span className="font-medium">{row.translator}</span>,
     },
     {
       key: "bookCount",
-      header: "Books",
+      header: t("groups.reports.columns.books"),
       sortable: true,
       sortValue: (row) => row.bookCount,
       headerClassName: "text-right",
       className: "text-right tabular-nums",
-      cell: (row) => row.bookCount.toLocaleString(),
+      cell: (row) => row.bookCount.toLocaleString(locale),
     },
     {
       key: "unitsSold",
-      header: "Units Sold",
+      header: t("groups.reports.columns.unitsSold"),
       sortable: true,
       sortValue: (row) => row.unitsSold,
       headerClassName: "text-right",
       className: "text-right tabular-nums",
-      cell: (row) => row.unitsSold.toLocaleString(),
+      cell: (row) => row.unitsSold.toLocaleString(locale),
     },
     {
       key: "totalRevenue",
-      header: "Revenue",
+      header: t("groups.reports.columns.revenue"),
       sortable: true,
       sortValue: (row) => row.totalRevenue,
       headerClassName: "text-right",
       className: "text-right tabular-nums",
-      cell: (row) => formatGroupBookPrice(row.totalRevenue),
+      cell: (row) => formatGroupBookPrice(row.totalRevenue, locale),
     },
     {
       key: "saleCount",
-      header: "Sales",
+      header: t("groups.reports.columns.sales"),
       sortable: true,
       sortValue: (row) => row.saleCount,
       headerClassName: "text-right",
       className: "text-right tabular-nums",
-      cell: (row) => row.saleCount.toLocaleString(),
+      cell: (row) => row.saleCount.toLocaleString(locale),
     },
   ]
 
@@ -288,46 +293,46 @@ export function GroupReportHistoryTab({
   >[] = [
     {
       key: "name",
-      header: "Category",
+      header: t("groups.reports.columns.category"),
       sortable: true,
       sortValue: (row) => row.category,
       cell: (row) => <span className="font-medium">{row.category}</span>,
     },
     {
       key: "bookCount",
-      header: "Books",
+      header: t("groups.reports.columns.books"),
       sortable: true,
       sortValue: (row) => row.bookCount,
       headerClassName: "text-right",
       className: "text-right tabular-nums",
-      cell: (row) => row.bookCount.toLocaleString(),
+      cell: (row) => row.bookCount.toLocaleString(locale),
     },
     {
       key: "unitsSold",
-      header: "Units Sold",
+      header: t("groups.reports.columns.unitsSold"),
       sortable: true,
       sortValue: (row) => row.unitsSold,
       headerClassName: "text-right",
       className: "text-right tabular-nums",
-      cell: (row) => row.unitsSold.toLocaleString(),
+      cell: (row) => row.unitsSold.toLocaleString(locale),
     },
     {
       key: "totalRevenue",
-      header: "Revenue",
+      header: t("groups.reports.columns.revenue"),
       sortable: true,
       sortValue: (row) => row.totalRevenue,
       headerClassName: "text-right",
       className: "text-right tabular-nums",
-      cell: (row) => formatGroupBookPrice(row.totalRevenue),
+      cell: (row) => formatGroupBookPrice(row.totalRevenue, locale),
     },
     {
       key: "saleCount",
-      header: "Sales",
+      header: t("groups.reports.columns.sales"),
       sortable: true,
       sortValue: (row) => row.saleCount,
       headerClassName: "text-right",
       className: "text-right tabular-nums",
-      cell: (row) => row.saleCount.toLocaleString(),
+      cell: (row) => row.saleCount.toLocaleString(locale),
     },
   ]
 
@@ -337,9 +342,9 @@ export function GroupReportHistoryTab({
     <div className="flex flex-col gap-4">
       <Card className="rounded-lg">
         <CardHeader className="pb-3">
-          <CardTitle className="text-base">Filters</CardTitle>
+          <CardTitle className="text-base">{t("groups.filters.filters")}</CardTitle>
           <CardDescription>
-            Branch and date filters apply to all report sections.
+            {t("groups.reports.filtersDescription")}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -363,9 +368,11 @@ export function GroupReportHistoryTab({
               <ShoppingCartIcon className="size-4 text-muted-foreground" />
             </span>
             <div>
-              <p className="text-xs text-muted-foreground">Completed Sales</p>
+              <p className="text-xs text-muted-foreground">
+                {t("groups.reports.completedSales")}
+              </p>
               <p className="text-xl font-semibold tabular-nums">
-                {report.completedSaleCount.toLocaleString()}
+                {report.completedSaleCount.toLocaleString(locale)}
               </p>
             </div>
           </CardContent>
@@ -376,9 +383,11 @@ export function GroupReportHistoryTab({
               <BookOpenIcon className="size-4 text-muted-foreground" />
             </span>
             <div>
-              <p className="text-xs text-muted-foreground">Units Sold</p>
+              <p className="text-xs text-muted-foreground">
+                {t("groups.reports.unitsSold")}
+              </p>
               <p className="text-xl font-semibold tabular-nums">
-                {report.totalUnitsSold.toLocaleString()}
+                {report.totalUnitsSold.toLocaleString(locale)}
               </p>
             </div>
           </CardContent>
@@ -389,9 +398,11 @@ export function GroupReportHistoryTab({
               <LayersIcon className="size-4 text-muted-foreground" />
             </span>
             <div>
-              <p className="text-xs text-muted-foreground">Total Revenue</p>
+              <p className="text-xs text-muted-foreground">
+                {t("groups.reports.totalRevenue")}
+              </p>
               <p className="text-xl font-semibold tabular-nums">
-                {formatGroupBookPrice(report.totalRevenue)}
+                {formatGroupBookPrice(report.totalRevenue, locale)}
               </p>
             </div>
           </CardContent>
@@ -402,7 +413,7 @@ export function GroupReportHistoryTab({
         <Card className="rounded-lg">
           <CardContent className="flex min-h-48 items-center justify-center py-8">
             <p className="text-sm text-muted-foreground">
-              No completed sales match the current filters.
+              {t("groups.reports.noCompletedSales")}
             </p>
           </CardContent>
         </Card>
@@ -411,26 +422,28 @@ export function GroupReportHistoryTab({
           <TabsList className="h-auto flex-wrap">
             <TabsTrigger value="books">
               <BookOpenIcon className="size-4" />
-              Books ({report.books.length})
+              {t("groups.reports.tabs.books")} ({report.books.length})
             </TabsTrigger>
             <TabsTrigger value="authors">
               <PenLineIcon className="size-4" />
-              Authors ({report.authors.length})
+              {t("groups.reports.tabs.authors")} ({report.authors.length})
             </TabsTrigger>
             <TabsTrigger value="translators">
-              Translators ({report.translators.length})
+              {t("groups.reports.tabs.translators")} ({report.translators.length})
             </TabsTrigger>
             <TabsTrigger value="categories">
-              Categories ({report.categories.length})
+              {t("groups.reports.tabs.categories")} ({report.categories.length})
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="books" className="mt-4">
             <Card className="rounded-lg">
               <CardHeader className="pb-3">
-                <CardTitle className="text-base">Books</CardTitle>
+                <CardTitle className="text-base">
+                  {t("groups.reports.sections.books.title")}
+                </CardTitle>
                 <CardDescription>
-                  Selling performance grouped by book title.
+                  {t("groups.reports.sections.books.description")}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -438,8 +451,8 @@ export function GroupReportHistoryTab({
                   data={report.books}
                   columns={bookColumns}
                   getRowId={(row) => row.bookId}
-                  emptyTitle="No book sales"
-                  emptyDescription="No book sales match the current filters."
+                  emptyTitle={t("groups.reports.sections.books.emptyTitle")}
+                  emptyDescription={t("groups.reports.sections.books.emptyDescription")}
                   initialSort={{ key: "totalRevenue", direction: "desc" }}
                   initialPageSize={10}
                 />
@@ -450,9 +463,11 @@ export function GroupReportHistoryTab({
           <TabsContent value="authors" className="mt-4">
             <Card className="rounded-lg">
               <CardHeader className="pb-3">
-                <CardTitle className="text-base">Authors</CardTitle>
+                <CardTitle className="text-base">
+                  {t("groups.reports.sections.authors.title")}
+                </CardTitle>
                 <CardDescription>
-                  Selling performance grouped by author.
+                  {t("groups.reports.sections.authors.description")}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -460,8 +475,8 @@ export function GroupReportHistoryTab({
                   data={report.authors}
                   columns={authorColumns}
                   getRowId={(row) => row.author}
-                  emptyTitle="No author sales"
-                  emptyDescription="No author sales match the current filters."
+                  emptyTitle={t("groups.reports.sections.authors.emptyTitle")}
+                  emptyDescription={t("groups.reports.sections.authors.emptyDescription")}
                   initialSort={{ key: "totalRevenue", direction: "desc" }}
                   initialPageSize={10}
                 />
@@ -472,9 +487,11 @@ export function GroupReportHistoryTab({
           <TabsContent value="translators" className="mt-4">
             <Card className="rounded-lg">
               <CardHeader className="pb-3">
-                <CardTitle className="text-base">Translators</CardTitle>
+                <CardTitle className="text-base">
+                  {t("groups.reports.sections.translators.title")}
+                </CardTitle>
                 <CardDescription>
-                  Selling performance grouped by translator.
+                  {t("groups.reports.sections.translators.description")}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -482,8 +499,10 @@ export function GroupReportHistoryTab({
                   data={report.translators}
                   columns={translatorColumns}
                   getRowId={(row) => row.translator}
-                  emptyTitle="No translator sales"
-                  emptyDescription="No translator sales match the current filters."
+                  emptyTitle={t("groups.reports.sections.translators.emptyTitle")}
+                  emptyDescription={t(
+                    "groups.reports.sections.translators.emptyDescription"
+                  )}
                   initialSort={{ key: "totalRevenue", direction: "desc" }}
                   initialPageSize={10}
                 />
@@ -494,9 +513,11 @@ export function GroupReportHistoryTab({
           <TabsContent value="categories" className="mt-4">
             <Card className="rounded-lg">
               <CardHeader className="pb-3">
-                <CardTitle className="text-base">Categories</CardTitle>
+                <CardTitle className="text-base">
+                  {t("groups.reports.sections.categories.title")}
+                </CardTitle>
                 <CardDescription>
-                  Selling performance grouped by category.
+                  {t("groups.reports.sections.categories.description")}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -504,8 +525,10 @@ export function GroupReportHistoryTab({
                   data={report.categories}
                   columns={categoryColumns}
                   getRowId={(row) => row.category}
-                  emptyTitle="No category sales"
-                  emptyDescription="No category sales match the current filters."
+                  emptyTitle={t("groups.reports.sections.categories.emptyTitle")}
+                  emptyDescription={t(
+                    "groups.reports.sections.categories.emptyDescription"
+                  )}
                   initialSort={{ key: "totalRevenue", direction: "desc" }}
                   initialPageSize={10}
                 />

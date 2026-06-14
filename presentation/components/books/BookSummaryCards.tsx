@@ -9,30 +9,33 @@ import {
 
 import { Card, CardContent } from "@/components/ui/card"
 import type { BookDetail } from "@/domain/entities/book/BookDetail"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type BookSummaryCardsProps = {
   book: BookDetail
 }
 
 export function BookSummaryCards({ book }: BookSummaryCardsProps) {
+  const { t } = useTranslation()
+
   const cards = [
     {
-      label: "Branches Carrying Book",
+      label: t("books.summary.branchesCarrying"),
       value: book.branchCount,
       icon: Building2Icon,
     },
     {
-      label: "Total Available",
+      label: t("books.summary.totalAvailable"),
       value: book.available,
       icon: PackageIcon,
     },
     {
-      label: "Active Bookings",
+      label: t("books.summary.activeBookings"),
       value: book.activeBookings,
       icon: BookOpenIcon,
     },
     {
-      label: "Total Sold",
+      label: t("books.summary.totalSold"),
       value: book.totalSold,
       icon: ShoppingCartIcon,
     },

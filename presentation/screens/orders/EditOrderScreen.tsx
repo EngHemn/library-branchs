@@ -18,6 +18,7 @@ import type { GetOrdersUseCase } from "@/domain/usecases/orders/GetOrdersUseCase
 import { OrderFormFields } from "@/presentation/components/orders/OrderFormFields"
 import { buildCreateHrefWithReturn } from "@/presentation/components/shared/DashboardEntityLink"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import { useFormSubmitSuccess } from "@/presentation/hooks/useFormSubmitSuccess"
 import { useEditOrderViewModel } from "@/presentation/viewmodels/orders/useEditOrderViewModel"
 
@@ -58,17 +59,18 @@ export function EditOrderScreen({
   const currentPath = `/dashboard/orders/${orderId}/edit?returnTo=${encodeURIComponent(returnTo)}`
   const createBookHref = buildCreateHrefWithReturn(CREATE_BOOK_PATH, currentPath)
   const viewModel = useEditOrderViewModel(orderId, authUseCase, getOrdersUseCase)
+  const { t } = useTranslation()
   const { state, form } = viewModel
 
   useDashboardBreadcrumbs([
-    { label: "Workspace", href: "/dashboard" },
-    { label: "Orders", href: "/dashboard/orders" },
-    { label: "Edit Order" },
+    { label: t("breadcrumbs.workspace"), href: "/dashboard" },
+    { label: t("nav.orders"), href: "/dashboard/orders" },
+    { label: t("orders.edit.breadcrumb") },
   ])
 
   const goBack = () => router.push(returnTo)
 
-  useFormSubmitSuccess(state.isSaved, "Order updated successfully.")
+  useFormSubmitSuccess(state.isSaved, t("orders.edit.updateSuccess"))
 
   return (
     <>
@@ -78,15 +80,13 @@ export function EditOrderScreen({
         <div className="flex flex-1 items-center justify-center p-4">
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
-              <CardTitle>Order not found</CardTitle>
-              <CardDescription>
-                This order may have been removed or the link is invalid.
-              </CardDescription>
+              <CardTitle>{t("orders.notFoundTitle")}</CardTitle>
+              <CardDescription>{t("orders.notFoundDescription")}</CardDescription>
             </CardHeader>
             <CardContent>
               <Button variant="outline" onClick={() => router.push("/dashboard/orders")}>
                 <ArrowLeftIcon />
-                Back to Orders
+                {t("orders.backToOrders")}
               </Button>
             </CardContent>
           </Card>
@@ -97,13 +97,13 @@ export function EditOrderScreen({
         <div className="flex flex-1 items-center justify-center p-4">
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
-              <CardTitle>Could not load order</CardTitle>
+              <CardTitle>{t("orders.edit.loadErrorTitle")}</CardTitle>
               <CardDescription>{state.error}</CardDescription>
             </CardHeader>
             <CardContent>
               <Button variant="outline" onClick={goBack}>
                 <ArrowLeftIcon />
-                Go Back
+                {t("common.back")}
               </Button>
             </CardContent>
           </Card>
@@ -114,14 +114,12 @@ export function EditOrderScreen({
         <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
           <section className="flex items-center justify-between pt-4">
             <div>
-              <h1 className="text-2xl font-semibold tracking-normal">Edit Order</h1>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Update order details, status, and book items.
-              </p>
+              <h1 className="text-2xl font-semibold tracking-normal">{t("orders.edit.title")}</h1>
+              <p className="mt-1 text-sm text-muted-foreground">{t("orders.edit.subtitle")}</p>
             </div>
             <Button variant="outline" onClick={goBack}>
               <ArrowLeftIcon />
-              Back
+              {t("common.back")}
             </Button>
           </section>
 
@@ -137,10 +135,8 @@ export function EditOrderScreen({
 
           <Card className="rounded-lg">
             <CardHeader>
-              <CardTitle>Order Details</CardTitle>
-              <CardDescription>
-                Update supplier, dates, status, branch, and books.
-              </CardDescription>
+              <CardTitle>{t("orders.edit.detailsTitle")}</CardTitle>
+              <CardDescription>{t("orders.edit.detailsDescription")}</CardDescription>
             </CardHeader>
             <CardContent>
               <OrderFormFields
@@ -160,7 +156,7 @@ export function EditOrderScreen({
                     onClick={goBack}
                     disabled={state.isSaving}
                   >
-                    Cancel
+                    {t("common.cancel")}
                   </Button>
                   <Button type="submit" disabled={state.isSaving || state.isSaved}>
                     {state.isSaving ? (
@@ -168,7 +164,7 @@ export function EditOrderScreen({
                     ) : (
                       <SaveIcon />
                     )}
-                    {state.isSaving ? "Saving..." : "Save Changes"}
+                    {state.isSaving ? t("common.saving") : t("common.saveChanges")}
                   </Button>
                 </div>
               </OrderFormFields>

@@ -20,12 +20,12 @@ import {
   type DataTableColumn,
 } from "@/components/ui/data-table"
 import { TooltipProvider } from "@/components/ui/tooltip"
-import { getNeedCategoryLabel } from "@/domain/entities/need/NeedCategory"
 import type { NeedListItem } from "@/domain/entities/need/Need"
 import { NeedActionButton } from "@/presentation/components/needs/NeedActionButton"
 import { NeedPriorityBadge } from "@/presentation/components/needs/NeedPriorityBadge"
 import { NeedStatusBadge } from "@/presentation/components/needs/NeedStatusBadge"
 import { formatNeedDate } from "@/presentation/components/needs/needDisplay"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type NeedsTableProps = {
   needs: NeedListItem[]
@@ -57,24 +57,26 @@ export function NeedsTable({
   onApprove,
   onReject,
 }: NeedsTableProps) {
+  const { t } = useTranslation()
+
   const columns: DataTableColumn<NeedListItem, NeedColumnKey>[] = [
     {
       key: "name",
-      header: "Need Name",
+      header: t("needs.table.columns.name"),
       sortable: true,
       sortValue: (need) => need.name,
       cell: (need) => <span className="font-semibold">{need.name}</span>,
     },
     {
       key: "category",
-      header: "Category",
+      header: t("needs.table.columns.category"),
       sortable: true,
       sortValue: (need) => need.category,
-      cell: (need) => getNeedCategoryLabel(need.category),
+      cell: (need) => t(`needs.categories.${need.category}` as any),
     },
     {
       key: "requestedBy",
-      header: "Requested By",
+      header: t("needs.table.columns.requestedBy"),
       sortable: true,
       sortValue: (need) => need.requestedBy,
       cell: (need) => need.requestedBy,
@@ -83,7 +85,7 @@ export function NeedsTable({
       ? [
           {
             key: "branchName" as const,
-            header: "Branch",
+            header: t("needs.table.columns.branch"),
             sortable: true,
             sortValue: (need: NeedListItem) => need.branchName,
             cell: (need: NeedListItem) => need.branchName,
@@ -92,7 +94,7 @@ export function NeedsTable({
       : []),
     {
       key: "quantity",
-      header: "Quantity Needed",
+      header: t("needs.table.columns.quantity"),
       sortable: true,
       sortValue: (need) => need.quantity,
       cell: (need) => (
@@ -101,40 +103,40 @@ export function NeedsTable({
     },
     {
       key: "priority",
-      header: "Priority",
+      header: t("needs.table.columns.priority"),
       sortable: true,
       sortValue: (need) => need.priority,
       cell: (need) => <NeedPriorityBadge priority={need.priority} />,
     },
     {
       key: "status",
-      header: "Status",
+      header: t("needs.table.columns.status"),
       sortable: true,
       sortValue: (need) => need.status,
       cell: (need) => <NeedStatusBadge status={need.status} />,
     },
     {
       key: "requestDate",
-      header: "Request Date",
+      header: t("needs.table.columns.requestDate"),
       sortable: true,
       sortValue: (need) => new Date(need.requestDate).getTime(),
       cell: (need) => formatNeedDate(need.requestDate),
     },
     {
       key: "actions",
-      header: "Actions",
+      header: t("needs.table.columns.actions"),
       headerClassName: "text-right",
       className: "text-right",
       cell: (need) => (
-        <div className="flex items-center justify-end gap-1">
+        <div className="table-action-content">
           <NeedActionButton
             icon={EyeIcon}
-            label="View need"
+            label={t("needs.table.actionsTooltip.view")}
             onClick={() => onView(need)}
           />
           <NeedActionButton
             icon={PencilIcon}
-            label="Edit need"
+            label={t("needs.table.actionsTooltip.edit")}
             variant="outline"
             onClick={() => onEdit(need)}
           />
@@ -142,13 +144,13 @@ export function NeedsTable({
             <>
               <NeedActionButton
                 icon={CheckIcon}
-                label="Approve need"
+                label={t("needs.table.actionsTooltip.approve")}
                 variant="outline"
                 onClick={() => onApprove(need)}
               />
               <NeedActionButton
                 icon={XIcon}
-                label="Reject need"
+                label={t("needs.table.actionsTooltip.reject")}
                 variant="destructive"
                 onClick={() => onReject(need)}
               />
@@ -156,7 +158,7 @@ export function NeedsTable({
           ) : null}
           <NeedActionButton
             icon={Trash2Icon}
-            label="Delete need"
+            label={t("needs.table.actionsTooltip.delete")}
             variant="destructive"
             onClick={() => onDelete(need)}
           />
@@ -169,11 +171,13 @@ export function NeedsTable({
     <TooltipProvider>
       <Card className="rounded-lg">
         <CardHeader className="pb-3">
-          <CardTitle className="text-base">Need Requests</CardTitle>
+          <CardTitle className="text-base">{t("needs.table.title")}</CardTitle>
           <CardDescription>
             {needs.length === 0
-              ? "No need requests match the current filters."
-              : `${needs.length} request${needs.length === 1 ? "" : "s"} shown`}
+              ? t("needs.table.noMatch")
+              : t(needs.length === 1 ? "needs.table.recordCount" : "needs.table.recordCountPlural", {
+                  count: needs.length,
+                })}
           </CardDescription>
         </CardHeader>
         <CardContent className="p-0">
@@ -181,8 +185,8 @@ export function NeedsTable({
             data={needs}
             columns={columns}
             getRowId={(need) => need.id}
-            emptyTitle="No need requests found"
-            emptyDescription="Try changing or clearing the active filters."
+            emptyTitle={t("needs.table.emptyTitle")}
+            emptyDescription={t("needs.table.emptyDescription")}
             initialSort={{ key: "requestDate", direction: "desc" }}
             initialPageSize={10}
           />

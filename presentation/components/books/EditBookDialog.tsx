@@ -16,6 +16,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import type { GetBooksUseCase } from "@/domain/usecases/books/GetBooksUseCase"
 import type { ShelfManagementUseCase } from "@/domain/usecases/shelves/ShelfManagementUseCase"
 import { BookFormFields } from "@/presentation/components/books/BookFormFields"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import { useEditBookViewModel } from "@/presentation/viewmodels/books/useEditBookViewModel"
 
 function isComboboxPortalTarget(target: EventTarget | null): boolean {
@@ -58,6 +59,7 @@ function EditBookDialogContent({
   onOpenChange,
   onSaved,
 }: EditBookDialogContentProps) {
+  const { t } = useTranslation()
   const {
     state,
     form,
@@ -74,11 +76,11 @@ function EditBookDialogContent({
 
   useEffect(() => {
     if (state.isSaved) {
-      toast.success("Book updated successfully.")
+      toast.success(t("books.edit.updateSuccess"))
       onSaved?.()
       onOpenChange(false)
     }
-  }, [state.isSaved, onOpenChange, onSaved])
+  }, [state.isSaved, onOpenChange, onSaved, t])
 
   if (state.isLoading) {
     return (
@@ -93,7 +95,7 @@ function EditBookDialogContent({
   if (state.isNotFound) {
     return (
       <p className="py-6 text-center text-sm text-muted-foreground">
-        Book not found or has been removed.
+        {t("books.edit.notFoundOrRemoved")}
       </p>
     )
   }
@@ -101,7 +103,7 @@ function EditBookDialogContent({
   if (state.isError && !state.isReady) {
     return (
       <p className="py-6 text-center text-sm text-destructive">
-        {state.error ?? "Failed to load book."}
+        {state.error ?? t("books.edit.loadFailed")}
       </p>
     )
   }
@@ -141,11 +143,11 @@ function EditBookDialogContent({
             onClick={() => onOpenChange(false)}
             disabled={state.isSaving}
           >
-            Cancel
+            {t("common.cancel")}
           </Button>
           <Button type="submit" disabled={state.isSaving || state.isSaved}>
             {state.isSaving ? <Loader2Icon className="animate-spin" /> : <SaveIcon />}
-            {state.isSaving ? "Saving..." : "Save Changes"}
+            {state.isSaving ? t("common.saving") : t("common.saveChanges")}
           </Button>
         </DialogFooter>
       </BookFormFields>
@@ -161,6 +163,8 @@ export function EditBookDialog({
   shelfManagementUseCase,
   onSaved,
 }: EditBookDialogProps) {
+  const { t } = useTranslation()
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
@@ -170,7 +174,7 @@ export function EditBookDialog({
         onFocusOutside={preventDialogDismissForCombobox}
       >
         <DialogHeader>
-          <DialogTitle>Edit Book</DialogTitle>
+          <DialogTitle>{t("books.edit.dialogTitle")}</DialogTitle>
         </DialogHeader>
 
         {open && bookId ? (

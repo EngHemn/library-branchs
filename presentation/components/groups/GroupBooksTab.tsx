@@ -19,14 +19,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import type { BookStatus } from "@/domain/entities/book/Book"
 import type { GroupAssignedBook } from "@/domain/entities/group/Group"
 import { GroupBooksFilters } from "@/presentation/components/groups/GroupBooksFilters"
 import {
   formatGroupBookPrice,
-  groupBookStatusLabels,
   groupBookStatusVariants,
 } from "@/presentation/components/groups/groupDisplay"
 import { BookLink } from "@/presentation/components/shared/DashboardEntityLink"
+import type { TranslationKey } from "@/presentation/i18n/messages"
+import { useLocale } from "@/presentation/i18n/useLocale"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import type {
   GroupBooksAuthorFilter,
   GroupBooksBranchFilter,
@@ -62,12 +65,18 @@ export function GroupBooksTab({
   onAuthorFilterChange,
   onBranchFilterChange,
 }: GroupBooksTabProps) {
+  const { t } = useTranslation()
+  const { locale } = useLocale()
+
+  const bookStatusLabel = (status: BookStatus) =>
+    t(`groups.bookStatus.${status}` as TranslationKey)
+
   if (totalBooks === 0) {
     return (
       <Card className="rounded-lg">
         <CardContent className="flex min-h-48 items-center justify-center py-8">
           <p className="text-sm text-muted-foreground">
-            No books assigned to this group.
+            {t("groups.books.empty")}
           </p>
         </CardContent>
       </Card>
@@ -78,7 +87,7 @@ export function GroupBooksTab({
     <div className="flex flex-col gap-4">
       <Card className="rounded-lg">
         <CardHeader className="pb-3">
-          <CardTitle className="text-base">Filters</CardTitle>
+          <CardTitle className="text-base">{t("groups.filters.filters")}</CardTitle>
         </CardHeader>
         <CardContent>
           <GroupBooksFilters
@@ -100,32 +109,38 @@ export function GroupBooksTab({
 
       <Card className="rounded-lg">
         <CardHeader className="pb-3">
-          <CardTitle className="text-base">Assigned Books</CardTitle>
+          <CardTitle className="text-base">{t("groups.books.assignedTitle")}</CardTitle>
           <CardDescription>
-            {books.length.toLocaleString()} of {totalBooks.toLocaleString()} book
-            {totalBooks === 1 ? "" : "s"} shown
+            {t("groups.books.shownCount", {
+              shown: books.length.toLocaleString(locale),
+              total: totalBooks.toLocaleString(locale),
+            })}
           </CardDescription>
         </CardHeader>
         <CardContent className="p-0">
           {books.length === 0 ? (
             <div className="flex min-h-48 items-center justify-center py-8">
               <p className="text-sm text-muted-foreground">
-                No books match the current filters.
+                {t("groups.books.noMatch")}
               </p>
             </div>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-16">Cover</TableHead>
-                  <TableHead>Title</TableHead>
-                  <TableHead>Author</TableHead>
-                  {showBranchFilter ? <TableHead>Branch</TableHead> : null}
-                  <TableHead>ISBN</TableHead>
-                  <TableHead className="text-center">Stock</TableHead>
-                  <TableHead className="text-center">Available</TableHead>
-                  <TableHead className="text-center">Price</TableHead>
-                  <TableHead>Availability</TableHead>
+                  <TableHead className="w-16">{t("groups.books.cover")}</TableHead>
+                  <TableHead>{t("groups.books.title")}</TableHead>
+                  <TableHead>{t("groups.books.author")}</TableHead>
+                  {showBranchFilter ? (
+                    <TableHead>{t("groups.books.branch")}</TableHead>
+                  ) : null}
+                  <TableHead>{t("groups.books.isbn")}</TableHead>
+                  <TableHead className="text-center">{t("groups.books.stock")}</TableHead>
+                  <TableHead className="text-center">
+                    {t("groups.books.available")}
+                  </TableHead>
+                  <TableHead className="text-center">{t("groups.books.price")}</TableHead>
+                  <TableHead>{t("groups.books.availability")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -152,17 +167,17 @@ export function GroupBooksTab({
                     ) : null}
                     <TableCell className="font-mono text-xs">{book.isbn}</TableCell>
                     <TableCell className="text-center tabular-nums">
-                      {book.stock.toLocaleString()}
+                      {book.stock.toLocaleString(locale)}
                     </TableCell>
                     <TableCell className="text-center tabular-nums">
-                      {book.available.toLocaleString()}
+                      {book.available.toLocaleString(locale)}
                     </TableCell>
                     <TableCell className="text-center tabular-nums">
-                      {formatGroupBookPrice(book.price)}
+                      {formatGroupBookPrice(book.price, locale)}
                     </TableCell>
                     <TableCell>
                       <Badge variant={groupBookStatusVariants[book.status]}>
-                        {groupBookStatusLabels[book.status]}
+                        {bookStatusLabel(book.status)}
                       </Badge>
                     </TableCell>
                   </TableRow>

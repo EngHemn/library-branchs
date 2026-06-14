@@ -12,6 +12,7 @@ import {
   getDashboardBranchScope,
   resolveUserBranchId,
 } from "@/lib/dashboardBranchScope"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 import type {
   SalesHistoryBranchFilter,
   SalesHistoryBranchFilterOption,
@@ -97,7 +98,10 @@ function resolveBranchFilterId(
   return branchFilter === "current" ? userBranchId : branchFilter
 }
 
-function getBranchFilterOptions(user: User): SalesHistoryBranchFilterOption[] {
+function getBranchFilterOptions(
+  user: User,
+  currentBranchLabel: string
+): SalesHistoryBranchFilterOption[] {
   if (user.branchType === "sub") {
     return []
   }
@@ -110,7 +114,7 @@ function getBranchFilterOptions(user: User): SalesHistoryBranchFilterOption[] {
     .map((branch) => ({ value: branch.id, label: branch.name }))
     .sort((left, right) => left.label.localeCompare(right.label))
 
-  return [{ value: "current", label: "Current Branch" }, ...otherBranches]
+  return [{ value: "current", label: currentBranchLabel }, ...otherBranches]
 }
 
 function filterSales(
@@ -152,6 +156,7 @@ export function useSalesHistoryViewModel(
   authUseCase: AuthUseCase,
   salesUseCase: SalesUseCase
 ): SalesHistoryViewModel {
+  const { t } = useTranslation()
   const [filters, setFilters] = useState<SalesHistoryFilterState>(defaultFilters)
 
   const userQuery = useQuery({
@@ -182,7 +187,9 @@ export function useSalesHistoryViewModel(
   const isSubBranch = user?.branchType === "sub"
   const showBranchFilter = !isSubBranch
   const showBranchColumn = !isSubBranch && filters.branchFilter !== "current"
-  const branchFilterOptions = user ? getBranchFilterOptions(user) : []
+  const branchFilterOptions = user
+    ? getBranchFilterOptions(user, t("sales.history.currentBranch"))
+    : []
   const scopedBranchIds = user ? getScopedBranchIds(user) : []
 
   const sales = salesHistoryQuery.data ?? []

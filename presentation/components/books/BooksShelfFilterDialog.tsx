@@ -15,6 +15,7 @@ import {
 import type { ShelfLocationOptions } from "@/domain/entities/shelf/ShelfLocationOptions"
 import type { BookFormValues } from "@/domain/schemas/bookFormSchema"
 import { BookFormLocationField } from "@/presentation/components/books/BookFormLocationField"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type ShelfFilterFormValues = {
   locationValues: Record<string, string>
@@ -55,6 +56,7 @@ export function BooksShelfFilterDialog({
   onUpdateLocationStep,
   onDeleteLocationStep,
 }: BooksShelfFilterDialogProps) {
+  const { t } = useTranslation()
   const form = useForm<ShelfFilterFormValues>({
     defaultValues: { locationValues: {} },
   })
@@ -77,9 +79,9 @@ export function BooksShelfFilterDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Filter by Shelf Location</DialogTitle>
+          <DialogTitle>{t("books.shelfFilter.title")}</DialogTitle>
           <DialogDescription>
-            Select shelf location steps to narrow down the books list.
+            {t("books.shelfFilter.description")}
           </DialogDescription>
         </DialogHeader>
 
@@ -99,17 +101,17 @@ export function BooksShelfFilterDialog({
 
         <DialogFooter className="gap-2 sm:gap-0">
           <Button type="button" variant="outline" onClick={handleClear}>
-            Clear
+            {t("books.shelfFilter.clear")}
           </Button>
           <Button
             type="button"
             variant="ghost"
             onClick={() => onOpenChange(false)}
           >
-            Cancel
+            {t("common.cancel")}
           </Button>
           <Button type="button" onClick={handleApply}>
-            Apply
+            {t("books.shelfFilter.apply")}
           </Button>
         </DialogFooter>
       </DialogContent>

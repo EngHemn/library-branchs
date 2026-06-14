@@ -7,6 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import { getPermissionRoleLabel } from "@/domain/entities/permission/Permission"
 import type { GroupStaffOption } from "@/domain/repositories/GroupRepository"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type GroupStaffSelectorProps = {
   staffOptions: GroupStaffOption[]
@@ -33,6 +34,7 @@ export function GroupStaffSelector({
   onSelectedStaffIdsChange,
   disabled = false,
 }: GroupStaffSelectorProps) {
+  const { t } = useTranslation()
   const [searchQuery, setSearchQuery] = useState("")
 
   const filteredStaff = useMemo(
@@ -56,7 +58,7 @@ export function GroupStaffSelector({
         <Input
           value={searchQuery}
           onChange={(event) => setSearchQuery(event.target.value)}
-          placeholder="Search staff by name, role, email, or phone..."
+          placeholder={t("groups.staffSelector.searchPlaceholder")}
           disabled={disabled}
           className="pl-9"
         />
@@ -91,15 +93,16 @@ export function GroupStaffSelector({
         ) : (
           <p className="py-6 text-center text-sm text-muted-foreground">
             {searchQuery.trim()
-              ? "No staff match your search."
-              : "No staff available."}
+              ? t("groups.staffSelector.noMatch")
+              : t("groups.staffSelector.noAvailable")}
           </p>
         )}
       </div>
 
       <p className="text-sm text-muted-foreground">
-        {selectedStaffIds.length} staff member
-        {selectedStaffIds.length === 1 ? "" : "s"} assigned
+        {t("groups.staffSelector.assignedCount", {
+          count: selectedStaffIds.length,
+        })}
       </p>
     </div>
   )
