@@ -12,21 +12,13 @@ import {
 import type {
   DashboardBooking,
   DashboardBookingStatus,
-  DashboardBookingType,
 } from "@/domain/entities/dashboard/DashboardSummary"
 import { BranchDetailLink } from "@/presentation/components/shared/DashboardEntityLink"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type DashboardRecentBookingsTableProps = {
   bookings: DashboardBooking[]
   showBranchColumn?: boolean
-}
-
-const statusLabel: Record<DashboardBookingStatus, string> = {
-  reserved: "Reserved",
-  borrowed: "Borrowed",
-  returned: "Returned",
-  overdue: "Overdue",
-  cancelled: "Cancelled",
 }
 
 const statusVariant: Record<
@@ -40,28 +32,25 @@ const statusVariant: Record<
   cancelled: "outline",
 }
 
-const typeLabel: Record<DashboardBookingType, string> = {
-  inside: "Inside",
-  outside: "Outside",
-}
-
 export function DashboardRecentBookingsTable({
   bookings,
   showBranchColumn = false,
 }: DashboardRecentBookingsTableProps) {
+  const { t } = useTranslation()
+
   return (
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead className="w-24">Booking ID</TableHead>
-          <TableHead>Book Title</TableHead>
-          <TableHead>Member</TableHead>
+          <TableHead className="w-24">{t("dashboard.tables.bookingId")}</TableHead>
+          <TableHead>{t("dashboard.tables.bookTitle")}</TableHead>
+          <TableHead>{t("dashboard.tables.member")}</TableHead>
           {showBranchColumn ? (
-            <TableHead className="hidden md:table-cell">Branch</TableHead>
+            <TableHead className="hidden md:table-cell">{t("dashboard.tables.branch")}</TableHead>
           ) : null}
-          <TableHead className="hidden lg:table-cell">Type</TableHead>
-          <TableHead className="hidden sm:table-cell">Due Date</TableHead>
-          <TableHead>Status</TableHead>
+          <TableHead className="hidden lg:table-cell">{t("dashboard.tables.type")}</TableHead>
+          <TableHead className="hidden sm:table-cell">{t("dashboard.tables.dueDate")}</TableHead>
+          <TableHead>{t("common.status")}</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -85,7 +74,7 @@ export function DashboardRecentBookingsTable({
             ) : null}
             <TableCell className="hidden lg:table-cell">
               <Badge variant="outline" className="text-xs">
-                {typeLabel[booking.type]}
+                {t(`dashboard.bookingType.${booking.type}`)}
               </Badge>
             </TableCell>
             <TableCell className="hidden text-sm text-muted-foreground sm:table-cell">
@@ -93,7 +82,7 @@ export function DashboardRecentBookingsTable({
             </TableCell>
             <TableCell>
               <Badge variant={statusVariant[booking.status]} className="text-xs">
-                {statusLabel[booking.status]}
+                {t(`dashboard.bookingStatus.${booking.status}`)}
               </Badge>
             </TableCell>
           </TableRow>

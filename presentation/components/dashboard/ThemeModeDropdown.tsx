@@ -2,6 +2,7 @@
 
 import { MonitorIcon, MoonIcon, SunIcon } from "lucide-react"
 import { useTheme } from "next-themes"
+import { useMemo } from "react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -14,11 +15,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useHydrated } from "@/hooks/use-hydrated"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 const themeOptions = [
-  { value: "light", label: "Light", icon: SunIcon },
-  { value: "dark", label: "Dark", icon: MoonIcon },
-  { value: "system", label: "System", icon: MonitorIcon },
+  { value: "light", labelKey: "theme.light" as const, icon: SunIcon },
+  { value: "dark", labelKey: "theme.dark" as const, icon: MoonIcon },
+  { value: "system", labelKey: "theme.system" as const, icon: MonitorIcon },
 ] as const
 
 function ThemeTriggerIcon({ theme }: { theme: string | undefined }) {
@@ -30,17 +32,26 @@ function ThemeTriggerIcon({ theme }: { theme: string | undefined }) {
 export function ThemeModeDropdown() {
   const { theme, setTheme } = useTheme()
   const hydrated = useHydrated()
+  const { t } = useTranslation()
 
   const activeTheme = hydrated ? (theme ?? "system") : "system"
+  const options = useMemo(
+    () =>
+      themeOptions.map((option) => ({
+        ...option,
+        label: t(option.labelKey),
+      })),
+    [t]
+  )
   const activeLabel =
-    themeOptions.find((o) => o.value === activeTheme)?.label ?? "Theme"
+    options.find((o) => o.value === activeTheme)?.label ?? t("header.theme")
 
   const trigger = (
     <Button
       variant="outline"
       size="sm"
       className="gap-1.5"
-      aria-label="Color mode"
+      aria-label={t("header.theme")}
     >
       {hydrated ? (
         <ThemeTriggerIcon theme={activeTheme} />
@@ -59,13 +70,13 @@ export function ThemeModeDropdown() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>{trigger}</DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-40">
-        <DropdownMenuLabel>Color mode</DropdownMenuLabel>
+        <DropdownMenuLabel>{t("header.theme")}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuRadioGroup
           value={activeTheme}
           onValueChange={setTheme}
         >
-          {themeOptions.map((option) => {
+          {options.map((option) => {
             const Icon = option.icon
             return (
               <DropdownMenuRadioItem key={option.value} value={option.value}>

@@ -14,16 +14,11 @@ import type {
   DashboardMemberStatus,
 } from "@/domain/entities/dashboard/DashboardSummary"
 import { BranchDetailLink } from "@/presentation/components/shared/DashboardEntityLink"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type DashboardRecentMembersTableProps = {
   members: DashboardMember[]
   showBranchColumn?: boolean
-}
-
-const statusLabel: Record<DashboardMemberStatus, string> = {
-  active: "Active",
-  inactive: "Inactive",
-  suspended: "Suspended",
 }
 
 const statusVariant: Record<
@@ -39,18 +34,20 @@ export function DashboardRecentMembersTable({
   members,
   showBranchColumn = false,
 }: DashboardRecentMembersTableProps) {
+  const { t } = useTranslation()
+
   return (
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Member</TableHead>
-          <TableHead className="hidden sm:table-cell">ID</TableHead>
+          <TableHead>{t("dashboard.tables.member")}</TableHead>
+          <TableHead className="hidden sm:table-cell">{t("dashboard.tables.id")}</TableHead>
           {showBranchColumn ? (
-            <TableHead className="hidden md:table-cell">Branch</TableHead>
+            <TableHead className="hidden md:table-cell">{t("dashboard.tables.branch")}</TableHead>
           ) : null}
-          <TableHead className="w-24 text-right">Bookings</TableHead>
-          <TableHead className="hidden lg:table-cell">Registered</TableHead>
-          <TableHead>Status</TableHead>
+          <TableHead className="w-24 text-right">{t("dashboard.tables.bookings")}</TableHead>
+          <TableHead className="hidden lg:table-cell">{t("dashboard.tables.registered")}</TableHead>
+          <TableHead>{t("common.status")}</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -75,7 +72,7 @@ export function DashboardRecentMembersTable({
             </TableCell>
             <TableCell>
               <Badge variant={statusVariant[member.status]} className="text-xs">
-                {statusLabel[member.status]}
+                {t(`dashboard.memberStatus.${member.status}`)}
               </Badge>
             </TableCell>
           </TableRow>

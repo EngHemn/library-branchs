@@ -19,6 +19,8 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import type { DashboardChartBar } from "@/domain/entities/dashboard/DashboardSummary"
+import { localizeChartBars } from "@/presentation/i18n/dashboardChartLabels"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type DashboardStaffChartsProps = {
   staffByRole: DashboardChartBar[]
@@ -54,19 +56,23 @@ export function DashboardStaffCharts({
   staffByBranch = [],
   showBranchChart = false,
 }: DashboardStaffChartsProps) {
+  const { t } = useTranslation()
+  const localizedStaffByRole = localizeChartBars(t, staffByRole)
+  const localizedStaffByBranch = localizeChartBars(t, staffByBranch)
+
   return (
     <div className="grid gap-4 lg:grid-cols-2">
       <Card className="rounded-xl">
         <CardHeader className="pb-2">
-          <CardTitle className="text-base">Staff by Role</CardTitle>
+          <CardTitle className="text-base">{t("dashboard.charts.staffByRole")}</CardTitle>
           <CardDescription>
-            Headcount distribution across all staff role types.
+            {t("dashboard.charts.staffByRoleDescription")}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={200}>
             <BarChart
-              data={staffByRole}
+              data={localizedStaffByRole}
               margin={{ top: 4, right: 8, left: -12, bottom: 0 }}
             >
               <CartesianGrid
@@ -87,7 +93,7 @@ export function DashboardStaffCharts({
               />
               <Tooltip cursor={{ fill: "#f9fafb" }} content={<ChartTooltip />} />
               <Bar dataKey="value" radius={[4, 4, 0, 0]}>
-                {staffByRole.map((entry, index) => (
+                {localizedStaffByRole.map((entry, index) => (
                   <Cell key={index} fill={entry.color} />
                 ))}
               </Bar>
@@ -99,15 +105,15 @@ export function DashboardStaffCharts({
       {showBranchChart ? (
         <Card className="rounded-xl">
           <CardHeader className="pb-2">
-            <CardTitle className="text-base">Staff by Branch</CardTitle>
+            <CardTitle className="text-base">{t("dashboard.charts.staffByBranch")}</CardTitle>
             <CardDescription>
-              Headcount distribution across library branches.
+              {t("dashboard.charts.staffByBranchDescription")}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={200}>
               <BarChart
-                data={staffByBranch}
+                data={localizedStaffByBranch}
                 margin={{ top: 4, right: 8, left: -12, bottom: 0 }}
               >
                 <CartesianGrid
@@ -128,7 +134,7 @@ export function DashboardStaffCharts({
                 />
                 <Tooltip cursor={{ fill: "#f9fafb" }} content={<ChartTooltip />} />
                 <Bar dataKey="value" radius={[4, 4, 0, 0]}>
-                  {staffByBranch.map((entry, index) => (
+                  {localizedStaffByBranch.map((entry, index) => (
                     <Cell key={index} fill={entry.color} />
                   ))}
                 </Bar>

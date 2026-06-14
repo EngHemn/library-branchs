@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/table"
 import type { DashboardSale } from "@/domain/entities/dashboard/DashboardSummary"
 import { BranchDetailLink } from "@/presentation/components/shared/DashboardEntityLink"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type DashboardRecentSalesTableProps = {
   sales: DashboardSale[]
@@ -20,17 +21,19 @@ export function DashboardRecentSalesTable({
   sales,
   showBranchColumn = false,
 }: DashboardRecentSalesTableProps) {
+  const { t } = useTranslation()
+
   return (
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead className="w-24">Sale ID</TableHead>
-          <TableHead className="w-24 text-right">Items</TableHead>
-          <TableHead className="w-28 text-right">Total</TableHead>
+          <TableHead className="w-24">{t("dashboard.tables.saleId")}</TableHead>
+          <TableHead className="w-24 text-right">{t("dashboard.tables.items")}</TableHead>
+          <TableHead className="w-28 text-right">{t("dashboard.tables.total")}</TableHead>
           {showBranchColumn ? (
-            <TableHead className="hidden md:table-cell">Branch</TableHead>
+            <TableHead className="hidden md:table-cell">{t("dashboard.tables.branch")}</TableHead>
           ) : null}
-          <TableHead className="hidden sm:table-cell">Date &amp; Time</TableHead>
+          <TableHead className="hidden sm:table-cell">{t("dashboard.tables.dateTime")}</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>

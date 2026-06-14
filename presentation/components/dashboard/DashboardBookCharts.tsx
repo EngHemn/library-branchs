@@ -19,6 +19,8 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import type { DashboardChartBar } from "@/domain/entities/dashboard/DashboardSummary"
+import { localizeChartBars } from "@/presentation/i18n/dashboardChartLabels"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type DashboardBookChartsProps = {
   booksByStatus: DashboardChartBar[]
@@ -52,19 +54,23 @@ export function DashboardBookCharts({
   booksByStatus,
   booksByCategory,
 }: DashboardBookChartsProps) {
+  const { t } = useTranslation()
+  const localizedBooksByStatus = localizeChartBars(t, booksByStatus)
+  const localizedBooksByCategory = localizeChartBars(t, booksByCategory)
+
   return (
     <div className="grid gap-4 lg:grid-cols-2">
       <Card className="rounded-xl">
         <CardHeader className="pb-2">
-          <CardTitle className="text-base">Books by Status</CardTitle>
+          <CardTitle className="text-base">{t("dashboard.charts.booksByStatus")}</CardTitle>
           <CardDescription>
-            Total catalog copies grouped by current availability status.
+            {t("dashboard.charts.booksByStatusDescription")}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={200}>
             <BarChart
-              data={booksByStatus}
+              data={localizedBooksByStatus}
               layout="vertical"
               margin={{ top: 0, right: 24, left: 0, bottom: 0 }}
             >
@@ -90,7 +96,7 @@ export function DashboardBookCharts({
               />
               <Tooltip cursor={{ fill: "#f9fafb" }} content={<ChartTooltip />} />
               <Bar dataKey="value" radius={[0, 4, 4, 0]}>
-                {booksByStatus.map((entry, index) => (
+                {localizedBooksByStatus.map((entry, index) => (
                   <Cell key={index} fill={entry.color} />
                 ))}
               </Bar>
@@ -101,15 +107,15 @@ export function DashboardBookCharts({
 
       <Card className="rounded-xl">
         <CardHeader className="pb-2">
-          <CardTitle className="text-base">Books by Category</CardTitle>
+          <CardTitle className="text-base">{t("dashboard.charts.booksByCategory")}</CardTitle>
           <CardDescription>
-            Top categories by total number of titles in the catalog.
+            {t("dashboard.charts.booksByCategoryDescription")}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={200}>
             <BarChart
-              data={booksByCategory}
+              data={localizedBooksByCategory}
               layout="vertical"
               margin={{ top: 0, right: 24, left: 0, bottom: 0 }}
             >
@@ -135,7 +141,7 @@ export function DashboardBookCharts({
               />
               <Tooltip cursor={{ fill: "#f9fafb" }} content={<ChartTooltip />} />
               <Bar dataKey="value" radius={[0, 4, 4, 0]}>
-                {booksByCategory.map((entry, index) => (
+                {localizedBooksByCategory.map((entry, index) => (
                   <Cell key={index} fill={entry.color} />
                 ))}
               </Bar>

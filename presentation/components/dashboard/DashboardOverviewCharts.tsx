@@ -24,6 +24,8 @@ import type {
   DashboardChartBar,
   DashboardChartTrend,
 } from "@/domain/entities/dashboard/DashboardSummary"
+import { localizeChartBars } from "@/presentation/i18n/dashboardChartLabels"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type DashboardOverviewChartsProps = {
   bookingsByStatus: DashboardChartBar[]
@@ -59,17 +61,20 @@ export function DashboardOverviewCharts({
   bookingsByStatus,
   salesTrend,
 }: DashboardOverviewChartsProps) {
+  const { t } = useTranslation()
+  const localizedBookingsByStatus = localizeChartBars(t, bookingsByStatus)
+
   return (
     <div className="grid gap-4 lg:grid-cols-2">
       <Card className="rounded-xl">
         <CardHeader className="pb-2">
-          <CardTitle className="text-base">Bookings by Status</CardTitle>
-          <CardDescription>Distribution of all active booking statuses.</CardDescription>
+          <CardTitle className="text-base">{t("dashboard.charts.bookingsByStatus")}</CardTitle>
+          <CardDescription>{t("dashboard.charts.bookingsByStatusOverview")}</CardDescription>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={200}>
             <BarChart
-              data={bookingsByStatus}
+              data={localizedBookingsByStatus}
               layout="vertical"
               margin={{ top: 0, right: 24, left: 0, bottom: 0 }}
             >
@@ -94,7 +99,7 @@ export function DashboardOverviewCharts({
               />
               <Tooltip cursor={{ fill: "#f9fafb" }} content={<ChartTooltip />} />
               <Bar dataKey="value" radius={[0, 4, 4, 0]}>
-                {bookingsByStatus.map((entry, index) => (
+                {localizedBookingsByStatus.map((entry, index) => (
                   <Cell key={index} fill={entry.color} />
                 ))}
               </Bar>
@@ -105,8 +110,8 @@ export function DashboardOverviewCharts({
 
       <Card className="rounded-xl">
         <CardHeader className="pb-2">
-          <CardTitle className="text-base">Sales Trend</CardTitle>
-          <CardDescription>Total sales revenue over the last 7 days.</CardDescription>
+          <CardTitle className="text-base">{t("dashboard.charts.salesTrend")}</CardTitle>
+          <CardDescription>{t("dashboard.charts.salesTrendDescription")}</CardDescription>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={200}>

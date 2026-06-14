@@ -21,6 +21,8 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import type { DashboardChartBar } from "@/domain/entities/dashboard/DashboardSummary"
+import { localizeChartBars } from "@/presentation/i18n/dashboardChartLabels"
+import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type DashboardBookingChartsProps = {
   bookingsByStatus: DashboardChartBar[]
@@ -54,21 +56,24 @@ export function DashboardBookingCharts({
   bookingsByStatus,
   bookingsByType,
 }: DashboardBookingChartsProps) {
+  const { t } = useTranslation()
+  const localizedBookingsByStatus = localizeChartBars(t, bookingsByStatus)
+  const localizedBookingsByType = localizeChartBars(t, bookingsByType)
   const total = bookingsByType.reduce((sum, item) => sum + item.value, 0)
 
   return (
     <div className="grid gap-4 lg:grid-cols-[1fr_300px]">
       <Card className="rounded-xl">
         <CardHeader className="pb-2">
-          <CardTitle className="text-base">Bookings by Status</CardTitle>
+          <CardTitle className="text-base">{t("dashboard.charts.bookingsByStatus")}</CardTitle>
           <CardDescription>
-            Breakdown of all booking records by current status.
+            {t("dashboard.charts.bookingsByStatusDetail")}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={210}>
             <BarChart
-              data={bookingsByStatus}
+              data={localizedBookingsByStatus}
               layout="vertical"
               margin={{ top: 0, right: 24, left: 0, bottom: 0 }}
             >
@@ -93,7 +98,7 @@ export function DashboardBookingCharts({
               />
               <Tooltip cursor={{ fill: "#f9fafb" }} content={<ChartTooltip />} />
               <Bar dataKey="value" radius={[0, 4, 4, 0]}>
-                {bookingsByStatus.map((entry, index) => (
+                {localizedBookingsByStatus.map((entry, index) => (
                   <Cell key={index} fill={entry.color} />
                 ))}
               </Bar>
@@ -104,16 +109,18 @@ export function DashboardBookingCharts({
 
       <Card className="rounded-xl">
         <CardHeader className="pb-2">
-          <CardTitle className="text-base">Bookings by Type</CardTitle>
+          <CardTitle className="text-base">{t("dashboard.charts.bookingsByType")}</CardTitle>
           <CardDescription>
-            Inside vs outside borrowing split — {total.toLocaleString()} total.
+            {t("dashboard.charts.bookingsByTypeDescription", {
+              total: total.toLocaleString(),
+            })}
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col items-center justify-center">
           <ResponsiveContainer width="100%" height={180}>
             <PieChart>
               <Pie
-                data={bookingsByType}
+                data={localizedBookingsByType}
                 cx="50%"
                 cy="50%"
                 innerRadius={52}
@@ -122,7 +129,7 @@ export function DashboardBookingCharts({
                 nameKey="label"
                 paddingAngle={3}
               >
-                {bookingsByType.map((entry, index) => (
+                {localizedBookingsByType.map((entry, index) => (
                   <Cell key={index} fill={entry.color} />
                 ))}
               </Pie>
@@ -130,7 +137,7 @@ export function DashboardBookingCharts({
             </PieChart>
           </ResponsiveContainer>
           <div className="mt-2 flex gap-4">
-            {bookingsByType.map((entry) => (
+            {localizedBookingsByType.map((entry) => (
               <div key={entry.label} className="flex items-center gap-1.5">
                 <span
                   className="size-2.5 rounded-full"
