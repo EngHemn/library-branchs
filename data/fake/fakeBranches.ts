@@ -155,6 +155,21 @@ export const fakeBranches: Branch[] = [
     bookCount: 2950,
     status: "active",
   },
+  {
+    id: "BR-011",
+    branchName: "Solo Reading Room",
+    type: "main",
+    email: "solo@liba.local",
+    adminName: "Hemn Software",
+    parentBranch: null,
+    address: "5 Oak Lane, Somerville, MA",
+    phone: "+1 (617) 555-0201",
+    latitude: 42.3876,
+    longitude: -71.0995,
+    staffCount: 6,
+    bookCount: 4200,
+    status: "active",
+  },
 ]
 
 export const fakeMainBranchRequests: MainBranchRequest[] = [

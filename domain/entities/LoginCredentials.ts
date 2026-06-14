@@ -1,7 +1,7 @@
-import type { BranchType } from "@/domain/entities/branch/Branch"
+import type { LoginType } from "@/domain/entities/LoginType"
 
 export type LoginCredentials = {
   username: string
   password: string
-  branchType: BranchType
+  loginType: LoginType
 }

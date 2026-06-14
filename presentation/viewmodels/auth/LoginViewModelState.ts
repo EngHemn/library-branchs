@@ -1,12 +1,12 @@
 "use client"
 
-import type { BranchType } from "@/domain/entities/branch/Branch"
+import type { LoginType } from "@/domain/entities/LoginType"
 import type { User } from "@/domain/entities/User"
 
 export type LoginFormState = {
   username: string
   password: string
-  branchType: BranchType
+  loginType: LoginType
 }
 
 export type LoginAsyncStatus = "idle" | "loading" | "success" | "error"

@@ -83,6 +83,7 @@ export default function DashboardLayout({
       <SidebarProvider>
         <AppSidebar
           branchType={resolvedUser?.branchType}
+          loginType={resolvedUser?.loginType}
           user={sidebarUser}
           onLogout={handleLogout}
         />
