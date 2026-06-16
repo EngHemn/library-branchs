@@ -117,6 +117,8 @@ export function MembersScreen({
               statusFilter={state.filters.statusFilter}
               branchRegisteredFilter={state.filters.branchRegisteredFilter}
               branchUsedFilter={state.filters.branchUsedFilter}
+              dateFrom={state.filters.dateFrom}
+              dateTo={state.filters.dateTo}
               registeredBranches={state.registeredBranches}
               usedBranches={state.usedBranches}
               showRegisterBranchFilter={state.showRegisterBranchFilter}
@@ -125,6 +127,8 @@ export function MembersScreen({
               onStatusFilterChange={viewModel.setStatusFilter}
               onBranchRegisteredFilterChange={viewModel.setBranchRegisteredFilter}
               onBranchUsedFilterChange={viewModel.setBranchUsedFilter}
+              onDateFromChange={viewModel.setDateFrom}
+              onDateToChange={viewModel.setDateTo}
             />
 
             <MembersTable

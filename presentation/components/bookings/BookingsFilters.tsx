@@ -25,12 +25,16 @@ type BookingsFiltersProps = {
   statusFilter: BookingStatusFilter
   typeFilter: BookingTypeFilter
   branchFilter: BookingBranchFilter
+  dateFrom: string | null
+  dateTo: string | null
   branchFilterOptions: BookingBranchFilterOption[]
   showBranchFilter?: boolean
   onSearchQueryChange: (searchQuery: string) => void
   onStatusFilterChange: (statusFilter: BookingStatusFilter) => void
   onTypeFilterChange: (typeFilter: BookingTypeFilter) => void
   onBranchFilterChange: (branchFilter: BookingBranchFilter) => void
+  onDateFromChange: (dateFrom: string | null) => void
+  onDateToChange: (dateTo: string | null) => void
 }
 
 const STATUS_FILTER_KEYS: Record<
@@ -71,12 +75,16 @@ export function BookingsFilters({
   statusFilter,
   typeFilter,
   branchFilter,
+  dateFrom,
+  dateTo,
   branchFilterOptions,
   showBranchFilter = false,
   onSearchQueryChange,
   onStatusFilterChange,
   onTypeFilterChange,
   onBranchFilterChange,
+  onDateFromChange,
+  onDateToChange,
 }: BookingsFiltersProps) {
   const { t } = useTranslation()
 
@@ -101,8 +109,8 @@ export function BookingsFilters({
   )
 
   return (
-    <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
-      <div className="relative flex-1">
+    <div className="flex flex-wrap items-center gap-3">
+      <div className="relative min-w-[200px] flex-1">
         <SearchIcon className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           value={searchQuery}
@@ -111,62 +119,78 @@ export function BookingsFilters({
           className="pl-9"
         />
       </div>
-      <div className="flex flex-col gap-3 sm:flex-row">
-        <Select
-          value={statusFilter}
-          onValueChange={(value) => {
-            if (isBookingStatusFilter(value)) {
-              onStatusFilterChange(value)
-            }
-          }}
-        >
-          <SelectTrigger className="w-full sm:w-[150px]">
+      <Select
+        value={statusFilter}
+        onValueChange={(value) => {
+          if (isBookingStatusFilter(value)) {
+            onStatusFilterChange(value)
+          }
+        }}
+      >
+        <SelectTrigger className="w-full sm:w-[150px]">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {statusOptions.map((option) => (
+            <SelectItem key={option.value} value={option.value}>
+              {option.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      <Select
+        value={typeFilter}
+        onValueChange={(value) => {
+          if (isBookingTypeFilter(value)) {
+            onTypeFilterChange(value)
+          }
+        }}
+      >
+        <SelectTrigger className="w-full sm:w-[140px]">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {typeOptions.map((option) => (
+            <SelectItem key={option.value} value={option.value}>
+              {option.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      {showBranchFilter ? (
+        <Select value={branchFilter} onValueChange={onBranchFilterChange}>
+          <SelectTrigger className="w-full sm:w-[200px]">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {statusOptions.map((option) => (
+            {branchFilterOptions.map((option) => (
               <SelectItem key={option.value} value={option.value}>
-                {option.label}
+                {option.value === "current"
+                  ? t("bookings.filters.currentBranch")
+                  : option.label}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
-        <Select
-          value={typeFilter}
-          onValueChange={(value) => {
-            if (isBookingTypeFilter(value)) {
-              onTypeFilterChange(value)
-            }
-          }}
-        >
-          <SelectTrigger className="w-full sm:w-[140px]">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {typeOptions.map((option) => (
-              <SelectItem key={option.value} value={option.value}>
-                {option.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        {showBranchFilter ? (
-          <Select value={branchFilter} onValueChange={onBranchFilterChange}>
-            <SelectTrigger className="w-full sm:w-[200px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {branchFilterOptions.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.value === "current"
-                    ? t("bookings.filters.currentBranch")
-                    : option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        ) : null}
-      </div>
+      ) : null}
+      <Input
+        id="bookings-date-from"
+        type="date"
+        aria-label={t("bookings.filters.dateFrom")}
+        className="w-full sm:w-[150px]"
+        value={dateFrom ?? ""}
+        max={dateTo ?? undefined}
+        onChange={(event) => onDateFromChange(event.target.value || null)}
+      />
+      <Input
+        id="bookings-date-to"
+        type="date"
+        aria-label={t("bookings.filters.dateTo")}
+        className="w-full sm:w-[150px]"
+        value={dateTo ?? ""}
+        min={dateFrom ?? undefined}
+        onChange={(event) => onDateToChange(event.target.value || null)}
+      />
     </div>
   )
 }

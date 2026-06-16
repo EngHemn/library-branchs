@@ -13,6 +13,7 @@ import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { BookingManagementUseCase } from "@/domain/usecases/bookings/BookingManagementUseCase"
 import {
   getDashboardBranchScope,
+  isBranchScopedDashboardUser,
   resolveUserBranchId,
 } from "@/lib/dashboardBranchScope"
 import type {
@@ -36,6 +37,8 @@ type BookingsViewModel = {
   setStatusFilter: (statusFilter: BookingStatusFilter) => void
   setTypeFilter: (typeFilter: BookingTypeFilter) => void
   setBranchFilter: (branchFilter: BookingBranchFilter) => void
+  setDateFrom: (dateFrom: string | null) => void
+  setDateTo: (dateTo: string | null) => void
   returnBooking: (bookingId: string) => Promise<void>
   extendBooking: (bookingId: string) => Promise<void>
   cancelBooking: (bookingId: string) => Promise<void>
@@ -48,6 +51,8 @@ const defaultFilters: BookingFilterState = {
   statusFilter: "all",
   typeFilter: "all",
   branchFilter: "current",
+  dateFrom: null,
+  dateTo: null,
 }
 
 const emptyStats: BookingStats = {
@@ -87,13 +92,39 @@ function resolveBranchFilterId(
   return branchFilter === "current" ? userBranchId : branchFilter
 }
 
+function matchesDateRange(
+  booking: Booking,
+  dateFrom: string | null,
+  dateTo: string | null
+): boolean {
+  const bookingDate = new Date(booking.bookingDate)
+
+  if (dateFrom) {
+    const from = new Date(dateFrom)
+    from.setHours(0, 0, 0, 0)
+    if (bookingDate < from) {
+      return false
+    }
+  }
+
+  if (dateTo) {
+    const to = new Date(dateTo)
+    to.setHours(23, 59, 59, 999)
+    if (bookingDate > to) {
+      return false
+    }
+  }
+
+  return true
+}
+
 function filterBookings(
   bookings: Booking[],
   filters: BookingFilterState,
   userBranchId: string,
-  isSubBranch: boolean
+  isBranchScoped: boolean
 ): Booking[] {
-  const effectiveBranchId = isSubBranch
+  const effectiveBranchId = isBranchScoped
     ? userBranchId
     : resolveBranchFilterId(filters.branchFilter, userBranchId)
 
@@ -103,12 +134,13 @@ function filterBookings(
       matchesBookingSearch(booking, filters.searchQuery) &&
       (filters.statusFilter === "all" ||
         booking.status === filters.statusFilter) &&
-      (filters.typeFilter === "all" || booking.type === filters.typeFilter)
+      (filters.typeFilter === "all" || booking.type === filters.typeFilter) &&
+      matchesDateRange(booking, filters.dateFrom, filters.dateTo)
   )
 }
 
 function getBranchFilterOptions(user: User): BookingBranchFilterOption[] {
-  if (user.branchType === "sub") {
+  if (isBranchScopedDashboardUser(user)) {
     return []
   }
 
@@ -196,15 +228,15 @@ export function useBookingsViewModel(
 
   const user = userQuery.data ?? null
   const userBranchId = user ? resolveUserBranchId(user) : ""
-  const isSubBranch = user?.branchType === "sub"
-  const showBranchFilter = !isSubBranch
-  const showBranchColumn = !isSubBranch && filters.branchFilter !== "current"
+  const isBranchScoped = user ? isBranchScopedDashboardUser(user) : false
+  const showBranchFilter = !isBranchScoped
+  const showBranchColumn = !isBranchScoped && filters.branchFilter !== "current"
   const branchFilterOptions = user ? getBranchFilterOptions(user) : []
 
   const bookings = bookingsQuery.data?.bookings ?? []
   const stats = bookingsQuery.data?.stats ?? emptyStats
   const filteredBookings = userBranchId
-    ? filterBookings(bookings, filters, userBranchId, isSubBranch)
+    ? filterBookings(bookings, filters, userBranchId, isBranchScoped)
     : []
   const isActionPending = isReturning || isExtending || isCancelling || isDeleting
 
@@ -238,6 +270,14 @@ export function useBookingsViewModel(
 
   function setBranchFilter(branchFilter: BookingBranchFilter): void {
     setFilters((current) => ({ ...current, branchFilter }))
+  }
+
+  function setDateFrom(dateFrom: string | null): void {
+    setFilters((current) => ({ ...current, dateFrom }))
+  }
+
+  function setDateTo(dateTo: string | null): void {
+    setFilters((current) => ({ ...current, dateTo }))
   }
 
   async function returnBooking(bookingId: string): Promise<void> {
@@ -285,6 +325,8 @@ export function useBookingsViewModel(
     setStatusFilter,
     setTypeFilter,
     setBranchFilter,
+    setDateFrom,
+    setDateTo,
     returnBooking,
     extendBooking,
     cancelBooking,

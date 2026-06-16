@@ -1,5 +1,6 @@
-import type { Bill } from "@/domain/entities/bill/Bill"
+import type { Bill, BillAddedBy } from "@/domain/entities/bill/Bill"
 import type { BillDetail } from "@/domain/entities/bill/BillDetail"
+import type { BillLineItem } from "@/domain/entities/bill/BillLineItem"
 import type { Result } from "@/domain/result/Result"
 
 export type BillBranchOption = {
@@ -11,6 +12,8 @@ export type BillBookOption = {
   id: string
   title: string
   isbn: string
+  price: number
+  stock: number
 }
 
 export type BillFormOptions = {
@@ -25,7 +28,8 @@ export type CreateBillInput = {
   phoneNumber: string
   price: number
   imageUrl?: string | null
-  bookIds: string[]
+  items: BillLineItem[]
+  addedBy: BillAddedBy
 }
 
 export type UpdateBillInput = CreateBillInput & {

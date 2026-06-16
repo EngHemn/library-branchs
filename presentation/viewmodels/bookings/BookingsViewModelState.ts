@@ -21,6 +21,8 @@ export type BookingFilterState = {
   statusFilter: BookingStatusFilter
   typeFilter: BookingTypeFilter
   branchFilter: BookingBranchFilter
+  dateFrom: string | null
+  dateTo: string | null
 }
 
 export type BookingsPageStatus = "idle" | "loading" | "ready" | "error"

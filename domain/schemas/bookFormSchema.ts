@@ -32,6 +32,7 @@ export const bookFormSchema = z.object({
   initialPrice: optionalNonNegativeNumber,
   finalPrice: optionalNonNegativeNumber,
   coverUrl: optionalImageUrlSchema,
+  branchId: z.string().min(1, validationKeys.branchRequired),
   locationValues: z.record(z.string(), z.string()).default({}),
 })
 

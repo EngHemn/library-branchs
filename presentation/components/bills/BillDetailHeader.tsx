@@ -1,6 +1,6 @@
 "use client"
 
-import { PencilIcon } from "lucide-react"
+import { ArrowLeftIcon, PencilIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import type { BillDetail } from "@/domain/entities/bill/BillDetail"
@@ -14,10 +14,11 @@ import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type BillDetailHeaderProps = {
   bill: BillDetail
+  onBack: () => void
   onEdit: () => void
 }
 
-export function BillDetailHeader({ bill, onEdit }: BillDetailHeaderProps) {
+export function BillDetailHeader({ bill, onBack, onEdit }: BillDetailHeaderProps) {
   const { t } = useTranslation()
   const { locale } = useLocale()
 
@@ -37,10 +38,16 @@ export function BillDetailHeader({ bill, onEdit }: BillDetailHeaderProps) {
           {formatBillPrice(bill.price, locale)}
         </p>
       </div>
-      <Button variant="outline" onClick={onEdit}>
-        <PencilIcon />
-        {t("bills.detail.editBill")}
-      </Button>
+      <div className="flex shrink-0 flex-wrap gap-2">
+        <Button variant="outline" onClick={onBack}>
+          <ArrowLeftIcon />
+          {t("common.back")}
+        </Button>
+        <Button variant="outline" onClick={onEdit}>
+          <PencilIcon />
+          {t("bills.detail.editBill")}
+        </Button>
+      </div>
     </section>
   )
 }

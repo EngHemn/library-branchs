@@ -46,6 +46,8 @@ export const members = {
       allRegisteredBranches: "All Registered Branches",
       allBranchesUsed: "All Branches Used",
       allBranches: "All branches",
+      dateFrom: "Date From",
+      dateTo: "Date To",
     },
     statuses: {
       suspended: "Suspended",
@@ -162,6 +164,8 @@ export const members = {
       allRegisteredBranches: "جميع فروع التسجيل",
       allBranchesUsed: "جميع الفروع المستخدمة",
       allBranches: "جميع الفروع",
+      dateFrom: "من تاريخ",
+      dateTo: "إلى تاريخ",
     },
     statuses: {
       suspended: "موقوف",
@@ -278,6 +282,8 @@ export const members = {
       allRegisteredBranches: "هەموو لقە تۆمارکراوەکان",
       allBranchesUsed: "هەموو لقە بەکارهاتووەکان",
       allBranches: "هەموو لقەکان",
+      dateFrom: "لە بەروار",
+      dateTo: "بۆ بەروار",
     },
     statuses: {
       suspended: "ڕاگیراو",
@@ -359,6 +365,8 @@ export const bookings = {
       allStatus: "All Status",
       allTypes: "All Types",
       currentBranch: "Current Branch",
+      dateFrom: "Date From",
+      dateTo: "Date To",
     },
     stats: {
       reserved: "Reserved",
@@ -460,6 +468,8 @@ export const bookings = {
       allStatus: "كل الحالات",
       allTypes: "كل الأنواع",
       currentBranch: "الفرع الحالي",
+      dateFrom: "من تاريخ",
+      dateTo: "إلى تاريخ",
     },
     stats: {
       reserved: "محجوز",
@@ -560,6 +570,8 @@ export const bookings = {
       allStatus: "هەموو دۆخەکان",
       allTypes: "هەموو جۆرەکان",
       currentBranch: "لقی ئێستا",
+      dateFrom: "لە بەروار",
+      dateTo: "بۆ بەروار",
     },
     stats: {
       reserved: "حجزکراو",

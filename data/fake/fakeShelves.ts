@@ -161,6 +161,38 @@ export const fakeShelfSeeds: Omit<Shelf, "bookCount">[] = [
     capacity: 70,
     status: "active",
   },
+  {
+    id: "SH-011",
+    name: "Solo Standard Rack 1",
+    code: "SOL-STD-R1",
+    shelfType: "standard",
+    branchId: "BR-011",
+    branchName: "Solo Reading Room",
+    branchType: "main",
+    locationParts: [
+      { stepId: "LOC-STEP-001", stepLabel: "Zone", value: "Ground Floor" },
+      { stepId: "LOC-STEP-002", stepLabel: "Section", value: "Fiction" },
+      { stepId: "LOC-STEP-003", stepLabel: "Row", value: "Rack 1" },
+    ],
+    capacity: 100,
+    status: "active",
+  },
+  {
+    id: "SH-012",
+    name: "Solo Study Corner",
+    code: "SOL-STY-C1",
+    shelfType: "display",
+    branchId: "BR-011",
+    branchName: "Solo Reading Room",
+    branchType: "main",
+    locationParts: [
+      { stepId: "LOC-STEP-001", stepLabel: "Zone", value: "First Floor" },
+      { stepId: "LOC-STEP-002", stepLabel: "Section", value: "Study Area" },
+      { stepId: "LOC-STEP-003", stepLabel: "Row", value: "Corner Shelf" },
+    ],
+    capacity: 50,
+    status: "active",
+  },
 ]
 
 export const fakeShelfBookCounts: Record<string, number> = {
@@ -174,4 +206,6 @@ export const fakeShelfBookCounts: Record<string, number> = {
   "SH-008": 0,
   "SH-009": 245,
   "SH-010": 48,
+  "SH-011": 42,
+  "SH-012": 15,
 }

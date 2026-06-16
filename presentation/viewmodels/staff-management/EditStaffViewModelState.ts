@@ -30,6 +30,7 @@ export type EditStaffViewModelState = {
   fieldErrors: EditStaffFormErrors
   branches: Branch[]
   showBranchField: boolean
+  showBranchAdminRole: boolean
   error: string | null
   isLoading: boolean
   isLoaded: boolean

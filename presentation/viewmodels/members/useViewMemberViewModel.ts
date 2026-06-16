@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query"
 
 import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { MemberManagementUseCase } from "@/domain/usecases/members/MemberManagementUseCase"
+import { isBranchScopedDashboardUser } from "@/lib/dashboardBranchScope"
 import type {
   ViewMemberStatus,
   ViewMemberTabKey,
@@ -43,9 +44,9 @@ export function useViewMemberViewModel(
   })
 
   const user = userQuery.data ?? null
-  const isSubBranch = user?.branchType === "sub"
-  const showBranchesUsedSection = !isSubBranch
-  const showBranchColumn = !isSubBranch
+  const isBranchScoped = user ? isBranchScopedDashboardUser(user) : false
+  const showBranchesUsedSection = !isBranchScoped
+  const showBranchColumn = !isBranchScoped
 
   const status: ViewMemberStatus =
     userQuery.isPending || memberQuery.isPending

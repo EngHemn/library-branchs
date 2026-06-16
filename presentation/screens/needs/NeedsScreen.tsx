@@ -124,31 +124,25 @@ export function NeedsScreen({
         isLoading={state.summaryStatus === "loading"}
       />
 
-      <Card className="rounded-lg">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base">{t("needs.filters.title")}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <NeedsFilters
-            searchQuery={state.searchQuery}
-            categoryFilter={state.categoryFilter}
-            branchFilter={state.branchFilter}
-            priorityFilter={state.priorityFilter}
-            statusFilter={state.statusFilter}
-            dateFrom={state.dateFrom}
-            dateTo={state.dateTo}
-            branchOptions={state.branchOptions}
-            showBranchFilter={state.showBranchFilter}
-            onSearchQueryChange={viewModel.setSearchQuery}
-            onCategoryFilterChange={viewModel.setCategoryFilter}
-            onBranchFilterChange={viewModel.setBranchFilter}
-            onPriorityFilterChange={viewModel.setPriorityFilter}
-            onStatusFilterChange={viewModel.setStatusFilter}
-            onDateFromChange={viewModel.setDateFrom}
-            onDateToChange={viewModel.setDateTo}
-          />
-        </CardContent>
-      </Card>
+      <NeedsFilters
+        searchQuery={state.searchQuery}
+        categoryFilter={state.categoryFilter}
+        branchFilter={state.branchFilter}
+        priorityFilter={state.priorityFilter}
+        statusFilter={state.statusFilter}
+        dateFrom={state.dateFrom}
+        dateTo={state.dateTo}
+        branchOptions={state.branchOptions}
+        showBranchFilter={state.showBranchFilter}
+        onSearchQueryChange={viewModel.setSearchQuery}
+        onCategoryFilterChange={viewModel.setCategoryFilter}
+        onBranchFilterChange={viewModel.setBranchFilter}
+        onPriorityFilterChange={viewModel.setPriorityFilter}
+        onStatusFilterChange={viewModel.setStatusFilter}
+        onDateFromChange={viewModel.setDateFrom}
+        onDateToChange={viewModel.setDateTo}
+        onClearFilters={viewModel.clearFilters}
+      />
 
       <NeedsTable
         needs={state.filteredNeeds}

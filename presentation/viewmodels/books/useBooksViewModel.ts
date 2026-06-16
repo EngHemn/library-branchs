@@ -16,6 +16,7 @@ import {
   getDashboardBranchScope,
   resolveUserBranchId,
 } from "@/lib/dashboardBranchScope"
+import { isBranchScopedBooksUser } from "@/lib/bookBranchScope"
 import { useShelfLocationOptionsMutations } from "@/presentation/viewmodels/shelves/useShelfLocationOptionsMutations"
 import type {
   BookAuthorFilter,
@@ -76,7 +77,7 @@ function resolveBranchFilterId(
 }
 
 function getBranchFilterOptions(user: User): BookBranchFilterOption[] {
-  if (user.branchType === "sub") {
+  if (isBranchScopedBooksUser(user)) {
     return []
   }
 
@@ -100,11 +101,16 @@ function matchesBookBranchFilter(
   branchFilter: BookBranchFilter,
   user: User
 ): boolean {
+  const userBranchId = resolveUserBranchId(user)
+
+  if (isBranchScopedBooksUser(user)) {
+    return book.branchId === userBranchId
+  }
+
   if (branchFilter === "all") {
     return true
   }
 
-  const userBranchId = resolveUserBranchId(user)
   const effectiveBranchId = resolveBranchFilterId(branchFilter, userBranchId)
   return book.branchId === effectiveBranchId
 }
@@ -318,7 +324,7 @@ export function useBooksViewModel(
         : true)
   )
 
-  const showBranchFilter = user?.branchType !== "sub"
+  const showBranchFilter = user ? !isBranchScopedBooksUser(user) : false
 
   const state: BooksViewModelState = {
     status,

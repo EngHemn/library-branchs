@@ -42,6 +42,7 @@ type BillColumnKey =
   | "phoneNumber"
   | "price"
   | "productCount"
+  | "addedBy"
   | "actions"
 
 export function BillsTable({
@@ -126,6 +127,13 @@ export function BillsTable({
         ),
       },
       {
+        key: "addedBy",
+        header: t("bills.table.addedBy"),
+        sortable: true,
+        sortValue: (bill) => bill.addedBy.staffName,
+        cell: (bill) => <span className="text-sm">{bill.addedBy.staffName}</span>,
+      },
+      {
         key: "actions",
         header: t("bills.table.actions"),
         headerClassName: "text-right",
@@ -177,7 +185,7 @@ export function BillsTable({
           emptyDescription={t("bills.table.emptyDescription")}
           initialSort={{ key: "billDate", direction: "desc" }}
           initialPageSize={10}
-          tableClassName="min-w-[1000px]"
+          tableClassName="min-w-[1120px]"
         />
       </CardContent>
     </Card>

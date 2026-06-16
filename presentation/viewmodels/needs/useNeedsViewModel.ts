@@ -6,11 +6,11 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import type { NeedListItem } from "@/domain/entities/need/Need"
 import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { NeedManagementUseCase } from "@/domain/usecases/needs/NeedManagementUseCase"
+import { isBranchScopedDashboardUser } from "@/lib/dashboardBranchScope"
 import {
   buildScopedNeedSummary,
   filterNeedsByBranchScope,
   getNeedBranchFormOptions,
-  getNeedDashboardBranchScope,
 } from "@/lib/needBranchScope"
 import type {
   NeedBranchFilter,
@@ -38,6 +38,7 @@ type NeedsViewModel = {
   confirmRejectNeed: () => Promise<boolean>
   approveNeed: (needId: string) => Promise<boolean>
   reload: () => Promise<void>
+  clearFilters: () => void
 }
 
 function matchesSearch(need: NeedListItem, query: string): boolean {
@@ -177,8 +178,7 @@ export function useNeedsViewModel(
   const summary =
     user !== null ? buildScopedNeedSummary(scopedNeeds) : null
 
-  const branchScope =
-    user !== null ? getNeedDashboardBranchScope(user) : null
+  const isBranchScopedUser = user !== null && isBranchScopedDashboardUser(user)
 
   const needsStatus: AsyncStatus =
     userQuery.isPending || needsQuery.isPending
@@ -223,7 +223,7 @@ export function useNeedsViewModel(
       dateTo,
       filteredNeeds,
       branchOptions: user ? getNeedBranchFormOptions(user) : [],
-      showBranchFilter: branchScope?.showBranchFilter ?? false,
+      showBranchFilter: !isBranchScopedUser,
       deleteNeedDialog,
       rejectNeedDialog,
       rejectReason,
@@ -294,6 +294,15 @@ export function useNeedsViewModel(
     },
     reload: async () => {
       await Promise.all([userQuery.refetch(), needsQuery.refetch()])
+    },
+    clearFilters: () => {
+      setSearchQuery("")
+      setCategoryFilter("all")
+      setBranchFilter("all")
+      setPriorityFilter("all")
+      setStatusFilter("all")
+      setDateFrom(null)
+      setDateTo(null)
     },
   }
 }

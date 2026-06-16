@@ -164,6 +164,7 @@ export const books = {
       description: "Description",
       cover: "Book cover",
       coverPreview: "Book cover preview",
+      branch: "Branch",
     },
     placeholders: {
       title: "Search or enter book title",
@@ -173,6 +174,7 @@ export const books = {
       language: "Search or add language",
       category: "Search category...",
       description: "Enter book description",
+      selectBranch: "Select branch",
       addAuthor: "Add author",
       addTranslator: "Add translator",
       addCategory: "Add category",
@@ -345,6 +347,7 @@ export const books = {
       description: "الوصف",
       cover: "غلاف الكتاب",
       coverPreview: "معاينة غلاف الكتاب",
+      branch: "الفرع",
     },
     placeholders: {
       title: "ابحث أو أدخل عنوان الكتاب",
@@ -354,6 +357,7 @@ export const books = {
       language: "ابحث أو أضف لغة",
       category: "البحث عن تصنيف...",
       description: "أدخل وصف الكتاب",
+      selectBranch: "اختر الفرع",
       addAuthor: "إضافة مؤلف",
       addTranslator: "إضافة مترجم",
       addCategory: "إضافة تصنيف",
@@ -529,6 +533,7 @@ export const books = {
       description: "وەسف",
       cover: "بەرگی کتێب",
       coverPreview: "پێشبینینی بەرگی کتێب",
+      branch: "لق",
     },
     placeholders: {
       title: "گەڕان یان ناونیشانی کتێب بنووسە",
@@ -538,6 +543,7 @@ export const books = {
       language: "گەڕان یان زیادکردنی زمان",
       category: "گەڕان بۆ پۆل...",
       description: "وەسفی کتێب بنووسە",
+      selectBranch: "لق هەڵبژێرە",
       addAuthor: "زیادکردنی نووسەر",
       addTranslator: "زیادکردنی وەرگێڕ",
       addCategory: "زیادکردنی پۆل",

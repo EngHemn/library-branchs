@@ -11,6 +11,8 @@ export type MemberFilterState = {
   statusFilter: MemberStatusFilter
   branchRegisteredFilter: MemberBranchFilter
   branchUsedFilter: MemberBranchFilter
+  dateFrom: string | null
+  dateTo: string | null
 }
 
 export type MembersPageStatus = "idle" | "loading" | "ready" | "error"

@@ -9,6 +9,7 @@ import type { UpdateStaffInput } from "@/domain/repositories/StaffManagementRepo
 import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { BranchManagementUseCase } from "@/domain/usecases/branch/BranchManagementUseCase"
 import type { StaffManagementUseCase } from "@/domain/usecases/staff/StaffManagementUseCase"
+import { isBranchScopedStaffPermissionsUser } from "@/domain/services/staffPermissionsScope"
 import {
   type EditStaffFormErrors,
   getEditStaffFieldErrors,
@@ -173,7 +174,8 @@ export function useEditStaffViewModel(
   const user = userQuery.data ?? null
   const staffMember = staffQuery.data ?? null
   const branches = branchesQuery.data ?? []
-  const showBranchField = user?.branchType !== "sub"
+  const showBranchField = user ? !isBranchScopedStaffPermissionsUser(user) : true
+  const showBranchAdminRole = user ? !isBranchScopedStaffPermissionsUser(user) : true
   const isLoading =
     userQuery.isPending ||
     staffQuery.isPending ||
@@ -215,6 +217,7 @@ export function useEditStaffViewModel(
     fieldErrors: showFieldErrors ? fieldErrors : emptyFieldErrors,
     branches,
     showBranchField,
+    showBranchAdminRole,
     error,
     isLoading,
     isLoaded: status === "loaded",

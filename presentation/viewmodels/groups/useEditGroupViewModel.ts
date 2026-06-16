@@ -34,6 +34,8 @@ import {
 
 } from "@/lib/groupBranchScope"
 
+import { isBranchScopedDashboardUser } from "@/lib/dashboardBranchScope"
+
 import type { EditGroupStatus, EditGroupViewModelState } from "./EditGroupViewModelState"
 
 
@@ -208,7 +210,7 @@ export function useEditGroupViewModel(
 
   const user = userQuery.data ?? null
 
-  const showBranchField = user?.branchType !== "sub"
+  const showBranchField = user ? !isBranchScopedDashboardUser(user) : true
 
   const defaultBranchId = user ? getDefaultGroupBranchId(user) : ""
 
@@ -218,7 +220,7 @@ export function useEditGroupViewModel(
 
   useEffect(() => {
 
-    if (!user || user.branchType !== "sub" || form.getValues("branchId")) return
+    if (!user || !isBranchScopedDashboardUser(user) || form.getValues("branchId")) return
 
     form.setValue("branchId", defaultBranchId)
 

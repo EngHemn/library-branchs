@@ -10,24 +10,30 @@ import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { GetBillsUseCase } from "@/domain/usecases/bills/GetBillsUseCase"
 import {
   getDashboardBranchScope,
+  isBranchScopedDashboardUser,
   resolveUserBranchId,
 } from "@/lib/dashboardBranchScope"
 import { useTranslation } from "@/presentation/i18n/useTranslation"
 import type {
+  BillAddedByFilter,
   BillBranchFilter,
   BillBranchFilterOption,
+  BillAddedByFilterOption,
   BillsFilterState,
   BillsStatus,
   BillsViewModelState,
 } from "./BillsViewModelState"
 export type { BillBranchFilter } from "./BillsViewModelState"
 export type { BillBranchFilterOption } from "./BillsViewModelState"
+export type { BillAddedByFilter } from "./BillsViewModelState"
+export type { BillAddedByFilterOption } from "./BillsViewModelState"
 export type { BillsFilterState } from "./BillsViewModelState"
 
 type BillsViewModel = {
   state: BillsViewModelState
   setSearchQuery: (value: string) => void
   setBranchFilter: (value: BillBranchFilter) => void
+  setAddedByFilter: (value: BillAddedByFilter) => void
   setDateFrom: (dateFrom: string | null) => void
   setDateTo: (dateTo: string | null) => void
   deleteBill: (billId: string) => Promise<boolean>
@@ -37,6 +43,7 @@ type BillsViewModel = {
 const defaultFilters: BillsFilterState = {
   searchQuery: "",
   branchFilter: "current",
+  addedByFilter: "all",
   dateFrom: null,
   dateTo: null,
 }
@@ -61,7 +68,7 @@ function getBranchFilterOptions(
   user: User,
   currentBranchLabel: string
 ): BillBranchFilterOption[] {
-  if (user.branchType === "sub") {
+  if (isBranchScopedDashboardUser(user)) {
     return []
   }
 
@@ -74,6 +81,18 @@ function getBranchFilterOptions(
     .sort((left, right) => left.label.localeCompare(right.label))
 
   return [{ value: "current", label: currentBranchLabel }, ...otherBranches]
+}
+
+function getAddedByFilterOptions(bills: Bill[]): BillAddedByFilterOption[] {
+  const optionsById = new Map<string, string>()
+
+  for (const bill of bills) {
+    optionsById.set(bill.addedBy.staffId, bill.addedBy.staffName)
+  }
+
+  return Array.from(optionsById.entries())
+    .map(([value, label]) => ({ value, label }))
+    .sort((left, right) => left.label.localeCompare(right.label))
 }
 
 function matchesDateRange(
@@ -129,9 +148,17 @@ function filterBills(
       bill.companyName.toLowerCase().includes(normalizedSearch) ||
       bill.branchName.toLowerCase().includes(normalizedSearch) ||
       bill.id.toLowerCase().includes(normalizedSearch) ||
-      bill.phoneNumber.toLowerCase().includes(normalizedSearch)
+      bill.phoneNumber.toLowerCase().includes(normalizedSearch) ||
+      bill.addedBy.staffName.toLowerCase().includes(normalizedSearch)
 
     if (!matchesSearch) {
+      return false
+    }
+
+    if (
+      filters.addedByFilter !== "all" &&
+      bill.addedBy.staffId !== filters.addedByFilter
+    ) {
       return false
     }
 
@@ -199,18 +226,20 @@ export function useBillsViewModel(
 
   const user = userQuery.data ?? null
   const userBranchId = user ? resolveUserBranchId(user) : ""
-  const isSubBranch = user?.branchType === "sub"
-  const showBranchFilter = !isSubBranch
-  const showBranchColumn = !isSubBranch && filters.branchFilter !== "current"
+  const isBranchScopedUser = user ? isBranchScopedDashboardUser(user) : false
+  const showBranchFilter = !isBranchScopedUser
+  const showBranchColumn = !isBranchScopedUser && filters.branchFilter !== "current"
   const branchFilterOptions = user
     ? getBranchFilterOptions(user, t("bills.filters.currentBranch"))
     : []
   const scopedBranchIds = user ? getScopedBranchIds(user) : []
 
   const allBills = bills ?? []
+  const scopedBills = allBills.filter((bill) => scopedBranchIds.includes(bill.branchId))
+  const addedByFilterOptions = getAddedByFilterOptions(scopedBills)
   const filteredBills =
     user && userBranchId
-      ? filterBills(allBills, filters, scopedBranchIds, isSubBranch, userBranchId)
+      ? filterBills(allBills, filters, scopedBranchIds, isBranchScopedUser, userBranchId)
       : []
 
   const status: BillsStatus =
@@ -230,6 +259,10 @@ export function useBillsViewModel(
     setFilters((current) => ({ ...current, branchFilter }))
   }
 
+  function setAddedByFilter(addedByFilter: BillAddedByFilter): void {
+    setFilters((current) => ({ ...current, addedByFilter }))
+  }
+
   function setDateFrom(dateFrom: string | null): void {
     setFilters((current) => ({ ...current, dateFrom }))
   }
@@ -244,6 +277,7 @@ export function useBillsViewModel(
     filteredBills,
     filters,
     branchFilterOptions,
+    addedByFilterOptions,
     showBranchFilter,
     showBranchColumn,
     error: deleteError?.message ?? queryError?.message ?? null,
@@ -256,6 +290,7 @@ export function useBillsViewModel(
     state,
     setSearchQuery,
     setBranchFilter,
+    setAddedByFilter,
     setDateFrom,
     setDateTo,
     deleteBill,

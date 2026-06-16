@@ -4,6 +4,7 @@ import type { User } from "@/domain/entities/User"
 import type { GroupBranchOption } from "@/domain/repositories/GroupRepository"
 import {
   getDashboardBranchScope,
+  isBranchScopedDashboardUser,
   resolveUserBranchId,
 } from "@/lib/dashboardBranchScope"
 
@@ -35,7 +36,7 @@ export function filterGroupsByBranchScope(
 ): GroupListItem[] {
   const scopedBranchIds = getScopedGroupBranchIds(user)
 
-  if (user.branchType === "sub") {
+  if (isBranchScopedDashboardUser(user)) {
     const userBranchId = resolveUserBranchId(user)
     return groups.filter((group) => group.branchId === userBranchId)
   }

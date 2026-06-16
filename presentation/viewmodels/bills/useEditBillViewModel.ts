@@ -12,7 +12,10 @@ import {
 } from "@/domain/schemas/billFormSchema"
 import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { GetBillsUseCase } from "@/domain/usecases/bills/GetBillsUseCase"
-import { resolveUserBranchId } from "@/lib/dashboardBranchScope"
+import {
+  isBranchScopedDashboardUser,
+  resolveUserBranchId,
+} from "@/lib/dashboardBranchScope"
 import { toBillDateInputValue } from "@/presentation/components/bills/billDisplay"
 import type { EditBillStatus, EditBillViewModelState } from "./EditBillViewModelState"
 
@@ -38,7 +41,7 @@ export function useEditBillViewModel(
       phoneNumber: "",
       price: 0,
       imageUrl: null,
-      bookIds: [],
+      items: [],
     },
   })
 
@@ -73,7 +76,8 @@ export function useEditBillViewModel(
   })
 
   const user = userQuery.data ?? null
-  const showBranchField = user?.branchType !== "sub"
+  const isBranchScopedUser = user ? isBranchScopedDashboardUser(user) : false
+  const showBranchField = !isBranchScopedUser
   const userBranchId = user ? resolveUserBranchId(user) : ""
 
   useEffect(() => {
@@ -86,12 +90,17 @@ export function useEditBillViewModel(
       phoneNumber: detailQuery.data.phoneNumber,
       price: detailQuery.data.price,
       imageUrl: detailQuery.data.imageUrl ?? null,
-      bookIds: [...detailQuery.data.bookIds],
+      items: detailQuery.data.products.map((product) => ({
+        bookId: product.bookId,
+        quantity: product.quantity,
+        initialPrice: product.initialPrice,
+        newPrice: product.newPrice,
+      })),
     })
   }, [detailQuery.data, form])
 
   useEffect(() => {
-    if (!user || user.branchType !== "sub" || form.getValues("branchId")) return
+    if (!user || !isBranchScopedDashboardUser(user) || form.getValues("branchId")) return
     form.setValue("branchId", userBranchId)
   }, [user, userBranchId, form])
 

@@ -14,6 +14,7 @@ import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { GetBooksUseCase } from "@/domain/usecases/books/GetBooksUseCase"
 import type { StockUseCase } from "@/domain/usecases/stock/StockUseCase"
 import { resolveUserBranchId } from "@/lib/dashboardBranchScope"
+import { isSingleBranchManagedUser } from "@/lib/salesStockBranchScope"
 import type { CreateStockStatus, CreateStockViewModelState } from "./CreateStockViewModelState"
 import type { StockBookOption } from "@/presentation/components/stock/StockBookSearchCombobox"
 
@@ -128,7 +129,8 @@ export function useCreateStockViewModel(
   const rows = stockRowsQuery.data ?? []
   const userBranchId = user ? resolveUserBranchId(user) : ""
   const isSubBranchUser = user?.branchType === "sub"
-  const showSubBranchField = !isSubBranchUser
+  const isSingleBranchManaged = user ? isSingleBranchManagedUser(user) : false
+  const showSubBranchField = !isSingleBranchManaged
   const effectiveBranchId = isSubBranchUser
     ? getMainBranchIdForSubBranch(rows, userBranchId) ?? userBranchId
     : userBranchId

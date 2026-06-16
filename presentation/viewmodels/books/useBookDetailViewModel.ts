@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query"
 import type { BookDetail } from "@/domain/entities/book/BookDetail"
 import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { GetBooksUseCase } from "@/domain/usecases/books/GetBooksUseCase"
+import { isBranchScopedBooksUser } from "@/lib/bookBranchScope"
 import type { BookDetailStatus, BookDetailViewModelState } from "./BookDetailViewModelState"
 
 type BookDetailViewModel = {
@@ -40,9 +41,9 @@ export function useBookDetailViewModel(
   }
 
   const user = userQuery.data ?? null
-  const isSubBranch = user?.branchType === "sub"
-  const showBranchColumn = !isSubBranch
-  const showBranchesTable = !isSubBranch
+  const isBranchScoped = user ? isBranchScopedBooksUser(user) : false
+  const showBranchColumn = !isBranchScoped
+  const showBranchesTable = !isBranchScoped
 
   const isLoading = bookDetailQuery.isPending || userQuery.isPending
   const isError = bookDetailQuery.isError || userQuery.isError

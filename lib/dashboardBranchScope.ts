@@ -14,6 +14,18 @@ export type DashboardBranchScope = {
 const DEFAULT_MAIN_BRANCH_ID = "BR-001"
 const DEFAULT_SUB_BRANCH_ID = "BR-002"
 
+export function isBranchScopedDashboardUser(
+  user: Pick<User, "branchType" | "loginType">
+): boolean {
+  return user.branchType === "sub" || user.loginType === "main_no_sub"
+}
+
+export function canShowDashboardBranchFilter(
+  user: Pick<User, "branchType" | "loginType">
+): boolean {
+  return user.branchType === "main" && user.loginType === "main"
+}
+
 export function resolveUserBranchId(
   user: Pick<User, "branchType"> & { branchId?: string }
 ): string {
@@ -27,7 +39,9 @@ export function getDashboardBranchScope(
 ): DashboardBranchScope {
   const branchId = resolveUserBranchId(user)
 
-  if (user.branchType === "sub") {
+  const showBranchFilter = canShowDashboardBranchFilter(user)
+
+  if (isBranchScopedDashboardUser(user)) {
     const branch =
       allBranches.find((item) => item.id === branchId) ??
       fakeBranches
@@ -51,9 +65,9 @@ export function getDashboardBranchScope(
     return {
       branches: allBranches,
       branchIds: allBranches.map((item) => item.id),
-      defaultBranchId: "all",
-      allowAllBranches: true,
-      showBranchFilter: true,
+      defaultBranchId: showBranchFilter ? "all" : branchId,
+      allowAllBranches: showBranchFilter,
+      showBranchFilter,
     }
   }
 
@@ -71,9 +85,9 @@ export function getDashboardBranchScope(
   return {
     branches,
     branchIds,
-    defaultBranchId: "all",
-    allowAllBranches: true,
-    showBranchFilter: true,
+    defaultBranchId: showBranchFilter ? "all" : branchId,
+    allowAllBranches: showBranchFilter,
+    showBranchFilter,
   }
 }
 

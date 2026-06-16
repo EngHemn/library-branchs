@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useState } from "react"
 
 import {
   Combobox,
@@ -9,56 +9,36 @@ import {
   ComboboxItem,
   ComboboxList,
 } from "@/components/ui/combobox"
+import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import type { DashboardBranch } from "@/domain/entities/dashboard/DashboardSummary"
 import { useTranslation } from "@/presentation/i18n/useTranslation"
-import type { DateRangeFilter } from "@/presentation/viewmodels/dashboard/useDashboardViewModel"
 
 type DashboardFiltersProps = {
   branches: DashboardBranch[]
   selectedBranchId: string
-  dateRange: DateRangeFilter
+  dateFrom: string | null
+  dateTo: string | null
   allowAllBranches?: boolean
   showBranchFilter?: boolean
   onBranchChange: (branchId: string) => void
-  onDateRangeChange: (range: DateRangeFilter) => void
-}
-
-const DATE_RANGE_VALUES = new Set<string>(["all", "today", "week", "month"])
-
-function isDateRangeFilter(value: string): value is DateRangeFilter {
-  return DATE_RANGE_VALUES.has(value)
+  onDateFromChange: (value: string | null) => void
+  onDateToChange: (value: string | null) => void
 }
 
 export function DashboardFilters({
   branches,
   selectedBranchId,
-  dateRange,
+  dateFrom,
+  dateTo,
   allowAllBranches = true,
   showBranchFilter = true,
   onBranchChange,
-  onDateRangeChange,
+  onDateFromChange,
+  onDateToChange,
 }: DashboardFiltersProps) {
   const { t } = useTranslation()
   const [inputValue, setInputValue] = useState("")
-
-  const dateRangeOptions = useMemo(
-    () =>
-      [
-        { value: "all" as const, label: t("dashboard.filters.allTime") },
-        { value: "today" as const, label: t("dashboard.filters.today") },
-        { value: "week" as const, label: t("dashboard.filters.thisWeek") },
-        { value: "month" as const, label: t("dashboard.filters.thisMonth") },
-      ],
-    [t]
-  )
 
   const allBranchOptions = [
     ...(allowAllBranches ? [{ value: "all", label: t("dashboard.filters.allBranches") }] : []),
@@ -90,12 +70,6 @@ export function DashboardFilters({
       nextInput.trim().toLowerCase() !== selectedOption.label.trim().toLowerCase()
     ) {
       onBranchChange(allowAllBranches ? "all" : (branches[0]?.id ?? selectedBranchId))
-    }
-  }
-
-  function handleDateRangeChange(value: string): void {
-    if (isDateRangeFilter(value)) {
-      onDateRangeChange(value)
     }
   }
 
@@ -143,23 +117,36 @@ export function DashboardFilters({
 
       <div className="w-40">
         <Label
-          htmlFor="dashboard-date-filter"
+          htmlFor="dashboard-date-from"
           className="mb-1.5 block text-xs font-medium text-muted-foreground"
         >
-          {t("dashboard.filters.dateRange")}
+          {t("dashboard.filters.dateFrom")}
         </Label>
-        <Select value={dateRange} onValueChange={handleDateRangeChange}>
-          <SelectTrigger id="dashboard-date-filter" className="h-9 w-full">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {dateRangeOptions.map((option) => (
-              <SelectItem key={option.value} value={option.value}>
-                {option.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <Input
+          id="dashboard-date-from"
+          type="date"
+          className="h-9"
+          value={dateFrom ?? ""}
+          max={dateTo ?? undefined}
+          onChange={(event) => onDateFromChange(event.target.value || null)}
+        />
+      </div>
+
+      <div className="w-40">
+        <Label
+          htmlFor="dashboard-date-to"
+          className="mb-1.5 block text-xs font-medium text-muted-foreground"
+        >
+          {t("dashboard.filters.dateTo")}
+        </Label>
+        <Input
+          id="dashboard-date-to"
+          type="date"
+          className="h-9"
+          value={dateTo ?? ""}
+          min={dateFrom ?? undefined}
+          onChange={(event) => onDateToChange(event.target.value || null)}
+        />
       </div>
     </div>
   )

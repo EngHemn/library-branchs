@@ -97,7 +97,7 @@ export function BooksTable({
       header: t("books.table.titleColumn"),
       sortable: true,
       sortValue: (book) => book.title,
-      className: "w-[28%] max-w-0",
+      className: "min-w-[11rem] shrink-0",
       cell: (book) => (
         <div className="flex min-w-0 items-center gap-2.5">
           <EntityImage
@@ -123,7 +123,7 @@ export function BooksTable({
       header: t("books.table.author"),
       sortable: true,
       sortValue: (book) => book.author,
-      className: "w-[14%] max-w-0",
+      className: "min-w-[9rem] shrink-0",
       cell: (book) => (
         <PersonNameButton
           name={book.author}
@@ -137,7 +137,7 @@ export function BooksTable({
       header: t("books.table.category"),
       sortable: true,
       sortValue: (book) => book.category,
-      className: "w-[12%] max-w-0",
+      className: "min-w-[8rem] shrink-0",
       cell: (book) => (
         <span className="block truncate text-sm">{book.category}</span>
       ),
@@ -147,7 +147,7 @@ export function BooksTable({
       header: t("books.table.location"),
       sortable: true,
       sortValue: (book) => book.shelfHint,
-      className: "w-[18%] max-w-0 whitespace-normal",
+      className: "min-w-[10rem] shrink-0 whitespace-normal",
       cell: (book) => <BookLocationCell shelfHint={book.shelfHint} />,
     },
     {
@@ -156,7 +156,7 @@ export function BooksTable({
       sortable: true,
       sortValue: (book) => book.available,
       headerClassName: "text-center",
-      className: "w-[10%] text-center tabular-nums",
+      className: "min-w-[5.5rem] shrink-0 text-center tabular-nums",
       cell: (book) => (
         <span className="text-sm">
           {book.available.toLocaleString()}
@@ -173,16 +173,16 @@ export function BooksTable({
       sortable: true,
       sortValue: (book) => book.price,
       headerClassName: "text-center",
-      className: "w-[10%] text-center tabular-nums",
+      className: "min-w-[5.5rem] shrink-0 text-center text-sm tabular-nums whitespace-nowrap",
       cell: (book) => formatPrice(book.price),
     },
     {
       key: "actions",
       header: t("books.table.actions"),
       headerClassName: "text-right",
-      className: "w-[8%] text-right",
+      className: "min-w-[9.5rem] shrink-0 text-right",
       cell: (book) => (
-        <div className="table-action-content gap-0.5">
+        <div className="table-action-content flex-nowrap justify-end gap-0.5">
           <BookActionButton
             icon={EyeIcon}
             label={t("books.table.viewBook")}
@@ -220,7 +220,7 @@ export function BooksTable({
           {t("books.table.recordCount", { count: books.length.toLocaleString() })}
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="overflow-x-auto">
         <DataTable
           data={books}
           columns={columns}
@@ -229,7 +229,7 @@ export function BooksTable({
           emptyDescription={t("books.table.emptyDescription")}
           initialSort={{ key: "title", direction: "asc" }}
           initialPageSize={10}
-          tableClassName="table-fixed"
+          tableClassName="min-w-[920px]"
         />
       </CardContent>
     </Card>

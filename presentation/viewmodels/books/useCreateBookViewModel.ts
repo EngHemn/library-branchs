@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useForm, type Resolver } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
@@ -9,8 +9,15 @@ import {
   bookFormSchema,
   type BookFormValues,
 } from "@/domain/schemas/bookFormSchema"
+import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { GetBooksUseCase } from "@/domain/usecases/books/GetBooksUseCase"
 import type { ShelfManagementUseCase } from "@/domain/usecases/shelves/ShelfManagementUseCase"
+import {
+  getBookBranchFormOptions,
+  getDefaultBookBranchId,
+  isBranchScopedBooksUser,
+  type BookBranchOption,
+} from "@/lib/bookBranchScope"
 import type { CreateBookStatus, CreateBookViewModelState } from "./CreateBookViewModelState"
 import { useBookFormLocation } from "./useBookFormLocation"
 
@@ -50,6 +57,7 @@ const DEFAULT_CATEGORIES = [
 const DEFAULT_LANGUAGES = ["English", "Kurdish", "Arabic", "Persian", "Turkish"]
 
 export function useCreateBookViewModel(
+  authUseCase: AuthUseCase,
   getBooksUseCase: GetBooksUseCase,
   shelfManagementUseCase: ShelfManagementUseCase
 ): CreateBookViewModel {
@@ -75,7 +83,17 @@ export function useCreateBookViewModel(
       initialPrice: 0,
       finalPrice: 0,
       coverUrl: null,
+      branchId: "",
       locationValues: {},
+    },
+  })
+
+  const userQuery = useQuery({
+    queryKey: ["currentUser"],
+    queryFn: async () => {
+      const result = await authUseCase.getCurrentUser()
+      if (!result.success) throw new Error(result.error)
+      return result.data ?? null
     },
   })
 
@@ -116,7 +134,7 @@ export function useCreateBookViewModel(
         coverUrl: values.coverUrl,
         shelfHint: location.shelfHintFromForm(),
         price: finalPrice,
-        branchId: "",
+        branchId: values.branchId,
       })
       if (!result.success) throw new Error(result.error)
       return result.data
@@ -160,7 +178,20 @@ export function useCreateBookViewModel(
     }
   }
 
+  const user = userQuery.data ?? null
+  const showBranchField = user ? !isBranchScopedBooksUser(user) : false
+  const defaultBranchId = user ? getDefaultBookBranchId(user) : ""
+  const branchOptions: BookBranchOption[] = user
+    ? getBookBranchFormOptions(user)
+    : []
+
+  useEffect(() => {
+    if (!user || form.getValues("branchId")) return
+    form.setValue("branchId", defaultBranchId)
+  }, [user, defaultBranchId, form])
+
   const isLoading =
+    userQuery.isPending ||
     authorNamesQuery.isPending ||
     translatorNamesQuery.isPending ||
     booksQuery.isPending ||
@@ -183,6 +214,8 @@ export function useCreateBookViewModel(
     translators: translatorNamesQuery.data ?? [],
     categories: DEFAULT_CATEGORIES,
     languages,
+    branchOptions,
+    showBranchField,
     error,
     isLoading,
     isReady: status === "ready",

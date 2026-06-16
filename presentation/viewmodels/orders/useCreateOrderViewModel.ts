@@ -11,7 +11,10 @@ import {
 } from "@/domain/schemas/orderFormSchema"
 import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { GetOrdersUseCase } from "@/domain/usecases/orders/GetOrdersUseCase"
-import { resolveUserBranchId } from "@/lib/dashboardBranchScope"
+import {
+  isBranchScopedDashboardUser,
+  resolveUserBranchId,
+} from "@/lib/dashboardBranchScope"
 import type {
   CreateOrderStatus,
   CreateOrderViewModelState,
@@ -91,11 +94,11 @@ export function useCreateOrderViewModel(
   }
 
   const user = userQuery.data ?? null
-  const showBranchField = user?.branchType !== "sub"
+  const showBranchField = user ? !isBranchScopedDashboardUser(user) : true
   const userBranchId = user ? resolveUserBranchId(user) : ""
 
   useEffect(() => {
-    if (!user || user.branchType !== "sub" || form.getValues("branchId")) return
+    if (!user || !isBranchScopedDashboardUser(user) || form.getValues("branchId")) return
     form.setValue("branchId", userBranchId)
     const branch = optionsQuery.data?.branches.find((item) => item.id === userBranchId)
     if (branch) {

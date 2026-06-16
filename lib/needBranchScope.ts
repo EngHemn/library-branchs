@@ -4,6 +4,7 @@ import type { User } from "@/domain/entities/User"
 import type { NeedBranchOption } from "@/domain/repositories/NeedRepository"
 import {
   getDashboardBranchScope,
+  isBranchScopedDashboardUser,
   resolveUserBranchId,
 } from "@/lib/dashboardBranchScope"
 
@@ -39,7 +40,7 @@ export function filterNeedsByBranchScope(
 ): NeedListItem[] {
   const scopedBranchIds = getScopedNeedBranchIds(user)
 
-  if (user.branchType === "sub") {
+  if (isBranchScopedDashboardUser(user)) {
     const userBranchId = resolveUserBranchId(user)
     return needs.filter((need) => need.branchId === userBranchId)
   }

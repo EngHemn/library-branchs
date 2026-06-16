@@ -4,6 +4,7 @@ import type { User } from "@/domain/entities/User"
 import type { ShelfBranchOption } from "@/domain/repositories/ShelfManagementRepository"
 import {
   getDashboardBranchScope,
+  isBranchScopedDashboardUser,
   resolveUserBranchId,
 } from "@/lib/dashboardBranchScope"
 
@@ -39,7 +40,7 @@ export function filterShelvesByBranchScope(
 ): Shelf[] {
   const scopedBranchIds = getScopedShelfBranchIds(user)
 
-  if (user.branchType === "sub") {
+  if (isBranchScopedDashboardUser(user)) {
     const userBranchId = resolveUserBranchId(user)
     return shelves.filter((shelf) => shelf.branchId === userBranchId)
   }

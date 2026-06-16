@@ -192,7 +192,9 @@ export function EditStaffScreen({
                         <SelectValue placeholder={t("staff.placeholders.selectRole")} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="branch_admin">{t("staff.roles.branchAdmin")}</SelectItem>
+                        {state.showBranchAdminRole ? (
+                          <SelectItem value="branch_admin">{t("staff.roles.branchAdmin")}</SelectItem>
+                        ) : null}
                         <SelectItem value="sub_branch_admin">{t("staff.roles.subBranchAdmin")}</SelectItem>
                         <SelectItem value="staff">{t("staff.roles.staff")}</SelectItem>
                       </SelectContent>
