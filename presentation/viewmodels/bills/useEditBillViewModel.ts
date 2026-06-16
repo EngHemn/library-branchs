@@ -111,7 +111,8 @@ export function useEditBillViewModel(
     error: mutationError,
   } = useMutation({
     mutationFn: async (values: BillFormValues) => {
-      const result = await getBillsUseCase.updateBill({ id: billId, ...values })
+      const addedBy = { staffId: user?.id ?? '', staffName: user?.fullName ?? '' };
+      const result = await getBillsUseCase.updateBill({ id: billId, ...values, addedBy });
       if (!result.success) throw new Error(result.error)
       return result.data
     },
