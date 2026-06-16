@@ -3,11 +3,18 @@
 import { Suspense } from "react"
 
 import { Skeleton } from "@/components/ui/skeleton"
+import { AuthFakeDataSource } from "@/data/datasources/AuthFakeDataSource"
 import { BookManagementFakeDataSource } from "@/data/datasources/BookManagementFakeDataSource"
+import { AuthRepositoryImpl } from "@/data/repositories/AuthRepositoryImpl"
 import { BookManagementRepositoryImpl } from "@/data/repositories/BookManagementRepositoryImpl"
 import { shelfManagementUseCase } from "@/app/dashboard/shelves/shelfDependencies"
+import { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import { GetBooksUseCase } from "@/domain/usecases/books/GetBooksUseCase"
 import { CreateBookScreen } from "@/presentation/screens/books/CreateBookScreen"
+
+const authFakeDataSource = new AuthFakeDataSource()
+const authRepository = new AuthRepositoryImpl(authFakeDataSource)
+const authUseCase = new AuthUseCase(authRepository)
 
 const bookManagementFakeDataSource = new BookManagementFakeDataSource()
 const bookManagementRepository = new BookManagementRepositoryImpl(
@@ -26,6 +33,7 @@ export default function CreateBookPage() {
       }
     >
       <CreateBookScreen
+        authUseCase={authUseCase}
         getBooksUseCase={getBooksUseCase}
         shelfManagementUseCase={shelfManagementUseCase}
       />

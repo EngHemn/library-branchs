@@ -80,6 +80,7 @@ export function useEditBookViewModel(
       initialPrice: 0,
       finalPrice: 0,
       coverUrl: null,
+      branchId: "",
       locationValues: {},
     },
   })
@@ -147,6 +148,7 @@ export function useEditBookViewModel(
       initialPrice: book.initialPrice ?? book.price,
       finalPrice: book.price,
       coverUrl: book.coverUrl ?? null,
+      branchId: book.branchId,
       locationValues: shelfHintToLocationValues(
         book.shelfHint,
         locationOptions.steps

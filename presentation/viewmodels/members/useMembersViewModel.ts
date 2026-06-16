@@ -6,6 +6,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import type { Member } from "@/domain/entities/member/Member"
 import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { MemberManagementUseCase } from "@/domain/usecases/members/MemberManagementUseCase"
+import { isBranchScopedDashboardUser } from "@/lib/dashboardBranchScope"
 import type {
   MemberBranchFilter,
   MemberFilterState,
@@ -24,6 +25,8 @@ type MembersViewModel = {
   setStatusFilter: (statusFilter: MemberStatusFilter) => void
   setBranchRegisteredFilter: (branchRegisteredFilter: MemberBranchFilter) => void
   setBranchUsedFilter: (branchUsedFilter: MemberBranchFilter) => void
+  setDateFrom: (dateFrom: string | null) => void
+  setDateTo: (dateTo: string | null) => void
   deleteMember: (memberId: string) => Promise<void>
   reload: () => Promise<void>
 }
@@ -33,6 +36,8 @@ const defaultFilters: MemberFilterState = {
   statusFilter: "all",
   branchRegisteredFilter: "all",
   branchUsedFilter: "all",
+  dateFrom: null,
+  dateTo: null,
 }
 
 function matchesMemberSearch(member: Member, searchQuery: string): boolean {
@@ -64,6 +69,36 @@ function getUniqueUsedBranches(members: Member[]): string[] {
   return Array.from(branchSet).sort()
 }
 
+function matchesDateRange(
+  member: Member,
+  dateFrom: string | null,
+  dateTo: string | null
+): boolean {
+  if (!member.registrationDate) {
+    return true
+  }
+
+  const regDate = new Date(member.registrationDate)
+
+  if (dateFrom) {
+    const from = new Date(dateFrom)
+    from.setHours(0, 0, 0, 0)
+    if (regDate < from) {
+      return false
+    }
+  }
+
+  if (dateTo) {
+    const to = new Date(dateTo)
+    to.setHours(23, 59, 59, 999)
+    if (regDate > to) {
+      return false
+    }
+  }
+
+  return true
+}
+
 function filterMembers(
   members: Member[],
   filters: MemberFilterState,
@@ -80,7 +115,8 @@ function filterMembers(
         member.registerBranch === filters.branchRegisteredFilter) &&
       (!showBranchUsedFilter ||
         filters.branchUsedFilter === "all" ||
-        member.allBranchesUsed.includes(filters.branchUsedFilter))
+        member.allBranchesUsed.includes(filters.branchUsedFilter)) &&
+      matchesDateRange(member, filters.dateFrom, filters.dateTo)
   )
 }
 
@@ -121,11 +157,11 @@ export function useMembersViewModel(
 
   const user = userQuery.data ?? null
   const members = membersQuery.data ?? []
-  const isSubBranch = user?.branchType === "sub"
-  const showRegisterBranchColumn = !isSubBranch
-  const showRegisterBranchFilter = !isSubBranch
-  const showBranchUsedColumn = !isSubBranch
-  const showBranchUsedFilter = !isSubBranch
+  const isBranchScoped = user ? isBranchScopedDashboardUser(user) : false
+  const showRegisterBranchColumn = !isBranchScoped
+  const showRegisterBranchFilter = !isBranchScoped
+  const showBranchUsedColumn = !isBranchScoped
+  const showBranchUsedFilter = !isBranchScoped
   const filteredMembers = filterMembers(
     members,
     filters,
@@ -169,6 +205,14 @@ export function useMembersViewModel(
     setFilters((current) => ({ ...current, branchUsedFilter }))
   }
 
+  function setDateFrom(dateFrom: string | null): void {
+    setFilters((current) => ({ ...current, dateFrom }))
+  }
+
+  function setDateTo(dateTo: string | null): void {
+    setFilters((current) => ({ ...current, dateTo }))
+  }
+
   async function deleteMember(memberId: string): Promise<void> {
     await deleteMemberAsync(memberId)
   }
@@ -200,6 +244,8 @@ export function useMembersViewModel(
     setStatusFilter,
     setBranchRegisteredFilter,
     setBranchUsedFilter,
+    setDateFrom,
+    setDateTo,
     deleteMember,
     reload,
   }

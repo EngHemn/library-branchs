@@ -11,7 +11,10 @@ import {
 } from "@/domain/schemas/orderFormSchema"
 import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { GetOrdersUseCase } from "@/domain/usecases/orders/GetOrdersUseCase"
-import { resolveUserBranchId } from "@/lib/dashboardBranchScope"
+import {
+  isBranchScopedDashboardUser,
+  resolveUserBranchId,
+} from "@/lib/dashboardBranchScope"
 import { toOrderDateInputValue } from "@/presentation/components/orders/orderDisplay"
 import type { EditOrderStatus, EditOrderViewModelState } from "./EditOrderViewModelState"
 
@@ -77,7 +80,7 @@ export function useEditOrderViewModel(
   })
 
   const user = userQuery.data ?? null
-  const showBranchField = user?.branchType !== "sub"
+  const showBranchField = user ? !isBranchScopedDashboardUser(user) : true
   const userBranchId = user ? resolveUserBranchId(user) : ""
 
   useEffect(() => {
@@ -100,7 +103,7 @@ export function useEditOrderViewModel(
   }, [detailQuery.data, form])
 
   useEffect(() => {
-    if (!user || user.branchType !== "sub" || form.getValues("branchId")) return
+    if (!user || !isBranchScopedDashboardUser(user) || form.getValues("branchId")) return
     form.setValue("branchId", userBranchId)
   }, [user, userBranchId, form])
 

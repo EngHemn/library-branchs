@@ -1,3 +1,8 @@
+export type BillAddedBy = {
+  staffId: string
+  staffName: string
+}
+
 export type Bill = {
   id: string
   branchId: string
@@ -8,4 +13,5 @@ export type Bill = {
   price: number
   productCount: number
   imageUrl?: string | null
+  addedBy: BillAddedBy
 }

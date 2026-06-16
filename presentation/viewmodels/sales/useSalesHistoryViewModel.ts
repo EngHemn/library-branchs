@@ -12,6 +12,7 @@ import {
   getDashboardBranchScope,
   resolveUserBranchId,
 } from "@/lib/dashboardBranchScope"
+import { isSingleBranchManagedUser } from "@/lib/salesStockBranchScope"
 import { useTranslation } from "@/presentation/i18n/useTranslation"
 import type {
   SalesHistoryBranchFilter,
@@ -102,7 +103,7 @@ function getBranchFilterOptions(
   user: User,
   currentBranchLabel: string
 ): SalesHistoryBranchFilterOption[] {
-  if (user.branchType === "sub") {
+  if (isSingleBranchManagedUser(user)) {
     return []
   }
 
@@ -184,7 +185,7 @@ export function useSalesHistoryViewModel(
 
   const user = userQuery.data ?? null
   const userBranchId = user ? resolveUserBranchId(user) : ""
-  const isSubBranch = user?.branchType === "sub"
+  const isSubBranch = user ? isSingleBranchManagedUser(user) : false
   const showBranchFilter = !isSubBranch
   const showBranchColumn = !isSubBranch && filters.branchFilter !== "current"
   const branchFilterOptions = user

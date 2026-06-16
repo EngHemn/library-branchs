@@ -11,11 +11,10 @@ import type {
 import type { User } from "@/domain/entities/User"
 import type { DashboardBranchScope } from "@/lib/dashboardBranchScope"
 
-export type DateRangeFilter = "today" | "week" | "month" | "all"
-
 export type DashboardFilterState = {
   branchId: string
-  dateRange: DateRangeFilter
+  dateFrom: string | null
+  dateTo: string | null
 }
 
 export type DashboardStatus = "idle" | "loading" | "success" | "unauthenticated" | "error"

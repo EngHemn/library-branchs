@@ -15,6 +15,7 @@ import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { GetActivityLogsUseCase } from "@/domain/usecases/activityLogs/GetActivityLogsUseCase"
 import {
   getDashboardBranchScope,
+  isBranchScopedDashboardUser,
   resolveUserBranchId,
   type DashboardBranchScope,
 } from "@/lib/dashboardBranchScope"
@@ -76,7 +77,7 @@ function getBranchFilterOptions(
   user: User,
   t: (key: TranslationKey) => string
 ): ActivityBranchFilterOption[] {
-  if (user.branchType === "sub") {
+  if (isBranchScopedDashboardUser(user)) {
     return []
   }
 
@@ -185,16 +186,16 @@ export function useActivityLogsViewModel(
 
   const user = userQuery.data ?? null
   const userBranchId = user ? resolveUserBranchId(user) : ""
-  const isSubBranch = user?.branchType === "sub"
+  const isSingleBranchScoped = user ? isBranchScopedDashboardUser(user) : false
   const branchScope = user ? getDashboardBranchScope(user, allDashboardBranches) : null
   const scopedBranchIds = branchScope?.branchIds ?? []
-  const showBranchFilter = !isSubBranch
+  const showBranchFilter = !isSingleBranchScoped
   const branchFilterOptions = user ? getBranchFilterOptions(user, t) : []
 
   useEffect(() => {
     if (!user || !branchScope) return
 
-    if (isSubBranch) {
+    if (isSingleBranchScoped) {
       setBranchFilterState(userBranchId)
       return
     }
@@ -202,7 +203,7 @@ export function useActivityLogsViewModel(
     setBranchFilterState((current) =>
       isBranchSelectionValid(current, branchScope, userBranchId) ? current : "current"
     )
-  }, [user, userBranchId, isSubBranch, branchScope?.branchIds.join(",")])
+  }, [user, userBranchId, isSingleBranchScoped, branchScope?.branchIds.join(",")])
 
   const status: AsyncStatus = (() => {
     if (userQuery.isPending || isPending || isFetching) return "loading"
@@ -223,7 +224,7 @@ export function useActivityLogsViewModel(
         branchFilter,
         staffFilter,
         scopedBranchIds,
-        isSubBranch,
+        isSingleBranchScoped,
         userBranchId
       )
     : []
@@ -233,7 +234,7 @@ export function useActivityLogsViewModel(
   }
 
   function setBranchFilter(value: ActivityBranchFilter): void {
-    if (isSubBranch) return
+    if (isSingleBranchScoped) return
     if (branchScope && !isBranchSelectionValid(value, branchScope, userBranchId)) return
     setBranchFilterState(value)
   }

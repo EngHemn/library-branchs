@@ -115,8 +115,9 @@ export function StaffManagementPage({
               roleFilter={state.filters.roleFilter}
               branchFilter={state.filters.branchFilter}
               statusFilter={state.filters.statusFilter}
-              branches={state.branches}
+              branchFilterOptions={state.branchFilterOptions}
               showBranchFilter={state.showBranchFilter}
+              showBranchAdminRole={state.showBranchAdminRole}
               onSearchQueryChange={viewModel.setSearchQuery}
               onRoleFilterChange={viewModel.setRoleFilter}
               onBranchFilterChange={viewModel.setBranchFilter}
@@ -125,7 +126,7 @@ export function StaffManagementPage({
 
             <StaffTable
               staff={state.filteredStaff}
-              showBranchColumn={state.showBranchFilter}
+              showBranchColumn={state.showBranchColumn}
               onView={(member) => router.push(`/dashboard/staff/${member.id}`)}
               onEdit={(member) => router.push(`/dashboard/staff/${member.id}/edit`)}
               onDelete={(member) =>

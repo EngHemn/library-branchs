@@ -11,10 +11,13 @@ import type {
 } from "@/domain/entities/stock/Stock"
 import type { StockMovement } from "@/domain/entities/stock/StockMovement"
 import type { MovementType } from "@/domain/entities/stock/StockMovement"
-import type { User } from "@/domain/entities/User"
 import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { StockUseCase } from "@/domain/usecases/stock/StockUseCase"
-import { resolveUserBranchId } from "@/lib/dashboardBranchScope"
+import {
+  isSingleBranchManagedUser,
+  scopeStockMovementsForUser,
+  scopeStockRowsForUser,
+} from "@/lib/salesStockBranchScope"
 import { useStockQueries } from "./useStockQueries"
 import type { StockViewModelState } from "./StockViewModelState"
 
@@ -70,33 +73,6 @@ function getMovementBranches(
     if (m.toBranchId && m.toBranchName) seen.set(m.toBranchId, m.toBranchName)
   }
   return Array.from(seen.entries()).map(([id, name]) => ({ id, name }))
-}
-
-function scopeStockRowsForUser(rows: StockRow[], user: User | null): StockRow[] {
-  if (!user) return rows
-
-  const userBranchId = resolveUserBranchId(user)
-
-  if (user.branchType === "sub") {
-    return rows.filter((row) => row.subBranchId === userBranchId)
-  }
-
-  return rows.filter((row) => row.branchId === userBranchId)
-}
-
-function scopeMovementsForUser(
-  movements: StockMovement[],
-  user: User | null
-): StockMovement[] {
-  if (!user || user.branchType !== "sub") return movements
-
-  const userBranchId = resolveUserBranchId(user)
-
-  return movements.filter(
-    (movement) =>
-      movement.fromBranchId === userBranchId ||
-      movement.toBranchId === userBranchId
-  )
 }
 
 function filterStockRows(
@@ -254,14 +230,14 @@ export function useStockViewModel(
   }
 
   const user = userQuery.data ?? null
-  const isSubBranchUser = user?.branchType === "sub"
+  const isSubBranchUser = user ? isSingleBranchManagedUser(user) : false
   const showSubBranchColumn = !isSubBranchUser
   const showSubBranchFilter = !isSubBranchUser
   const showStockGroupAccordion = !isSubBranchUser
   const showMovementBranchFilter = !isSubBranchUser
 
   const scopedStockRows = scopeStockRowsForUser(stockData.stockRows, user)
-  const scopedMovements = scopeMovementsForUser(stockData.movements, user)
+  const scopedMovements = scopeStockMovementsForUser(stockData.movements, user)
 
   const filteredStockRows = filterStockRows(
     scopedStockRows,

@@ -11,7 +11,8 @@ import {
 } from "@/domain/schemas/needFormSchema"
 import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { NeedManagementUseCase } from "@/domain/usecases/needs/NeedManagementUseCase"
-import { getNeedBranchFormOptions, getNeedDashboardBranchScope } from "@/lib/needBranchScope"
+import { isBranchScopedDashboardUser } from "@/lib/dashboardBranchScope"
+import { getNeedBranchFormOptions } from "@/lib/needBranchScope"
 import type {
   EditNeedStatus,
   EditNeedViewModelState,
@@ -100,7 +101,6 @@ export function useEditNeedViewModel(
   }, [needQuery.data, form])
 
   const user = userQuery.data ?? null
-  const branchScope = user ? getNeedDashboardBranchScope(user) : null
   const branchOptions = user ? getNeedBranchFormOptions(user) : []
   const requestedByOptions = optionsQuery.data?.requesters ?? []
 
@@ -158,7 +158,7 @@ export function useEditNeedViewModel(
       isSaved: updateMutation.isSuccess,
       branchOptions,
       requestedByOptions,
-      showBranchField: branchScope?.showBranchFilter ?? true,
+      showBranchField: user ? !isBranchScopedDashboardUser(user) : true,
     },
     form,
     save: async (values) => {

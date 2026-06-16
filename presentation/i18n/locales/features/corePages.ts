@@ -23,12 +23,9 @@ export const dashboard = {
       branch: "Branch",
       searchBranches: "Search branches...",
       noBranchesFound: "No branches found",
-      dateRange: "Date range",
+      dateFrom: "Date From",
+      dateTo: "Date To",
       allBranches: "All branches",
-      allTime: "All time",
-      today: "Today",
-      thisWeek: "This week",
-      thisMonth: "This month",
     },
     metrics: {
       "metric-books": {
@@ -254,12 +251,9 @@ export const dashboard = {
       branch: "الفرع",
       searchBranches: "البحث في الفروع...",
       noBranchesFound: "لم يتم العثور على فروع",
-      dateRange: "النطاق الزمني",
+      dateFrom: "من تاريخ",
+      dateTo: "إلى تاريخ",
       allBranches: "جميع الفروع",
-      allTime: "كل الوقت",
-      today: "اليوم",
-      thisWeek: "هذا الأسبوع",
-      thisMonth: "هذا الشهر",
     },
     metrics: {
       "metric-books": {
@@ -485,12 +479,9 @@ export const dashboard = {
       branch: "لق",
       searchBranches: "گەڕان لە لقەکان...",
       noBranchesFound: "هیچ لقێک نەدۆزرایەوە",
-      dateRange: "ماوەی کات",
+      dateFrom: "لە بەروار",
+      dateTo: "بۆ بەروار",
       allBranches: "هەموو لقەکان",
-      allTime: "هەموو کات",
-      today: "ئەمڕۆ",
-      thisWeek: "ئەم هەفتەیە",
-      thisMonth: "ئەم مانگە",
     },
     metrics: {
       "metric-books": {

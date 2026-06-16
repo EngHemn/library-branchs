@@ -7,6 +7,7 @@ import { fakeBranches } from "@/data/fake/fakeBranches"
 import { toBillDetail } from "@/data/mappers/billDetailMapper"
 import type { Bill } from "@/domain/entities/bill/Bill"
 import type { BillDetail } from "@/domain/entities/bill/BillDetail"
+import type { BillLineItem } from "@/domain/entities/bill/BillLineItem"
 import type {
   BillFormOptions,
   CreateBillInput,
@@ -34,11 +35,45 @@ function toBillListItem(record: FakeBillRecord): Bill {
     price: record.price,
     productCount: record.productCount,
     imageUrl: record.imageUrl ?? null,
+    addedBy: record.addedBy,
   }
 }
 
+function normalizeBillItems(items: BillLineItem[]): BillLineItem[] {
+  const normalized: BillLineItem[] = []
+
+  for (const item of items) {
+    const existingIndex = normalized.findIndex((entry) => entry.bookId === item.bookId)
+    if (existingIndex === -1) {
+      normalized.push({
+        bookId: item.bookId,
+        quantity: item.quantity,
+        initialPrice: item.initialPrice,
+        newPrice: item.newPrice,
+      })
+      continue
+    }
+
+    normalized[existingIndex] = {
+      ...normalized[existingIndex],
+      quantity: item.quantity,
+      initialPrice: item.initialPrice,
+      newPrice: item.newPrice,
+    }
+  }
+
+  return normalized
+}
+
+function getProductCount(items: BillLineItem[]): number {
+  return items.reduce((total, item) => total + item.quantity, 0)
+}
+
 export class BillManagementFakeDataSource {
-  private bills: FakeBillRecord[] = fakeBills.map((bill) => ({ ...bill, bookIds: [...bill.bookIds] }))
+  private bills: FakeBillRecord[] = fakeBills.map((bill) => ({
+    ...bill,
+    items: bill.items.map((item) => ({ ...item })),
+  }))
 
   async getBills(): Promise<Result<Bill[]>> {
     await delay(300)
@@ -53,7 +88,12 @@ export class BillManagementFakeDataSource {
     const bill = this.bills.find((item) => item.id === billId)
     return {
       success: true,
-      data: bill ? toBillDetail({ ...bill, bookIds: [...bill.bookIds] }) : null,
+      data: bill
+        ? toBillDetail({
+            ...bill,
+            items: bill.items.map((item) => ({ ...item })),
+          })
+        : null,
     }
   }
 
@@ -72,6 +112,8 @@ export class BillManagementFakeDataSource {
           id: book.id,
           title: book.title,
           isbn: book.isbn,
+          price: book.price,
+          stock: book.stock,
         })),
       },
     }
@@ -85,8 +127,8 @@ export class BillManagementFakeDataSource {
       return { success: false, error: "Selected branch was not found." }
     }
 
-    const uniqueBookIds = [...new Set(input.bookIds)]
-    const missingBook = uniqueBookIds.find((bookId) => !findLibraryBookById(bookId))
+    const items = normalizeBillItems(input.items)
+    const missingBook = items.find((item) => !findLibraryBookById(item.bookId))
     if (missingBook) {
       return { success: false, error: "One or more selected books could not be found." }
     }
@@ -99,9 +141,10 @@ export class BillManagementFakeDataSource {
       billDate: toBillDateTime(input.billDate),
       phoneNumber: input.phoneNumber.trim(),
       price: input.price,
-      productCount: uniqueBookIds.length,
+      productCount: getProductCount(items),
       imageUrl: input.imageUrl ?? null,
-      bookIds: uniqueBookIds,
+      addedBy: input.addedBy,
+      items,
     }
 
     this.bills.unshift(newBill)
@@ -121,8 +164,8 @@ export class BillManagementFakeDataSource {
       return { success: false, error: "Selected branch was not found." }
     }
 
-    const uniqueBookIds = [...new Set(input.bookIds)]
-    const missingBook = uniqueBookIds.find((bookId) => !findLibraryBookById(bookId))
+    const items = normalizeBillItems(input.items)
+    const missingBook = items.find((item) => !findLibraryBookById(item.bookId))
     if (missingBook) {
       return { success: false, error: "One or more selected books could not be found." }
     }
@@ -136,9 +179,9 @@ export class BillManagementFakeDataSource {
       billDate: toBillDateTime(input.billDate, currentBill.billDate),
       phoneNumber: input.phoneNumber.trim(),
       price: input.price,
-      productCount: uniqueBookIds.length,
+      productCount: getProductCount(items),
       imageUrl: input.imageUrl ?? currentBill.imageUrl ?? null,
-      bookIds: uniqueBookIds,
+      items,
     }
 
     this.bills[billIndex] = updatedBill

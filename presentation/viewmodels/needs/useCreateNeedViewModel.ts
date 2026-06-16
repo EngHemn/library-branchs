@@ -11,10 +11,10 @@ import {
 } from "@/domain/schemas/needFormSchema"
 import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { NeedManagementUseCase } from "@/domain/usecases/needs/NeedManagementUseCase"
+import { isBranchScopedDashboardUser } from "@/lib/dashboardBranchScope"
 import {
   getDefaultNeedBranchId,
   getNeedBranchFormOptions,
-  getNeedDashboardBranchScope,
 } from "@/lib/needBranchScope"
 import type {
   CreateNeedStatus,
@@ -77,7 +77,6 @@ export function useCreateNeedViewModel(
   })
 
   const user = userQuery.data ?? null
-  const branchScope = user ? getNeedDashboardBranchScope(user) : null
   const branchOptions = user ? getNeedBranchFormOptions(user) : []
   const requestedByOptions = optionsQuery.data?.requesters ?? []
 
@@ -147,7 +146,7 @@ export function useCreateNeedViewModel(
       isSaved: createMutation.isSuccess,
       branchOptions,
       requestedByOptions,
-      showBranchField: branchScope?.showBranchFilter ?? true,
+      showBranchField: user ? !isBranchScopedDashboardUser(user) : true,
     },
     form,
     saveDraft: (values) => persist(values, "draft"),

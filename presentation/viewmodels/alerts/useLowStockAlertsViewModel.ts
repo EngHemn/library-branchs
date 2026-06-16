@@ -7,7 +7,10 @@ import type { LowStockAlert } from "@/domain/entities/alert/LowStockAlert"
 import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { LowStockAlertUseCase } from "@/domain/usecases/alerts/LowStockAlertUseCase"
 import { fakeBranches } from "@/data/fake/fakeBranches"
-import { getDashboardBranchScope } from "@/lib/dashboardBranchScope"
+import {
+  getDashboardBranchScope,
+  isBranchScopedDashboardUser,
+} from "@/lib/dashboardBranchScope"
 import type {
   LowStockAlertBranchFilter,
   LowStockAlertStatusFilter,
@@ -48,14 +51,18 @@ function filterAlerts(
   branchFilter: LowStockAlertBranchFilter,
   statusFilter: LowStockAlertStatusFilter,
   branchIds: string[],
-  isSubUser: boolean,
+  isBranchScopedUser: boolean,
   userBranchId: string | null
 ): LowStockAlert[] {
   return alerts.filter((alert) => {
-    if (isSubUser && userBranchId && alert.branchId !== userBranchId) {
+    if (isBranchScopedUser && userBranchId && alert.branchId !== userBranchId) {
       return false
     }
-    if (!isSubUser && branchIds.length > 0 && !branchIds.includes(alert.branchId)) {
+    if (
+      !isBranchScopedUser &&
+      branchIds.length > 0 &&
+      !branchIds.includes(alert.branchId)
+    ) {
       return false
     }
     if (branchFilter !== "all" && alert.branchId !== branchFilter) return false
@@ -171,7 +178,7 @@ export function useLowStockAlertsViewModel(
         branchFilter,
         statusFilter,
         branchScope?.branchIds ?? [],
-        user.branchType === "sub",
+        isBranchScopedDashboardUser(user),
         user.branchId ?? null
       )
     : []
@@ -197,7 +204,7 @@ export function useLowStockAlertsViewModel(
       statusFilter,
       filteredAlerts,
       branchOptions: branchScope?.branches ?? [],
-      showBranchFilter: branchScope?.showBranchFilter ?? false,
+      showBranchFilter: user ? !isBranchScopedDashboardUser(user) : false,
       isLoading: alertsStatus === "loading",
       isReady: alertsStatus === "success",
       isSyncing: syncMutation.isPending,

@@ -1,6 +1,7 @@
 "use client"
 
-import { Building2Icon, CalendarIcon, PhoneIcon } from "lucide-react"
+import Link from "next/link"
+import { Building2Icon, CalendarIcon, PhoneIcon, UserIcon } from "lucide-react"
 
 import {
   Card,
@@ -39,10 +40,16 @@ export function BillSummaryCards({ bill }: BillSummaryCardsProps) {
       label: t("bills.detail.phone"),
       value: bill.phoneNumber,
     },
+    {
+      icon: UserIcon,
+      label: t("bills.detail.addedBy"),
+      value: bill.addedBy.staffName,
+      href: `/dashboard/staff/${bill.addedBy.staffId}`,
+    },
   ]
 
   return (
-    <div className="grid gap-4 sm:grid-cols-3">
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {items.map((item) => (
         <Card key={item.label} className="rounded-lg">
           <CardContent className="flex items-center gap-4 py-4">
@@ -51,7 +58,13 @@ export function BillSummaryCards({ bill }: BillSummaryCardsProps) {
             </div>
             <div>
               <p className="text-xs text-muted-foreground">{item.label}</p>
-              <p className="font-semibold">{item.value}</p>
+              {"href" in item && item.href ? (
+                <Link href={item.href} className="font-semibold hover:underline">
+                  {item.value}
+                </Link>
+              ) : (
+                <p className="font-semibold">{item.value}</p>
+              )}
               {"subValue" in item && item.subValue ? (
                 <p className="text-xs text-muted-foreground">{item.subValue}</p>
               ) : null}

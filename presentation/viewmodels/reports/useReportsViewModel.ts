@@ -20,6 +20,7 @@ import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { GetReportsUseCase } from "@/domain/usecases/reports/GetReportsUseCase"
 import {
   getDashboardBranchScope,
+  isBranchScopedDashboardUser,
   resolveUserBranchId,
   type DashboardBranchScope,
 } from "@/lib/dashboardBranchScope"
@@ -91,7 +92,7 @@ function getBranchFilterOptions(
   user: User,
   t: (key: TranslationKey) => string
 ): ReportBranchFilterOption[] {
-  if (user.branchType === "sub") {
+  if (isBranchScopedDashboardUser(user)) {
     return []
   }
 
@@ -131,7 +132,7 @@ function resolveEffectiveBranchId(
   user: User,
   userBranchId: string
 ): string {
-  if (user.branchType === "sub") {
+  if (isBranchScopedDashboardUser(user)) {
     return userBranchId
   }
 
@@ -162,15 +163,15 @@ export function useReportsViewModel(
 
   const user = userQuery.data ?? null
   const userBranchId = user ? resolveUserBranchId(user) : ""
-  const isSubBranch = user?.branchType === "sub"
+  const isSingleBranchScoped = user ? isBranchScopedDashboardUser(user) : false
   const branchScope = user ? getDashboardBranchScope(user, allDashboardBranches) : null
-  const showBranchFilter = !isSubBranch
+  const showBranchFilter = !isSingleBranchScoped
   const branchFilterOptions = user ? getBranchFilterOptions(user, t) : []
 
   useEffect(() => {
     if (!user || !branchScope) return
 
-    if (isSubBranch) {
+    if (isSingleBranchScoped) {
       setBranchIdState(userBranchId)
       return
     }
@@ -178,7 +179,7 @@ export function useReportsViewModel(
     setBranchIdState((current) =>
       isBranchSelectionValid(current, branchScope, userBranchId) ? current : "current"
     )
-  }, [user, userBranchId, isSubBranch, branchScope?.branchIds.join(",")])
+  }, [user, userBranchId, isSingleBranchScoped, branchScope?.branchIds.join(",")])
 
   const effectiveBranchId = user
     ? resolveEffectiveBranchId(branchId, user, userBranchId)
@@ -213,7 +214,7 @@ export function useReportsViewModel(
   }
 
   function setBranchId(nextBranchId: ReportBranchFilter): void {
-    if (isSubBranch) return
+    if (isSingleBranchScoped) return
     if (branchScope && !isBranchSelectionValid(nextBranchId, branchScope, userBranchId)) return
     setBranchIdState(nextBranchId)
   }

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 import type { Shelf } from "@/domain/entities/shelf/Shelf"
@@ -10,6 +10,7 @@ import type { ShelfManagementUseCase } from "@/domain/usecases/shelves/ShelfMana
 import {
   buildScopedShelfSummary,
   filterShelvesByBranchScope,
+  getDefaultShelfBranchId,
   getShelfBranchFormOptions,
   getShelfDashboardBranchScope,
 } from "@/lib/shelfBranchScope"
@@ -112,6 +113,15 @@ export function useShelvesViewModel(
   })
 
   const user = userQuery.data
+  const [hasInitializedBranch, setHasInitializedBranch] = useState(false)
+
+  useEffect(() => {
+    if (user && !hasInitializedBranch) {
+      setBranchFilter(getDefaultShelfBranchId(user))
+      setHasInitializedBranch(true)
+    }
+  }, [user, hasInitializedBranch])
+
   const allShelves = shelvesQuery.data ?? []
   const scopedShelves = user
     ? filterShelvesByBranchScope(allShelves, user)

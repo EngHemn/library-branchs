@@ -130,23 +130,16 @@ export function LowStockAlertsScreen({
         isLoading={state.summaryStatus === "loading"}
       />
 
-      <Card className="rounded-lg">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base">{t("alerts.filters")}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <LowStockAlertsFilters
-            searchQuery={state.searchQuery}
-            branchFilter={state.branchFilter}
-            statusFilter={state.statusFilter}
-            branchOptions={state.branchOptions}
-            showBranchFilter={state.showBranchFilter}
-            onSearchQueryChange={viewModel.setSearchQuery}
-            onBranchFilterChange={viewModel.setBranchFilter}
-            onStatusFilterChange={viewModel.setStatusFilter}
-          />
-        </CardContent>
-      </Card>
+      <LowStockAlertsFilters
+        searchQuery={state.searchQuery}
+        branchFilter={state.branchFilter}
+        statusFilter={state.statusFilter}
+        branchOptions={state.branchOptions}
+        showBranchFilter={state.showBranchFilter}
+        onSearchQueryChange={viewModel.setSearchQuery}
+        onBranchFilterChange={viewModel.setBranchFilter}
+        onStatusFilterChange={viewModel.setStatusFilter}
+      />
 
       <LowStockAlertsTable
         alerts={state.filteredAlerts}

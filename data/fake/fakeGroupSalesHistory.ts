@@ -232,6 +232,42 @@ export const fakeGroupSalesHistory: GroupSalesHistoryRecord[] = [
     status: "voided",
     lines: [{ bookId: "BK-011", quantity: 1 }],
   }),
+
+  buildGroupSale({
+    id: "GSALE-016",
+    groupId: "GRP-006",
+    branchId: "BR-011",
+    branchName: "Solo Reading Room",
+    createdAt: "2026-05-20T10:30:00.000Z",
+    lines: [
+      { bookId: "BK-017", quantity: 2, discount: 10 },
+      { bookId: "BK-018", quantity: 1 },
+    ],
+  }),
+  buildGroupSale({
+    id: "GSALE-017",
+    groupId: "GRP-006",
+    branchId: "BR-011",
+    branchName: "Solo Reading Room",
+    createdAt: "2026-04-28T14:00:00.000Z",
+    lines: [{ bookId: "BK-018", quantity: 3, discount: 5 }],
+  }),
+  buildGroupSale({
+    id: "GSALE-018",
+    groupId: "GRP-007",
+    branchId: "BR-011",
+    branchName: "Solo Reading Room",
+    createdAt: "2026-05-10T11:45:00.000Z",
+    lines: [{ bookId: "BK-017", quantity: 1 }],
+  }),
+  buildGroupSale({
+    id: "GSALE-019",
+    groupId: "GRP-008",
+    branchId: "BR-011",
+    branchName: "Solo Reading Room",
+    createdAt: "2026-01-15T09:20:00.000Z",
+    lines: [{ bookId: "BK-018", quantity: 2 }],
+  }),
 ]
 
 export function getFakeGroupSalesHistoryByGroupId(

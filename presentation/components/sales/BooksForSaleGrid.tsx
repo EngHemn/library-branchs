@@ -209,17 +209,18 @@ export function BooksForSaleGrid({
           </div>
         )}
 
-        <div className="relative">
-          <SearchIcon className="absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            className="pl-8"
-            placeholder={t("sales.books.searchPlaceholder")}
-            value={searchQuery}
-            onChange={(e) => onSearchQueryChange(e.target.value)}
-          />
-        </div>
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
+          <div className="relative flex-1">
+            <SearchIcon className="absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              className="pl-8"
+              placeholder={t("sales.books.searchPlaceholder")}
+              value={searchQuery}
+              onChange={(e) => onSearchQueryChange(e.target.value)}
+            />
+          </div>
 
-        <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2">
           <FilterCombobox
             value={languageFilter}
             onValueChange={onLanguageFilterChange}
@@ -252,6 +253,7 @@ export function BooksForSaleGrid({
             options={translators}
             widthClassName="w-[180px]"
           />
+          </div>
         </div>
       </div>
 

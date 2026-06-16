@@ -9,6 +9,7 @@ import type { CreateStaffInput } from "@/domain/repositories/StaffManagementRepo
 import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { BranchManagementUseCase } from "@/domain/usecases/branch/BranchManagementUseCase"
 import type { StaffManagementUseCase } from "@/domain/usecases/staff/StaffManagementUseCase"
+import { isBranchScopedStaffPermissionsUser } from "@/domain/services/staffPermissionsScope"
 import { resolveUserBranchId } from "@/lib/dashboardBranchScope"
 import {
   type CreateStaffFormErrors,
@@ -134,11 +135,12 @@ export function useCreateStaffViewModel(
 
   const user = userQuery.data ?? null
   const branches = branchesQuery.data ?? []
-  const showBranchField = user?.branchType !== "sub"
+  const showBranchField = user ? !isBranchScopedStaffPermissionsUser(user) : true
+  const showBranchAdminRole = user ? !isBranchScopedStaffPermissionsUser(user) : true
   const userBranchId = user ? resolveUserBranchId(user) : ""
 
   useEffect(() => {
-    if (!user || user.branchType !== "sub" || form.branchId) return
+    if (!user || !isBranchScopedStaffPermissionsUser(user) || form.branchId) return
     setForm((current) => ({ ...current, branchId: userBranchId }))
   }, [user, userBranchId, form.branchId])
 
@@ -166,6 +168,7 @@ export function useCreateStaffViewModel(
     fieldErrors: showFieldErrors ? fieldErrors : emptyFieldErrors,
     branches,
     showBranchField,
+    showBranchAdminRole,
     error,
     isLoading,
     isReady: status === "ready",

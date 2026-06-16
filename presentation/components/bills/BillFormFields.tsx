@@ -178,15 +178,15 @@ export function BillFormFields({
 
         <FormField
           control={form.control}
-          name="bookIds"
+          name="items"
           render={({ field }) => (
             <FormItem>
               <FormLabel>{t("bills.form.products")}</FormLabel>
               <FormControl>
                 <BillBooksSelector
                   bookOptions={bookOptions}
-                  selectedBookIds={field.value}
-                  onSelectedBookIdsChange={field.onChange}
+                  items={field.value}
+                  onItemsChange={field.onChange}
                   disabled={disabled}
                   createBookHref={createBookHref}
                 />

@@ -32,6 +32,8 @@ import {
 
 } from "@/lib/groupBranchScope"
 
+import { isBranchScopedDashboardUser } from "@/lib/dashboardBranchScope"
+
 import type {
 
   CreateGroupStatus,
@@ -178,7 +180,7 @@ export function useCreateGroupViewModel(
 
   const user = userQuery.data ?? null
 
-  const showBranchField = user?.branchType !== "sub"
+  const showBranchField = user ? !isBranchScopedDashboardUser(user) : true
 
   const defaultBranchId = user ? getDefaultGroupBranchId(user) : ""
 

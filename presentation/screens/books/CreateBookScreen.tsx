@@ -14,6 +14,7 @@ import {
 import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
 import type { GetBooksUseCase } from "@/domain/usecases/books/GetBooksUseCase"
+import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { ShelfManagementUseCase } from "@/domain/usecases/shelves/ShelfManagementUseCase"
 import { BookFormFields } from "@/presentation/components/books/BookFormFields"
 import { useDashboardBreadcrumbs } from "@/presentation/hooks/useDashboardBreadcrumbs"
@@ -22,6 +23,7 @@ import { useTranslation } from "@/presentation/i18n/useTranslation"
 import { useCreateBookViewModel } from "@/presentation/viewmodels/books/useCreateBookViewModel"
 
 type CreateBookScreenProps = {
+  authUseCase: AuthUseCase
   getBooksUseCase: GetBooksUseCase
   shelfManagementUseCase: ShelfManagementUseCase
 }
@@ -52,6 +54,7 @@ function LoadingState() {
 }
 
 export function CreateBookScreen({
+  authUseCase,
   getBooksUseCase,
   shelfManagementUseCase,
 }: CreateBookScreenProps) {
@@ -60,6 +63,7 @@ export function CreateBookScreen({
   const searchParams = useSearchParams()
   const returnTo = searchParams.get("returnTo")
   const viewModel = useCreateBookViewModel(
+    authUseCase,
     getBooksUseCase,
     shelfManagementUseCase
   )
@@ -129,6 +133,8 @@ export function CreateBookScreen({
                 translators={state.translators}
                 categories={state.categories}
                 languages={state.languages}
+                branchOptions={state.branchOptions}
+                showBranchField={state.showBranchField}
                 disabled={state.isSaving || state.isSaved}
                 onSubmit={viewModel.save}
                 onAddLanguage={viewModel.addLanguage}

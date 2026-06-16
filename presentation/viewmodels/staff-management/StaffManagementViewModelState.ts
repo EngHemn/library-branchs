@@ -10,7 +10,12 @@ import type { User } from "@/domain/entities/User"
 
 export type StaffRoleFilter = "all" | StaffRole
 export type StaffStatusFilter = "all" | StaffStatus
-export type StaffBranchFilter = "all" | string
+export type StaffBranchFilter = "all" | "current" | string
+
+export type StaffBranchFilterOption = {
+  value: string
+  label: string
+}
 
 export type StaffFilterState = {
   searchQuery: string
@@ -41,7 +46,7 @@ export type StaffManagementViewModelState = {
   user: User | null
   staff: StaffMember[]
   filteredStaff: StaffMember[]
-  branches: string[]
+  branchFilterOptions: StaffBranchFilterOption[]
   filters: StaffFilterState
   stats: StaffStats
   dialog: StaffManagementDialog
@@ -49,6 +54,8 @@ export type StaffManagementViewModelState = {
   deleteStaffError: string | null
   isDeletingStaff: boolean
   showBranchFilter: boolean
+  showBranchColumn: boolean
+  showBranchAdminRole: boolean
   error: string | null
   isLoading: boolean
   isReady: boolean

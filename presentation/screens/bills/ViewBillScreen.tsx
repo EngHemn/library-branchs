@@ -27,6 +27,8 @@ type ViewBillScreenProps = {
   getBillsUseCase: GetBillsUseCase
 }
 
+const DEFAULT_BILL_IMAGE = "/images/billimage.png"
+
 function LoadingState() {
   return (
     <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
@@ -102,38 +104,30 @@ export function ViewBillScreen({ billId, getBillsUseCase }: ViewBillScreenProps)
 
       {state.isLoaded && state.bill ? (
         <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
-          <div className="flex justify-end pt-4">
-            <Button variant="outline" onClick={goBack}>
-              <ArrowLeftIcon />
-              {t("common.back")}
-            </Button>
-          </div>
-
           <BillDetailHeader
             bill={state.bill}
+            onBack={goBack}
             onEdit={() => router.push(`/dashboard/bills/${state.bill?.id}/edit`)}
           />
 
-          {state.bill.imageUrl ? (
-            <Card className="rounded-lg">
-              <CardHeader>
-                <CardTitle>{t("bills.view.billImage")}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <EntityImage
-                  src={state.bill.imageUrl}
-                  alt={t("bills.view.billImageAlt", {
-                    companyName: state.bill.companyName,
-                  })}
-                  width={800}
-                  height={320}
-                  className="mx-auto max-h-80 w-full rounded-lg border"
-                  imageClassName="max-h-80 rounded-lg object-contain"
-                  fallback={null}
-                />
-              </CardContent>
-            </Card>
-          ) : null}
+          <Card className="rounded-lg">
+            <CardHeader>
+              <CardTitle>{t("bills.view.billImage")}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <EntityImage
+                src={state.bill.imageUrl ?? DEFAULT_BILL_IMAGE}
+                alt={t("bills.view.billImageAlt", {
+                  companyName: state.bill.companyName,
+                })}
+                width={800}
+                height={320}
+                className="mx-auto max-h-80 w-full rounded-lg border"
+                imageClassName="max-h-80 rounded-lg object-contain"
+                fallback={null}
+              />
+            </CardContent>
+          </Card>
 
           <BillSummaryCards bill={state.bill} />
           <TooltipProvider>

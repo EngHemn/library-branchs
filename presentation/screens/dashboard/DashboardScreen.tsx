@@ -53,6 +53,7 @@ function LoadingDashboard() {
       <div className="flex gap-3">
         <Skeleton className="h-9 w-52" />
         <Skeleton className="h-9 w-40" />
+        <Skeleton className="h-9 w-40" />
       </div>
       <div className="flex gap-2">
         {Array.from({ length: 5 }).map((_, i) => (
@@ -160,11 +161,13 @@ export function DashboardScreen({
           <DashboardFilters
             branches={state.branchScope?.branches ?? summary.branches}
             selectedBranchId={state.filterState.branchId}
-            dateRange={state.filterState.dateRange}
+            dateFrom={state.filterState.dateFrom}
+            dateTo={state.filterState.dateTo}
             allowAllBranches={state.branchScope?.allowAllBranches ?? true}
             showBranchFilter={state.branchScope?.showBranchFilter ?? false}
             onBranchChange={viewModel.setBranchId}
-            onDateRangeChange={viewModel.setDateRange}
+            onDateFromChange={viewModel.setDateFrom}
+            onDateToChange={viewModel.setDateTo}
           />
 
           <Tabs defaultValue="overview">

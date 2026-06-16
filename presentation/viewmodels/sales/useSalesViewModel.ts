@@ -15,6 +15,7 @@ import {
   writeStoredSalesCart,
 } from "@/lib/salesCartStorage"
 import { resolveUserBranchId } from "@/lib/dashboardBranchScope"
+import { isSingleBranchManagedUser } from "@/lib/salesStockBranchScope"
 import { useSalesData } from "./useSalesData"
 import type { BranchNode, SalesFilter, SalesViewModelState } from "./SalesViewModelState"
 export type { BranchNode } from "./SalesViewModelState"
@@ -54,7 +55,7 @@ function buildScopedBranchNodes(
   branches: Branch[],
   user: User | null
 ): BranchNode[] {
-  if (!user || user.branchType === "sub") {
+  if (!user || isSingleBranchManagedUser(user)) {
     return []
   }
 
@@ -112,7 +113,7 @@ export function useSalesViewModel(
   const user = userQuery.data ?? null
   const userId = user?.id ?? null
   const userBranchId = user ? resolveUserBranchId(user) : null
-  const isSubBranch = user?.branchType === "sub"
+  const isSubBranch = user ? isSingleBranchManagedUser(user) : false
 
   const [shoppingBranchId, setShoppingBranchId] = useState<string | null>(null)
   const [cart, setCart] = useState<CartItem[]>([])

@@ -2,18 +2,22 @@
 
 import { useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
-import { PlusIcon, SearchIcon } from "lucide-react"
+import { EyeIcon, MinusIcon, PencilIcon, PlusIcon, SearchIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
+import { getBillLineFinalPrice } from "@/domain/entities/bill/BillLineItem"
 import type { BillBookOption } from "@/domain/repositories/BillManagementRepository"
+import type { BillFormLineItem } from "@/domain/schemas/billFormSchema"
+import { formatBillPrice } from "@/presentation/components/bills/billDisplay"
+import { useLocale } from "@/presentation/i18n/useLocale"
 import { useTranslation } from "@/presentation/i18n/useTranslation"
 
 type BillBooksSelectorProps = {
   bookOptions: BillBookOption[]
-  selectedBookIds: string[]
-  onSelectedBookIdsChange: (bookIds: string[]) => void
+  items: BillFormLineItem[]
+  onItemsChange: (items: BillFormLineItem[]) => void
   disabled?: boolean
   createBookHref: string
 }
@@ -31,18 +35,32 @@ function matchesBook(book: BillBookOption, query: string): boolean {
 
 export function BillBooksSelector({
   bookOptions,
-  selectedBookIds,
-  onSelectedBookIdsChange,
+  items,
+  onItemsChange,
   disabled = false,
   createBookHref,
 }: BillBooksSelectorProps) {
   const router = useRouter()
   const { t } = useTranslation()
+  const { locale } = useLocale()
   const [searchQuery, setSearchQuery] = useState("")
+
+  const selectedBookIds = useMemo(() => items.map((item) => item.bookId), [items])
 
   const filteredBooks = useMemo(
     () => bookOptions.filter((book) => matchesBook(book, searchQuery)),
     [bookOptions, searchQuery]
+  )
+
+  const selectedRows = useMemo(
+    () =>
+      items
+        .map((item) => {
+          const book = bookOptions.find((option) => option.id === item.bookId)
+          return book ? { item, book } : null
+        })
+        .filter((row): row is { item: BillFormLineItem; book: BillBookOption } => row !== null),
+    [items, bookOptions]
   )
 
   const hasSearchQuery = searchQuery.trim().length > 0
@@ -51,15 +69,49 @@ export function BillBooksSelector({
 
   function toggleBook(bookId: string, checked: boolean): void {
     if (checked) {
-      onSelectedBookIdsChange([...selectedBookIds, bookId])
+      const book = bookOptions.find((option) => option.id === bookId)
+      if (!book) return
+
+      onItemsChange([
+        ...items,
+        {
+          bookId,
+          quantity: 1,
+          initialPrice: book.price,
+          newPrice: null,
+        },
+      ])
       return
     }
 
-    onSelectedBookIdsChange(selectedBookIds.filter((id) => id !== bookId))
+    onItemsChange(items.filter((item) => item.bookId !== bookId))
   }
 
   function handleAddBook(): void {
     router.push(createBookHref)
+  }
+
+  function updateItem(bookId: string, patch: Partial<BillFormLineItem>): void {
+    onItemsChange(
+      items.map((item) => (item.bookId === bookId ? { ...item, ...patch } : item))
+    )
+  }
+
+  function updateQuantity(bookId: string, nextQuantity: number, maxQuantity: number): void {
+    const safeQuantity = Math.min(Math.max(nextQuantity, 1), Math.max(maxQuantity, 1))
+    updateItem(bookId, { quantity: safeQuantity })
+  }
+
+  function updateNewPrice(bookId: string, value: string): void {
+    if (value.trim() === "") {
+      updateItem(bookId, { newPrice: null })
+      return
+    }
+
+    const parsed = Number(value)
+    updateItem(bookId, {
+      newPrice: Number.isFinite(parsed) && parsed > 0 ? parsed : null,
+    })
   }
 
   return (
@@ -139,6 +191,119 @@ export function BillBooksSelector({
           {t("bills.booksSelector.addNewBook")}
         </Button>
       </div>
+
+      {selectedRows.length > 0 ? (
+        <div className="overflow-hidden rounded-lg border">
+          <div className="border-b bg-muted/40 px-3 py-2 text-sm font-medium">
+            {t("bills.booksSelector.selectedTableTitle")}
+          </div>
+          <div className="max-h-64 overflow-auto">
+            <table className="w-full text-sm">
+              <thead className="bg-muted/20 text-left text-xs text-muted-foreground uppercase">
+                <tr>
+                  <th className="px-3 py-2">{t("bills.booksSelector.columns.title")}</th>
+                  <th className="px-3 py-2">{t("bills.booksSelector.columns.isbn")}</th>
+                  <th className="px-3 py-2">{t("bills.booksSelector.columns.stock")}</th>
+                  <th className="px-3 py-2">{t("bills.booksSelector.columns.initialPrice")}</th>
+                  <th className="px-3 py-2">{t("bills.booksSelector.columns.newPrice")}</th>
+                  <th className="px-3 py-2">{t("bills.booksSelector.columns.quantity")}</th>
+                  <th className="px-3 py-2">{t("bills.booksSelector.columns.finalPrice")}</th>
+                  <th className="px-3 py-2 text-right">{t("bills.booksSelector.columns.actions")}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {selectedRows.map(({ item, book }) => {
+                  const maxQuantity = Math.max(book.stock, 1)
+                  const canDecrease = item.quantity > 1
+                  const canIncrease = item.quantity < maxQuantity
+                  const finalPrice = getBillLineFinalPrice(item)
+
+                  return (
+                    <tr key={book.id} className="border-t">
+                      <td className="px-3 py-2 font-medium">{book.title}</td>
+                      <td className="px-3 py-2 font-mono text-xs text-muted-foreground">
+                        {book.isbn}
+                      </td>
+                      <td className="px-3 py-2">{book.stock}</td>
+                      <td className="px-3 py-2">{formatBillPrice(item.initialPrice, locale)}</td>
+                      <td className="px-3 py-2">
+                        <Input
+                          type="number"
+                          min={0}
+                          step="0.01"
+                          value={item.newPrice ?? ""}
+                          onChange={(event) => updateNewPrice(book.id, event.target.value)}
+                          disabled={disabled}
+                          placeholder={item.initialPrice.toFixed(2)}
+                          className="h-8 w-28"
+                        />
+                      </td>
+                      <td className="px-3 py-2">
+                        <div className="flex items-center gap-2">
+                          <Button
+                            type="button"
+                            size="icon"
+                            variant="outline"
+                            className="h-7 w-7"
+                            disabled={disabled || !canDecrease}
+                            onClick={() => updateQuantity(book.id, item.quantity - 1, maxQuantity)}
+                          >
+                            <MinusIcon className="size-3.5" />
+                          </Button>
+                          <span className="min-w-6 text-center text-sm font-medium">
+                            {item.quantity}
+                          </span>
+                          <Button
+                            type="button"
+                            size="icon"
+                            variant="outline"
+                            className="h-7 w-7"
+                            disabled={disabled || !canIncrease}
+                            onClick={() => updateQuantity(book.id, item.quantity + 1, maxQuantity)}
+                          >
+                            <PlusIcon className="size-3.5" />
+                          </Button>
+                        </div>
+                      </td>
+                      <td className="px-3 py-2 font-semibold">
+                        {formatBillPrice(finalPrice, locale)}
+                      </td>
+                      <td className="px-3 py-2">
+                        <div className="flex items-center justify-end gap-2">
+                          <Button
+                            type="button"
+                            size="icon"
+                            variant="outline"
+                            className="h-7 w-7"
+                            disabled={disabled}
+                            aria-label={t("bills.booksSelector.actions.viewBook")}
+                            title={t("bills.booksSelector.actions.viewBook")}
+                            onClick={() => router.push(`/dashboard/books/${book.id}`)}
+                          >
+                            <EyeIcon className="size-3.5" />
+                          </Button>
+                          <Button
+                            type="button"
+                            size="icon"
+                            variant="outline"
+                            className="h-7 w-7"
+                            disabled={disabled}
+                            aria-label={t("bills.booksSelector.actions.editBook")}
+                            title={t("bills.booksSelector.actions.editBook")}
+                            onClick={() => router.push(`/dashboard/books/${book.id}/edit`)}
+                          >
+                            <PencilIcon className="size-3.5" />
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      ) : null}
     </div>
   )
 }

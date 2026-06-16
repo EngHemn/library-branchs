@@ -27,6 +27,9 @@ import type { PermissionStaffRole } from "@/domain/entities/permission/Permissio
 import type { StaffRole, StaffStatus } from "@/domain/entities/staff/StaffMember"
 import type { TranslationKey } from "@/presentation/i18n/messages"
 import { useTranslation } from "@/presentation/i18n/useTranslation"
+import type {
+  StaffBranchFilterOption,
+} from "@/presentation/viewmodels/staff-management/StaffManagementViewModelState"
 
 type StaffRoleFilter = "all" | StaffRole
 type StaffStatusFilter = "all" | StaffStatus
@@ -37,8 +40,9 @@ type StaffFiltersProps = {
   roleFilter: StaffRoleFilter
   branchFilter: StaffBranchFilter
   statusFilter: StaffStatusFilter
-  branches: string[]
+  branchFilterOptions: StaffBranchFilterOption[]
   showBranchFilter?: boolean
+  showBranchAdminRole?: boolean
   onSearchQueryChange: (searchQuery: string) => void
   onRoleFilterChange: (roleFilter: StaffRoleFilter) => void
   onBranchFilterChange: (branchFilter: StaffBranchFilter) => void
@@ -56,8 +60,9 @@ export function StaffFilters({
   roleFilter,
   branchFilter,
   statusFilter,
-  branches,
+  branchFilterOptions,
   showBranchFilter = true,
+  showBranchAdminRole = true,
   onSearchQueryChange,
   onRoleFilterChange,
   onBranchFilterChange,
@@ -67,7 +72,9 @@ export function StaffFilters({
 
   const roleOptions: { value: string; label: string }[] = [
     { value: "all", label: t("staff.filters.allRoles") },
-    ...Object.keys(PERMISSION_ROLE_LABELS).map((value) => ({
+    ...Object.keys(PERMISSION_ROLE_LABELS)
+      .filter((value) => showBranchAdminRole || value !== "branch_admin")
+      .map((value) => ({
       value,
       label: t(STAFF_ROLE_KEYS[value as PermissionStaffRole]),
     })),
@@ -115,10 +122,11 @@ export function StaffFilters({
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">{t("staff.filters.allBranches")}</SelectItem>
-              {branches.map((branch) => (
-                <SelectItem key={branch} value={branch}>
-                  {branch}
+              {branchFilterOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.value === "all"
+                    ? t("staff.filters.allBranches")
+                    : option.label}
                 </SelectItem>
               ))}
             </SelectContent>

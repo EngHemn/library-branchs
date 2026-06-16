@@ -21,11 +21,19 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { ImageUpload } from "@/components/ui/image-upload"
 import type { Book } from "@/domain/entities/book/Book"
 import type { ShelfLocationOptions } from "@/domain/entities/shelf/ShelfLocationOptions"
 import type { BookFormValues } from "@/domain/schemas/bookFormSchema"
+import type { BookBranchOption } from "@/lib/bookBranchScope"
 import {
   BookingSearchCombobox,
   type BookingComboboxOption,
@@ -45,6 +53,8 @@ type BookFormFieldsProps = {
   translators: string[]
   categories: string[]
   languages: string[]
+  branchOptions?: BookBranchOption[]
+  showBranchField?: boolean
   disabled: boolean
   onSubmit: (values: BookFormValues) => void
   onAddLanguage: (name: string) => void
@@ -168,6 +178,8 @@ export function BookFormFields({
   translators,
   categories,
   languages,
+  branchOptions = [],
+  showBranchField = false,
   disabled,
   onSubmit,
   onAddLanguage,
@@ -235,6 +247,39 @@ export function BookFormFields({
               </FormItem>
             )}
           />
+
+          {showBranchField ? (
+            <FormField
+              control={form.control}
+              name="branchId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("books.fields.branch")} *</FormLabel>
+                  <Select
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    disabled={disabled}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue
+                          placeholder={t("books.placeholders.selectBranch")}
+                        />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {branchOptions.map((branch) => (
+                        <SelectItem key={branch.id} value={branch.id}>
+                          {branch.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          ) : null}
 
           <FormField
             control={form.control}

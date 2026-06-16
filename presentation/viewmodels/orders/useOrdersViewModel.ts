@@ -12,6 +12,7 @@ import type { GetOrdersUseCase } from "@/domain/usecases/orders/GetOrdersUseCase
 import {
   getDashboardBranchScope,
   getSubBranchNetworkBranchIds,
+  isBranchScopedDashboardUser,
   resolveUserBranchId,
 } from "@/lib/dashboardBranchScope"
 import { useTranslation } from "@/presentation/i18n/useTranslation"
@@ -102,7 +103,7 @@ function getBranchFilterOptions(
   allBranchesLabel: string,
   currentBranchLabel: string
 ): OrderBranchFilterOption[] {
-  if (user.branchType !== "sub") {
+  if (!isBranchScopedDashboardUser(user)) {
     return []
   }
 
@@ -324,10 +325,10 @@ export function useOrdersViewModel(
 
   const user = userQuery.data ?? null
   const userBranchId = user ? resolveUserBranchId(user) : ""
-  const isSubBranch = user?.branchType === "sub"
-  const showSubBranchFilter = isSubBranch
-  const showTranslatorFilter = !isSubBranch
-  const showBranchColumn = isSubBranch
+  const isBranchScopedUser = user ? isBranchScopedDashboardUser(user) : false
+  const showSubBranchFilter = isBranchScopedUser
+  const showTranslatorFilter = !isBranchScopedUser
+  const showBranchColumn = isBranchScopedUser
     ? filters.branchFilter !== "current"
     : true
   const branchFilterOptions = user
@@ -348,7 +349,7 @@ export function useOrdersViewModel(
           filters,
           scopedBranchIds,
           userBranchId,
-          isSubBranch
+          isBranchScopedUser
         )
       : []
 

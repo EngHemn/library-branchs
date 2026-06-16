@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { isAfter, parseISO, startOfMonth, startOfWeek } from "date-fns"
 
 import type {
   DashboardBooking,
@@ -20,15 +19,15 @@ import {
   matchesDashboardBranchFilter,
   type DashboardBranchScope,
 } from "@/lib/dashboardBranchScope"
-import type { DashboardFilterState, DashboardStatus, DashboardViewModelState, DateRangeFilter } from "./DashboardViewModelState"
-export type { DateRangeFilter } from "./DashboardViewModelState"
+import type { DashboardFilterState, DashboardStatus, DashboardViewModelState } from "./DashboardViewModelState"
 
 type DashboardViewModel = {
   state: DashboardViewModelState
   reload: () => Promise<void>
   logout: () => Promise<void>
   setBranchId: (branchId: string) => void
-  setDateRange: (dateRange: DateRangeFilter) => void
+  setDateFrom: (dateFrom: string | null) => void
+  setDateTo: (dateTo: string | null) => void
 }
 
 type DashboardQueryData = {
@@ -48,22 +47,32 @@ function filterByBranch<T extends { branchId: string }>(
 
 const defaultFilterState: DashboardFilterState = {
   branchId: "all",
-  dateRange: "all",
+  dateFrom: null,
+  dateTo: null,
 }
 
-function isInDateRange(dateStr: string, range: DateRangeFilter): boolean {
-  if (range === "all") return true
-  const now = new Date()
-  const date = parseISO(dateStr)
-  if (range === "today") {
-    return (
-      date.getFullYear() === now.getFullYear() &&
-      date.getMonth() === now.getMonth() &&
-      date.getDate() === now.getDate()
-    )
+function matchesDateFilter(
+  dateStr: string | undefined,
+  dateFrom: string | null,
+  dateTo: string | null
+): boolean {
+  if (!dateFrom && !dateTo) return true
+  if (!dateStr) return true
+
+  const date = new Date(dateStr)
+
+  if (dateFrom) {
+    const from = new Date(dateFrom)
+    from.setHours(0, 0, 0, 0)
+    if (date < from) return false
   }
-  if (range === "week") return isAfter(date, startOfWeek(now, { weekStartsOn: 1 }))
-  if (range === "month") return isAfter(date, startOfMonth(now))
+
+  if (dateTo) {
+    const to = new Date(dateTo)
+    to.setHours(23, 59, 59, 999)
+    if (date > to) return false
+  }
+
   return true
 }
 
@@ -82,7 +91,7 @@ function applyFilters<
       return false
     }
     const dateValue = item[dateKey]
-    if (dateValue && !isInDateRange(dateValue, filterState.dateRange)) return false
+    if (!matchesDateFilter(dateValue, filterState.dateFrom, filterState.dateTo)) return false
     return true
   })
 }
@@ -182,8 +191,12 @@ export function useDashboardViewModel(
     setFilterState((prev) => ({ ...prev, branchId }))
   }
 
-  function setDateRange(dateRange: DateRangeFilter): void {
-    setFilterState((prev) => ({ ...prev, dateRange }))
+  function setDateFrom(dateFrom: string | null): void {
+    setFilterState((prev) => ({ ...prev, dateFrom }))
+  }
+
+  function setDateTo(dateTo: string | null): void {
+    setFilterState((prev) => ({ ...prev, dateTo }))
   }
 
   const state: DashboardViewModelState = {
@@ -203,5 +216,5 @@ export function useDashboardViewModel(
     filteredStaff,
   }
 
-  return { state, reload, logout, setBranchId, setDateRange }
+  return { state, reload, logout, setBranchId, setDateFrom, setDateTo }
 }

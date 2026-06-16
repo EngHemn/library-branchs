@@ -143,12 +143,16 @@ export function BookingsScreen({
               statusFilter={state.filters.statusFilter}
               typeFilter={state.filters.typeFilter}
               branchFilter={state.filters.branchFilter}
+              dateFrom={state.filters.dateFrom}
+              dateTo={state.filters.dateTo}
               branchFilterOptions={state.branchFilterOptions}
               showBranchFilter={state.showBranchFilter}
               onSearchQueryChange={viewModel.setSearchQuery}
               onStatusFilterChange={viewModel.setStatusFilter}
               onTypeFilterChange={viewModel.setTypeFilter}
               onBranchFilterChange={viewModel.setBranchFilter}
+              onDateFromChange={viewModel.setDateFrom}
+              onDateToChange={viewModel.setDateTo}
             />
 
             <BookingsTable

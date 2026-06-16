@@ -111,12 +111,15 @@ export function BillsScreen({ authUseCase, getBillsUseCase }: BillsScreenProps) 
             <BillsFilters
               searchQuery={state.filters.searchQuery}
               branchFilter={state.filters.branchFilter}
+              addedByFilter={state.filters.addedByFilter}
               dateFrom={state.filters.dateFrom}
               dateTo={state.filters.dateTo}
               branchFilterOptions={state.branchFilterOptions}
+              addedByFilterOptions={state.addedByFilterOptions}
               showBranchFilter={state.showBranchFilter}
               onSearchQueryChange={viewModel.setSearchQuery}
               onBranchFilterChange={viewModel.setBranchFilter}
+              onAddedByFilterChange={viewModel.setAddedByFilter}
               onDateFromChange={viewModel.setDateFrom}
               onDateToChange={viewModel.setDateTo}
             />

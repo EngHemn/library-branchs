@@ -5,6 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 import type { PermissionCode, PermissionConfig, PermissionRole } from "@/domain/entities/permission/Permission"
 import type { User } from "@/domain/entities/User"
+import { filterPermissionRolesForUser } from "@/domain/services/staffPermissionsScope"
 import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { PermissionManagementUseCase } from "@/domain/usecases/permission/PermissionManagementUseCase"
 import { usePermissionsData } from "./usePermissionsData"
@@ -47,6 +48,7 @@ export function usePermissionsViewModel(
   const roles = data?.roles ?? []
   const config = data?.config ?? null
   const user = data?.user ?? null
+  const visibleRoles = user ? filterPermissionRolesForUser(roles, user) : roles
 
   const [selectedRoleId, setSelectedRoleId] = useState<string | null>(null)
   const [draftPermissions, setDraftPermissions] = useState<PermissionCode[]>([])
@@ -54,24 +56,24 @@ export function usePermissionsViewModel(
   const hasInitialized = useRef(false)
 
   useEffect(() => {
-    if (roles.length > 0 && !hasInitialized.current) {
+    if (visibleRoles.length > 0 && !hasInitialized.current) {
       hasInitialized.current = true
-      setSelectedRoleId(roles[0].id)
-      setDraftPermissions([...roles[0].assignedPermissions])
+      setSelectedRoleId(visibleRoles[0].id)
+      setDraftPermissions([...visibleRoles[0].assignedPermissions])
     }
-  }, [roles])
+  }, [visibleRoles])
 
   const effectiveSelectedRoleId =
-    selectedRoleId && roles.some((r) => r.id === selectedRoleId)
+    selectedRoleId && visibleRoles.some((r) => r.id === selectedRoleId)
       ? selectedRoleId
-      : (roles[0]?.id ?? null)
+      : (visibleRoles[0]?.id ?? null)
 
-  const selectedRole = roles.find((r) => r.id === effectiveSelectedRoleId) ?? null
+  const selectedRole = visibleRoles.find((r) => r.id === effectiveSelectedRoleId) ?? null
 
   const filteredRoles = (() => {
     const normalized = searchQuery.trim().toLowerCase()
-    if (!normalized) return roles
-    return roles.filter(
+    if (!normalized) return visibleRoles
+    return visibleRoles.filter(
       (r) =>
         r.name.toLowerCase().includes(normalized) ||
         r.description.toLowerCase().includes(normalized)
@@ -91,7 +93,7 @@ export function usePermissionsViewModel(
   const deleteDialog = usePermissionsDeleteDialog({
     selectedRoleId: effectiveSelectedRoleId,
     selectedRole,
-    roles,
+    roles: visibleRoles,
     permissionManagementUseCase,
     onRoleDeleted: (_, nextRoles) => {
       if (nextRoles.length > 0) {
@@ -134,7 +136,7 @@ export function usePermissionsViewModel(
   })()
 
   function selectRole(roleId: string): void {
-    const role = roles.find((r) => r.id === roleId)
+    const role = visibleRoles.find((r) => r.id === roleId)
     if (role) {
       setSelectedRoleId(roleId)
       setDraftPermissions([...role.assignedPermissions])
@@ -193,7 +195,7 @@ export function usePermissionsViewModel(
   const state: PermissionsViewModelState = {
     status,
     user,
-    roles,
+    roles: visibleRoles,
     filteredRoles,
     config,
     selectedRoleId: effectiveSelectedRoleId,

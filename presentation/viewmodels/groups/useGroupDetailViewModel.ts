@@ -11,6 +11,7 @@ import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { GroupManagementUseCase } from "@/domain/usecases/groups/GroupManagementUseCase"
 import {
   getDashboardBranchScope,
+  isBranchScopedDashboardUser,
   resolveUserBranchId,
 } from "@/lib/dashboardBranchScope"
 import { useTranslation } from "@/presentation/i18n/useTranslation"
@@ -67,7 +68,7 @@ function getBranchFilterOptions(
   allBranchesLabel: string,
   currentBranchLabel: string
 ): GroupBranchFilterOption[] {
-  if (user.branchType === "sub") {
+  if (isBranchScopedDashboardUser(user)) {
     return []
   }
 
@@ -254,10 +255,10 @@ export function useGroupDetailViewModel(
 
   const user = userQuery.data ?? null
   const userBranchId = user ? resolveUserBranchId(user) : ""
-  const isSubBranch = user?.branchType === "sub"
-  const showBooksBranchFilter = !isSubBranch
-  const showSalesBranchFilter = !isSubBranch
-  const showSalesBranchColumn = !isSubBranch && salesFilters.branchFilter !== "current"
+  const isBranchScopedUser = user ? isBranchScopedDashboardUser(user) : false
+  const showBooksBranchFilter = !isBranchScopedUser
+  const showSalesBranchFilter = !isBranchScopedUser
+  const showSalesBranchColumn = !isBranchScopedUser && salesFilters.branchFilter !== "current"
   const branchFilterOptions = user
     ? getBranchFilterOptions(
         user,
@@ -279,7 +280,7 @@ export function useGroupDetailViewModel(
           groupBooks,
           booksFilters,
           userBranchId,
-          isSubBranch,
+          isBranchScopedUser,
           scopedBranchIds
         )
       : []
@@ -291,7 +292,7 @@ export function useGroupDetailViewModel(
           sales,
           salesFilters,
           scopedBranchIds,
-          isSubBranch,
+          isBranchScopedUser,
           userBranchId
         )
       : []

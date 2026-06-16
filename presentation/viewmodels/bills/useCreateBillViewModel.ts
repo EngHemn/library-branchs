@@ -12,7 +12,10 @@ import {
 } from "@/domain/schemas/billFormSchema"
 import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { GetBillsUseCase } from "@/domain/usecases/bills/GetBillsUseCase"
-import { resolveUserBranchId } from "@/lib/dashboardBranchScope"
+import {
+  isBranchScopedDashboardUser,
+  resolveUserBranchId,
+} from "@/lib/dashboardBranchScope"
 import type { CreateBillStatus, CreateBillViewModelState } from "./CreateBillViewModelState"
 
 type CreateBillViewModel = {
@@ -34,7 +37,7 @@ export function useCreateBillViewModel(
       phoneNumber: "",
       price: 0,
       imageUrl: null,
-      bookIds: [],
+      items: [],
     },
   })
 
@@ -65,7 +68,14 @@ export function useCreateBillViewModel(
     error: mutationError,
   } = useMutation({
     mutationFn: async (values: BillFormValues) => {
-      const result = await getBillsUseCase.createBill(values)
+      const user = userQuery.data
+      const result = await getBillsUseCase.createBill({
+        ...values,
+        addedBy: {
+          staffId: user?.id ?? "unknown",
+          staffName: user?.fullName ?? "Unknown",
+        },
+      })
       if (!result.success) throw new Error(result.error)
       return result.data
     },
@@ -80,11 +90,12 @@ export function useCreateBillViewModel(
   }
 
   const user = userQuery.data ?? null
-  const showBranchField = user?.branchType !== "sub"
+  const isBranchScopedUser = user ? isBranchScopedDashboardUser(user) : false
+  const showBranchField = !isBranchScopedUser
   const userBranchId = user ? resolveUserBranchId(user) : ""
 
   useEffect(() => {
-    if (!user || user.branchType !== "sub" || form.getValues("branchId")) return
+    if (!user || !isBranchScopedDashboardUser(user) || form.getValues("branchId")) return
     form.setValue("branchId", userBranchId)
   }, [user, userBranchId, form])
 
