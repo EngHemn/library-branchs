@@ -1,12 +1,7 @@
 "use client"
 
 import { Badge } from "@/components/ui/badge"
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import type { GroupDetail, GroupStatus } from "@/domain/entities/group/Group"
 import {
   formatGroupDate,
@@ -19,13 +14,11 @@ type GroupDetailsTabProps = {
   group: GroupDetail
 }
 
-const statusVariants: Record<
-  GroupStatus,
-  "default" | "secondary" | "outline"
-> = {
-  active: "default",
-  inactive: "outline",
-}
+const statusVariants: Record<GroupStatus, "default" | "secondary" | "outline"> =
+  {
+    active: "default",
+    inactive: "outline",
+  }
 
 export function GroupDetailsTab({ group }: GroupDetailsTabProps) {
   const { t } = useTranslation()

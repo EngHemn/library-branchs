@@ -97,7 +97,9 @@ export function ViewMemberScreen({
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
               <CardTitle>{t("members.notFoundTitle")}</CardTitle>
-              <CardDescription>{t("members.notFoundDescription")}</CardDescription>
+              <CardDescription>
+                {t("members.notFoundDescription")}
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <Button variant="outline" onClick={goBack}>
@@ -159,7 +161,9 @@ export function ViewMemberScreen({
               <TabsList className="flex h-auto w-full flex-wrap justify-start gap-1 sm:w-fit">
                 <TabsTrigger value="details" className="gap-1.5">
                   <UserRoundIcon className="size-3.5" />
-                  <span className="hidden sm:inline">{t("members.view.tabs.details")}</span>
+                  <span className="hidden sm:inline">
+                    {t("members.view.tabs.details")}
+                  </span>
                 </TabsTrigger>
                 <TabsTrigger value="active-bookings" className="gap-1.5">
                   <BookOpenIcon className="size-3.5" />
@@ -169,7 +173,9 @@ export function ViewMemberScreen({
                 </TabsTrigger>
                 <TabsTrigger value="late-returns" className="gap-1.5">
                   <ClockIcon className="size-3.5" />
-                  <span className="hidden sm:inline">{t("members.view.tabs.lateReturns")}</span>
+                  <span className="hidden sm:inline">
+                    {t("members.view.tabs.lateReturns")}
+                  </span>
                 </TabsTrigger>
                 <TabsTrigger value="borrowing-history" className="gap-1.5">
                   <HistoryIcon className="size-3.5" />

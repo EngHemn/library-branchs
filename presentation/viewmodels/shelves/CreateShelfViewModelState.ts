@@ -1,6 +1,11 @@
 import type { ShelfLocationOptions } from "@/domain/entities/shelf/ShelfLocationOptions"
 
-export type CreateShelfStatus = "loading" | "ready" | "saving" | "saved" | "error"
+export type CreateShelfStatus =
+  | "loading"
+  | "ready"
+  | "saving"
+  | "saved"
+  | "error"
 
 export type ShelfFormStep = 1 | 2 | 3
 

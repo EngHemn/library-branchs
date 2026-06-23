@@ -4,4 +4,7 @@ export type TranslationKey = ValidationKey | (string & {})
 
 export type TranslateParams = Record<string, string | number>
 
-export type Translate = (key: TranslationKey, params?: TranslateParams) => string
+export type Translate = (
+  key: TranslationKey,
+  params?: TranslateParams
+) => string

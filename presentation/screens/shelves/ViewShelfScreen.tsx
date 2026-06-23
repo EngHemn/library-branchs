@@ -156,7 +156,9 @@ export function ViewShelfScreen({
 
           <Card className="rounded-lg">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base">{t("shelves.filters.title")}</CardTitle>
+              <CardTitle className="text-base">
+                {t("shelves.filters.title")}
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <ShelfBooksFilters

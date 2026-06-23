@@ -158,7 +158,10 @@ export function useEditShelfViewModel(
     shelfQuery.data?.branchName ??
     ""
 
-  async function addLocationValue(stepId: string, value: string): Promise<void> {
+  async function addLocationValue(
+    stepId: string,
+    value: string
+  ): Promise<void> {
     locationMutations.clearError()
     const added = await locationMutations.addLocationValue(stepId, value)
     if (added) {
@@ -240,8 +243,13 @@ export function useEditShelfViewModel(
       const currentStepId = steps[locationStepIndex]?.id
       const locationValues = form.getValues("locationValues")
 
-      if (!currentStepId || !hasLocationStepValue(locationValues, currentStepId)) {
-        setError(`Select or add a value for ${steps[locationStepIndex]?.label ?? "this step"}.`)
+      if (
+        !currentStepId ||
+        !hasLocationStepValue(locationValues, currentStepId)
+      ) {
+        setError(
+          `Select or add a value for ${steps[locationStepIndex]?.label ?? "this step"}.`
+        )
         return
       }
 
@@ -250,10 +258,12 @@ export function useEditShelfViewModel(
         return
       }
 
-      if (!hasAllLocationStepValues(
-        locationValues,
-        steps.map((step) => step.id)
-      )) {
+      if (
+        !hasAllLocationStepValues(
+          locationValues,
+          steps.map((step) => step.id)
+        )
+      ) {
         setError("Complete every location step before continuing.")
         return
       }
@@ -327,7 +337,11 @@ export function useEditShelfViewModel(
   let status: EditShelfStatus = "loading"
   if (isSaved) status = "saved"
   else if (isSaving) status = "saving"
-  else if (userQuery.isError || shelfQuery.isError || locationOptionsQuery.isError) {
+  else if (
+    userQuery.isError ||
+    shelfQuery.isError ||
+    locationOptionsQuery.isError
+  ) {
     status = "error"
   } else if (notFound) status = "error"
   else if (isReady) status = "ready"

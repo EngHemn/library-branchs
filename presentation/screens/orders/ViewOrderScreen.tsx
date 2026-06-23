@@ -44,7 +44,10 @@ function LoadingState() {
   )
 }
 
-export function ViewOrderScreen({ orderId, getOrdersUseCase }: ViewOrderScreenProps) {
+export function ViewOrderScreen({
+  orderId,
+  getOrdersUseCase,
+}: ViewOrderScreenProps) {
   const router = useRouter()
   const viewModel = useOrderDetailViewModel(orderId, getOrdersUseCase)
   const { t } = useTranslation()
@@ -67,10 +70,15 @@ export function ViewOrderScreen({ orderId, getOrdersUseCase }: ViewOrderScreenPr
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
               <CardTitle>{t("orders.notFoundTitle")}</CardTitle>
-              <CardDescription>{t("orders.notFoundDescription")}</CardDescription>
+              <CardDescription>
+                {t("orders.notFoundDescription")}
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button variant="outline" onClick={() => router.push("/dashboard/orders")}>
+              <Button
+                variant="outline"
+                onClick={() => router.push("/dashboard/orders")}
+              >
                 <ArrowLeftIcon />
                 {t("orders.backToOrders")}
               </Button>
@@ -111,7 +119,9 @@ export function ViewOrderScreen({ orderId, getOrdersUseCase }: ViewOrderScreenPr
 
           <OrderDetailHeader
             order={state.order}
-            onEdit={() => router.push(`/dashboard/orders/${state.order?.id}/edit`)}
+            onEdit={() =>
+              router.push(`/dashboard/orders/${state.order?.id}/edit`)
+            }
           />
 
           <OrderSummaryCards order={state.order} />
@@ -124,7 +134,9 @@ export function ViewOrderScreen({ orderId, getOrdersUseCase }: ViewOrderScreenPr
                 <CardTitle>{t("orders.view.notes")}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-muted-foreground">{state.order.notes}</p>
+                <p className="text-sm text-muted-foreground">
+                  {state.order.notes}
+                </p>
               </CardContent>
             </Card>
           ) : null}

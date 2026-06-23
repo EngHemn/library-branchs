@@ -8,11 +8,7 @@ type PersonNameLinkProps = {
   className?: string
 }
 
-export function PersonNameLink({
-  name,
-  href,
-  className,
-}: PersonNameLinkProps) {
+export function PersonNameLink({ name, href, className }: PersonNameLinkProps) {
   if (!href) {
     return <span className={className}>{name}</span>
   }

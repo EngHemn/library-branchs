@@ -5,11 +5,14 @@ import { TranslatorManagementRepositoryImpl } from "@/data/repositories/Translat
 import { GetTranslatorsUseCase } from "@/domain/usecases/translators/GetTranslatorsUseCase"
 import { TranslatorsScreen } from "@/presentation/screens/translators/TranslatorsScreen"
 
-const translatorManagementFakeDataSource = new TranslatorManagementFakeDataSource()
+const translatorManagementFakeDataSource =
+  new TranslatorManagementFakeDataSource()
 const translatorManagementRepository = new TranslatorManagementRepositoryImpl(
   translatorManagementFakeDataSource
 )
-const getTranslatorsUseCase = new GetTranslatorsUseCase(translatorManagementRepository)
+const getTranslatorsUseCase = new GetTranslatorsUseCase(
+  translatorManagementRepository
+)
 
 export default function Page() {
   return <TranslatorsScreen getTranslatorsUseCase={getTranslatorsUseCase} />

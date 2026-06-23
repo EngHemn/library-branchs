@@ -15,7 +15,11 @@ import {
   type ConcatCategoryFormValues,
 } from "@/domain/schemas/concatCategoryFormSchema"
 import type { GetCategoriesUseCase } from "@/domain/usecases/categories/GetCategoriesUseCase"
-import type { CategoriesStatus, CategoriesViewModelState, CategoryFormMode } from "./CategoriesViewModelState"
+import type {
+  CategoriesStatus,
+  CategoriesViewModelState,
+  CategoryFormMode,
+} from "./CategoriesViewModelState"
 
 type CategoriesViewModel = {
   state: CategoriesViewModelState
@@ -44,9 +48,9 @@ export function useCategoriesViewModel(
   getCategoriesUseCase: GetCategoriesUseCase
 ): CategoriesViewModel {
   const [searchQuery, setSearchQuery] = useState("")
-  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">(
-    "all"
-  )
+  const [statusFilter, setStatusFilter] = useState<
+    "all" | "active" | "inactive"
+  >("all")
   const [formMode, setFormMode] = useState<CategoryFormMode>(null)
   const [editingCategoryId, setEditingCategoryId] = useState<string | null>(
     null
@@ -110,7 +114,8 @@ export function useCategoriesViewModel(
       if (!result.success) throw new Error(result.error)
       return result.data
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["categories"] }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["categories"] }),
     onError: (err: Error) => setOperationError(err.message),
   })
 
@@ -198,7 +203,11 @@ export function useCategoriesViewModel(
   async function saveCategory(values: CategoryFormValues): Promise<void> {
     setFormError(null)
     try {
-      await saveMutation.mutateAsync({ values, mode: formMode, categoryId: editingCategoryId })
+      await saveMutation.mutateAsync({
+        values,
+        mode: formMode,
+        categoryId: editingCategoryId,
+      })
     } catch {
       // error handled in onError callback
     }

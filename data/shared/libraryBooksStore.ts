@@ -12,7 +12,9 @@ export function appendLibraryBook(book: Book): void {
 }
 
 export function replaceLibraryBook(book: Book): void {
-  libraryBooks = libraryBooks.map((item) => (item.id === book.id ? { ...book } : item))
+  libraryBooks = libraryBooks.map((item) =>
+    item.id === book.id ? { ...book } : item
+  )
 }
 
 export function removeLibraryBook(bookId: string): void {

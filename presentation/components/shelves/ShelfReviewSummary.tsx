@@ -21,10 +21,7 @@ export function ShelfReviewSummary({
   locationSteps,
 }: ShelfReviewSummaryProps) {
   const { t } = useTranslation()
-  const locationParts = buildLocationParts(
-    locationSteps,
-    values.locationValues
-  )
+  const locationParts = buildLocationParts(locationSteps, values.locationValues)
 
   return (
     <div className="space-y-4 rounded-lg border bg-muted/20 p-4">

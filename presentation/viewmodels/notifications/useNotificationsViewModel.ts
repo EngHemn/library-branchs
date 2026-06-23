@@ -16,7 +16,12 @@ export function useNotificationsViewModel(
 ): NotificationsViewModel {
   const queryClient = useQueryClient()
 
-  const { data: notifications, isLoading, isError, error } = useQuery({
+  const {
+    data: notifications,
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
     queryKey: ["notifications"],
     queryFn: async () => {
       const result = await notificationsUseCase.getNotifications()
@@ -31,7 +36,8 @@ export function useNotificationsViewModel(
       if (!result.success) throw new Error(result.error)
       return result.data
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["notifications"] }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["notifications"] }),
   })
 
   const markAllAsReadMutation = useMutation({
@@ -40,7 +46,8 @@ export function useNotificationsViewModel(
       if (!result.success) throw new Error(result.error)
       return result.data
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["notifications"] }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["notifications"] }),
   })
 
   const all = notifications ?? []
@@ -61,7 +68,9 @@ export function useNotificationsViewModel(
       isError,
       error: isError ? (error as Error).message : null,
     },
-    markAsRead: (id: string, options?: any) => markAsReadMutation.mutate(id, options),
-    markAllAsRead: (options?: any) => markAllAsReadMutation.mutate(undefined, options),
+    markAsRead: (id: string, options?: any) =>
+      markAsReadMutation.mutate(id, options),
+    markAllAsRead: (options?: any) =>
+      markAllAsReadMutation.mutate(undefined, options),
   }
 }

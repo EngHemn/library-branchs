@@ -7,7 +7,11 @@ import type { LoginType } from "@/domain/entities/LoginType"
 import type { User } from "@/domain/entities/User"
 import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { Result } from "@/domain/result/Result"
-import type { LoginAsyncStatus, LoginFormState, LoginViewModelState } from "./LoginViewModelState"
+import type {
+  LoginAsyncStatus,
+  LoginFormState,
+  LoginViewModelState,
+} from "./LoginViewModelState"
 
 type LoginViewModel = {
   state: LoginViewModelState
@@ -18,7 +22,11 @@ type LoginViewModel = {
   logout: () => Promise<void>
 }
 
-const emptyForm: LoginFormState = { username: "", password: "", loginType: "main" }
+const emptyForm: LoginFormState = {
+  username: "",
+  password: "",
+  loginType: "main",
+}
 
 export function useLoginViewModel(authUseCase: AuthUseCase): LoginViewModel {
   const [formState, setFormState] = useState<LoginFormState>(emptyForm)
@@ -88,7 +96,9 @@ export function useLoginViewModel(authUseCase: AuthUseCase): LoginViewModel {
     if (loginMutation.isPending || logoutMutation.isPending) return "loading"
     if (loginSucceeded) return "success"
     if (
-      (loginMutation.isSuccess && loginResult !== undefined && !loginResult.success) ||
+      (loginMutation.isSuccess &&
+        loginResult !== undefined &&
+        !loginResult.success) ||
       loginMutation.isError ||
       (logoutMutation.isSuccess &&
         logoutMutation.data !== undefined &&
@@ -127,5 +137,12 @@ export function useLoginViewModel(authUseCase: AuthUseCase): LoginViewModel {
         : null,
   }
 
-  return { state, updateUsername, updatePassword, updateLoginType, submit, logout }
+  return {
+    state,
+    updateUsername,
+    updatePassword,
+    updateLoginType,
+    submit,
+    logout,
+  }
 }

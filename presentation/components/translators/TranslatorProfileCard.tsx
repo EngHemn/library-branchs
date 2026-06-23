@@ -4,12 +4,7 @@ import Link from "next/link"
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import type { TranslatorDetail } from "@/domain/entities/translator/TranslatorDetail"
 import { BranchLink } from "@/presentation/components/branch-management/BranchLink"
@@ -35,7 +30,9 @@ type ProfileRowKey =
   | "translatorCreated"
   | "status"
 
-export function TranslatorProfileCard({ translator }: TranslatorProfileCardProps) {
+export function TranslatorProfileCard({
+  translator,
+}: TranslatorProfileCardProps) {
   const { t } = useTranslation()
 
   const rows: { key: ProfileRowKey; value: string }[] = [
@@ -114,7 +111,9 @@ export function TranslatorProfileCard({ translator }: TranslatorProfileCardProps
             <dt className="text-sm text-muted-foreground">
               {t("translators.profile.biography")}
             </dt>
-            <dd className="mt-2 text-sm leading-relaxed">{translator.biography}</dd>
+            <dd className="mt-2 text-sm leading-relaxed">
+              {translator.biography}
+            </dd>
           </div>
         </dl>
       </CardContent>

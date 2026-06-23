@@ -11,13 +11,14 @@ import {
   type AuthorFormValues,
 } from "@/domain/schemas/authorFormSchema"
 import type { GetAuthorsUseCase } from "@/domain/usecases/authors/GetAuthorsUseCase"
-import type { CreateAuthorStatus, CreateAuthorViewModelState } from "./CreateAuthorViewModelState"
+import type {
+  CreateAuthorStatus,
+  CreateAuthorViewModelState,
+} from "./CreateAuthorViewModelState"
 
 type CreateAuthorViewModel = {
   state: CreateAuthorViewModelState
-  form: ReturnType<
-    typeof useForm<AuthorFormInput, unknown, AuthorFormValues>
-  >
+  form: ReturnType<typeof useForm<AuthorFormInput, unknown, AuthorFormValues>>
   save: (values: AuthorFormValues) => Promise<void>
 }
 
@@ -62,7 +63,11 @@ export function useCreateAuthorViewModel(
     }
   }
 
-  const status: CreateAuthorStatus = isSaved ? "saved" : isSaving ? "saving" : "ready"
+  const status: CreateAuthorStatus = isSaved
+    ? "saved"
+    : isSaving
+      ? "saving"
+      : "ready"
 
   const state: CreateAuthorViewModelState = {
     status,

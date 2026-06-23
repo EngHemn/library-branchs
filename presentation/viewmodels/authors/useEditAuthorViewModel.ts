@@ -11,13 +11,14 @@ import {
   type AuthorFormValues,
 } from "@/domain/schemas/authorFormSchema"
 import type { GetAuthorsUseCase } from "@/domain/usecases/authors/GetAuthorsUseCase"
-import type { EditAuthorStatus, EditAuthorViewModelState } from "./EditAuthorViewModelState"
+import type {
+  EditAuthorStatus,
+  EditAuthorViewModelState,
+} from "./EditAuthorViewModelState"
 
 type EditAuthorViewModel = {
   state: EditAuthorViewModelState
-  form: ReturnType<
-    typeof useForm<AuthorFormInput, unknown, AuthorFormValues>
-  >
+  form: ReturnType<typeof useForm<AuthorFormInput, unknown, AuthorFormValues>>
   save: (values: AuthorFormValues) => Promise<void>
 }
 
@@ -39,7 +40,11 @@ export function useEditAuthorViewModel(
     },
   })
 
-  const { data, status: queryStatus, error: queryError } = useQuery({
+  const {
+    data,
+    status: queryStatus,
+    error: queryError,
+  } = useQuery({
     queryKey: ["authors", authorId],
     queryFn: async () => {
       const result = await getAuthorsUseCase.getAuthorById(authorId)
@@ -68,11 +73,15 @@ export function useEditAuthorViewModel(
     error: mutationError,
   } = useMutation({
     mutationFn: async (values: AuthorFormValues) => {
-      const result = await getAuthorsUseCase.updateAuthor({ id: authorId, ...values })
+      const result = await getAuthorsUseCase.updateAuthor({
+        id: authorId,
+        ...values,
+      })
       if (!result.success) throw new Error(result.error)
       return result.data
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["authors", authorId] }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["authors", authorId] }),
   })
 
   async function save(values: AuthorFormValues): Promise<void> {
@@ -83,13 +92,17 @@ export function useEditAuthorViewModel(
     }
   }
 
-  const status: EditAuthorStatus =
-    isSaved ? "saved" :
-    isSaving ? "saving" :
-    queryStatus === "error" ? "error" :
-    queryStatus === "pending" ? "loading" :
-    data === null ? "not-found" :
-    "ready"
+  const status: EditAuthorStatus = isSaved
+    ? "saved"
+    : isSaving
+      ? "saving"
+      : queryStatus === "error"
+        ? "error"
+        : queryStatus === "pending"
+          ? "loading"
+          : data === null
+            ? "not-found"
+            : "ready"
 
   const state: EditAuthorViewModelState = {
     status,

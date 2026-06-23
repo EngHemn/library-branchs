@@ -6,10 +6,7 @@ import {
   NetworkIcon,
 } from "lucide-react"
 
-import {
-  Card,
-  CardContent,
-} from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 
 import type { BranchStats } from "@/domain/entities/branch/Branch"
 import type { TranslationKey } from "@/presentation/i18n/messages"
@@ -20,11 +17,32 @@ type BranchStatsCardsProps = {
   hideMainBranchCard?: boolean
 }
 const statKeys = [
-  { key: "totalBranches" as const, icon: Building2Icon, className: "bg-sky-100 text-sky-600" },
-  { key: "mainBranches" as const, icon: BookOpenIcon, className: "bg-violet-100 text-violet-600", mainOnly: true },
-  { key: "subBranches" as const, icon: NetworkIcon, className: "bg-orange-100 text-orange-600" },
-  { key: "activeBranches" as const, icon: CircleCheckIcon, className: "bg-emerald-100 text-emerald-600" },
-  { key: "inactiveBranches" as const, icon: CircleSlashIcon, className: "bg-rose-100 text-rose-600" },
+  {
+    key: "totalBranches" as const,
+    icon: Building2Icon,
+    className: "bg-sky-100 text-sky-600",
+  },
+  {
+    key: "mainBranches" as const,
+    icon: BookOpenIcon,
+    className: "bg-violet-100 text-violet-600",
+    mainOnly: true,
+  },
+  {
+    key: "subBranches" as const,
+    icon: NetworkIcon,
+    className: "bg-orange-100 text-orange-600",
+  },
+  {
+    key: "activeBranches" as const,
+    icon: CircleCheckIcon,
+    className: "bg-emerald-100 text-emerald-600",
+  },
+  {
+    key: "inactiveBranches" as const,
+    icon: CircleSlashIcon,
+    className: "bg-rose-100 text-rose-600",
+  },
 ]
 
 export function BranchStatsCards({
@@ -52,11 +70,11 @@ export function BranchStatsCards({
         return (
           <Card
             key={card.label}
-            className="flex items-center flex-row shadow-sm  gap-4 p-4 rounded-lg w-full "
+            className="flex w-full flex-row items-center gap-4 rounded-lg p-4 shadow-sm"
           >
             {/* Left Icon Chip */}
             <div
-              className={`h-10 w-10 flex items-center justify-center rounded-full ${card.className}`}
+              className={`flex h-10 w-10 items-center justify-center rounded-full ${card.className}`}
             >
               <Icon className="size-4" />
             </div>

@@ -10,10 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import {
-  DataTable,
-  type DataTableColumn,
-} from "@/components/ui/data-table"
+import { DataTable, type DataTableColumn } from "@/components/ui/data-table"
 import type { Category } from "@/domain/entities/category/Category"
 import { CategoryActionButton } from "@/presentation/components/categories/CategoryActionButton"
 import { useTranslation } from "@/presentation/i18n/useTranslation"

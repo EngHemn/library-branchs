@@ -126,7 +126,9 @@ export function ShelvesScreen({
 
         <Card className="rounded-lg">
           <CardHeader className="pb-3">
-            <CardTitle className="text-base">{t("shelves.filters.title")}</CardTitle>
+            <CardTitle className="text-base">
+              {t("shelves.filters.title")}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <ShelvesFilters
@@ -150,9 +152,7 @@ export function ShelvesScreen({
           onView={(shelf) =>
             router.push(dashboardPaths.shelves.detail(shelf.id))
           }
-          onEdit={(shelf) =>
-            router.push(dashboardPaths.shelves.edit(shelf.id))
-          }
+          onEdit={(shelf) => router.push(dashboardPaths.shelves.edit(shelf.id))}
           onDelete={(shelf) =>
             viewModel.openDeleteShelfDialog(shelf.id, shelf.name)
           }

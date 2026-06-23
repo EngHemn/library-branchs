@@ -699,9 +699,7 @@ export const fakeMemberDetails: MemberDetail[] = fakeMembers.map((member) => {
   }
 })
 
-export function getFakeMemberDetailById(
-  memberId: string
-): MemberDetail | null {
+export function getFakeMemberDetailById(memberId: string): MemberDetail | null {
   const detail = fakeMemberDetails.find((item) => item.id === memberId)
   return detail ? cloneMemberDetail(detail) : null
 }

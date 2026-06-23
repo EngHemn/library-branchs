@@ -29,27 +29,32 @@ export type DeleteDialogResult = {
   confirmDeleteRole: () => Promise<void>
 }
 
-export function usePermissionsDeleteDialog(options: DeleteDialogOptions): DeleteDialogResult {
+export function usePermissionsDeleteDialog(
+  options: DeleteDialogOptions
+): DeleteDialogResult {
   const queryClient = useQueryClient()
 
-  const [deleteRoleDialog, setDeleteRoleDialog] = useState<DeleteRoleDialogState | null>(null)
+  const [deleteRoleDialog, setDeleteRoleDialog] =
+    useState<DeleteRoleDialogState | null>(null)
   const [deleteRoleError, setDeleteRoleError] = useState<string | null>(null)
 
-  const { mutateAsync: deleteRoleAsync, isPending: isDeletingRole } = useMutation({
-    mutationFn: async (roleId: string) => {
-      const result = await options.permissionManagementUseCase.deleteRole(roleId)
-      if (!result.success) throw new Error(result.error)
-      return roleId
-    },
-    onSuccess: (deletedRoleId) => {
-      void queryClient.invalidateQueries({ queryKey: ["permissions"] })
-      const nextRoles = options.roles.filter((r) => r.id !== deletedRoleId)
-      options.onRoleDeleted(deletedRoleId, nextRoles)
-      setDeleteRoleDialog(null)
-      setDeleteRoleError(null)
-    },
-    onError: (err: Error) => setDeleteRoleError(err.message),
-  })
+  const { mutateAsync: deleteRoleAsync, isPending: isDeletingRole } =
+    useMutation({
+      mutationFn: async (roleId: string) => {
+        const result =
+          await options.permissionManagementUseCase.deleteRole(roleId)
+        if (!result.success) throw new Error(result.error)
+        return roleId
+      },
+      onSuccess: (deletedRoleId) => {
+        void queryClient.invalidateQueries({ queryKey: ["permissions"] })
+        const nextRoles = options.roles.filter((r) => r.id !== deletedRoleId)
+        options.onRoleDeleted(deletedRoleId, nextRoles)
+        setDeleteRoleDialog(null)
+        setDeleteRoleError(null)
+      },
+      onError: (err: Error) => setDeleteRoleError(err.message),
+    })
 
   function openDeleteRoleDialog(): void {
     if (!options.selectedRole) return

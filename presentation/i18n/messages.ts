@@ -4,13 +4,38 @@ import type { TranslateParams } from "@/domain/i18n/TranslationKey"
 import enCore from "@/presentation/i18n/locales/en.json"
 import arCore from "@/presentation/i18n/locales/ar.json"
 import kuCore from "@/presentation/i18n/locales/ku.json"
-import { books, authors as authorsFeature, translators, categories } from "@/presentation/i18n/locales/features/library"
+import {
+  books,
+  authors as authorsFeature,
+  translators,
+  categories,
+} from "@/presentation/i18n/locales/features/library"
 import { shelves } from "@/presentation/i18n/locales/features/shelves"
-import { members, bookings, branches } from "@/presentation/i18n/locales/features/people"
-import { staff, permissions, groups } from "@/presentation/i18n/locales/features/org"
-import { stock, bills, orders, needs } from "@/presentation/i18n/locales/features/commerce"
-import { sales, reports, activityLogs } from "@/presentation/i18n/locales/features/insights"
-import { dashboard, notifications } from "@/presentation/i18n/locales/features/corePages"
+import {
+  members,
+  bookings,
+  branches,
+} from "@/presentation/i18n/locales/features/people"
+import {
+  staff,
+  permissions,
+  groups,
+} from "@/presentation/i18n/locales/features/org"
+import {
+  stock,
+  bills,
+  orders,
+  needs,
+} from "@/presentation/i18n/locales/features/commerce"
+import {
+  sales,
+  reports,
+  activityLogs,
+} from "@/presentation/i18n/locales/features/insights"
+import {
+  dashboard,
+  notifications,
+} from "@/presentation/i18n/locales/features/corePages"
 
 const en = {
   ...enCore,
@@ -87,9 +112,7 @@ const ku = {
 type Messages = typeof en
 
 type NestedKeys<T> = {
-  [K in keyof T & string]: T[K] extends string
-    ? K
-    : `${K}.${NestedKeys<T[K]>}`
+  [K in keyof T & string]: T[K] extends string ? K : `${K}.${NestedKeys<T[K]>}`
 }[keyof T & string]
 
 export type TranslationKey = NestedKeys<Messages>

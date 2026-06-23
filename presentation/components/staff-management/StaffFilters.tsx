@@ -24,12 +24,13 @@ import {
 } from "@/components/ui/select"
 import { PERMISSION_ROLE_LABELS } from "@/domain/entities/permission/Permission"
 import type { PermissionStaffRole } from "@/domain/entities/permission/Permission"
-import type { StaffRole, StaffStatus } from "@/domain/entities/staff/StaffMember"
+import type {
+  StaffRole,
+  StaffStatus,
+} from "@/domain/entities/staff/StaffMember"
 import type { TranslationKey } from "@/presentation/i18n/messages"
 import { useTranslation } from "@/presentation/i18n/useTranslation"
-import type {
-  StaffBranchFilterOption,
-} from "@/presentation/viewmodels/staff-management/StaffManagementViewModelState"
+import type { StaffBranchFilterOption } from "@/presentation/viewmodels/staff-management/StaffManagementViewModelState"
 
 type StaffRoleFilter = "all" | StaffRole
 type StaffStatusFilter = "all" | StaffStatus
@@ -75,9 +76,9 @@ export function StaffFilters({
     ...Object.keys(PERMISSION_ROLE_LABELS)
       .filter((value) => showBranchAdminRole || value !== "branch_admin")
       .map((value) => ({
-      value,
-      label: t(STAFF_ROLE_KEYS[value as PermissionStaffRole]),
-    })),
+        value,
+        label: t(STAFF_ROLE_KEYS[value as PermissionStaffRole]),
+      })),
   ]
 
   const statusOptions: { value: StaffStatusFilter; label: string }[] = [
@@ -100,7 +101,9 @@ export function StaffFilters({
       <div className="flex gap-3">
         <Select
           value={roleFilter}
-          onValueChange={(value) => { if (isStaffRoleFilter(value)) onRoleFilterChange(value) }}
+          onValueChange={(value) => {
+            if (isStaffRoleFilter(value)) onRoleFilterChange(value)
+          }}
         >
           <SelectTrigger className="w-[160px]">
             <SelectValue />
@@ -114,10 +117,7 @@ export function StaffFilters({
           </SelectContent>
         </Select>
         {showBranchFilter ? (
-          <Select
-            value={branchFilter}
-            onValueChange={onBranchFilterChange}
-          >
+          <Select value={branchFilter} onValueChange={onBranchFilterChange}>
             <SelectTrigger className="w-[180px]">
               <SelectValue />
             </SelectTrigger>
@@ -134,7 +134,9 @@ export function StaffFilters({
         ) : null}
         <Select
           value={statusFilter}
-          onValueChange={(value) => { if (isStaffStatusFilter(value)) onStatusFilterChange(value) }}
+          onValueChange={(value) => {
+            if (isStaffStatusFilter(value)) onStatusFilterChange(value)
+          }}
         >
           <SelectTrigger className="w-[140px]">
             <SelectValue />

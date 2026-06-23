@@ -17,7 +17,11 @@ import {
 import { resolveUserBranchId } from "@/lib/dashboardBranchScope"
 import { isSingleBranchManagedUser } from "@/lib/salesStockBranchScope"
 import { useSalesData } from "./useSalesData"
-import type { BranchNode, SalesFilter, SalesViewModelState } from "./SalesViewModelState"
+import type {
+  BranchNode,
+  SalesFilter,
+  SalesViewModelState,
+} from "./SalesViewModelState"
 export type { BranchNode } from "./SalesViewModelState"
 
 export type SalesViewModel = {
@@ -91,7 +95,12 @@ function computeCartTotals(cart: CartItem[]): {
       ((item.book.price * item.book.discount) / 100) * item.quantity
     itemCount += item.quantity
   }
-  return { subtotal, discountAmount, total: subtotal - discountAmount, itemCount }
+  return {
+    subtotal,
+    discountAmount,
+    total: subtotal - discountAmount,
+    itemCount,
+  }
 }
 
 export function useSalesViewModel(
@@ -118,7 +127,8 @@ export function useSalesViewModel(
   const [shoppingBranchId, setShoppingBranchId] = useState<string | null>(null)
   const [cart, setCart] = useState<CartItem[]>([])
   const [pendingBranchId, setPendingBranchId] = useState<string | null>(null)
-  const [isChangeBranchDialogOpen, setIsChangeBranchDialogOpen] = useState(false)
+  const [isChangeBranchDialogOpen, setIsChangeBranchDialogOpen] =
+    useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [languageFilter, setLanguageFilter] = useState<SalesFilter>("all")
   const [categoryFilter, setCategoryFilter] = useState<SalesFilter>("all")
@@ -263,15 +273,15 @@ export function useSalesViewModel(
       if (userId) {
         clearStoredSalesCart(userId)
       }
-    } catch {
-    }
+    } catch {}
   }
 
   const { branches, books } = salesData
   const { subtotal, discountAmount, total, itemCount } = computeCartTotals(cart)
 
   const shoppingBranch = branches.find((b) => b.id === shoppingBranchId) ?? null
-  const displayedBranch = branches.find((b) => b.id === displayedBranchId) ?? null
+  const displayedBranch =
+    branches.find((b) => b.id === displayedBranchId) ?? null
   const pendingBranch = branches.find((b) => b.id === pendingBranchId) ?? null
 
   const branchNodes = buildScopedBranchNodes(branches, user)

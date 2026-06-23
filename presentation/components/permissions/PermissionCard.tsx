@@ -68,7 +68,7 @@ export function PermissionCard({
               checked={selectedPermissions.includes(permission)}
               onCheckedChange={() => onTogglePermission(permission)}
             />
-            <span className="text-sm font-mono text-muted-foreground">
+            <span className="font-mono text-sm text-muted-foreground">
               {permission}
             </span>
           </label>

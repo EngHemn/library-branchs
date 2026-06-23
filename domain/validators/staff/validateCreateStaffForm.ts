@@ -75,6 +75,9 @@ export function getCreateStaffFieldErrors(
     branch: input.branchId ? null : "Branch is required",
     email: validateEmail(input.email),
     phone: validatePhone(input.phone),
-    password: input.password.trim().length < 6 ? "Password must be at least 6 characters" : null,
+    password:
+      input.password.trim().length < 6
+        ? "Password must be at least 6 characters"
+        : null,
   }
 }

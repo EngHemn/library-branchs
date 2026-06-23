@@ -1,4 +1,10 @@
-export type EditNeedStatus = "idle" | "loading" | "ready" | "saving" | "saved" | "error"
+export type EditNeedStatus =
+  | "idle"
+  | "loading"
+  | "ready"
+  | "saving"
+  | "saved"
+  | "error"
 
 export type EditNeedViewModelState = {
   status: EditNeedStatus

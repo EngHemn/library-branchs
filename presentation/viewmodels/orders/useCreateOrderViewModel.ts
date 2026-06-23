@@ -98,9 +98,16 @@ export function useCreateOrderViewModel(
   const userBranchId = user ? resolveUserBranchId(user) : ""
 
   useEffect(() => {
-    if (!user || !isBranchScopedDashboardUser(user) || form.getValues("branchId")) return
+    if (
+      !user ||
+      !isBranchScopedDashboardUser(user) ||
+      form.getValues("branchId")
+    )
+      return
     form.setValue("branchId", userBranchId)
-    const branch = optionsQuery.data?.branches.find((item) => item.id === userBranchId)
+    const branch = optionsQuery.data?.branches.find(
+      (item) => item.id === userBranchId
+    )
     if (branch) {
       form.setValue("latitude", branch.latitude)
       form.setValue("longitude", branch.longitude)

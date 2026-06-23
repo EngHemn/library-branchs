@@ -214,15 +214,16 @@ const sidebarGroups: SidebarGroup[] = [
 
 const branchManagementHref = "/dashboard/branches"
 
-function buildSidebarGroups(branchType: BranchType | undefined): SidebarGroup[] {
+function buildSidebarGroups(
+  branchType: BranchType | undefined
+): SidebarGroup[] {
   const hideBranchManagement = branchType === "sub"
 
   return sidebarGroups
     .map((group) => ({
       ...group,
       items: group.items.filter(
-        (item) =>
-          !(hideBranchManagement && item.href === branchManagementHref)
+        (item) => !(hideBranchManagement && item.href === branchManagementHref)
       ),
     }))
     .filter((group) => group.items.length > 0)

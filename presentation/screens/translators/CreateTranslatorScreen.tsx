@@ -23,7 +23,9 @@ type CreateTranslatorScreenProps = {
   getTranslatorsUseCase: GetTranslatorsUseCase
 }
 
-export function CreateTranslatorScreen({ getTranslatorsUseCase }: CreateTranslatorScreenProps) {
+export function CreateTranslatorScreen({
+  getTranslatorsUseCase,
+}: CreateTranslatorScreenProps) {
   const router = useRouter()
   const { t } = useTranslation()
   const viewModel = useCreateTranslatorViewModel(getTranslatorsUseCase)
@@ -59,7 +61,9 @@ export function CreateTranslatorScreen({ getTranslatorsUseCase }: CreateTranslat
       {state.error ? (
         <Card className="rounded-lg border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950">
           <CardContent className="py-3">
-            <p className="text-sm font-medium text-red-800 dark:text-red-200">{state.error}</p>
+            <p className="text-sm font-medium text-red-800 dark:text-red-200">
+              {state.error}
+            </p>
           </CardContent>
         </Card>
       ) : null}
@@ -67,7 +71,9 @@ export function CreateTranslatorScreen({ getTranslatorsUseCase }: CreateTranslat
       <Card className="rounded-lg">
         <CardHeader>
           <CardTitle>{t("translators.detailsTitle")}</CardTitle>
-          <CardDescription>{t("translators.detailsDescription")}</CardDescription>
+          <CardDescription>
+            {t("translators.detailsDescription")}
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <TranslatorFormFields
@@ -77,12 +83,23 @@ export function CreateTranslatorScreen({ getTranslatorsUseCase }: CreateTranslat
           >
             <Separator />
             <div className="flex justify-end gap-3">
-              <Button type="button" variant="outline" onClick={goBack} disabled={state.isSaving}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={goBack}
+                disabled={state.isSaving}
+              >
                 {t("common.cancel")}
               </Button>
               <Button type="submit" disabled={state.isSaving || state.isSaved}>
-                {state.isSaving ? <Loader2Icon className="animate-spin" /> : <PlusIcon />}
-                {state.isSaving ? t("common.creating") : t("translators.createButton")}
+                {state.isSaving ? (
+                  <Loader2Icon className="animate-spin" />
+                ) : (
+                  <PlusIcon />
+                )}
+                {state.isSaving
+                  ? t("common.creating")
+                  : t("translators.createButton")}
               </Button>
             </div>
           </TranslatorFormFields>

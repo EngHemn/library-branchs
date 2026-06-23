@@ -9,10 +9,8 @@ type OrderStatusBadgeProps = {
 }
 
 const statusStyles: Record<OrderStatus, string> = {
-  pending:
-    "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300",
-  confirmed:
-    "bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300",
+  pending: "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300",
+  confirmed: "bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300",
   shipped:
     "bg-violet-100 text-violet-800 dark:bg-violet-950 dark:text-violet-300",
   delivered:

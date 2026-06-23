@@ -5,7 +5,10 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
-import type { BillBookOption, BillBranchOption } from "@/domain/repositories/BillManagementRepository"
+import type {
+  BillBookOption,
+  BillBranchOption,
+} from "@/domain/repositories/BillManagementRepository"
 import {
   billFormSchema,
   type BillFormValues,
@@ -17,7 +20,10 @@ import {
   resolveUserBranchId,
 } from "@/lib/dashboardBranchScope"
 import { toBillDateInputValue } from "@/presentation/components/bills/billDisplay"
-import type { EditBillStatus, EditBillViewModelState } from "./EditBillViewModelState"
+import type {
+  EditBillStatus,
+  EditBillViewModelState,
+} from "./EditBillViewModelState"
 
 type EditBillViewModel = {
   state: EditBillViewModelState
@@ -100,7 +106,12 @@ export function useEditBillViewModel(
   }, [detailQuery.data, form])
 
   useEffect(() => {
-    if (!user || !isBranchScopedDashboardUser(user) || form.getValues("branchId")) return
+    if (
+      !user ||
+      !isBranchScopedDashboardUser(user) ||
+      form.getValues("branchId")
+    )
+      return
     form.setValue("branchId", userBranchId)
   }, [user, userBranchId, form])
 
@@ -111,8 +122,15 @@ export function useEditBillViewModel(
     error: mutationError,
   } = useMutation({
     mutationFn: async (values: BillFormValues) => {
-      const addedBy = { staffId: user?.id ?? '', staffName: user?.fullName ?? '' };
-      const result = await getBillsUseCase.updateBill({ id: billId, ...values, addedBy });
+      const addedBy = {
+        staffId: user?.id ?? "",
+        staffName: user?.fullName ?? "",
+      }
+      const result = await getBillsUseCase.updateBill({
+        id: billId,
+        ...values,
+        addedBy,
+      })
       if (!result.success) throw new Error(result.error)
       return result.data
     },

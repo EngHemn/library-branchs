@@ -54,8 +54,9 @@ export const fakeShelfLocationOptions: ShelfLocationOptions = {
       "Top Row",
       "Bottom Row",
     ],
-    "LOC-STEP-SLOT": Array.from({ length: 20 }, (_, index) =>
-      `Slot ${String(index + 1).padStart(2, "0")}`
+    "LOC-STEP-SLOT": Array.from(
+      { length: 20 },
+      (_, index) => `Slot ${String(index + 1).padStart(2, "0")}`
     ),
   },
 }

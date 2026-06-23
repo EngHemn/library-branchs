@@ -60,7 +60,9 @@ export function ShelfDeleteDialog({
             onClick={onConfirm}
           >
             {isDeleting ? <Loader2Icon className="animate-spin" /> : null}
-            {isDeleting ? t("shelves.deleteDialog.deleting") : t("common.delete")}
+            {isDeleting
+              ? t("shelves.deleteDialog.deleting")
+              : t("common.delete")}
           </Button>
         </DialogFooter>
       </DialogContent>

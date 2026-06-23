@@ -1,12 +1,7 @@
 "use client"
 
 import { Badge } from "@/components/ui/badge"
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Table,
   TableBody,
@@ -78,12 +73,16 @@ export function MemberBookingsTable({
           </p>
         ) : (
           <div className="overflow-x-auto">
-            <Table className={showBranchColumn ? "min-w-[860px]" : "min-w-[720px]"}>
+            <Table
+              className={showBranchColumn ? "min-w-[860px]" : "min-w-[720px]"}
+            >
               <TableHeader>
                 <TableRow>
                   <TableHead>{t("members.bookings.bookingId")}</TableHead>
                   <TableHead>{t("members.bookings.bookTitle")}</TableHead>
-                  {showBranchColumn ? <TableHead>{t("members.bookings.branch")}</TableHead> : null}
+                  {showBranchColumn ? (
+                    <TableHead>{t("members.bookings.branch")}</TableHead>
+                  ) : null}
                   <TableHead>{t("members.bookings.type")}</TableHead>
                   <TableHead>{t("members.bookings.borrowed")}</TableHead>
                   <TableHead>{t("members.bookings.due")}</TableHead>

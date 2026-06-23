@@ -94,12 +94,16 @@ export function TranslatorFormFields({
                 >
                   <FormControl>
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder={t("translators.placeholders.status")} />
+                      <SelectValue
+                        placeholder={t("translators.placeholders.status")}
+                      />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
                     <SelectItem value="active">{t("common.active")}</SelectItem>
-                    <SelectItem value="inactive">{t("common.inactive")}</SelectItem>
+                    <SelectItem value="inactive">
+                      {t("common.inactive")}
+                    </SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />

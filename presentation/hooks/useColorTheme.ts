@@ -12,7 +12,6 @@ export type ColorThemeId =
   | "cyan"
   | "orange"
   | "pink"
-  
 
 export type ColorTheme = {
   id: ColorThemeId
@@ -23,14 +22,14 @@ export type ColorTheme = {
 
 export const colorThemes: ColorTheme[] = [
   { id: "default", label: "Default", color: "#a1a1aa", foreground: "white" },
-  { id: "blue",    label: "Blue",    color: "#818cf8", foreground: "white" },
-  { id: "purple",  label: "Purple",  color: "#a78bfa", foreground: "white" },
-  { id: "green",   label: "Green",   color: "#34d399", foreground: "white" },
-  { id: "amber",   label: "Amber",   color: "#fbbf24", foreground: "white" },
-  { id: "rose",    label: "Rose",    color: "#fb7185", foreground: "white" },
-  { id: "cyan",    label: "Cyan",    color: "#22d3ee", foreground: "white" },
-  { id: "orange",  label: "Orange",  color: "#fb923c", foreground: "white" },
-  { id: "pink",    label: "Pink",    color: "#f472b6", foreground: "white" },
+  { id: "blue", label: "Blue", color: "#818cf8", foreground: "white" },
+  { id: "purple", label: "Purple", color: "#a78bfa", foreground: "white" },
+  { id: "green", label: "Green", color: "#34d399", foreground: "white" },
+  { id: "amber", label: "Amber", color: "#fbbf24", foreground: "white" },
+  { id: "rose", label: "Rose", color: "#fb7185", foreground: "white" },
+  { id: "cyan", label: "Cyan", color: "#22d3ee", foreground: "white" },
+  { id: "orange", label: "Orange", color: "#fb923c", foreground: "white" },
+  { id: "pink", label: "Pink", color: "#f472b6", foreground: "white" },
 ]
 
 const STORAGE_KEY = "liba-color-theme"
@@ -55,8 +54,7 @@ function isColorThemeId(value: string): value is ColorThemeId {
 }
 
 export function useColorTheme(): UseColorThemeReturn {
-  const [colorTheme, setColorThemeState] =
-    useState<ColorThemeId>(DEFAULT_THEME)
+  const [colorTheme, setColorThemeState] = useState<ColorThemeId>(DEFAULT_THEME)
 
   useEffect(() => {
     const raw = localStorage.getItem(STORAGE_KEY) ?? DEFAULT_THEME

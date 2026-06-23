@@ -9,7 +9,11 @@ import type { StaffMember } from "@/domain/entities/staff/StaffMember"
 import type { Translator } from "@/domain/entities/translator/Translator"
 import type { BranchDetailUseCase } from "@/domain/usecases/branch/BranchDetailUseCase"
 import type { StaffManagementUseCase } from "@/domain/usecases/staff/StaffManagementUseCase"
-import type { ViewStaffStatus, ViewStaffTabKey, ViewStaffViewModelState } from "./ViewStaffViewModelState"
+import type {
+  ViewStaffStatus,
+  ViewStaffTabKey,
+  ViewStaffViewModelState,
+} from "./ViewStaffViewModelState"
 
 type ViewStaffViewModel = {
   state: ViewStaffViewModelState

@@ -4,10 +4,7 @@ import { useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 import { fakeBranches } from "@/data/fake/fakeBranches"
-import type {
-  Booking,
-  BookingStats,
-} from "@/domain/entities/booking/Booking"
+import type { Booking, BookingStats } from "@/domain/entities/booking/Booking"
 import type { User } from "@/domain/entities/User"
 import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { BookingManagementUseCase } from "@/domain/usecases/bookings/BookingManagementUseCase"
@@ -189,7 +186,8 @@ export function useBookingsViewModel(
         if (!result.success) throw new Error(result.error)
         return result.data
       },
-      onSuccess: () => queryClient.invalidateQueries({ queryKey: ["bookings"] }),
+      onSuccess: () =>
+        queryClient.invalidateQueries({ queryKey: ["bookings"] }),
       onError: (err: Error) => setActionError(err.message),
     })
 
@@ -200,7 +198,8 @@ export function useBookingsViewModel(
         if (!result.success) throw new Error(result.error)
         return result.data
       },
-      onSuccess: () => queryClient.invalidateQueries({ queryKey: ["bookings"] }),
+      onSuccess: () =>
+        queryClient.invalidateQueries({ queryKey: ["bookings"] }),
       onError: (err: Error) => setActionError(err.message),
     })
 
@@ -211,7 +210,8 @@ export function useBookingsViewModel(
         if (!result.success) throw new Error(result.error)
         return result.data
       },
-      onSuccess: () => queryClient.invalidateQueries({ queryKey: ["bookings"] }),
+      onSuccess: () =>
+        queryClient.invalidateQueries({ queryKey: ["bookings"] }),
       onError: (err: Error) => setActionError(err.message),
     })
 
@@ -222,7 +222,8 @@ export function useBookingsViewModel(
         if (!result.success) throw new Error(result.error)
         return result.data
       },
-      onSuccess: () => queryClient.invalidateQueries({ queryKey: ["bookings"] }),
+      onSuccess: () =>
+        queryClient.invalidateQueries({ queryKey: ["bookings"] }),
       onError: (err: Error) => setActionError(err.message),
     })
 
@@ -238,7 +239,8 @@ export function useBookingsViewModel(
   const filteredBookings = userBranchId
     ? filterBookings(bookings, filters, userBranchId, isBranchScoped)
     : []
-  const isActionPending = isReturning || isExtending || isCancelling || isDeleting
+  const isActionPending =
+    isReturning || isExtending || isCancelling || isDeleting
 
   const status: BookingsPageStatus =
     userQuery.isPending || bookingsQuery.isPending

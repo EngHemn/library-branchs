@@ -86,7 +86,9 @@ export function NeedFormFields({
                 >
                   <FormControl>
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder={t("needs.form.categoryPlaceholder")} />
+                      <SelectValue
+                        placeholder={t("needs.form.categoryPlaceholder")}
+                      />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -109,12 +111,7 @@ export function NeedFormFields({
               <FormItem>
                 <FormLabel>{t("needs.form.quantity")}</FormLabel>
                 <FormControl>
-                  <Input
-                    type="number"
-                    min={1}
-                    disabled={disabled}
-                    {...field}
-                  />
+                  <Input type="number" min={1} disabled={disabled} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -134,7 +131,9 @@ export function NeedFormFields({
                 >
                   <FormControl>
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder={t("needs.form.priorityPlaceholder")} />
+                      <SelectValue
+                        placeholder={t("needs.form.priorityPlaceholder")}
+                      />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -164,7 +163,9 @@ export function NeedFormFields({
                   >
                     <FormControl>
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder={t("needs.form.branchPlaceholder")} />
+                        <SelectValue
+                          placeholder={t("needs.form.branchPlaceholder")}
+                        />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -194,7 +195,9 @@ export function NeedFormFields({
                 >
                   <FormControl>
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder={t("needs.form.requestedByPlaceholder")} />
+                      <SelectValue
+                        placeholder={t("needs.form.requestedByPlaceholder")}
+                      />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>

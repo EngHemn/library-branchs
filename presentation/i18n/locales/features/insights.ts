@@ -173,8 +173,7 @@ export const sales = {
       discount: "الخصم",
       finalPrice: "السعر النهائي",
       price: "السعر",
-      switchBranchHint:
-        "بدّل للتسوق من هذا الفرع لإضافة كتب إلى سلتك.",
+      switchBranchHint: "بدّل للتسوق من هذا الفرع لإضافة كتب إلى سلتك.",
       addToCart: "أضف إلى السلة",
     },
     history: {
@@ -276,7 +275,8 @@ export const sales = {
       translator: "وەرگێڕ",
       allTranslators: "هەموو وەرگێڕەکان",
       noBooksInBranch: "هیچ کتێبێک لەم لقەدا بەردەست نییە.",
-      noSearchResults: 'هیچ کتێبێک لەگەڵ "{query}" ناگونجێت. گەڕانێکی تر تاقی بکەرەوە.',
+      noSearchResults:
+        'هیچ کتێبێک لەگەڵ "{query}" ناگونجێت. گەڕانێکی تر تاقی بکەرەوە.',
       stock: "کۆگا",
       outOfStock: "کۆگا بەتاڵە",
       available: "{count} بەردەست",
@@ -284,8 +284,7 @@ export const sales = {
       discount: "داشکاندن",
       finalPrice: "نرخی کۆتایی",
       price: "نرخ",
-      switchBranchHint:
-        "بیگۆڕە بۆ کڕین لەم لقە بۆ زیادکردنی کتێب بۆ سەبەتە.",
+      switchBranchHint: "بیگۆڕە بۆ کڕین لەم لقە بۆ زیادکردنی کتێب بۆ سەبەتە.",
       addToCart: "زیادکردن بۆ سەبەتە",
     },
     history: {
@@ -370,7 +369,7 @@ export const reports = {
       "7d": "Last 7 days",
       "30d": "Last 30 days",
       "90d": "Last 90 days",
-      "ytd": "Year to date",
+      ytd: "Year to date",
     },
   },
   ar: {
@@ -408,7 +407,7 @@ export const reports = {
       "7d": "آخر 7 أيام",
       "30d": "آخر 30 يومًا",
       "90d": "آخر 90 يومًا",
-      "ytd": "منذ بداية العام",
+      ytd: "منذ بداية العام",
     },
   },
   ku: {
@@ -446,7 +445,7 @@ export const reports = {
       "7d": "٧ ڕۆژی ڕابردوو",
       "30d": "٣٠ ڕۆژی ڕابردوو",
       "90d": "٩٠ ڕۆژی ڕابردوو",
-      "ytd": "ساڵ تا ئێستا",
+      ytd: "ساڵ تا ئێستا",
     },
   },
 }
@@ -454,7 +453,8 @@ export const activityLogs = {
   en: {
     screen: {
       title: "Activity Logs",
-      subtitle: "Review staff actions across branches. Filter by action, branch, or staff member and search by description or entity.",
+      subtitle:
+        "Review staff actions across branches. Filter by action, branch, or staff member and search by description or entity.",
       unableToLoad: "Unable to load activity logs",
     },
     filters: {
@@ -506,7 +506,8 @@ export const activityLogs = {
   ar: {
     screen: {
       title: "سجلات النشاط",
-      subtitle: "مراجعة إجراءات الموظفين عبر الفروع. تصفية حسب الإجراء أو الفرع أو الموظف، والبحث حسب الوصف أو الكيان.",
+      subtitle:
+        "مراجعة إجراءات الموظفين عبر الفروع. تصفية حسب الإجراء أو الفرع أو الموظف، والبحث حسب الوصف أو الكيان.",
       unableToLoad: "تعذّر تحميل سجلات النشاط",
     },
     filters: {
@@ -558,7 +559,8 @@ export const activityLogs = {
   ku: {
     screen: {
       title: "تۆماری چالاکی",
-      subtitle: "پێداچوونەوە بە کرداری کارمەندان بکە لە لقەکاندا. فلتەر بکە بەپێی کردار، لق، یان ئەندامی ستاف و بگەڕێ بەپێی وەسف یان قەوارە.",
+      subtitle:
+        "پێداچوونەوە بە کرداری کارمەندان بکە لە لقەکاندا. فلتەر بکە بەپێی کردار، لق، یان ئەندامی ستاف و بگەڕێ بەپێی وەسف یان قەوارە.",
       unableToLoad: "نەتوانرا تۆماری چالاکیەکان باربکرێن",
     },
     filters: {

@@ -108,13 +108,19 @@ export function MemberFormFields({
                 >
                   <FormControl>
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder={t("members.placeholders.selectStatus")} />
+                      <SelectValue
+                        placeholder={t("members.placeholders.selectStatus")}
+                      />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
                     <SelectItem value="active">{t("common.active")}</SelectItem>
-                    <SelectItem value="inactive">{t("common.inactive")}</SelectItem>
-                    <SelectItem value="suspended">{t("members.statuses.suspended")}</SelectItem>
+                    <SelectItem value="inactive">
+                      {t("common.inactive")}
+                    </SelectItem>
+                    <SelectItem value="suspended">
+                      {t("members.statuses.suspended")}
+                    </SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />

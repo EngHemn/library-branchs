@@ -1,5 +1,8 @@
 import { findLibraryBookById } from "@/data/shared/libraryBooksStore"
-import { getBranchLocation, resolveOrderCoordinates } from "@/data/shared/branchLocation"
+import {
+  getBranchLocation,
+  resolveOrderCoordinates,
+} from "@/data/shared/branchLocation"
 import type { FakeOrderRecord } from "@/data/fake/fakeOrders"
 import type { OrderDetail } from "@/domain/entities/order/OrderDetail"
 

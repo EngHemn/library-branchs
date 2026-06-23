@@ -1,9 +1,6 @@
 import { fakeBranches } from "@/data/fake/fakeBranches"
 import { fakeShelfLocationOptions } from "@/data/fake/fakeShelfLocationOptions"
-import {
-  fakeShelfBookCounts,
-  fakeShelfSeeds,
-} from "@/data/fake/fakeShelves"
+import { fakeShelfBookCounts, fakeShelfSeeds } from "@/data/fake/fakeShelves"
 import { fakeBooks } from "@/data/fake/fakeBooks"
 import { fakeShelfBooks as initialFakeShelfBooks } from "@/data/fake/fakeShelfBooks"
 import {
@@ -30,9 +27,7 @@ function delay(ms: number): Promise<void> {
   })
 }
 
-function withBookCounts(
-  seeds: Omit<Shelf, "bookCount">[]
-): Shelf[] {
+function withBookCounts(seeds: Omit<Shelf, "bookCount">[]): Shelf[] {
   return seeds.map((seed) => ({
     ...seed,
     bookCount: fakeShelfBookCounts[seed.id] ?? 0,
@@ -320,7 +315,8 @@ export class ShelfManagementFakeDataSource {
     if (duplicate) {
       return {
         success: false,
-        error: "Another record already uses this bay and slot for the same book.",
+        error:
+          "Another record already uses this bay and slot for the same book.",
       }
     }
 
@@ -645,7 +641,8 @@ export class ShelfManagementFakeDataSource {
     if (codeExists) {
       return {
         success: false,
-        error: "A shelf already exists at this location in the selected branch.",
+        error:
+          "A shelf already exists at this location in the selected branch.",
       }
     }
 
@@ -696,7 +693,8 @@ export class ShelfManagementFakeDataSource {
     if (codeExists) {
       return {
         success: false,
-        error: "A shelf already exists at this location in the selected branch.",
+        error:
+          "A shelf already exists at this location in the selected branch.",
       }
     }
 

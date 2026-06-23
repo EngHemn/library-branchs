@@ -47,10 +47,7 @@ export class NeedManagementUseCase {
     return this.needRepository.deleteNeed(id)
   }
 
-  approveNeed(
-    id: string,
-    performedBy: string
-  ): Promise<Result<NeedDetail>> {
+  approveNeed(id: string, performedBy: string): Promise<Result<NeedDetail>> {
     return this.needRepository.approveNeed(id, performedBy)
   }
 

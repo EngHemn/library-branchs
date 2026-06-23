@@ -2,7 +2,11 @@
 
 import type { TranslatorDetail } from "@/domain/entities/translator/TranslatorDetail"
 
-export type TranslatorDetailStatus = "loading" | "loaded" | "not-found" | "error"
+export type TranslatorDetailStatus =
+  | "loading"
+  | "loaded"
+  | "not-found"
+  | "error"
 
 export type TranslatorDetailViewModelState = {
   status: TranslatorDetailStatus

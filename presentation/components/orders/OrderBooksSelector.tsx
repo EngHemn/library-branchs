@@ -89,7 +89,9 @@ export function OrderBooksSelector({
                 <Checkbox
                   checked={isChecked}
                   disabled={disabled}
-                  onCheckedChange={(checked) => toggleBook(book.id, checked === true)}
+                  onCheckedChange={(checked) =>
+                    toggleBook(book.id, checked === true)
+                  }
                 />
                 <span className="min-w-0 flex-1">
                   <span className="block font-medium">{book.title}</span>
@@ -129,7 +131,9 @@ export function OrderBooksSelector({
 
       <div className="flex items-center justify-between text-xs text-muted-foreground">
         <span>
-          {t("orders.booksSelector.selected", { count: selectedBookIds.length })}
+          {t("orders.booksSelector.selected", {
+            count: selectedBookIds.length,
+          })}
           {hasSearchQuery && filteredBooks.length > 0
             ? ` · ${t("orders.booksSelector.shown", { count: filteredBooks.length })}`
             : ""}

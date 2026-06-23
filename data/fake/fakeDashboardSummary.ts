@@ -525,14 +525,14 @@ export const fakeDashboardSummary: DashboardSummary = {
     {
       id: "act-003",
       title: "Book returned",
-      description: "\"Refactoring\" was returned by Fatima Al-Zahra.",
+      description: '"Refactoring" was returned by Fatima Al-Zahra.',
       time: "34 min ago",
       tone: "success",
     },
     {
       id: "act-004",
       title: "Stock alert triggered",
-      description: "\"The Phoenix Project\" dropped to 0 available copies.",
+      description: '"The Phoenix Project" dropped to 0 available copies.',
       time: "52 min ago",
       tone: "warning",
     },
@@ -557,7 +557,12 @@ export const fakeDashboardSummary: DashboardSummary = {
     { key: "reserved", label: "Reserved", value: 184, color: "var(--chart-2)" },
     { key: "returned", label: "Returned", value: 267, color: "var(--chart-3)" },
     { key: "overdue", label: "Overdue", value: 48, color: "var(--chart-4)" },
-    { key: "cancelled", label: "Cancelled", value: 81, color: "var(--chart-5)" },
+    {
+      key: "cancelled",
+      label: "Cancelled",
+      value: 81,
+      color: "var(--chart-5)",
+    },
   ],
 
   bookingsByType: [
@@ -566,18 +571,58 @@ export const fakeDashboardSummary: DashboardSummary = {
   ],
 
   booksByStatus: [
-    { key: "available", label: "Available", value: 8640, color: "var(--chart-1)" },
-    { key: "borrowed", label: "Borrowed", value: 3920, color: "var(--chart-2)" },
-    { key: "reserved", label: "Reserved", value: 1140, color: "var(--chart-3)" },
-    { key: "unavailable", label: "Unavailable", value: 682, color: "var(--chart-4)" },
+    {
+      key: "available",
+      label: "Available",
+      value: 8640,
+      color: "var(--chart-1)",
+    },
+    {
+      key: "borrowed",
+      label: "Borrowed",
+      value: 3920,
+      color: "var(--chart-2)",
+    },
+    {
+      key: "reserved",
+      label: "Reserved",
+      value: 1140,
+      color: "var(--chart-3)",
+    },
+    {
+      key: "unavailable",
+      label: "Unavailable",
+      value: 682,
+      color: "var(--chart-4)",
+    },
   ],
 
   booksByCategory: [
-    { key: "softwareEng", label: "Software Eng.", value: 2140, color: "var(--chart-1)" },
-    { key: "selfDev", label: "Self-Dev.", value: 1830, color: "var(--chart-2)" },
-    { key: "business", label: "Business", value: 1620, color: "var(--chart-3)" },
+    {
+      key: "softwareEng",
+      label: "Software Eng.",
+      value: 2140,
+      color: "var(--chart-1)",
+    },
+    {
+      key: "selfDev",
+      label: "Self-Dev.",
+      value: 1830,
+      color: "var(--chart-2)",
+    },
+    {
+      key: "business",
+      label: "Business",
+      value: 1620,
+      color: "var(--chart-3)",
+    },
     { key: "history", label: "History", value: 1390, color: "var(--chart-4)" },
-    { key: "psychology", label: "Psychology", value: 1210, color: "var(--chart-5)" },
+    {
+      key: "psychology",
+      label: "Psychology",
+      value: 1210,
+      color: "var(--chart-5)",
+    },
     { key: "other", label: "Other", value: 4192, color: "var(--primary)" },
   ],
 
@@ -592,9 +637,19 @@ export const fakeDashboardSummary: DashboardSummary = {
   ],
 
   staffByRole: [
-    { key: "librarian", label: "Librarian", value: 42, color: "var(--chart-1)" },
+    {
+      key: "librarian",
+      label: "Librarian",
+      value: 42,
+      color: "var(--chart-1)",
+    },
     { key: "manager", label: "Manager", value: 14, color: "var(--chart-2)" },
-    { key: "assistant", label: "Assistant", value: 28, color: "var(--chart-3)" },
+    {
+      key: "assistant",
+      label: "Assistant",
+      value: 28,
+      color: "var(--chart-3)",
+    },
     { key: "clerk", label: "Clerk", value: 19, color: "var(--chart-4)" },
     { key: "security", label: "Security", value: 8, color: "var(--chart-5)" },
   ],
@@ -602,9 +657,24 @@ export const fakeDashboardSummary: DashboardSummary = {
   staffByBranch: [
     { key: "central", label: "Central", value: 38, color: "var(--chart-1)" },
     { key: "westEnd", label: "West End", value: 25, color: "var(--chart-2)" },
-    { key: "brookline", label: "Brookline", value: 21, color: "var(--chart-3)" },
-    { key: "northside", label: "Northside", value: 14, color: "var(--chart-4)" },
-    { key: "southGarden", label: "South Garden", value: 8, color: "var(--chart-5)" },
+    {
+      key: "brookline",
+      label: "Brookline",
+      value: 21,
+      color: "var(--chart-3)",
+    },
+    {
+      key: "northside",
+      label: "Northside",
+      value: 14,
+      color: "var(--chart-4)",
+    },
+    {
+      key: "southGarden",
+      label: "South Garden",
+      value: 8,
+      color: "var(--chart-5)",
+    },
     { key: "other", label: "Other", value: 5, color: "var(--primary)" },
   ],
 

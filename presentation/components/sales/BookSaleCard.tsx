@@ -64,7 +64,7 @@ function CartQuantityOverlay({
   return (
     <div
       className={cn(
-        "absolute left-2 top-2 flex items-center gap-0.5 rounded-lg border bg-background/95 px-0.5 shadow-sm backdrop-blur-sm",
+        "absolute top-2 left-2 flex items-center gap-0.5 rounded-lg border bg-background/95 px-0.5 shadow-sm backdrop-blur-sm",
         className
       )}
       onClick={handleClick}
@@ -135,11 +135,13 @@ function BookDetailDialog({
             sizes="(max-width: 640px) 100vw, 384px"
             className="size-full bg-muted/50"
             imageClassName="object-cover"
-            fallback={<BookOpenIcon className="size-16 text-muted-foreground/25" />}
+            fallback={
+              <BookOpenIcon className="size-16 text-muted-foreground/25" />
+            }
           />
 
           {hasDiscount ? (
-            <Badge className="absolute right-3 top-3 bg-red-500 text-white hover:bg-red-500">
+            <Badge className="absolute top-3 right-3 bg-red-500 text-white hover:bg-red-500">
               -{book.discount}%
             </Badge>
           ) : null}
@@ -149,7 +151,7 @@ function BookDetailDialog({
               quantity={cartQuantity}
               canAddMore={canAddMore}
               onUpdateQuantity={onUpdateQuantity}
-              className="left-3 top-3"
+              className="top-3 left-3"
             />
           ) : null}
         </div>
@@ -169,7 +171,9 @@ function BookDetailDialog({
 
           <div className="flex flex-col gap-1.5 rounded-lg bg-muted/40 px-4 py-3 text-sm">
             <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">{t("sales.books.stock")}</span>
+              <span className="text-muted-foreground">
+                {t("sales.books.stock")}
+              </span>
               <span
                 className={cn(
                   "font-medium",
@@ -193,7 +197,9 @@ function BookDetailDialog({
             {hasDiscount ? (
               <>
                 <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">{t("sales.books.originalPrice")}</span>
+                  <span className="text-muted-foreground">
+                    {t("sales.books.originalPrice")}
+                  </span>
                   <span className="text-muted-foreground line-through">
                     {formatPrice(book.price)}
                   </span>
@@ -266,7 +272,7 @@ export function BookSaleCard({
         role="button"
         tabIndex={0}
         className={cn(
-          "flex cursor-pointer flex-col overflow-hidden pt-0 transition-all hover:shadow-md hover:ring-1 hover:ring-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+          "flex cursor-pointer flex-col overflow-hidden pt-0 transition-all hover:shadow-md hover:ring-1 hover:ring-border focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
           cartQuantity > 0 && "ring-2 ring-primary/30",
           book.stock === 0 && "opacity-60"
         )}
@@ -286,11 +292,13 @@ export function BookSaleCard({
             sizes="(max-width: 640px) 50vw, 240px"
             className="size-full bg-muted/40"
             imageClassName="object-cover"
-            fallback={<BookOpenIcon className="size-12 text-muted-foreground/25" />}
+            fallback={
+              <BookOpenIcon className="size-12 text-muted-foreground/25" />
+            }
           />
 
           {hasDiscount ? (
-            <Badge className="absolute right-2 top-2 bg-red-500 text-white hover:bg-red-500">
+            <Badge className="absolute top-2 right-2 bg-red-500 text-white hover:bg-red-500">
               -{book.discount}%
             </Badge>
           ) : null}
@@ -306,7 +314,7 @@ export function BookSaleCard({
         </div>
 
         <div className="flex flex-col gap-1.5 p-3">
-          <p className="line-clamp-2 text-sm font-semibold leading-tight">
+          <p className="line-clamp-2 text-sm leading-tight font-semibold">
             {book.title}
           </p>
 
@@ -321,7 +329,9 @@ export function BookSaleCard({
                 </span>
               </>
             ) : (
-              <span className="text-sm font-bold">{formatPrice(book.price)}</span>
+              <span className="text-sm font-bold">
+                {formatPrice(book.price)}
+              </span>
             )}
           </div>
         </div>

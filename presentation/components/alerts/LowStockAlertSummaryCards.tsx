@@ -1,10 +1,6 @@
 "use client"
 
-import {
-  AlertTriangleIcon,
-  BookOpenIcon,
-  PackageXIcon,
-} from "lucide-react"
+import { AlertTriangleIcon, BookOpenIcon, PackageXIcon } from "lucide-react"
 
 import {
   Card,
@@ -29,7 +25,8 @@ const cards = [
     titleKey: "alerts.activeAlerts" as const,
     descriptionKey: "alerts.activeAlertsDesc" as const,
     icon: AlertTriangleIcon,
-    color: "bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400",
+    color:
+      "bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400",
     getValue: (summary: LowStockAlertSummary) => summary.activeAlerts,
   },
   {
@@ -37,7 +34,8 @@ const cards = [
     titleKey: "alerts.lowStockBooks" as const,
     descriptionKey: "alerts.lowStockBooksDesc" as const,
     icon: BookOpenIcon,
-    color: "bg-orange-100 dark:bg-orange-900/40 text-orange-600 dark:text-orange-400",
+    color:
+      "bg-orange-100 dark:bg-orange-900/40 text-orange-600 dark:text-orange-400",
     getValue: (summary: LowStockAlertSummary) => summary.lowStockBooks,
   },
   {
@@ -73,8 +71,8 @@ export function LowStockAlertSummaryCards({
       {cards.map((card) => {
         const Icon = card.icon
         return (
-          <Card key={card.key} className="rounded-lg flex flex-row">
-            <CardHeader className="flex-row items-center  flex-1 gap-3 space-y-0 pb-2">
+          <Card key={card.key} className="flex flex-row rounded-lg">
+            <CardHeader className="flex-1 flex-row items-center gap-3 space-y-0 pb-2">
               <span
                 className={`flex size-9 shrink-0 items-center justify-center rounded-lg ${card.color}`}
               >

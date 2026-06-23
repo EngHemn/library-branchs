@@ -41,7 +41,9 @@ export function DashboardFilters({
   const [inputValue, setInputValue] = useState("")
 
   const allBranchOptions = [
-    ...(allowAllBranches ? [{ value: "all", label: t("dashboard.filters.allBranches") }] : []),
+    ...(allowAllBranches
+      ? [{ value: "all", label: t("dashboard.filters.allBranches") }]
+      : []),
     ...branches.map((b) => ({ value: b.id, label: b.name })),
   ]
 
@@ -61,15 +63,21 @@ export function DashboardFilters({
     onBranchChange(nextValue ?? "all")
   }
 
-  function handleInputValueChange(nextInput: string, eventDetails?: { reason?: string }): void {
+  function handleInputValueChange(
+    nextInput: string,
+    eventDetails?: { reason?: string }
+  ): void {
     setInputValue(nextInput)
     if (
       eventDetails?.reason === "input-change" &&
       selectedBranchId !== "all" &&
       selectedOption &&
-      nextInput.trim().toLowerCase() !== selectedOption.label.trim().toLowerCase()
+      nextInput.trim().toLowerCase() !==
+        selectedOption.label.trim().toLowerCase()
     ) {
-      onBranchChange(allowAllBranches ? "all" : (branches[0]?.id ?? selectedBranchId))
+      onBranchChange(
+        allowAllBranches ? "all" : (branches[0]?.id ?? selectedBranchId)
+      )
     }
   }
 

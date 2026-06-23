@@ -63,7 +63,11 @@ export function useCreateBookingViewModel(
     },
   })
 
-  const { mutate: createBooking, isPending: isSaving, isSuccess: isSaved } = useMutation({
+  const {
+    mutate: createBooking,
+    isPending: isSaving,
+    isSuccess: isSaved,
+  } = useMutation({
     mutationFn: async (_values: BookingFormValues) => {
       return { success: true }
     },

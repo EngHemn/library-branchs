@@ -59,7 +59,9 @@ export function BookingSearchCombobox({
 
   const optionMap = new Map(options.map((o) => [o.value, o]))
   const selectedOption = value ? optionMap.get(value) : undefined
-  const filteredOptions = options.filter((option) => matchesQuery(option, inputValue))
+  const filteredOptions = options.filter((option) =>
+    matchesQuery(option, inputValue)
+  )
 
   const hasSearchQuery = inputValue.trim().length > 0
   const showAddAction =
@@ -81,7 +83,10 @@ export function BookingSearchCombobox({
     setInputValue(selected ? (optionMap.get(selected)?.label ?? "") : "")
   }
 
-  function handleInputValueChange(nextInput: string, eventDetails?: { reason?: string }): void {
+  function handleInputValueChange(
+    nextInput: string,
+    eventDetails?: { reason?: string }
+  ): void {
     setInputValue(nextInput)
 
     // If the user starts typing while something is selected, clear selection.
@@ -89,7 +94,8 @@ export function BookingSearchCombobox({
       eventDetails?.reason === "input-change" &&
       value &&
       selectedOption &&
-      nextInput.trim().toLowerCase() !== selectedOption.label.trim().toLowerCase()
+      nextInput.trim().toLowerCase() !==
+        selectedOption.label.trim().toLowerCase()
     ) {
       onValueChange("")
     }

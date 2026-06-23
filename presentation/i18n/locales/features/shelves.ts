@@ -61,8 +61,7 @@ export const shelves = {
     },
     view: {
       title: "Books by Shelf",
-      description:
-        "View, add, edit, and manage books assigned to this shelf.",
+      description: "View, add, edit, and manage books assigned to this shelf.",
       descriptionWithName:
         "View, add, edit, and manage books assigned to {name}.",
       notFoundTitle: "Shelf not found",
@@ -140,8 +139,7 @@ export const shelves = {
         reviewSave: "Review & Save",
       },
       stepDescriptions: {
-        details:
-          "Enter the shelf name, type, branch, capacity, and status.",
+        details: "Enter the shelf name, type, branch, capacity, and status.",
         location:
           "Choose each location step one by one. Add or remove steps in the Steps tab.",
         review: "Confirm everything before saving.",
@@ -252,15 +250,13 @@ export const shelves = {
       success: "تم تحديث الرف بنجاح.",
       submitButton: "حفظ التغييرات",
       notFoundTitle: "الرف غير موجود",
-      notFoundDescription:
-        "الرف الذي تحاول تعديله غير موجود أو غير متاح.",
+      notFoundDescription: "الرف الذي تحاول تعديله غير موجود أو غير متاح.",
       backToShelves: "العودة إلى الرفوف",
     },
     view: {
       title: "الكتب حسب الرف",
       description: "عرض وإضافة وتعديل وإدارة الكتب المخصصة لهذا الرف.",
-      descriptionWithName:
-        "عرض وإضافة وتعديل وإدارة الكتب المخصصة لـ {name}.",
+      descriptionWithName: "عرض وإضافة وتعديل وإدارة الكتب المخصصة لـ {name}.",
       notFoundTitle: "الرف غير موجود",
       notFoundDescription: "ربما تمت إزالة هذا الرف أو الرابط غير صالح.",
       unavailableTitle: "الرف غير متاح",
@@ -442,7 +438,8 @@ export const shelves = {
     },
     edit: {
       title: "دەستکاری ڕەف",
-      description: "وردەکاری ڕەف نوێ بکەرەوە و ئەگەر پێویست بوو شوێنەکە دووبارە دروست بکەرەوە.",
+      description:
+        "وردەکاری ڕەف نوێ بکەرەوە و ئەگەر پێویست بوو شوێنەکە دووبارە دروست بکەرەوە.",
       success: "ڕەف بە سەرکەوتوویی نوێکرایەوە.",
       submitButton: "پاشەکەوتکردنی گۆڕانکارییەکان",
       notFoundTitle: "ڕەف نەدۆزرایەوە",
@@ -457,8 +454,7 @@ export const shelves = {
       descriptionWithName:
         "کتێبە دیاریکراوەکان بۆ {name} ببینە، زیادیان بکە، دەستکاری بکە و بەڕێوەیان ببە.",
       notFoundTitle: "ڕەف نەدۆزرایەوە",
-      notFoundDescription:
-        "ڕەفەکە لابراوە یان بەستەرەکە نادروستە.",
+      notFoundDescription: "ڕەفەکە لابراوە یان بەستەرەکە نادروستە.",
       unavailableTitle: "ڕەف بەردەست نییە",
       backToShelves: "گەڕانەوە بۆ ڕەفەکان",
       addBook: "زیادکردنی کتێب",
@@ -510,8 +506,7 @@ export const shelves = {
       emptyDescription: "فلتەرەکان بگۆڕە یان پاکیان بکەرەوە.",
     },
     booksFilters: {
-      searchPlaceholder:
-        "گەڕان بە ناونیشان، نووسەر، ISBN، پۆل، یان شوێن...",
+      searchPlaceholder: "گەڕان بە ناونیشان، نووسەر، ISBN، پۆل، یان شوێن...",
       allCategories: "هەموو پۆلەکان",
       allLanguages: "هەموو زمانەکان",
     },

@@ -40,7 +40,9 @@ function toAsyncStatus(
 
 export function useSalesData(salesUseCase: SalesUseCase): SalesDataResult {
   const queryClient = useQueryClient()
-  const [displayedBranchId, setDisplayedBranchId] = useState<string | null>(null)
+  const [displayedBranchId, setDisplayedBranchId] = useState<string | null>(
+    null
+  )
   const [saleResult, setSaleResult] = useState<Sale | null>(null)
   const [saleError, setSaleError] = useState<string | null>(null)
 

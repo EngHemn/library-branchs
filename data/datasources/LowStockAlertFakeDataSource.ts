@@ -1,6 +1,9 @@
 import { fakeStockRows } from "@/data/fake/fakeStock"
 import { dispatchFakeNotification } from "@/data/fake/fakeNotifications"
-import type { LowStockAlert, LowStockAlertSummary } from "@/domain/entities/alert/LowStockAlert"
+import type {
+  LowStockAlert,
+  LowStockAlertSummary,
+} from "@/domain/entities/alert/LowStockAlert"
 import {
   buildLowStockAlertId,
   computeLowStockAlertSummary,
@@ -24,7 +27,10 @@ export class LowStockAlertFakeDataSource {
     )
 
     return alerts.filter((alert) => {
-      if (alert.status === "resolved" && !this.manuallyResolvedIds.has(alert.id)) {
+      if (
+        alert.status === "resolved" &&
+        !this.manuallyResolvedIds.has(alert.id)
+      ) {
         return false
       }
       return true
@@ -88,11 +94,17 @@ export class LowStockAlertFakeDataSource {
     return { success: true, data: resolved }
   }
 
-  async restock(alertId: string, quantity: number): Promise<Result<LowStockAlert>> {
+  async restock(
+    alertId: string,
+    quantity: number
+  ): Promise<Result<LowStockAlert>> {
     await delay(350)
 
     if (quantity <= 0) {
-      return { success: false, error: "Restock quantity must be greater than zero." }
+      return {
+        success: false,
+        error: "Restock quantity must be greater than zero.",
+      }
     }
 
     const alerts = this.computeAlerts()
@@ -102,7 +114,9 @@ export class LowStockAlertFakeDataSource {
       return { success: false, error: `Alert ${alertId} not found` }
     }
 
-    const stockIndex = this.stockRows.findIndex((row) => row.id === alert.stockId)
+    const stockIndex = this.stockRows.findIndex(
+      (row) => row.id === alert.stockId
+    )
 
     if (stockIndex === -1) {
       return { success: false, error: "Stock record not found." }
@@ -137,7 +151,8 @@ export class LowStockAlertFakeDataSource {
         currentStock: newAvailable,
         shortageQuantity: Math.max(0, alert.minimumStock - newAvailable),
         status: newAvailable > alert.minimumStock ? "resolved" : "active",
-        resolvedAt: newAvailable > alert.minimumStock ? new Date().toISOString() : null,
+        resolvedAt:
+          newAvailable > alert.minimumStock ? new Date().toISOString() : null,
       } as LowStockAlert)
 
     return { success: true, data: updated }

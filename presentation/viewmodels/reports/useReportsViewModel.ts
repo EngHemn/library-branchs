@@ -48,7 +48,10 @@ const allDashboardBranches = fakeBranches.map((branch) => ({
   name: branch.branchName,
 }))
 
-function getDateRangeForPeriod(period: ReportPeriod): { dateFrom: string; dateTo: string } {
+function getDateRangeForPeriod(period: ReportPeriod): {
+  dateFrom: string
+  dateTo: string
+} {
   const to = new Date()
   let from = new Date()
   switch (period) {
@@ -65,18 +68,29 @@ function getDateRangeForPeriod(period: ReportPeriod): { dateFrom: string; dateTo
       from = startOfYear(to)
       break
   }
-  return { dateFrom: format(from, "yyyy-MM-dd"), dateTo: format(to, "yyyy-MM-dd") }
+  return {
+    dateFrom: format(from, "yyyy-MM-dd"),
+    dateTo: format(to, "yyyy-MM-dd"),
+  }
 }
 
 function filterKpis(kpis: ReportKpi[], category: ReportCategory): ReportKpi[] {
   return kpis.filter((kpi) => kpi.category === category)
 }
 
-function filterCharts(charts: ReportChart[], category: ReportCategory): ReportChart[] {
-  return charts.filter((chart) => chart.category === category).slice(0, REPORT_CHARTS_PER_TAB)
+function filterCharts(
+  charts: ReportChart[],
+  category: ReportCategory
+): ReportChart[] {
+  return charts
+    .filter((chart) => chart.category === category)
+    .slice(0, REPORT_CHARTS_PER_TAB)
 }
 
-function filterTables(tables: ReportTable[], category: ReportCategory): ReportTable[] {
+function filterTables(
+  tables: ReportTable[],
+  category: ReportCategory
+): ReportTable[] {
   if (category !== "overview") return []
   return tables.filter((table) => table.category === "overview")
 }
@@ -164,7 +178,9 @@ export function useReportsViewModel(
   const user = userQuery.data ?? null
   const userBranchId = user ? resolveUserBranchId(user) : ""
   const isSingleBranchScoped = user ? isBranchScopedDashboardUser(user) : false
-  const branchScope = user ? getDashboardBranchScope(user, allDashboardBranches) : null
+  const branchScope = user
+    ? getDashboardBranchScope(user, allDashboardBranches)
+    : null
   const showBranchFilter = !isSingleBranchScoped
   const branchFilterOptions = user ? getBranchFilterOptions(user, t) : []
 
@@ -177,9 +193,16 @@ export function useReportsViewModel(
     }
 
     setBranchIdState((current) =>
-      isBranchSelectionValid(current, branchScope, userBranchId) ? current : "current"
+      isBranchSelectionValid(current, branchScope, userBranchId)
+        ? current
+        : "current"
     )
-  }, [user, userBranchId, isSingleBranchScoped, branchScope?.branchIds.join(",")])
+  }, [
+    user,
+    userBranchId,
+    isSingleBranchScoped,
+    branchScope?.branchIds.join(","),
+  ])
 
   const effectiveBranchId = user
     ? resolveEffectiveBranchId(branchId, user, userBranchId)
@@ -187,9 +210,21 @@ export function useReportsViewModel(
       ? "all"
       : branchId
 
-  const query: ReportsQuery = { period, branchId: effectiveBranchId, dateFrom, dateTo }
+  const query: ReportsQuery = {
+    period,
+    branchId: effectiveBranchId,
+    dateFrom,
+    dateTo,
+  }
 
-  const { data: reports, isPending, isFetching, isError, error, refetch } = useQuery({
+  const {
+    data: reports,
+    isPending,
+    isFetching,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
     queryKey: ["reports", query, user?.branchType, userBranchId],
     queryFn: async () => {
       const result = await getReportsUseCase.getReports(query)
@@ -215,7 +250,11 @@ export function useReportsViewModel(
 
   function setBranchId(nextBranchId: ReportBranchFilter): void {
     if (isSingleBranchScoped) return
-    if (branchScope && !isBranchSelectionValid(nextBranchId, branchScope, userBranchId)) return
+    if (
+      branchScope &&
+      !isBranchSelectionValid(nextBranchId, branchScope, userBranchId)
+    )
+      return
     setBranchIdState(nextBranchId)
   }
 
@@ -233,8 +272,7 @@ export function useReportsViewModel(
     error:
       (userQuery.isError && userQuery.error instanceof Error
         ? userQuery.error.message
-        : null) ??
-      (isError && error instanceof Error ? error.message : null),
+        : null) ?? (isError && error instanceof Error ? error.message : null),
     period,
     branchId,
     dateFrom,
@@ -250,5 +288,13 @@ export function useReportsViewModel(
     tables,
   }
 
-  return { state, setPeriod, setBranchId, setDateFrom, setDateTo, setCategory, reload }
+  return {
+    state,
+    setPeriod,
+    setBranchId,
+    setDateFrom,
+    setDateTo,
+    setCategory,
+    reload,
+  }
 }

@@ -16,7 +16,10 @@ import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { BranchManagementUseCase } from "@/domain/usecases/branch/BranchManagementUseCase"
 import type { MemberManagementUseCase } from "@/domain/usecases/members/MemberManagementUseCase"
 import { resolveUserBranchId } from "@/lib/dashboardBranchScope"
-import type { CreateMemberStatus, CreateMemberViewModelState } from "./CreateMemberViewModelState"
+import type {
+  CreateMemberStatus,
+  CreateMemberViewModelState,
+} from "./CreateMemberViewModelState"
 
 type CreateMemberViewModel = {
   state: CreateMemberViewModelState
@@ -106,22 +109,21 @@ export function useCreateMemberViewModel(
               ? "error"
               : "ready"
 
-  const error =
-    userQuery.isError
-      ? userQuery.error instanceof Error
-        ? userQuery.error.message
-        : String(userQuery.error)
-      : branchesQuery.isError
-        ? branchesQuery.error instanceof Error
-          ? branchesQuery.error.message
-          : String(branchesQuery.error)
-        : userQuery.isSuccess && !user
-          ? "You must be signed in to create a member."
-          : createMutation.isError
-            ? createMutation.error instanceof Error
-              ? createMutation.error.message
-              : String(createMutation.error)
-            : null
+  const error = userQuery.isError
+    ? userQuery.error instanceof Error
+      ? userQuery.error.message
+      : String(userQuery.error)
+    : branchesQuery.isError
+      ? branchesQuery.error instanceof Error
+        ? branchesQuery.error.message
+        : String(branchesQuery.error)
+      : userQuery.isSuccess && !user
+        ? "You must be signed in to create a member."
+        : createMutation.isError
+          ? createMutation.error instanceof Error
+            ? createMutation.error.message
+            : String(createMutation.error)
+          : null
 
   async function save(values: MemberFormValues): Promise<void> {
     await createMutation.mutateAsync(values)

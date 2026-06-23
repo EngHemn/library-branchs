@@ -394,8 +394,12 @@ export function ShelfLocationStepFlow({
       ) : (
         <Tabs defaultValue="select" className="w-full">
           <TabsList className="grid w-full max-w-xl grid-cols-2">
-            <TabsTrigger value="select">{t("shelves.location.select")}</TabsTrigger>
-            <TabsTrigger value="content">{t("shelves.location.content")}</TabsTrigger>
+            <TabsTrigger value="select">
+              {t("shelves.location.select")}
+            </TabsTrigger>
+            <TabsTrigger value="content">
+              {t("shelves.location.content")}
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="select" className="mt-4">
@@ -432,7 +436,9 @@ export function ShelfLocationStepFlow({
         <div className="flex items-start gap-3 rounded-lg border bg-muted/30 p-4">
           <MapPinIcon className="mt-0.5 size-4 shrink-0 text-primary" />
           <div>
-            <p className="text-sm font-medium">{t("shelves.location.locationPreview")}</p>
+            <p className="text-sm font-medium">
+              {t("shelves.location.locationPreview")}
+            </p>
             <p className="text-sm text-muted-foreground">
               {formatShelfLocationParts(completedParts)}
             </p>

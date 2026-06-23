@@ -35,7 +35,7 @@ export function AuthorSummaryCards({ author }: AuthorSummaryCardsProps) {
       className={
         cards.length > 1
           ? "grid gap-4 sm:grid-cols-2"
-          : "grid gap-4 sm:grid-cols-1 max-w-sm"
+          : "grid max-w-sm gap-4 sm:grid-cols-1"
       }
     >
       {cards.map((card) => (
@@ -45,7 +45,9 @@ export function AuthorSummaryCards({ author }: AuthorSummaryCardsProps) {
               <card.icon className="size-5 text-muted-foreground" />
             </div>
             <div className="flex flex-col">
-              <span className="text-xs text-muted-foreground">{card.label}</span>
+              <span className="text-xs text-muted-foreground">
+                {card.label}
+              </span>
               <span className="text-xl font-bold">
                 {card.value.toLocaleString()}
               </span>

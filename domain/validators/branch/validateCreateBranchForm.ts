@@ -88,6 +88,9 @@ export function getCreateBranchFieldErrors(
       input.latitude === null || input.longitude === null
         ? "Branch location is required"
         : null,
-    password: input.password.trim().length < 6 ? "Password must be at least 6 characters" : null,
+    password:
+      input.password.trim().length < 6
+        ? "Password must be at least 6 characters"
+        : null,
   }
 }

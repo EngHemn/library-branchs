@@ -61,7 +61,7 @@ export function BillsFilters({
 
   return (
     <div className="rounded-lg border bg-card p-4">
-      <div className="flex flex-col gap-3 sm:flex-row items-center justify-between sm:items-end">
+      <div className="flex flex-col items-center justify-between gap-3 sm:flex-row sm:items-end">
         <div className="min-w-0 flex-1 space-y-2">
           <Label htmlFor="bills-search">{t("bills.filters.search")}</Label>
           <div className="relative">
@@ -76,10 +76,12 @@ export function BillsFilters({
           </div>
         </div>
 
-        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end sm:shrink-0">
+        <div className="flex flex-col gap-3 sm:shrink-0 sm:flex-row sm:flex-wrap sm:items-end">
           {showBranchFilter ? (
             <div className="space-y-2 sm:w-48">
-              <Label htmlFor="bills-branch-filter">{t("bills.filters.filterByBranch")}</Label>
+              <Label htmlFor="bills-branch-filter">
+                {t("bills.filters.filterByBranch")}
+              </Label>
               <Select value={branchFilter} onValueChange={onBranchFilterChange}>
                 <SelectTrigger id="bills-branch-filter" className="w-full">
                   <SelectValue />
@@ -95,11 +97,15 @@ export function BillsFilters({
             </div>
           ) : null}
 
-          <div className=" sm:w-48">
-            <Label htmlFor="bills-added-by-filter">{t("bills.filters.filterByAddedBy")}</Label>
+          <div className="sm:w-48">
+            <Label htmlFor="bills-added-by-filter">
+              {t("bills.filters.filterByAddedBy")}
+            </Label>
             <Combobox
               value={addedByFilter}
-              onValueChange={(next) => onAddedByFilterChange((next ?? "all") as BillAddedByFilter)}
+              onValueChange={(next) =>
+                onAddedByFilterChange((next ?? "all") as BillAddedByFilter)
+              }
               onInputValueChange={() => undefined}
               filter={null}
             >
@@ -110,7 +116,9 @@ export function BillsFilters({
               />
               <ComboboxContent>
                 <ComboboxList>
-                  <ComboboxItem value="all">{t("bills.filters.allAddedBy")}</ComboboxItem>
+                  <ComboboxItem value="all">
+                    {t("bills.filters.allAddedBy")}
+                  </ComboboxItem>
                   {addedByFilterOptions.map((option) => (
                     <ComboboxItem key={option.value} value={option.value}>
                       {option.label}
@@ -122,7 +130,9 @@ export function BillsFilters({
           </div>
 
           <div className="space-y-2 sm:w-40">
-            <Label htmlFor="bills-date-from">{t("bills.filters.dateFrom")}</Label>
+            <Label htmlFor="bills-date-from">
+              {t("bills.filters.dateFrom")}
+            </Label>
             <Input
               id="bills-date-from"
               type="date"

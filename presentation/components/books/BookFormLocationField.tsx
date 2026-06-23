@@ -69,7 +69,9 @@ export function BookFormLocationField({
     return (
       <div className="space-y-2">
         <Label>{t("books.location.label")}</Label>
-        <p className="text-sm text-muted-foreground">{t("books.location.loading")}</p>
+        <p className="text-sm text-muted-foreground">
+          {t("books.location.loading")}
+        </p>
       </div>
     )
   }

@@ -11,10 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import {
-  DataTable,
-  type DataTableColumn,
-} from "@/components/ui/data-table"
+import { DataTable, type DataTableColumn } from "@/components/ui/data-table"
 import {
   Dialog,
   DialogContent,
@@ -101,18 +98,14 @@ export function LowStockAlertsTable({
       header: t("alerts.columnBookTitle"),
       sortable: true,
       sortValue: (alert) => alert.bookTitle,
-      cell: (alert) => (
-        <span className="font-semibold">{alert.bookTitle}</span>
-      ),
+      cell: (alert) => <span className="font-semibold">{alert.bookTitle}</span>,
     },
     {
       key: "isbn",
       header: t("alerts.columnIsbn"),
       sortable: true,
       sortValue: (alert) => alert.isbn,
-      cell: (alert) => (
-        <span className="font-mono text-xs">{alert.isbn}</span>
-      ),
+      cell: (alert) => <span className="font-mono text-xs">{alert.isbn}</span>,
     },
     ...(showBranchColumn
       ? [
@@ -159,7 +152,7 @@ export function LowStockAlertsTable({
       sortable: true,
       sortValue: (alert) => alert.shortageQuantity,
       cell: (alert) => (
-        <span className="tabular-nums font-medium text-amber-600 dark:text-amber-400">
+        <span className="font-medium text-amber-600 tabular-nums dark:text-amber-400">
           {alert.shortageQuantity.toLocaleString()}
         </span>
       ),
@@ -250,7 +243,9 @@ export function LowStockAlertsTable({
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-2">
-            <Label htmlFor="restock-quantity">{t("alerts.quantityToAdd")}</Label>
+            <Label htmlFor="restock-quantity">
+              {t("alerts.quantityToAdd")}
+            </Label>
             <Input
               id="restock-quantity"
               type="number"
@@ -273,7 +268,9 @@ export function LowStockAlertsTable({
               onClick={() => void handleRestockConfirm()}
               disabled={isRestocking}
             >
-              {isRestocking ? t("alerts.restocking") : t("alerts.confirmRestock")}
+              {isRestocking
+                ? t("alerts.restocking")
+                : t("alerts.confirmRestock")}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -51,7 +51,9 @@ function ChartTooltip({
   if (!item) return null
   return (
     <div className="rounded-md border bg-background px-3 py-2 text-sm shadow-sm">
-      <p className="font-medium">{item.payload.label ?? item.payload.date ?? label}</p>
+      <p className="font-medium">
+        {item.payload.label ?? item.payload.date ?? label}
+      </p>
       <p className="text-muted-foreground">{item.value.toLocaleString()}</p>
     </div>
   )
@@ -68,8 +70,12 @@ export function DashboardOverviewCharts({
     <div className="grid gap-4 lg:grid-cols-2">
       <Card className="rounded-xl">
         <CardHeader className="pb-2">
-          <CardTitle className="text-base">{t("dashboard.charts.bookingsByStatus")}</CardTitle>
-          <CardDescription>{t("dashboard.charts.bookingsByStatusOverview")}</CardDescription>
+          <CardTitle className="text-base">
+            {t("dashboard.charts.bookingsByStatus")}
+          </CardTitle>
+          <CardDescription>
+            {t("dashboard.charts.bookingsByStatusOverview")}
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={200}>
@@ -97,7 +103,10 @@ export function DashboardOverviewCharts({
                 axisLine={false}
                 width={68}
               />
-              <Tooltip cursor={{ fill: "#f9fafb" }} content={<ChartTooltip />} />
+              <Tooltip
+                cursor={{ fill: "#f9fafb" }}
+                content={<ChartTooltip />}
+              />
               <Bar dataKey="value" radius={[0, 4, 4, 0]}>
                 {localizedBookingsByStatus.map((entry, index) => (
                   <Cell key={index} fill={entry.color} />
@@ -110,8 +119,12 @@ export function DashboardOverviewCharts({
 
       <Card className="rounded-xl">
         <CardHeader className="pb-2">
-          <CardTitle className="text-base">{t("dashboard.charts.salesTrend")}</CardTitle>
-          <CardDescription>{t("dashboard.charts.salesTrendDescription")}</CardDescription>
+          <CardTitle className="text-base">
+            {t("dashboard.charts.salesTrend")}
+          </CardTitle>
+          <CardDescription>
+            {t("dashboard.charts.salesTrendDescription")}
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={200}>
@@ -120,9 +133,23 @@ export function DashboardOverviewCharts({
               margin={{ top: 4, right: 4, left: -12, bottom: 0 }}
             >
               <defs>
-                <linearGradient id="overviewSalesGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="var(--chart-2)" stopOpacity={0.25} />
-                  <stop offset="95%" stopColor="var(--chart-2)" stopOpacity={0} />
+                <linearGradient
+                  id="overviewSalesGradient"
+                  x1="0"
+                  y1="0"
+                  x2="0"
+                  y2="1"
+                >
+                  <stop
+                    offset="5%"
+                    stopColor="var(--chart-2)"
+                    stopOpacity={0.25}
+                  />
+                  <stop
+                    offset="95%"
+                    stopColor="var(--chart-2)"
+                    stopOpacity={0}
+                  />
                 </linearGradient>
               </defs>
               <CartesianGrid

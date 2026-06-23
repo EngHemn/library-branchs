@@ -10,7 +10,10 @@ import {
   type TranslatorFormValues,
 } from "@/domain/schemas/translatorFormSchema"
 import type { GetTranslatorsUseCase } from "@/domain/usecases/translators/GetTranslatorsUseCase"
-import type { CreateTranslatorStatus, CreateTranslatorViewModelState } from "./CreateTranslatorViewModelState"
+import type {
+  CreateTranslatorStatus,
+  CreateTranslatorViewModelState,
+} from "./CreateTranslatorViewModelState"
 
 type CreateTranslatorViewModel = {
   state: CreateTranslatorViewModelState
@@ -53,7 +56,11 @@ export function useCreateTranslatorViewModel(
     }
   }
 
-  const status: CreateTranslatorStatus = isSaved ? "saved" : isSaving ? "saving" : "ready"
+  const status: CreateTranslatorStatus = isSaved
+    ? "saved"
+    : isSaving
+      ? "saving"
+      : "ready"
 
   const state: CreateTranslatorViewModelState = {
     status,

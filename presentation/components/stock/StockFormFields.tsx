@@ -98,11 +98,15 @@ export function CreateStockFormFields({
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder={t("stock.form.noSubBranch")} />
+                        <SelectValue
+                          placeholder={t("stock.form.noSubBranch")}
+                        />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="none">{t("stock.form.noSubBranch")}</SelectItem>
+                      <SelectItem value="none">
+                        {t("stock.form.noSubBranch")}
+                      </SelectItem>
                       {subBranches.map((subBranch) => (
                         <SelectItem key={subBranch.id} value={subBranch.id}>
                           {subBranch.name}

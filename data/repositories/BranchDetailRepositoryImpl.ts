@@ -10,9 +10,7 @@ import type { BranchDetailRepository } from "@/domain/repositories/BranchDetailR
 import type { Result } from "@/domain/result/Result"
 
 export class BranchDetailRepositoryImpl implements BranchDetailRepository {
-  constructor(
-    private readonly dataSource: BranchDetailFakeDataSource
-  ) {}
+  constructor(private readonly dataSource: BranchDetailFakeDataSource) {}
 
   getBranchDetail(branchId: string): Promise<Result<BranchDetail | null>> {
     return this.dataSource.getBranchDetail(branchId)

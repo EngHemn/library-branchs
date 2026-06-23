@@ -36,10 +36,7 @@ type SalesHistoryFiltersProps = {
 
 const STATUS_FILTER_VALUES = new Set<string>(["all", "completed", "voided"])
 
-const STATUS_OPTION_KEYS: Record<
-  SalesHistoryStatusFilter,
-  TranslationKey
-> = {
+const STATUS_OPTION_KEYS: Record<SalesHistoryStatusFilter, TranslationKey> = {
   all: "sales.history.allStatus",
   completed: "sales.statuses.completed",
   voided: "sales.statuses.voided",
@@ -66,7 +63,11 @@ export function SalesHistoryFilters({
   onDateToChange,
 }: SalesHistoryFiltersProps) {
   const { t } = useTranslation()
-  const statusOptions: SalesHistoryStatusFilter[] = ["all", "completed", "voided"]
+  const statusOptions: SalesHistoryStatusFilter[] = [
+    "all",
+    "completed",
+    "voided",
+  ]
 
   return (
     <div className="flex flex-col gap-3 lg:flex-row lg:items-end">
@@ -112,7 +113,10 @@ export function SalesHistoryFilters({
               {t("sales.history.filterByBranch")}
             </Label>
             <Select value={branchFilter} onValueChange={onBranchFilterChange}>
-              <SelectTrigger id="sales-history-branch-filter" className="w-full">
+              <SelectTrigger
+                id="sales-history-branch-filter"
+                className="w-full"
+              >
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -127,20 +131,22 @@ export function SalesHistoryFilters({
         ) : null}
 
         <div className="space-y-2">
-          <Label htmlFor="sales-history-date-from">{t("sales.history.dateFrom")}</Label>
+          <Label htmlFor="sales-history-date-from">
+            {t("sales.history.dateFrom")}
+          </Label>
           <Input
             id="sales-history-date-from"
             type="date"
             value={dateFrom ?? ""}
             max={dateTo ?? undefined}
-            onChange={(event) =>
-              onDateFromChange(event.target.value || null)
-            }
+            onChange={(event) => onDateFromChange(event.target.value || null)}
           />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="sales-history-date-to">{t("sales.history.dateTo")}</Label>
+          <Label htmlFor="sales-history-date-to">
+            {t("sales.history.dateTo")}
+          </Label>
           <Input
             id="sales-history-date-to"
             type="date"

@@ -2,7 +2,12 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { ArrowRightLeft, PackageIcon, PlusIcon, WarehouseIcon } from "lucide-react"
+import {
+  ArrowRightLeft,
+  PackageIcon,
+  PlusIcon,
+  WarehouseIcon,
+} from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -54,7 +59,9 @@ function LoadingStockManagementPage() {
   )
 }
 
-export function StockManagementScreen({ viewModel }: StockManagementScreenProps) {
+export function StockManagementScreen({
+  viewModel,
+}: StockManagementScreenProps) {
   const router = useRouter()
   const { t } = useTranslation()
   const { state } = viewModel
@@ -75,7 +82,8 @@ export function StockManagementScreen({ viewModel }: StockManagementScreenProps)
     viewModel.openReduceStockDialog(row)
   }
 
-  const isLoading = state.stockStatus === "idle" || state.stockStatus === "loading"
+  const isLoading =
+    state.stockStatus === "idle" || state.stockStatus === "loading"
   const isHistoryLoading =
     state.movementsStatus === "idle" || state.movementsStatus === "loading"
   const isReady = state.stockStatus === "success"
@@ -94,7 +102,9 @@ export function StockManagementScreen({ viewModel }: StockManagementScreenProps)
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button onClick={() => viewModel.reload()}>{t("common.retry")}</Button>
+              <Button onClick={() => viewModel.reload()}>
+                {t("common.retry")}
+              </Button>
             </CardContent>
           </Card>
         </div>
@@ -142,7 +152,8 @@ export function StockManagementScreen({ viewModel }: StockManagementScreenProps)
               <StockSummaryCards
                 summary={state.summary}
                 isLoading={
-                  state.summaryStatus === "idle" || state.summaryStatus === "loading"
+                  state.summaryStatus === "idle" ||
+                  state.summaryStatus === "loading"
                 }
               />
               <StockFilters
@@ -168,7 +179,9 @@ export function StockManagementScreen({ viewModel }: StockManagementScreenProps)
                 onAddStock={handleAddStock}
                 onReduceStock={handleReduceStock}
                 onTransfer={(row) => viewModel.openTransferDialog(row)}
-                onEditStock={(row) => router.push(`/dashboard/stock/${row.id}/edit`)}
+                onEditStock={(row) =>
+                  router.push(`/dashboard/stock/${row.id}/edit`)
+                }
                 showSubBranchColumn={state.showSubBranchColumn}
                 showStockGroupAccordion={state.showStockGroupAccordion}
               />
@@ -178,13 +191,19 @@ export function StockManagementScreen({ viewModel }: StockManagementScreenProps)
               {state.movementsStatus === "error" ? (
                 <Card className="rounded-lg">
                   <CardHeader>
-                    <CardTitle>{t("stock.movementHistoryUnavailable")}</CardTitle>
+                    <CardTitle>
+                      {t("stock.movementHistoryUnavailable")}
+                    </CardTitle>
                     <CardDescription>
-                      {state.movementsError ?? t("stock.movementHistoryLoadError")}
+                      {state.movementsError ??
+                        t("stock.movementHistoryLoadError")}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <Button variant="outline" onClick={() => viewModel.reload()}>
+                    <Button
+                      variant="outline"
+                      onClick={() => viewModel.reload()}
+                    >
                       {t("common.retry")}
                     </Button>
                   </CardContent>
@@ -239,7 +258,13 @@ export function StockManagementScreen({ viewModel }: StockManagementScreenProps)
         error={state.submitError}
         onClose={viewModel.closeDialogs}
         onSubmit={(bookId, fromBranchId, toBranchId, quantity, notes) => {
-          void viewModel.transferStock({ bookId, fromBranchId, toBranchId, quantity, notes })
+          void viewModel.transferStock({
+            bookId,
+            fromBranchId,
+            toBranchId,
+            quantity,
+            notes,
+          })
         }}
       />
     </>

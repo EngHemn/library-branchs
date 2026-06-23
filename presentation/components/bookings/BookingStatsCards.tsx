@@ -86,9 +86,9 @@ export function BookingStatsCards({ stats }: BookingStatsCardsProps) {
             className="flex flex-row items-center gap-3 rounded-lg p-4 shadow-sm"
           >
             <div
-              className={`flex xl:size-10 size-6 shrink-0 items-center justify-center rounded-full ${card.className}`}
+              className={`flex size-6 shrink-0 items-center justify-center rounded-full xl:size-10 ${card.className}`}
             >
-              <Icon className=" xl:size-4 size-2" />
+              <Icon className="size-2 xl:size-4" />
             </div>
             <div className="flex min-w-0 flex-col">
               <span className="truncate text-xs font-medium tracking-wide text-muted-foreground uppercase">

@@ -8,10 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import {
-  DataTable,
-  type DataTableColumn,
-} from "@/components/ui/data-table"
+import { DataTable, type DataTableColumn } from "@/components/ui/data-table"
 import type { BookStatus } from "@/domain/entities/book/Book"
 import type { TranslatorBookItem } from "@/domain/entities/translator/TranslatorDetail"
 import { useTranslation } from "@/presentation/i18n/useTranslation"
@@ -53,7 +50,10 @@ export function TranslatorBooksTable({
   const bookStatusLabel = (status: BookStatus) =>
     t(`translators.books.statuses.${status}`)
 
-  const columns: DataTableColumn<TranslatorBookItem, TranslatorBookColumnKey>[] = [
+  const columns: DataTableColumn<
+    TranslatorBookItem,
+    TranslatorBookColumnKey
+  >[] = [
     {
       key: "title",
       header: t("translators.books.title"),

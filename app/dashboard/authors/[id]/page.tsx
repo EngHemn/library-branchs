@@ -22,5 +22,7 @@ const getAuthorsUseCase = new GetAuthorsUseCase(authorManagementRepository)
 export default function ViewAuthorPage({ params }: ViewAuthorPageProps) {
   const { id } = use(params)
 
-  return <ViewAuthorScreen authorId={id} getAuthorsUseCase={getAuthorsUseCase} />
+  return (
+    <ViewAuthorScreen authorId={id} getAuthorsUseCase={getAuthorsUseCase} />
+  )
 }

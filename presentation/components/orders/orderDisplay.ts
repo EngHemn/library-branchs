@@ -22,12 +22,18 @@ export function toOrderDateInputValue(value: string): string {
   return `${year}-${month}-${day}`
 }
 
-export function toOrderDateTime(dateValue: string, existingDate?: string): string {
+export function toOrderDateTime(
+  dateValue: string,
+  existingDate?: string
+): string {
   if (/^\d{4}-\d{2}-\d{2}T/.test(dateValue)) {
     return dateValue
   }
 
-  if (existingDate && /^\d{4}-\d{2}-\d{2}T(\d{2}:\d{2}:\d{2})/.test(existingDate)) {
+  if (
+    existingDate &&
+    /^\d{4}-\d{2}-\d{2}T(\d{2}:\d{2}:\d{2})/.test(existingDate)
+  ) {
     return `${dateValue}T${existingDate.split("T")[1]}`
   }
 

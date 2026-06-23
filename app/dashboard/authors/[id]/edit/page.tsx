@@ -22,5 +22,7 @@ const getAuthorsUseCase = new GetAuthorsUseCase(authorManagementRepository)
 export default function EditAuthorPage({ params }: EditAuthorPageProps) {
   const { id } = use(params)
 
-  return <EditAuthorScreen authorId={id} getAuthorsUseCase={getAuthorsUseCase} />
+  return (
+    <EditAuthorScreen authorId={id} getAuthorsUseCase={getAuthorsUseCase} />
+  )
 }

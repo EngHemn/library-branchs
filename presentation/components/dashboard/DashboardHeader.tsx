@@ -35,11 +35,19 @@ export function DashboardHeader() {
                   {index > 0 && (
                     <BreadcrumbSeparator className="hidden md:block" />
                   )}
-                  <BreadcrumbItem className={index < breadcrumbs.length - 1 ? "hidden md:block" : undefined}>
+                  <BreadcrumbItem
+                    className={
+                      index < breadcrumbs.length - 1
+                        ? "hidden md:block"
+                        : undefined
+                    }
+                  >
                     {isLast ? (
                       <BreadcrumbPage>{item.label}</BreadcrumbPage>
                     ) : (
-                      <BreadcrumbLink href={item.href ?? "#"}>{item.label}</BreadcrumbLink>
+                      <BreadcrumbLink href={item.href ?? "#"}>
+                        {item.label}
+                      </BreadcrumbLink>
                     )}
                   </BreadcrumbItem>
                 </span>

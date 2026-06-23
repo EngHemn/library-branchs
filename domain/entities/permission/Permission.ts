@@ -5,10 +5,7 @@ export type PermissionCategory = {
   permissions: PermissionCode[]
 }
 
-export type PermissionStaffRole =
-  | "branch_admin"
-  | "sub_branch_admin"
-  | "staff"
+export type PermissionStaffRole = "branch_admin" | "sub_branch_admin" | "staff"
 
 export const PERMISSION_ROLE_LABELS: Record<PermissionStaffRole, string> = {
   branch_admin: "Branch Admin",

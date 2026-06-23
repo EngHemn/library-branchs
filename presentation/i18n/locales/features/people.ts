@@ -492,7 +492,8 @@ export const bookings = {
       returnDate: "تاريخ الإرجاع",
       status: "الحالة",
       actions: "الإجراءات",
-      emptyDescription: "لم يتم العثور على حجوزات. جرّب تغيير عوامل التصفية أو مسحها.",
+      emptyDescription:
+        "لم يتم العثور على حجوزات. جرّب تغيير عوامل التصفية أو مسحها.",
       noReturnDate: "—",
     },
     actions: {
@@ -735,11 +736,13 @@ export const branches = {
     },
     actions: {
       mainApprovedTitle: "Main branch request approved",
-      mainApprovedDescription: "{name} was created and removed from the pending queue.",
+      mainApprovedDescription:
+        "{name} was created and removed from the pending queue.",
       mainRejectedTitle: "Main branch request rejected",
       subApprovedTitle: "Sub branch request approved",
       subRejectedTitle: "Sub branch request rejected",
-      rejectedWithMessage: "The request was rejected and your message was sent to the requester.",
+      rejectedWithMessage:
+        "The request was rejected and your message was sent to the requester.",
       rejectedWithoutMessage: "The request was removed from the pending queue.",
       requestActionUnavailable: "Request action unavailable",
       replySentTitle: "Reply sent",
@@ -870,7 +873,8 @@ export const branches = {
       deleteTranslator: "Delete Translator",
       deleteStaff: "Delete Staff Member",
       deleteMember: "Delete Member",
-      deleteConfirm: 'Are you sure you want to delete "{name}"? This action cannot be undone.',
+      deleteConfirm:
+        'Are you sure you want to delete "{name}"? This action cannot be undone.',
     },
     location: {
       title: "Branch Location",
@@ -884,7 +888,8 @@ export const branches = {
       noLocationFound: "No location found for that address.",
       searchFailed: "Location search failed. Please try again.",
       noLocationSet: "No location set",
-      noLocationDescription: "This branch does not have a map location assigned yet.",
+      noLocationDescription:
+        "This branch does not have a map location assigned yet.",
       addressDetails: "Address Details",
     },
     detail: {
@@ -1067,8 +1072,7 @@ export const branches = {
     approveDialog: {
       titleMain: "الموافقة على طلب فرع رئيسي",
       titleSub: "الموافقة على طلب فرع فرعي",
-      description:
-        "إنشاء الفرع لـ {name} ({id}) وإزالته من قائمة الانتظار.",
+      description: "إنشاء الفرع لـ {name} ({id}) وإزالته من قائمة الانتظار.",
       admin: "المسؤول:",
       address: "العنوان:",
       notProvided: "غير مُقدَّم",
@@ -1147,8 +1151,7 @@ export const branches = {
       subtitle: "تحديث تفاصيل {name}",
       breadcrumb: "تعديل الفرع",
       notFoundTitle: "الفرع غير موجود",
-      notFoundDescription:
-        "الفرع الذي تبحث عنه غير موجود أو تمت إزالته.",
+      notFoundDescription: "الفرع الذي تبحث عنه غير موجود أو تمت إزالته.",
       backToBranches: "العودة إلى الفروع",
       detailsTitle: "تفاصيل الفرع",
       detailsDescription: "تحديث معلومات الفرع الفرعي.",
@@ -1162,8 +1165,7 @@ export const branches = {
     view: {
       breadcrumb: "تفاصيل الفرع",
       notFoundTitle: "الفرع غير موجود",
-      notFoundDescription:
-        "الفرع الذي تبحث عنه غير موجود أو تمت إزالته.",
+      notFoundDescription: "الفرع الذي تبحث عنه غير موجود أو تمت إزالته.",
       backToBranches: "العودة إلى الفروع",
       subtitle: "عرض وإدارة تفاصيل الفرع والموارد والفريق.",
       tabs: {
@@ -1182,7 +1184,8 @@ export const branches = {
       deleteTranslator: "حذف مترجم",
       deleteStaff: "حذف موظف",
       deleteMember: "حذف عضو",
-      deleteConfirm: 'هل أنت متأكد من حذف "{name}"؟ لا يمكن التراجع عن هذا الإجراء.',
+      deleteConfirm:
+        'هل أنت متأكد من حذف "{name}"؟ لا يمكن التراجع عن هذا الإجراء.',
     },
     location: {
       title: "موقع الفرع",
@@ -1459,8 +1462,7 @@ export const branches = {
       subtitle: "نوێکردنەوەی وردەکارییەکانی {name}",
       breadcrumb: "دەستکاری لق",
       notFoundTitle: "لق نەدۆزرایەوە",
-      notFoundDescription:
-        "ئەو لقەی دەگەڕێیت بۆی بوونی نییە یان سڕاوەتەوە.",
+      notFoundDescription: "ئەو لقەی دەگەڕێیت بۆی بوونی نییە یان سڕاوەتەوە.",
       backToBranches: "گەڕانەوە بۆ لقەکان",
       detailsTitle: "وردەکارییەکانی لق",
       detailsDescription: "نوێکردنەوەی زانیارییەکانی لقی لق.",
@@ -1474,8 +1476,7 @@ export const branches = {
     view: {
       breadcrumb: "وردەکارییەکانی لق",
       notFoundTitle: "لق نەدۆزرایەوە",
-      notFoundDescription:
-        "ئەو لقەی دەگەڕێیت بۆی بوونی نییە یان سڕاوەتەوە.",
+      notFoundDescription: "ئەو لقەی دەگەڕێیت بۆی بوونی نییە یان سڕاوەتەوە.",
       backToBranches: "گەڕانەوە بۆ لقەکان",
       subtitle: "بینین و بەڕێوەبردنی وردەکارییەکانی لق، سەرچاوەکان و تیم.",
       tabs: {

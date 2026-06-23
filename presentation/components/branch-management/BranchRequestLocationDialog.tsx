@@ -68,8 +68,7 @@ export function BranchRequestLocationDialog({
       L.Icon.Default.mergeOptions({
         iconRetinaUrl:
           "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-        iconUrl:
-          "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+        iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
         shadowUrl:
           "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
       })
@@ -78,10 +77,7 @@ export function BranchRequestLocationDialog({
         return
       }
 
-      const center: [number, number] = [
-        location.latitude!,
-        location.longitude!,
-      ]
+      const center: [number, number] = [location.latitude!, location.longitude!]
 
       const map = L.map(mapContainerRef.current, {
         center,
@@ -138,7 +134,9 @@ export function BranchRequestLocationDialog({
                 <DialogTitle>{t("branches.locationDialog.title")}</DialogTitle>
               </div>
               <DialogDescription className="text-left">
-                {t("branches.locationDialog.description", { name: location.branchName })}
+                {t("branches.locationDialog.description", {
+                  name: location.branchName,
+                })}
               </DialogDescription>
             </DialogHeader>
 
@@ -160,10 +158,14 @@ export function BranchRequestLocationDialog({
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label htmlFor="request-address">{t("branches.locationDialog.address")}</Label>
+                  <Label htmlFor="request-address">
+                    {t("branches.locationDialog.address")}
+                  </Label>
                   <Input
                     id="request-address"
-                    value={location.address || t("branches.locationDialog.noAddress")}
+                    value={
+                      location.address || t("branches.locationDialog.noAddress")
+                    }
                     readOnly
                     className="bg-muted/40"
                   />
@@ -171,7 +173,9 @@ export function BranchRequestLocationDialog({
 
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div className="space-y-1.5">
-                    <Label htmlFor="request-latitude">{t("branches.locationDialog.latitude")}</Label>
+                    <Label htmlFor="request-latitude">
+                      {t("branches.locationDialog.latitude")}
+                    </Label>
                     <Input
                       id="request-latitude"
                       value={String(location.latitude)}
@@ -180,7 +184,9 @@ export function BranchRequestLocationDialog({
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <Label htmlFor="request-longitude">{t("branches.locationDialog.longitude")}</Label>
+                    <Label htmlFor="request-longitude">
+                      {t("branches.locationDialog.longitude")}
+                    </Label>
                     <Input
                       id="request-longitude"
                       value={String(location.longitude)}

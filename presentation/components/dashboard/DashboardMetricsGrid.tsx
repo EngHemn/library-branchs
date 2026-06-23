@@ -12,7 +12,12 @@ import {
 } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 
-import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+} from "@/components/ui/card"
 import type {
   DashboardMetric,
   DashboardMetricTrend,
@@ -34,8 +39,10 @@ const metricIconMap: Record<string, LucideIcon> = {
 }
 
 function TrendIcon({ trend }: { trend: DashboardMetricTrend }) {
-  if (trend === "up") return <ArrowUpRightIcon className="size-4 text-emerald-500" />
-  if (trend === "down") return <ArrowDownRightIcon className="size-4 text-rose-500" />
+  if (trend === "up")
+    return <ArrowUpRightIcon className="size-4 text-emerald-500" />
+  if (trend === "down")
+    return <ArrowDownRightIcon className="size-4 text-rose-500" />
   return <MinusIcon className="size-4 text-muted-foreground" />
 }
 
@@ -46,12 +53,17 @@ function trendChangeClass(trend: DashboardMetricTrend): string {
 }
 
 function trendBadgeClass(trend: DashboardMetricTrend): string {
-  if (trend === "up") return "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400"
-  if (trend === "down") return "bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-400"
+  if (trend === "up")
+    return "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400"
+  if (trend === "down")
+    return "bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-400"
   return "bg-muted text-muted-foreground"
 }
 
-const METRIC_LABEL_KEYS: Record<string, { label: TranslationKey; helperText: TranslationKey }> = {
+const METRIC_LABEL_KEYS: Record<
+  string,
+  { label: TranslationKey; helperText: TranslationKey }
+> = {
   "metric-books": {
     label: "dashboard.metrics.metric-books.label",
     helperText: "dashboard.metrics.metric-books.helperText",
@@ -88,25 +100,28 @@ export function DashboardMetricsGrid({ metrics }: DashboardMetricsGridProps) {
         const labelKeys = METRIC_LABEL_KEYS[metric.id]
         return (
           <Card key={metric.id} className="rounded-xl">
-          <CardHeader className="flex items-center justify-between flex-row space-y-0 pb-3">
-            <span className="rounded-md bg-muted p-1.5">
-              <Icon className="size-4 text-muted-foreground" />
-            </span>
-            <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${trendBadgeClass(metric.trend)}`}>
-              {metric.change}
-            </span>
-          </CardHeader>
-        
-          <CardContent className="space-y-3">
-            <div>
-              <CardDescription className="text-xs font-medium uppercase tracking-wide mb-1">
-                {labelKeys ? t(labelKeys.label) : metric.label}
-              </CardDescription>
-              <div className="text-2xl font-bold tracking-tight">{metric.value}</div>
-            </div>
-        
-          </CardContent>
-        </Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+              <span className="rounded-md bg-muted p-1.5">
+                <Icon className="size-4 text-muted-foreground" />
+              </span>
+              <span
+                className={`rounded-full px-2 py-0.5 text-xs font-medium ${trendBadgeClass(metric.trend)}`}
+              >
+                {metric.change}
+              </span>
+            </CardHeader>
+
+            <CardContent className="space-y-3">
+              <div>
+                <CardDescription className="mb-1 text-xs font-medium tracking-wide uppercase">
+                  {labelKeys ? t(labelKeys.label) : metric.label}
+                </CardDescription>
+                <div className="text-2xl font-bold tracking-tight">
+                  {metric.value}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         )
       })}
     </div>

@@ -178,12 +178,20 @@ export function ShelfFormWizard({
             </Button>
 
             {currentStep < 3 ? (
-              <Button type="button" disabled={isSaving} onClick={() => void onNext()}>
+              <Button
+                type="button"
+                disabled={isSaving}
+                onClick={() => void onNext()}
+              >
                 {t("shelves.form.next")}
                 <ArrowRightIcon />
               </Button>
             ) : (
-              <Button type="button" disabled={isSaving} onClick={() => void onSave()}>
+              <Button
+                type="button"
+                disabled={isSaving}
+                onClick={() => void onSave()}
+              >
                 {isSaving ? (
                   <Loader2Icon className="animate-spin" />
                 ) : (

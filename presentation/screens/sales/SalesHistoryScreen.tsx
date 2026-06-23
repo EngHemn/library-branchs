@@ -79,7 +79,9 @@ export function SalesHistoryScreen({
     <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
       <section className="flex flex-col gap-3 pt-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-normal">{t("sales.history.title")}</h1>
+          <h1 className="text-2xl font-semibold tracking-normal">
+            {t("sales.history.title")}
+          </h1>
           <p className="mt-1 text-sm text-muted-foreground">
             {t("sales.history.subtitle")}
           </p>
@@ -91,7 +93,11 @@ export function SalesHistoryScreen({
               {t("sales.history.backToSales")}
             </Link>
           </Button>
-          <Button variant="outline" size="sm" onClick={() => void viewModel.reload()}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => void viewModel.reload()}
+          >
             <RefreshCwIcon />
             {t("common.refresh")}
           </Button>

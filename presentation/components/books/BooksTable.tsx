@@ -17,10 +17,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import {
-  DataTable,
-  type DataTableColumn,
-} from "@/components/ui/data-table"
+import { DataTable, type DataTableColumn } from "@/components/ui/data-table"
 import type { Book } from "@/domain/entities/book/Book"
 import { getAuthorViewHref } from "@/lib/authorLink"
 import { BookActionButton } from "@/presentation/components/books/BookActionButton"
@@ -173,7 +170,8 @@ export function BooksTable({
       sortable: true,
       sortValue: (book) => book.price,
       headerClassName: "text-center",
-      className: "min-w-[5.5rem] shrink-0 text-center text-sm tabular-nums whitespace-nowrap",
+      className:
+        "min-w-[5.5rem] shrink-0 text-center text-sm tabular-nums whitespace-nowrap",
       cell: (book) => formatPrice(book.price),
     },
     {
@@ -217,7 +215,9 @@ export function BooksTable({
       <CardHeader>
         <CardTitle>{t("books.table.title")}</CardTitle>
         <CardDescription>
-          {t("books.table.recordCount", { count: books.length.toLocaleString() })}
+          {t("books.table.recordCount", {
+            count: books.length.toLocaleString(),
+          })}
         </CardDescription>
       </CardHeader>
       <CardContent className="overflow-x-auto">

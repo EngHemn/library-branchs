@@ -131,7 +131,10 @@ export function useCreateNeedViewModel(
             ? "error"
             : "idle"
 
-  async function persist(values: NeedFormValues, submitAs: "draft" | "pending") {
+  async function persist(
+    values: NeedFormValues,
+    submitAs: "draft" | "pending"
+  ) {
     setError(null)
     await createMutation.mutateAsync({ values, submitAs })
   }
@@ -139,7 +142,11 @@ export function useCreateNeedViewModel(
   return {
     state: {
       status,
-      error: error ?? userQuery.error?.message ?? optionsQuery.error?.message ?? null,
+      error:
+        error ??
+        userQuery.error?.message ??
+        optionsQuery.error?.message ??
+        null,
       isLoading,
       isReady,
       isSaving: createMutation.isPending,

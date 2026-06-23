@@ -48,7 +48,11 @@ export function GroupDeleteDialog({
           <Button variant="outline" onClick={onClose} disabled={isDeleting}>
             {t("common.cancel")}
           </Button>
-          <Button variant="destructive" onClick={onConfirm} disabled={isDeleting}>
+          <Button
+            variant="destructive"
+            onClick={onConfirm}
+            disabled={isDeleting}
+          >
             {isDeleting ? <Loader2Icon className="animate-spin" /> : null}
             {isDeleting
               ? t("groups.deleteDialog.deleting")

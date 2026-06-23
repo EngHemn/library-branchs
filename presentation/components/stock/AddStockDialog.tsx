@@ -72,7 +72,9 @@ export function AddStockDialog({
             ) : (
               <Plus className="h-5 w-5 text-emerald-600" />
             )}
-            {isReduce ? t("stock.addDialog.reduceTitle") : t("stock.addDialog.addTitle")}
+            {isReduce
+              ? t("stock.addDialog.reduceTitle")
+              : t("stock.addDialog.addTitle")}
           </DialogTitle>
           <DialogDescription>
             {isReduce
@@ -85,13 +87,17 @@ export function AddStockDialog({
           <div className="space-y-4">
             <div className="rounded-xl border border-slate-100 bg-slate-50 p-3">
               <p className="text-xs text-slate-500">{t("stock.table.book")}</p>
-              <p className="font-semibold text-slate-900">{stockRow.bookTitle}</p>
+              <p className="font-semibold text-slate-900">
+                {stockRow.bookTitle}
+              </p>
               <p className="text-xs text-slate-400">{stockRow.isbn}</p>
             </div>
 
             <div className="grid grid-cols-3 gap-3 rounded-xl border border-slate-100 bg-white p-3 text-center">
               <div>
-                <p className="text-xs text-slate-500">{t("stock.table.current")}</p>
+                <p className="text-xs text-slate-500">
+                  {t("stock.table.current")}
+                </p>
                 <p className="text-lg font-bold text-slate-900">
                   {stockRow.currentStock}
                 </p>
@@ -100,7 +106,9 @@ export function AddStockDialog({
                 <span className="text-slate-300">→</span>
               </div>
               <div>
-                <p className="text-xs text-slate-500">{t("stock.addDialog.after")}</p>
+                <p className="text-xs text-slate-500">
+                  {t("stock.addDialog.after")}
+                </p>
                 <p
                   className={`text-lg font-bold ${
                     isReduce && previewStock <= stockRow.minStock
@@ -179,7 +187,11 @@ export function AddStockDialog({
         )}
 
         <DialogFooter className="gap-2">
-          <Button variant="outline" onClick={handleClose} disabled={isSubmitting}>
+          <Button
+            variant="outline"
+            onClick={handleClose}
+            disabled={isSubmitting}
+          >
             {t("common.cancel")}
           </Button>
           <Button

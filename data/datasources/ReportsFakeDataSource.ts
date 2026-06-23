@@ -1,5 +1,8 @@
 import { getFakeReports } from "@/data/fake/fakeReports"
-import type { ReportsBundle, ReportsQuery } from "@/domain/entities/reports/Reports"
+import type {
+  ReportsBundle,
+  ReportsQuery,
+} from "@/domain/entities/reports/Reports"
 import type { Result } from "@/domain/result/Result"
 
 function delay(ms: number): Promise<void> {

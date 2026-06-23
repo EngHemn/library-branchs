@@ -12,11 +12,18 @@ import {
   validateBranchForm,
 } from "@/domain/validators/branch/validateBranchForm"
 import { generatePassword } from "@/lib/generatePassword"
-import type { EditBranchFormState, EditBranchStatus, EditBranchViewModelState } from "./EditBranchViewModelState"
+import type {
+  EditBranchFormState,
+  EditBranchStatus,
+  EditBranchViewModelState,
+} from "./EditBranchViewModelState"
 
 type EditBranchViewModel = {
   state: EditBranchViewModelState
-  setField: (field: keyof EditBranchFormState, value: string | number | null) => void
+  setField: (
+    field: keyof EditBranchFormState,
+    value: string | number | null
+  ) => void
   setLocation: (latitude: number | null, longitude: number | null) => void
   autoGeneratePassword: () => void
   save: () => Promise<void>
@@ -103,22 +110,36 @@ export function useEditBranchViewModel(
   }, [data?.branch])
 
   const saveMutation = useMutation({
-    mutationFn: async (vars: { branchId: string; input: UpdateBranchInput }) => {
-      const result = await branchManagementUseCase.updateBranch(vars.branchId, vars.input)
+    mutationFn: async (vars: {
+      branchId: string
+      input: UpdateBranchInput
+    }) => {
+      const result = await branchManagementUseCase.updateBranch(
+        vars.branchId,
+        vars.input
+      )
       if (!result.success) throw new Error(result.error)
       return result.data
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["editBranchData", branchId] })
+      void queryClient.invalidateQueries({
+        queryKey: ["editBranchData", branchId],
+      })
       setIsSaved(true)
     },
   })
 
-  function setField(field: keyof EditBranchFormState, value: string | number | null): void {
+  function setField(
+    field: keyof EditBranchFormState,
+    value: string | number | null
+  ): void {
     setForm((currentForm) => ({ ...currentForm, [field]: value }))
   }
 
-  function setLocation(latitude: number | null, longitude: number | null): void {
+  function setLocation(
+    latitude: number | null,
+    longitude: number | null
+  ): void {
     setForm((currentForm) => ({ ...currentForm, latitude, longitude }))
   }
 
@@ -135,7 +156,10 @@ export function useEditBranchViewModel(
     const validationResult = validateBranchForm(input, data.branch.type)
     if (!validationResult.success) return
 
-    saveMutation.mutate({ branchId: data.branch.id, input: validationResult.data })
+    saveMutation.mutate({
+      branchId: data.branch.id,
+      input: validationResult.data,
+    })
   }
 
   const fieldErrors: BranchFormErrors = data?.branch
@@ -145,14 +169,14 @@ export function useEditBranchViewModel(
   const status: EditBranchStatus = isPending
     ? "loading"
     : isError
-    ? "error"
-    : data === null
-    ? "not-found"
-    : isSaved
-    ? "saved"
-    : saveMutation.isPending
-    ? "saving"
-    : "loaded"
+      ? "error"
+      : data === null
+        ? "not-found"
+        : isSaved
+          ? "saved"
+          : saveMutation.isPending
+            ? "saving"
+            : "loaded"
 
   const state: EditBranchViewModelState = {
     status,
@@ -160,10 +184,14 @@ export function useEditBranchViewModel(
     form,
     fieldErrors: showFieldErrors ? fieldErrors : emptyFieldErrors,
     error: isError
-      ? (error instanceof Error ? error.message : "Unknown error")
+      ? error instanceof Error
+        ? error.message
+        : "Unknown error"
       : saveMutation.isError
-      ? (saveMutation.error instanceof Error ? saveMutation.error.message : "Unknown error")
-      : null,
+        ? saveMutation.error instanceof Error
+          ? saveMutation.error.message
+          : "Unknown error"
+        : null,
     showFieldErrors,
     isLoading: status === "loading",
     isLoaded: status === "loaded",

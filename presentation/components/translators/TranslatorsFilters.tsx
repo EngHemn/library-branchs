@@ -45,15 +45,14 @@ export function TranslatorsFilters({
         />
       </div>
       <div className="flex flex-wrap gap-3">
-        <Select
-          value={languageFilter}
-          onValueChange={onLanguageFilterChange}
-        >
+        <Select value={languageFilter} onValueChange={onLanguageFilterChange}>
           <SelectTrigger className="w-full sm:w-[160px]">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">{t("translators.filters.allLanguages")}</SelectItem>
+            <SelectItem value="all">
+              {t("translators.filters.allLanguages")}
+            </SelectItem>
             {languages.map((language) => (
               <SelectItem key={language} value={language}>
                 {language}
@@ -71,7 +70,9 @@ export function TranslatorsFilters({
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">{t("translators.filters.allStatus")}</SelectItem>
+            <SelectItem value="all">
+              {t("translators.filters.allStatus")}
+            </SelectItem>
             <SelectItem value="active">{t("common.active")}</SelectItem>
             <SelectItem value="inactive">{t("common.inactive")}</SelectItem>
           </SelectContent>

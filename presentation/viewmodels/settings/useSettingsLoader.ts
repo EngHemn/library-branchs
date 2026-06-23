@@ -15,8 +15,17 @@ export type SettingsLoaderResult = {
   reload: () => Promise<void>
 }
 
-export function useSettingsLoader(settingsUseCase: SettingsUseCase): SettingsLoaderResult {
-  const { data: settings, isPending, isFetching, isError, error, refetch } = useQuery<Settings>({
+export function useSettingsLoader(
+  settingsUseCase: SettingsUseCase
+): SettingsLoaderResult {
+  const {
+    data: settings,
+    isPending,
+    isFetching,
+    isError,
+    error,
+    refetch,
+  } = useQuery<Settings>({
     queryKey: ["settings"],
     queryFn: async () => {
       const result = await settingsUseCase.getSettings()

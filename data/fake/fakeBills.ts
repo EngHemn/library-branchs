@@ -14,7 +14,10 @@ type BillItemOverrides = Record<
   }
 >
 
-function createBillItems(bookIds: string[], overrides: BillItemOverrides = {}): BillLineItem[] {
+function createBillItems(
+  bookIds: string[],
+  overrides: BillItemOverrides = {}
+): BillLineItem[] {
   return bookIds.map((bookId) => {
     const book = fakeBooks.find((item) => item.id === bookId)
     const itemOverrides = overrides[bookId]

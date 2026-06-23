@@ -2,7 +2,13 @@
 
 import type { StockRow } from "@/domain/entities/stock/Stock"
 
-export type EditStockStatus = "idle" | "loading" | "ready" | "saving" | "saved" | "error"
+export type EditStockStatus =
+  | "idle"
+  | "loading"
+  | "ready"
+  | "saving"
+  | "saved"
+  | "error"
 
 export type EditStockViewModelState = {
   status: EditStockStatus

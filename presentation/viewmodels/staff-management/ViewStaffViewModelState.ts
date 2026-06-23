@@ -6,7 +6,12 @@ import type { StaffMember } from "@/domain/entities/staff/StaffMember"
 import type { Translator } from "@/domain/entities/translator/Translator"
 
 export type ViewStaffTabKey = "details" | "books" | "authors" | "translators"
-export type ViewStaffStatus = "idle" | "loading" | "loaded" | "not-found" | "error"
+export type ViewStaffStatus =
+  | "idle"
+  | "loading"
+  | "loaded"
+  | "not-found"
+  | "error"
 
 export type ViewStaffViewModelState = {
   status: ViewStaffStatus

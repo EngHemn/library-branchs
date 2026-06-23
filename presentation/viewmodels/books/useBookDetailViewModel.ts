@@ -6,7 +6,10 @@ import type { BookDetail } from "@/domain/entities/book/BookDetail"
 import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { GetBooksUseCase } from "@/domain/usecases/books/GetBooksUseCase"
 import { isBranchScopedBooksUser } from "@/lib/bookBranchScope"
-import type { BookDetailStatus, BookDetailViewModelState } from "./BookDetailViewModelState"
+import type {
+  BookDetailStatus,
+  BookDetailViewModelState,
+} from "./BookDetailViewModelState"
 
 type BookDetailViewModel = {
   state: BookDetailViewModelState
@@ -64,9 +67,7 @@ export function useBookDetailViewModel(
     status,
     bookDetail: bookDetailQuery.data ?? null,
     error: isError
-      ? (bookDetailQuery.error?.message ??
-          userQuery.error?.message ??
-          null)
+      ? (bookDetailQuery.error?.message ?? userQuery.error?.message ?? null)
       : null,
     isLoading,
     isLoaded,

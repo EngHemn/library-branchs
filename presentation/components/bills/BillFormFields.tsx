@@ -68,7 +68,9 @@ export function BillFormFields({
                   >
                     <FormControl>
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder={t("bills.form.branchPlaceholder")} />
+                        <SelectValue
+                          placeholder={t("bills.form.branchPlaceholder")}
+                        />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>

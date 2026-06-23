@@ -152,10 +152,7 @@ export const fakeMembers: Member[] = [
     memberName: "Kevin Martinez",
     membershipNumber: "LIB-2024-0010",
     registerBranch: "Lexington Literature House",
-    allBranchesUsed: [
-      "Lexington Literature House",
-      "Brookline Main Bookshop",
-    ],
+    allBranchesUsed: ["Lexington Literature House", "Brookline Main Bookshop"],
     email: "kevin.martinez@example.com",
     phone: "+1 (617) 555-0310",
     registrationDate: "2024-08-20",

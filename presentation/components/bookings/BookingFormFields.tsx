@@ -67,7 +67,11 @@ export function BookingFormFields({
   const memberOptionsForBranch: BookingComboboxOption[] = branchId
     ? memberFormOptions
         .filter((member) => member.branchId === branchId)
-        .map((member) => ({ value: member.value, label: member.label, searchText: member.searchText }))
+        .map((member) => ({
+          value: member.value,
+          label: member.label,
+          searchText: member.searchText,
+        }))
     : []
 
   return (
@@ -167,12 +171,18 @@ export function BookingFormFields({
                 >
                   <FormControl>
                     <SelectTrigger id="booking-type" className="w-full">
-                      <SelectValue placeholder={t("bookings.placeholders.selectType")} />
+                      <SelectValue
+                        placeholder={t("bookings.placeholders.selectType")}
+                      />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="outside">{t("bookings.types.outside")}</SelectItem>
-                    <SelectItem value="inside">{t("bookings.types.inside")}</SelectItem>
+                    <SelectItem value="outside">
+                      {t("bookings.types.outside")}
+                    </SelectItem>
+                    <SelectItem value="inside">
+                      {t("bookings.types.inside")}
+                    </SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -236,15 +246,27 @@ export function BookingFormFields({
                 >
                   <FormControl>
                     <SelectTrigger id="booking-status" className="w-full">
-                      <SelectValue placeholder={t("bookings.placeholders.selectStatus")} />
+                      <SelectValue
+                        placeholder={t("bookings.placeholders.selectStatus")}
+                      />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="reserved">{t("bookings.statuses.reserved")}</SelectItem>
-                    <SelectItem value="borrowed">{t("bookings.statuses.borrowed")}</SelectItem>
-                    <SelectItem value="returned">{t("bookings.statuses.returned")}</SelectItem>
-                    <SelectItem value="overdue">{t("bookings.statuses.overdue")}</SelectItem>
-                    <SelectItem value="cancelled">{t("bookings.statuses.cancelled")}</SelectItem>
+                    <SelectItem value="reserved">
+                      {t("bookings.statuses.reserved")}
+                    </SelectItem>
+                    <SelectItem value="borrowed">
+                      {t("bookings.statuses.borrowed")}
+                    </SelectItem>
+                    <SelectItem value="returned">
+                      {t("bookings.statuses.returned")}
+                    </SelectItem>
+                    <SelectItem value="overdue">
+                      {t("bookings.statuses.overdue")}
+                    </SelectItem>
+                    <SelectItem value="cancelled">
+                      {t("bookings.statuses.cancelled")}
+                    </SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />

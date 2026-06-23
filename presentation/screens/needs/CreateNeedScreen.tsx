@@ -109,8 +109,8 @@ export function CreateNeedScreen({
                     type="button"
                     variant="outline"
                     disabled={state.isSaving}
-                    onClick={form.handleSubmit((values) =>
-                      void viewModel.saveDraft(values)
+                    onClick={form.handleSubmit(
+                      (values) => void viewModel.saveDraft(values)
                     )}
                   >
                     {state.isSaving ? (
@@ -123,8 +123,8 @@ export function CreateNeedScreen({
                   <Button
                     type="button"
                     disabled={state.isSaving}
-                    onClick={form.handleSubmit((values) =>
-                      void viewModel.submitRequest(values)
+                    onClick={form.handleSubmit(
+                      (values) => void viewModel.submitRequest(values)
                     )}
                   >
                     {state.isSaving ? (

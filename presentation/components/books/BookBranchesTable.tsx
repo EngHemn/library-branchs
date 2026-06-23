@@ -1,11 +1,6 @@
 "use client"
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Table,
   TableBody,
@@ -78,7 +73,10 @@ export function BookBranchesTable({
             {t("books.branches.empty")}
           </p>
         ) : variant === "summary" && branchStock ? (
-          <BookBranchStockSummary stock={branchStock} fields={stockSummaryFields} />
+          <BookBranchStockSummary
+            stock={branchStock}
+            fields={stockSummaryFields}
+          />
         ) : (
           <div className="overflow-x-auto">
             <Table className="min-w-[700px]">

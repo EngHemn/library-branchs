@@ -152,9 +152,12 @@ function LoadingNotificationsScreen({ t }: { t: any }) {
   )
 }
 
-export function NotificationsScreen({ notificationsUseCase }: NotificationsScreenProps) {
+export function NotificationsScreen({
+  notificationsUseCase,
+}: NotificationsScreenProps) {
   const { t } = useTranslation()
-  const { state, markAsRead, markAllAsRead } = useNotificationsViewModel(notificationsUseCase)
+  const { state, markAsRead, markAllAsRead } =
+    useNotificationsViewModel(notificationsUseCase)
 
   useDashboardBreadcrumbs([
     { label: t("breadcrumbs.workspace"), href: "/dashboard" },
@@ -199,7 +202,7 @@ export function NotificationsScreen({ notificationsUseCase }: NotificationsScree
           </CardHeader>
           <CardContent>
             <Button onClick={() => window.location.reload()}>
-              <RefreshCwIcon className="mr-2 h-4 w-4 animate-spin-once" />
+              <RefreshCwIcon className="animate-spin-once mr-2 h-4 w-4" />
               {t("common.retry")}
             </Button>
           </CardContent>
@@ -220,7 +223,12 @@ export function NotificationsScreen({ notificationsUseCase }: NotificationsScree
           </p>
         </div>
         {state.unreadCount > 0 && (
-          <Button type="button" variant="outline" size="sm" onClick={handleMarkAllAsRead}>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={handleMarkAllAsRead}
+          >
             <CheckCheckIcon className="mr-2 h-4 w-4" />
             {t("notifications.markAllAsRead")}
           </Button>
@@ -252,12 +260,18 @@ export function NotificationsScreen({ notificationsUseCase }: NotificationsScree
             <CardHeader className="pb-3">
               <div className="flex items-center gap-2">
                 <BellIcon className="size-4 text-muted-foreground" />
-                <CardTitle className="text-base">{t("notifications.unreadTab")}</CardTitle>
+                <CardTitle className="text-base">
+                  {t("notifications.unreadTab")}
+                </CardTitle>
               </div>
               <CardDescription>
                 {state.unreadCount === 1
-                  ? t("notifications.unreadDescription", { count: state.unreadCount })
-                  : t("notifications.unreadDescriptionPlural", { count: state.unreadCount })}
+                  ? t("notifications.unreadDescription", {
+                      count: state.unreadCount,
+                    })
+                  : t("notifications.unreadDescriptionPlural", {
+                      count: state.unreadCount,
+                    })}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -276,12 +290,18 @@ export function NotificationsScreen({ notificationsUseCase }: NotificationsScree
             <CardHeader className="pb-3">
               <div className="flex items-center gap-2">
                 <BellIcon className="size-4 text-muted-foreground" />
-                <CardTitle className="text-base">{t("notifications.readTab")}</CardTitle>
+                <CardTitle className="text-base">
+                  {t("notifications.readTab")}
+                </CardTitle>
               </div>
               <CardDescription>
                 {state.readCount === 1
-                  ? t("notifications.readDescription", { count: state.readCount })
-                  : t("notifications.readDescriptionPlural", { count: state.readCount })}
+                  ? t("notifications.readDescription", {
+                      count: state.readCount,
+                    })
+                  : t("notifications.readDescriptionPlural", {
+                      count: state.readCount,
+                    })}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">

@@ -118,15 +118,21 @@ export function BranchDetailsTab({ branchDetail }: BranchDetailsTabProps) {
               }
             />
             <div className="min-w-0">
-              <h3 className="text-lg font-semibold">{branchDetail.branchName}</h3>
+              <h3 className="text-lg font-semibold">
+                {branchDetail.branchName}
+              </h3>
               <div className="mt-1 flex items-center gap-2">
                 <Badge
-                  variant={branchDetail.type === "main" ? "default" : "secondary"}
+                  variant={
+                    branchDetail.type === "main" ? "default" : "secondary"
+                  }
                 >
                   {t(`branches.types.${branchDetail.type}` as TranslationKey)}
                 </Badge>
                 <Badge
-                  variant={branchDetail.status === "active" ? "default" : "outline"}
+                  variant={
+                    branchDetail.status === "active" ? "default" : "outline"
+                  }
                 >
                   {t(`common.${branchDetail.status}` as TranslationKey)}
                 </Badge>
@@ -142,7 +148,10 @@ export function BranchDetailsTab({ branchDetail }: BranchDetailsTabProps) {
             <InfoRow icon={PhoneIcon} label={t("branches.detail.info.phone")}>
               {branchDetail.phone}
             </InfoRow>
-            <InfoRow icon={MapPinIcon} label={t("branches.detail.info.address")}>
+            <InfoRow
+              icon={MapPinIcon}
+              label={t("branches.detail.info.address")}
+            >
               {branchDetail.address}
             </InfoRow>
             <InfoRow icon={UsersIcon} label={t("branches.detail.info.admin")}>
@@ -151,7 +160,10 @@ export function BranchDetailsTab({ branchDetail }: BranchDetailsTabProps) {
                 adminName={branchDetail.adminName}
               />
             </InfoRow>
-            <InfoRow icon={CalendarIcon} label={t("branches.detail.info.createdDate")}>
+            <InfoRow
+              icon={CalendarIcon}
+              label={t("branches.detail.info.createdDate")}
+            >
               {new Date(branchDetail.createdDate).toLocaleDateString(locale, {
                 year: "numeric",
                 month: "long",
@@ -159,7 +171,10 @@ export function BranchDetailsTab({ branchDetail }: BranchDetailsTabProps) {
               })}
             </InfoRow>
             {branchDetail.type === "sub" && branchDetail.parentBranch ? (
-              <InfoRow icon={Building2Icon} label={t("branches.detail.info.parentBranch")}>
+              <InfoRow
+                icon={Building2Icon}
+                label={t("branches.detail.info.parentBranch")}
+              >
                 {branchDetail.parentBranch}
               </InfoRow>
             ) : null}

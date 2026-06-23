@@ -11,10 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import {
-  DataTable,
-  type DataTableColumn,
-} from "@/components/ui/data-table"
+import { DataTable, type DataTableColumn } from "@/components/ui/data-table"
 import type { Author } from "@/domain/entities/author/Author"
 import { AuthorActionButton } from "@/presentation/components/authors/AuthorActionButton"
 import { useTranslation } from "@/presentation/i18n/useTranslation"
@@ -149,7 +146,9 @@ export function AuthorsTable({
       <CardHeader>
         <CardTitle>{t("authors.table.title")}</CardTitle>
         <CardDescription>
-          {t("authors.table.recordCount", { count: authors.length.toLocaleString() })}
+          {t("authors.table.recordCount", {
+            count: authors.length.toLocaleString(),
+          })}
         </CardDescription>
       </CardHeader>
       <CardContent>

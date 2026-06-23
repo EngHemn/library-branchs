@@ -9,7 +9,9 @@ type ShelfBranchTypeBadgeProps = {
   branchType: BranchType
 }
 
-export function ShelfBranchTypeBadge({ branchType }: ShelfBranchTypeBadgeProps) {
+export function ShelfBranchTypeBadge({
+  branchType,
+}: ShelfBranchTypeBadgeProps) {
   return (
     <Badge
       variant="outline"

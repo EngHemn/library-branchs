@@ -4,7 +4,10 @@ import { useEffect, useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 import type { Branch } from "@/domain/entities/branch/Branch"
-import type { StaffMember, StaffRole } from "@/domain/entities/staff/StaffMember"
+import type {
+  StaffMember,
+  StaffRole,
+} from "@/domain/entities/staff/StaffMember"
 import type { UpdateStaffInput } from "@/domain/repositories/StaffManagementRepository"
 import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { BranchManagementUseCase } from "@/domain/usecases/branch/BranchManagementUseCase"
@@ -16,7 +19,11 @@ import {
   validateEditStaffForm,
 } from "@/domain/validators/staff/validateEditStaffForm"
 import { generatePassword } from "@/lib/generatePassword"
-import type { EditStaffFormState, EditStaffStatus, EditStaffViewModelState } from "./EditStaffViewModelState"
+import type {
+  EditStaffFormState,
+  EditStaffStatus,
+  EditStaffViewModelState,
+} from "./EditStaffViewModelState"
 
 type EditStaffViewModel = {
   state: EditStaffViewModelState
@@ -174,8 +181,12 @@ export function useEditStaffViewModel(
   const user = userQuery.data ?? null
   const staffMember = staffQuery.data ?? null
   const branches = branchesQuery.data ?? []
-  const showBranchField = user ? !isBranchScopedStaffPermissionsUser(user) : true
-  const showBranchAdminRole = user ? !isBranchScopedStaffPermissionsUser(user) : true
+  const showBranchField = user
+    ? !isBranchScopedStaffPermissionsUser(user)
+    : true
+  const showBranchAdminRole = user
+    ? !isBranchScopedStaffPermissionsUser(user)
+    : true
   const isLoading =
     userQuery.isPending ||
     staffQuery.isPending ||

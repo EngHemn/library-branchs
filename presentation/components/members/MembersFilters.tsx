@@ -18,7 +18,12 @@ import type {
 import type { TranslationKey } from "@/presentation/i18n/messages"
 import { useTranslation } from "@/presentation/i18n/useTranslation"
 
-const MEMBER_STATUS_VALUES = new Set<string>(["all", "active", "inactive", "suspended"])
+const MEMBER_STATUS_VALUES = new Set<string>([
+  "all",
+  "active",
+  "inactive",
+  "suspended",
+])
 
 function isMemberStatusFilter(value: string): value is MemberStatusFilter {
   return MEMBER_STATUS_VALUES.has(value)
@@ -37,13 +42,18 @@ type MembersFiltersProps = {
   showBranchUsedFilter?: boolean
   onSearchQueryChange: (searchQuery: string) => void
   onStatusFilterChange: (statusFilter: MemberStatusFilter) => void
-  onBranchRegisteredFilterChange: (branchRegisteredFilter: MemberBranchFilter) => void
+  onBranchRegisteredFilterChange: (
+    branchRegisteredFilter: MemberBranchFilter
+  ) => void
   onBranchUsedFilterChange: (branchUsedFilter: MemberBranchFilter) => void
   onDateFromChange: (dateFrom: string | null) => void
   onDateToChange: (dateTo: string | null) => void
 }
 
-const STATUS_KEYS: Record<Exclude<MemberStatusFilter, "all">, TranslationKey> = {
+const STATUS_KEYS: Record<
+  Exclude<MemberStatusFilter, "all">,
+  TranslationKey
+> = {
   active: "common.active",
   inactive: "common.inactive",
   suspended: "members.statuses.suspended",
@@ -115,7 +125,9 @@ export function MembersFilters({
                 <SelectValue placeholder={t("members.filters.allBranches")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">{t("members.filters.allRegisteredBranches")}</SelectItem>
+                <SelectItem value="all">
+                  {t("members.filters.allRegisteredBranches")}
+                </SelectItem>
                 {registeredBranches.map((branch) => (
                   <SelectItem key={branch} value={branch}>
                     {branch}
@@ -125,12 +137,17 @@ export function MembersFilters({
             </Select>
           ) : null}
           {showBranchUsedFilter ? (
-            <Select value={branchUsedFilter} onValueChange={onBranchUsedFilterChange}>
+            <Select
+              value={branchUsedFilter}
+              onValueChange={onBranchUsedFilterChange}
+            >
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder={t("members.filters.allBranches")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">{t("members.filters.allBranchesUsed")}</SelectItem>
+                <SelectItem value="all">
+                  {t("members.filters.allBranchesUsed")}
+                </SelectItem>
                 {usedBranches.map((branch) => (
                   <SelectItem key={branch} value={branch}>
                     {branch}
@@ -144,7 +161,9 @@ export function MembersFilters({
 
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="members-date-from">{t("members.filters.dateFrom")}</Label>
+          <Label htmlFor="members-date-from">
+            {t("members.filters.dateFrom")}
+          </Label>
           <Input
             id="members-date-from"
             type="date"

@@ -5,7 +5,13 @@ import type {
   GroupStaffOption,
 } from "@/domain/repositories/GroupRepository"
 
-export type EditGroupStatus = "loading" | "ready" | "saving" | "saved" | "not_found" | "error"
+export type EditGroupStatus =
+  | "loading"
+  | "ready"
+  | "saving"
+  | "saved"
+  | "not_found"
+  | "error"
 
 export type EditGroupViewModelState = {
   status: EditGroupStatus

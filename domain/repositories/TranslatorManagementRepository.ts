@@ -16,7 +16,9 @@ export type UpdateTranslatorInput = CreateTranslatorInput & {
 
 export interface TranslatorManagementRepository {
   getTranslators(): Promise<Result<Translator[]>>
-  getTranslatorById(translatorId: string): Promise<Result<TranslatorDetail | null>>
+  getTranslatorById(
+    translatorId: string
+  ): Promise<Result<TranslatorDetail | null>>
   createTranslator(input: CreateTranslatorInput): Promise<Result<Translator>>
   updateTranslator(input: UpdateTranslatorInput): Promise<Result<Translator>>
   deleteTranslator(translatorId: string): Promise<Result<null>>

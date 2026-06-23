@@ -4,7 +4,10 @@ import { useQuery } from "@tanstack/react-query"
 
 import type { AuthorDetail } from "@/domain/entities/author/AuthorDetail"
 import type { GetAuthorsUseCase } from "@/domain/usecases/authors/GetAuthorsUseCase"
-import type { AuthorDetailStatus, AuthorDetailViewModelState } from "./AuthorDetailViewModelState"
+import type {
+  AuthorDetailStatus,
+  AuthorDetailViewModelState,
+} from "./AuthorDetailViewModelState"
 
 type AuthorDetailViewModel = {
   state: AuthorDetailViewModelState
@@ -15,7 +18,12 @@ export function useAuthorDetailViewModel(
   authorId: string,
   getAuthorsUseCase: GetAuthorsUseCase
 ): AuthorDetailViewModel {
-  const { data, status: queryStatus, error: queryError, refetch } = useQuery({
+  const {
+    data,
+    status: queryStatus,
+    error: queryError,
+    refetch,
+  } = useQuery({
     queryKey: ["authors", authorId],
     queryFn: async () => {
       const result = await getAuthorsUseCase.getAuthorById(authorId)
@@ -29,10 +37,13 @@ export function useAuthorDetailViewModel(
   }
 
   const status: AuthorDetailStatus =
-    queryStatus === "error" ? "error" :
-    queryStatus === "pending" ? "loading" :
-    data === null ? "not-found" :
-    "loaded"
+    queryStatus === "error"
+      ? "error"
+      : queryStatus === "pending"
+        ? "loading"
+        : data === null
+          ? "not-found"
+          : "loaded"
 
   const state: AuthorDetailViewModelState = {
     status,

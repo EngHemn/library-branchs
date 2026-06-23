@@ -14,7 +14,11 @@ import type { Translator } from "@/domain/entities/translator/Translator"
 import type { BranchDetailUseCase } from "@/domain/usecases/branch/BranchDetailUseCase"
 
 import { useBranchDetailActionsHook } from "./useBranchDetailActionsHook"
-import type { BranchDetailStatus, BranchDetailViewModelState, TabKey } from "./BranchDetailViewModelState"
+import type {
+  BranchDetailStatus,
+  BranchDetailViewModelState,
+  TabKey,
+} from "./BranchDetailViewModelState"
 
 type BranchDetailViewModel = {
   state: BranchDetailViewModelState
@@ -45,10 +49,16 @@ type BranchDetailQueryData = {
   members: Member[]
 } | null
 
-function filterBySearch<T>(items: T[], query: string, getText: (item: T) => string): T[] {
+function filterBySearch<T>(
+  items: T[],
+  query: string,
+  getText: (item: T) => string
+): T[] {
   const normalized = query.toLowerCase().trim()
   if (!normalized) return items
-  return items.filter((item) => getText(item).toLowerCase().includes(normalized))
+  return items.filter((item) =>
+    getText(item).toLowerCase().includes(normalized)
+  )
 }
 
 export function useBranchDetailViewModel(
@@ -58,7 +68,10 @@ export function useBranchDetailViewModel(
   const [activeTab, setActiveTab] = useState<TabKey>("details")
   const [searchQuery, setSearchQuery] = useState("")
 
-  const { data, isPending, isError, error } = useQuery<BranchDetailQueryData, Error>({
+  const { data, isPending, isError, error } = useQuery<
+    BranchDetailQueryData,
+    Error
+  >({
     queryKey: ["branchDetail", branchId],
     queryFn: async () => {
       const detailResult = await branchDetailUseCase.getBranchDetail(branchId)
@@ -105,44 +118,44 @@ export function useBranchDetailViewModel(
   const status: BranchDetailStatus = isPending
     ? "loading"
     : isError
-    ? "error"
-    : data === null
-    ? "not-found"
-    : data
-    ? "loaded"
-    : "idle"
+      ? "error"
+      : data === null
+        ? "not-found"
+        : data
+          ? "loaded"
+          : "idle"
 
   const state: BranchDetailViewModelState = {
     status,
     branchDetail: data?.branchDetail ?? null,
     permissions: data?.permissions ?? null,
-    subBranches: filterBySearch(
-      data?.subBranches ?? [],
-      searchQuery,
-      (b) => [b.branchName, b.adminName, b.email, b.phone, b.address].join(" ")
+    subBranches: filterBySearch(data?.subBranches ?? [], searchQuery, (b) =>
+      [b.branchName, b.adminName, b.email, b.phone, b.address].join(" ")
     ),
-    books: filterBySearch(
-      data?.books ?? [],
-      searchQuery,
-      (b) => [b.title, b.category, b.author, b.translator ?? "", b.isbn].join(" ")
+    books: filterBySearch(data?.books ?? [], searchQuery, (b) =>
+      [b.title, b.category, b.author, b.translator ?? "", b.isbn].join(" ")
     ),
-    authors: filterBySearch(authors, searchQuery, (a) => [a.name, a.nationality].join(" ")),
-    translators: filterBySearch(translators, searchQuery, (t) => [t.name, t.language].join(" ")),
+    authors: filterBySearch(authors, searchQuery, (a) =>
+      [a.name, a.nationality].join(" ")
+    ),
+    translators: filterBySearch(translators, searchQuery, (t) =>
+      [t.name, t.language].join(" ")
+    ),
     branchAuthors: authors,
     branchTranslators: translators,
-    staff: filterBySearch(
-      data?.staff ?? [],
-      searchQuery,
-      (s) => [s.staffName, s.staffId, s.role, s.branch, s.email, s.phone].join(" ")
+    staff: filterBySearch(data?.staff ?? [], searchQuery, (s) =>
+      [s.staffName, s.staffId, s.role, s.branch, s.email, s.phone].join(" ")
     ),
-    members: filterBySearch(
-      data?.members ?? [],
-      searchQuery,
-      (m) => [m.memberName, m.registerBranch, m.email, m.phone].join(" ")
+    members: filterBySearch(data?.members ?? [], searchQuery, (m) =>
+      [m.memberName, m.registerBranch, m.email, m.phone].join(" ")
     ),
     activeTab,
     searchQuery,
-    error: isError ? (error instanceof Error ? error.message : "Unknown error") : null,
+    error: isError
+      ? error instanceof Error
+        ? error.message
+        : "Unknown error"
+      : null,
     isLoading: status === "idle" || status === "loading",
     isLoaded: status === "loaded",
     isNotFound: status === "not-found",

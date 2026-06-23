@@ -1,6 +1,12 @@
 "use client"
 
-import { CheckIcon, MapPinIcon, MessageSquareReplyIcon, MessageSquareTextIcon, XIcon } from "lucide-react"
+import {
+  CheckIcon,
+  MapPinIcon,
+  MessageSquareReplyIcon,
+  MessageSquareTextIcon,
+  XIcon,
+} from "lucide-react"
 
 import {
   Card,
@@ -9,10 +15,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import {
-  DataTable,
-  type DataTableColumn,
-} from "@/components/ui/data-table"
+import { DataTable, type DataTableColumn } from "@/components/ui/data-table"
 import type { MainBranchRequest } from "@/domain/entities/branch/Branch"
 import { BranchActionButton } from "@/presentation/components/branch-management/BranchActionButton"
 import { BranchRequestExpandedDetails } from "@/presentation/components/branch-management/BranchRequestExpandedDetails"
@@ -37,13 +40,7 @@ type MainBranchRequestColumnKey =
   | "submittedDate"
   | "actions"
 
-function BranchAdminCell({
-  name,
-  email,
-}: {
-  name: string
-  email: string
-}) {
+function BranchAdminCell({ name, email }: { name: string; email: string }) {
   return (
     <div>
       <div className="font-medium">{name}</div>
@@ -108,10 +105,7 @@ export function MainBranchRequestsTable({
       sortable: true,
       sortValue: (request) => request.adminName,
       cell: (request) => (
-        <BranchAdminCell
-          name={request.adminName}
-          email={request.adminEmail}
-        />
+        <BranchAdminCell name={request.adminName} email={request.adminEmail} />
       ),
     },
     {
@@ -171,7 +165,9 @@ export function MainBranchRequestsTable({
       <CardHeader>
         <CardTitle>{t("branches.requests.mainTitle")}</CardTitle>
         <CardDescription>
-          {t("branches.requests.pendingCount", { count: requests.length.toLocaleString() })}
+          {t("branches.requests.pendingCount", {
+            count: requests.length.toLocaleString(),
+          })}
         </CardDescription>
       </CardHeader>
       <CardContent>

@@ -79,16 +79,26 @@ function LoadingState() {
   )
 }
 
-export function ViewStaffScreen({ staffId, staffManagementUseCase, branchDetailUseCase }: ViewStaffScreenProps) {
+export function ViewStaffScreen({
+  staffId,
+  staffManagementUseCase,
+  branchDetailUseCase,
+}: ViewStaffScreenProps) {
   const router = useRouter()
   const { t } = useTranslation()
-  const viewModel = useViewStaffViewModel(staffId, staffManagementUseCase, branchDetailUseCase)
+  const viewModel = useViewStaffViewModel(
+    staffId,
+    staffManagementUseCase,
+    branchDetailUseCase
+  )
   const { state } = viewModel
 
   useDashboardBreadcrumbs([
     { label: t("breadcrumbs.workspace"), href: "/dashboard" },
     { label: t("nav.staff"), href: "/dashboard/staff" },
-    { label: state.staffMember?.staffName ?? t("staff.view.breadcrumbFallback") },
+    {
+      label: state.staffMember?.staffName ?? t("staff.view.breadcrumbFallback"),
+    },
   ])
 
   const goBack = () => router.back()
@@ -149,7 +159,9 @@ export function ViewStaffScreen({ staffId, staffManagementUseCase, branchDetailU
                   sizes="80px"
                   className="size-20 rounded-lg"
                   imageClassName="rounded-lg"
-                  fallback={<UsersRoundIcon className="size-10 text-muted-foreground" />}
+                  fallback={
+                    <UsersRoundIcon className="size-10 text-muted-foreground" />
+                  }
                 />
                 <div>
                   <h1 className="text-2xl font-semibold tracking-normal">
@@ -169,25 +181,35 @@ export function ViewStaffScreen({ staffId, staffManagementUseCase, branchDetailU
             <Tabs
               defaultValue="details"
               value={state.activeTab}
-              onValueChange={(value) => viewModel.setActiveTab(value as typeof state.activeTab)}
+              onValueChange={(value) =>
+                viewModel.setActiveTab(value as typeof state.activeTab)
+              }
               className="gap-4"
             >
               <TabsList className="flex h-auto w-full flex-wrap justify-start gap-1 sm:w-fit">
                 <TabsTrigger value="details" className="gap-1.5">
                   <Building2Icon className="size-3.5" />
-                  <span className="hidden sm:inline">{t("staff.view.tabs.details")}</span>
+                  <span className="hidden sm:inline">
+                    {t("staff.view.tabs.details")}
+                  </span>
                 </TabsTrigger>
                 <TabsTrigger value="books" className="gap-1.5">
                   <BookOpenIcon className="size-3.5" />
-                  <span className="hidden sm:inline">{t("staff.view.tabs.books")}</span>
+                  <span className="hidden sm:inline">
+                    {t("staff.view.tabs.books")}
+                  </span>
                 </TabsTrigger>
                 <TabsTrigger value="authors" className="gap-1.5">
                   <PenLineIcon className="size-3.5" />
-                  <span className="hidden sm:inline">{t("staff.view.tabs.authors")}</span>
+                  <span className="hidden sm:inline">
+                    {t("staff.view.tabs.authors")}
+                  </span>
                 </TabsTrigger>
                 <TabsTrigger value="translators" className="gap-1.5">
                   <LanguagesIcon className="size-3.5" />
-                  <span className="hidden sm:inline">{t("staff.view.tabs.translators")}</span>
+                  <span className="hidden sm:inline">
+                    {t("staff.view.tabs.translators")}
+                  </span>
                 </TabsTrigger>
               </TabsList>
 
@@ -221,7 +243,9 @@ export function ViewStaffScreen({ staffId, staffManagementUseCase, branchDetailU
                   permissions={viewPermissions}
                   searchQuery={state.searchQuery}
                   onSearchQueryChange={viewModel.setSearchQuery}
-                  onView={(author) => router.push(`/dashboard/authors/${author.id}`)}
+                  onView={(author) =>
+                    router.push(`/dashboard/authors/${author.id}`)
+                  }
                   onEdit={() => {}}
                   onDelete={() => {}}
                   onToggleStatus={() => {}}

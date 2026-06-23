@@ -30,9 +30,12 @@ export type SettingsViewModel = {
   reload: () => Promise<void>
 }
 
-export function useSettingsViewModel(settingsUseCase: SettingsUseCase): SettingsViewModel {
+export function useSettingsViewModel(
+  settingsUseCase: SettingsUseCase
+): SettingsViewModel {
   const queryClient = useQueryClient()
-  const { settings, loadStatus, loadError, isLoading, reload } = useSettingsLoader(settingsUseCase)
+  const { settings, loadStatus, loadError, isLoading, reload } =
+    useSettingsLoader(settingsUseCase)
 
   const [libraryInfoSuccess, setLibraryInfoSuccess] = useState(false)
   const [borrowingRulesSuccess, setBorrowingRulesSuccess] = useState(false)
@@ -40,7 +43,14 @@ export function useSettingsViewModel(settingsUseCase: SettingsUseCase): Settings
 
   const libraryInfoForm = useForm<LibraryInfoFormValues>({
     resolver: zodResolver(libraryInfoFormSchema),
-    defaultValues: { name: "", address: "", phone: "", email: "", website: "", logoUrl: "" },
+    defaultValues: {
+      name: "",
+      address: "",
+      phone: "",
+      email: "",
+      website: "",
+      logoUrl: "",
+    },
   })
 
   const borrowingRulesForm = useForm<BorrowingRulesFormValues>({
@@ -149,11 +159,15 @@ export function useSettingsViewModel(settingsUseCase: SettingsUseCase): Settings
     saveLibraryInfoMutation(values)
   }
 
-  async function saveBorrowingRules(values: BorrowingRulesFormValues): Promise<void> {
+  async function saveBorrowingRules(
+    values: BorrowingRulesFormValues
+  ): Promise<void> {
     saveBorrowingRulesMutation(values)
   }
 
-  async function saveNotifications(values: NotificationsFormValues): Promise<void> {
+  async function saveNotifications(
+    values: NotificationsFormValues
+  ): Promise<void> {
     saveNotificationsMutation(values)
   }
 

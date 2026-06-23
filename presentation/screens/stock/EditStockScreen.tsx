@@ -57,7 +57,10 @@ function LoadingState() {
   )
 }
 
-export function EditStockScreen({ stockId, stockUseCase }: EditStockScreenProps) {
+export function EditStockScreen({
+  stockId,
+  stockUseCase,
+}: EditStockScreenProps) {
   const router = useRouter()
   const viewModel = useEditStockViewModel(stockId, stockUseCase)
   const { t } = useTranslation()
@@ -80,7 +83,9 @@ export function EditStockScreen({ stockId, stockUseCase }: EditStockScreenProps)
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
               <CardTitle>{t("stock.edit.notFoundTitle")}</CardTitle>
-              <CardDescription>{t("stock.edit.notFoundDescription")}</CardDescription>
+              <CardDescription>
+                {t("stock.edit.notFoundDescription")}
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <Button variant="outline" onClick={goBack}>
@@ -145,7 +150,9 @@ export function EditStockScreen({ stockId, stockUseCase }: EditStockScreenProps)
           {state.error && state.isReady ? (
             <Card className="rounded-lg border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950">
               <CardContent className="py-3">
-                <p className="text-sm font-medium text-red-800 dark:text-red-200">{state.error}</p>
+                <p className="text-sm font-medium text-red-800 dark:text-red-200">
+                  {state.error}
+                </p>
               </CardContent>
             </Card>
           ) : null}
@@ -153,7 +160,9 @@ export function EditStockScreen({ stockId, stockUseCase }: EditStockScreenProps)
           <Card className="rounded-lg">
             <CardHeader>
               <CardTitle>{t("stock.edit.stockDetails")}</CardTitle>
-              <CardDescription>{t("stock.edit.stockDetailsDescription")}</CardDescription>
+              <CardDescription>
+                {t("stock.edit.stockDetailsDescription")}
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="mb-5 rounded-xl border bg-linear-to-r from-slate-50 to-white p-4">
@@ -170,34 +179,50 @@ export function EditStockScreen({ stockId, stockUseCase }: EditStockScreenProps)
                     )}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs uppercase tracking-wide text-muted-foreground">
+                    <p className="text-xs tracking-wide text-muted-foreground uppercase">
                       {t("stock.edit.bookDetails")}
                     </p>
                     <p className="truncate text-base font-semibold text-slate-900">
                       {state.stockRow.bookTitle}
                     </p>
-                    <p className="text-xs text-muted-foreground">{state.stockRow.isbn}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {state.stockRow.isbn}
+                    </p>
                     <div className="mt-2 flex flex-wrap items-center gap-2">
                       <Badge variant="secondary">
                         <TagIcon className="mr-1 h-3 w-3" />
                         {state.stockRow.category}
                       </Badge>
-                      <Badge variant="outline">{t("stock.edit.languageNa")}</Badge>
+                      <Badge variant="outline">
+                        {t("stock.edit.languageNa")}
+                      </Badge>
                     </div>
                   </div>
                 </div>
                 <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-3">
                   <div className="rounded-md border bg-white px-3 py-2">
-                    <p className="text-xs text-muted-foreground">{t("stock.table.current")}</p>
-                    <p className="text-sm font-semibold">{state.stockRow.currentStock}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {t("stock.table.current")}
+                    </p>
+                    <p className="text-sm font-semibold">
+                      {state.stockRow.currentStock}
+                    </p>
                   </div>
                   <div className="rounded-md border bg-white px-3 py-2">
-                    <p className="text-xs text-muted-foreground">{t("stock.summary.reserved")}</p>
-                    <p className="text-sm font-semibold">{state.stockRow.reservedStock}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {t("stock.summary.reserved")}
+                    </p>
+                    <p className="text-sm font-semibold">
+                      {state.stockRow.reservedStock}
+                    </p>
                   </div>
                   <div className="rounded-md border bg-white px-3 py-2">
-                    <p className="text-xs text-muted-foreground">{t("stock.summary.available")}</p>
-                    <p className="text-sm font-semibold">{state.stockRow.availableStock}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {t("stock.summary.available")}
+                    </p>
+                    <p className="text-sm font-semibold">
+                      {state.stockRow.availableStock}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -208,12 +233,26 @@ export function EditStockScreen({ stockId, stockUseCase }: EditStockScreenProps)
               >
                 <Separator />
                 <div className="flex justify-end gap-3">
-                  <Button type="button" variant="outline" onClick={goBack} disabled={state.isSaving}>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={goBack}
+                    disabled={state.isSaving}
+                  >
                     {t("common.cancel")}
                   </Button>
-                  <Button type="submit" disabled={state.isSaving || state.isSaved}>
-                    {state.isSaving ? <Loader2Icon className="animate-spin" /> : <SaveIcon />}
-                    {state.isSaving ? t("common.saving") : t("common.saveChanges")}
+                  <Button
+                    type="submit"
+                    disabled={state.isSaving || state.isSaved}
+                  >
+                    {state.isSaving ? (
+                      <Loader2Icon className="animate-spin" />
+                    ) : (
+                      <SaveIcon />
+                    )}
+                    {state.isSaving
+                      ? t("common.saving")
+                      : t("common.saveChanges")}
                   </Button>
                 </div>
               </EditStockFormFields>

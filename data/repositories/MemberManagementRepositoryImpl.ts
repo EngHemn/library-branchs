@@ -8,9 +8,7 @@ import type {
 } from "@/domain/repositories/MemberManagementRepository"
 import type { Result } from "@/domain/result/Result"
 
-export class MemberManagementRepositoryImpl
-  implements MemberManagementRepository
-{
+export class MemberManagementRepositoryImpl implements MemberManagementRepository {
   constructor(
     private readonly memberManagementFakeDataSource: MemberManagementFakeDataSource
   ) {}

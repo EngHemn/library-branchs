@@ -4,12 +4,7 @@ import Link from "next/link"
 import { UserRoundIcon } from "lucide-react"
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import type { BookDetail } from "@/domain/entities/book/BookDetail"
 import { getAuthorViewHref } from "@/lib/authorLink"
@@ -35,7 +30,13 @@ type ProfileRow = {
   href?: string | null
 }
 
-function ProfileValue({ value, href }: { value: string; href?: string | null }) {
+function ProfileValue({
+  value,
+  href,
+}: {
+  value: string
+  href?: string | null
+}) {
   if (!href) {
     return <span className="text-sm font-medium">{value}</span>
   }

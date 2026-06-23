@@ -30,7 +30,9 @@ export function resolveOrderCoordinates(
   const normalizedLatitude =
     typeof latitude === "number" && Number.isFinite(latitude) ? latitude : null
   const normalizedLongitude =
-    typeof longitude === "number" && Number.isFinite(longitude) ? longitude : null
+    typeof longitude === "number" && Number.isFinite(longitude)
+      ? longitude
+      : null
 
   if (normalizedLatitude !== null && normalizedLongitude !== null) {
     return { latitude: normalizedLatitude, longitude: normalizedLongitude }

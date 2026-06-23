@@ -27,10 +27,7 @@ type NotificationsDropdownProps = {
   recentNotifications?: Notification[]
 }
 
-function formatNotificationTime(
-  value: string,
-  t: any
-): string {
+function formatNotificationTime(value: string, t: any): string {
   const date = new Date(value)
   const now = new Date()
   const diffMs = now.getTime() - date.getTime()
@@ -53,10 +50,17 @@ function NotificationPreview({
 
   return (
     <div className="flex flex-col gap-0.5 text-left">
-      <span className={cn("text-sm leading-snug", !notification.read && "font-medium")}>
+      <span
+        className={cn(
+          "text-sm leading-snug",
+          !notification.read && "font-medium"
+        )}
+      >
         {displayTitle}
       </span>
-      <span className="line-clamp-2 text-xs text-muted-foreground">{displayMessage}</span>
+      <span className="line-clamp-2 text-xs text-muted-foreground">
+        {displayMessage}
+      </span>
       <span className="text-xs text-muted-foreground">
         {formatNotificationTime(notification.createdAt, t)}
       </span>
@@ -119,7 +123,10 @@ export function NotificationsDropdown({
               className="cursor-pointer items-start py-2"
               asChild
             >
-              <Link href="/dashboard/notifications" className="flex w-full gap-2">
+              <Link
+                href="/dashboard/notifications"
+                className="flex w-full gap-2"
+              >
                 <span
                   className={cn(
                     "mt-1.5 size-2 shrink-0 rounded-full",
@@ -134,7 +141,9 @@ export function NotificationsDropdown({
         )}
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild className="justify-center font-medium">
-          <Link href="/dashboard/notifications">{t("notifications.viewAll")}</Link>
+          <Link href="/dashboard/notifications">
+            {t("notifications.viewAll")}
+          </Link>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

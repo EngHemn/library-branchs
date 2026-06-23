@@ -4,12 +4,7 @@ import Link from "next/link"
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import type { AuthorDetail } from "@/domain/entities/author/AuthorDetail"
 import { BranchLink } from "@/presentation/components/branch-management/BranchLink"
@@ -48,9 +43,7 @@ export function AuthorProfileCard({ author }: AuthorProfileCardProps) {
     {
       key: "status",
       value:
-        author.status === "active"
-          ? t("common.active")
-          : t("common.inactive"),
+        author.status === "active" ? t("common.active") : t("common.inactive"),
     },
   ]
 

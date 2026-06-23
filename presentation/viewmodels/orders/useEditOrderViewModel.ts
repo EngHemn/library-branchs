@@ -16,7 +16,10 @@ import {
   resolveUserBranchId,
 } from "@/lib/dashboardBranchScope"
 import { toOrderDateInputValue } from "@/presentation/components/orders/orderDisplay"
-import type { EditOrderStatus, EditOrderViewModelState } from "./EditOrderViewModelState"
+import type {
+  EditOrderStatus,
+  EditOrderViewModelState,
+} from "./EditOrderViewModelState"
 
 type EditOrderViewModel = {
   state: EditOrderViewModelState
@@ -90,7 +93,9 @@ export function useEditOrderViewModel(
       branchId: detailQuery.data.branchId,
       supplierName: detailQuery.data.supplierName,
       orderDate: toOrderDateInputValue(detailQuery.data.orderDate),
-      expectedDeliveryDate: toOrderDateInputValue(detailQuery.data.expectedDeliveryDate),
+      expectedDeliveryDate: toOrderDateInputValue(
+        detailQuery.data.expectedDeliveryDate
+      ),
       status: detailQuery.data.status,
       phoneNumber: detailQuery.data.phoneNumber,
       supplierEmail: detailQuery.data.supplierEmail ?? "",
@@ -103,7 +108,12 @@ export function useEditOrderViewModel(
   }, [detailQuery.data, form])
 
   useEffect(() => {
-    if (!user || !isBranchScopedDashboardUser(user) || form.getValues("branchId")) return
+    if (
+      !user ||
+      !isBranchScopedDashboardUser(user) ||
+      form.getValues("branchId")
+    )
+      return
     form.setValue("branchId", userBranchId)
   }, [user, userBranchId, form])
 

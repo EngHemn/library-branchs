@@ -67,7 +67,9 @@ function SaleSuccess({ sale, onReset }: { sale: Sale; onReset: () => void }) {
         <CheckCircleIcon className="size-10 text-emerald-600 dark:text-emerald-400" />
       </div>
       <div>
-        <p className="text-base font-semibold">{t("sales.cart.saleComplete")}</p>
+        <p className="text-base font-semibold">
+          {t("sales.cart.saleComplete")}
+        </p>
         <p className="mt-0.5 text-xs text-muted-foreground">
           {sale.id} · {sale.branchName}
         </p>
@@ -157,7 +159,7 @@ export function SalesCartPanel({
                 <div key={item.book.id} className="flex flex-col gap-2 p-3">
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0 flex-1">
-                      <p className="line-clamp-2 text-xs font-medium leading-tight">
+                      <p className="line-clamp-2 text-xs leading-tight font-medium">
                         {item.book.title}
                       </p>
                       <p className="mt-0.5 truncate text-[11px] text-muted-foreground">

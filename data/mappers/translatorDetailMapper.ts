@@ -40,7 +40,9 @@ function getBooksTranslated(translatorName: string): TranslatorBookItem[] {
 
 export function toTranslatorDetail(translator: Translator): TranslatorDetail {
   const branch = fakeBranches.find((item) => item.id === translator.branchId)
-  const branchStaff = fakeStaff.filter((staff) => staff.branchId === translator.branchId)
+  const branchStaff = fakeStaff.filter(
+    (staff) => staff.branchId === translator.branchId
+  )
   const staffIndex =
     translator.id.charCodeAt(translator.id.length - 1) % branchStaff.length
   const addedByStaff = branchStaff[staffIndex] ?? fakeStaff[0]
@@ -50,7 +52,9 @@ export function toTranslatorDetail(translator: Translator): TranslatorDetail {
   return {
     ...translator,
     totalBooks:
-      translatedBooks.length > 0 ? translatedBooks.length : translator.totalBooks,
+      translatedBooks.length > 0
+        ? translatedBooks.length
+        : translator.totalBooks,
     branchName: branch?.branchName ?? "Unknown Branch",
     createdAt: translatorCreatedAtById[translator.id] ?? "2024-01-01",
     createdBy: {

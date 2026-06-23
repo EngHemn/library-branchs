@@ -1,7 +1,12 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { ArrowLeftIcon, Loader2Icon, RefreshCwIcon, SaveIcon } from "lucide-react"
+import {
+  ArrowLeftIcon,
+  Loader2Icon,
+  RefreshCwIcon,
+  SaveIcon,
+} from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -120,7 +125,7 @@ export function EditBookScreen({
         </div>
       ) : null}
 
-      {(state.isReady || state.isSaving || state.isSaved) ? (
+      {state.isReady || state.isSaving || state.isSaved ? (
         <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
           <section className="flex items-center justify-between pt-4">
             <div>
@@ -150,7 +155,9 @@ export function EditBookScreen({
           <Card className="rounded-lg">
             <CardHeader>
               <CardTitle>{t("books.edit.detailsTitle")}</CardTitle>
-              <CardDescription>{t("books.edit.detailsDescription")}</CardDescription>
+              <CardDescription>
+                {t("books.edit.detailsDescription")}
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <BookFormFields
@@ -185,13 +192,18 @@ export function EditBookScreen({
                   >
                     {t("common.cancel")}
                   </Button>
-                  <Button type="submit" disabled={state.isSaving || state.isSaved}>
+                  <Button
+                    type="submit"
+                    disabled={state.isSaving || state.isSaved}
+                  >
                     {state.isSaving ? (
                       <Loader2Icon className="animate-spin" />
                     ) : (
                       <SaveIcon />
                     )}
-                    {state.isSaving ? t("common.saving") : t("common.saveChanges")}
+                    {state.isSaving
+                      ? t("common.saving")
+                      : t("common.saveChanges")}
                   </Button>
                 </div>
               </BookFormFields>

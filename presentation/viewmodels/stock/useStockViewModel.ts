@@ -49,7 +49,8 @@ function getSubBranches(rows: StockRow[]): { id: string; name: string }[] {
   const seen = new Map<string, string>()
   for (const row of rows) {
     if (row.subBranchId && row.subBranchName) {
-      if (!seen.has(row.subBranchId)) seen.set(row.subBranchId, row.subBranchName)
+      if (!seen.has(row.subBranchId))
+        seen.set(row.subBranchId, row.subBranchName)
     }
   }
   return Array.from(seen.entries()).map(([id, name]) => ({ id, name }))
@@ -150,23 +151,34 @@ export function useStockViewModel(
   })
 
   const [searchQuery, setSearchQuery] = useState("")
-  const [selectedSubBranchId, setSelectedSubBranchId] = useState<string | null>(null)
+  const [selectedSubBranchId, setSelectedSubBranchId] = useState<string | null>(
+    null
+  )
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [showLowStock, setShowLowStock] = useState(false)
   const [showOutOfStock, setShowOutOfStock] = useState(false)
 
   const [movementSearchQuery, setMovementSearchQuery] = useState("")
-  const [movementTypeFilter, setMovementTypeFilter] = useState<MovementType | null>(null)
-  const [movementBranchFilter, setMovementBranchFilter] = useState<string | null>(null)
+  const [movementTypeFilter, setMovementTypeFilter] =
+    useState<MovementType | null>(null)
+  const [movementBranchFilter, setMovementBranchFilter] = useState<
+    string | null
+  >(null)
   const [movementDateFrom, setMovementDateFrom] = useState<string | null>(null)
   const [movementDateTo, setMovementDateTo] = useState<string | null>(null)
-  const [movementUserFilter, setMovementUserFilter] = useState<string | null>(null)
+  const [movementUserFilter, setMovementUserFilter] = useState<string | null>(
+    null
+  )
 
   const [isAddStockDialogOpen, setIsAddStockDialogOpen] = useState(false)
   const [isReduceStockDialogOpen, setIsReduceStockDialogOpen] = useState(false)
   const [isTransferDialogOpen, setIsTransferDialogOpen] = useState(false)
-  const [selectedStockRow, setSelectedStockRow] = useState<StockRow | null>(null)
-  const [expandedStockGroupIds, setExpandedStockGroupIds] = useState<string[]>([])
+  const [selectedStockRow, setSelectedStockRow] = useState<StockRow | null>(
+    null
+  )
+  const [expandedStockGroupIds, setExpandedStockGroupIds] = useState<string[]>(
+    []
+  )
 
   function openAddStockDialog(row: StockRow): void {
     setSelectedStockRow(row)
@@ -199,8 +211,7 @@ export function useStockViewModel(
       await stockData.addStock(input)
       setIsAddStockDialogOpen(false)
       setSelectedStockRow(null)
-    } catch {
-    }
+    } catch {}
   }
 
   async function reduceStock(input: ReduceStockInput): Promise<void> {
@@ -208,8 +219,7 @@ export function useStockViewModel(
       await stockData.reduceStock(input)
       setIsReduceStockDialogOpen(false)
       setSelectedStockRow(null)
-    } catch {
-    }
+    } catch {}
   }
 
   async function transferStock(input: TransferStockInput): Promise<void> {
@@ -217,8 +227,7 @@ export function useStockViewModel(
       await stockData.transferStock(input)
       setIsTransferDialogOpen(false)
       setSelectedStockRow(null)
-    } catch {
-    }
+    } catch {}
   }
 
   function toggleStockGroupExpanded(groupId: string): void {

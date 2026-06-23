@@ -35,7 +35,9 @@ export function ReportDataTable({ table }: ReportDataTableProps) {
               {table.columns.map((column) => (
                 <TableHead
                   key={column.key}
-                  className={column.align === "right" ? "text-right" : undefined}
+                  className={
+                    column.align === "right" ? "text-right" : undefined
+                  }
                 >
                   {column.label}
                 </TableHead>

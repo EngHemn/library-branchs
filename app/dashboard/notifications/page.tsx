@@ -6,7 +6,9 @@ import { NotificationsUseCase } from "@/domain/usecases/notifications/Notificati
 import { NotificationsScreen } from "@/presentation/screens/notifications/NotificationsScreen"
 
 const notificationsFakeDataSource = new NotificationsFakeDataSource()
-const notificationsRepository = new NotificationsRepositoryImpl(notificationsFakeDataSource)
+const notificationsRepository = new NotificationsRepositoryImpl(
+  notificationsFakeDataSource
+)
 const notificationsUseCase = new NotificationsUseCase(notificationsRepository)
 
 export default function NotificationsPage() {

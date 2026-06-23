@@ -4,7 +4,9 @@ import type { DashboardRepository } from "@/domain/repositories/DashboardReposit
 import type { Result } from "@/domain/result/Result"
 
 export class DashboardRepositoryImpl implements DashboardRepository {
-  constructor(private readonly dashboardFakeDataSource: DashboardFakeDataSource) {}
+  constructor(
+    private readonly dashboardFakeDataSource: DashboardFakeDataSource
+  ) {}
 
   getSummary(): Promise<Result<DashboardSummary>> {
     return this.dashboardFakeDataSource.getSummary()

@@ -1,11 +1,6 @@
 "use client"
 
-import {
-  EyeIcon,
-  LayersIcon,
-  PencilIcon,
-  Trash2Icon,
-} from "lucide-react"
+import { EyeIcon, LayersIcon, PencilIcon, Trash2Icon } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { EntityImage } from "@/components/ui/entity-image"
@@ -16,10 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import {
-  DataTable,
-  type DataTableColumn,
-} from "@/components/ui/data-table"
+import { DataTable, type DataTableColumn } from "@/components/ui/data-table"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import type { GroupListItem, GroupStatus } from "@/domain/entities/group/Group"
 import { GroupActionButton } from "@/presentation/components/groups/GroupActionButton"
@@ -44,13 +36,11 @@ type GroupColumnKey =
   | "status"
   | "actions"
 
-const statusVariants: Record<
-  GroupStatus,
-  "default" | "secondary" | "outline"
-> = {
-  active: "default",
-  inactive: "outline",
-}
+const statusVariants: Record<GroupStatus, "default" | "secondary" | "outline"> =
+  {
+    active: "default",
+    inactive: "outline",
+  }
 
 export function GroupsTable({
   groups,
@@ -78,9 +68,7 @@ export function GroupsTable({
             width={36}
             height={36}
             className="size-9 shrink-0 rounded-lg"
-            fallback={
-              <LayersIcon className="size-4 text-muted-foreground" />
-            }
+            fallback={<LayersIcon className="size-4 text-muted-foreground" />}
           />
           <GroupLink groupId={group.id} name={group.name} />
         </div>
@@ -103,7 +91,9 @@ export function GroupsTable({
       sortable: true,
       sortValue: (group) => group.totalBooks,
       cell: (group) => (
-        <span className="tabular-nums">{group.totalBooks.toLocaleString(locale)}</span>
+        <span className="tabular-nums">
+          {group.totalBooks.toLocaleString(locale)}
+        </span>
       ),
     },
     {

@@ -13,7 +13,10 @@ import {
 } from "@/domain/schemas/bookingFormSchema"
 import type { BookingManagementUseCase } from "@/domain/usecases/bookings/BookingManagementUseCase"
 import type { BookingComboboxOption } from "@/presentation/components/bookings/BookingSearchCombobox"
-import type { EditBookingStatus, EditBookingViewModelState } from "./EditBookingViewModelState"
+import type {
+  EditBookingStatus,
+  EditBookingViewModelState,
+} from "./EditBookingViewModelState"
 
 type EditBookingViewModel = {
   state: EditBookingViewModelState
@@ -31,7 +34,9 @@ type EditBookingQueryData = {
   }
 } | null
 
-function toComboboxOptions(options: BookingFormOption[]): BookingComboboxOption[] {
+function toComboboxOptions(
+  options: BookingFormOption[]
+): BookingComboboxOption[] {
   return options.map((option) => ({
     value: option.value,
     label: option.label,
@@ -115,7 +120,9 @@ export function useEditBookingViewModel(
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["bookings"] })
-      queryClient.invalidateQueries({ queryKey: ["booking-edit-data", bookingId] })
+      queryClient.invalidateQueries({
+        queryKey: ["booking-edit-data", bookingId],
+      })
     },
   })
 

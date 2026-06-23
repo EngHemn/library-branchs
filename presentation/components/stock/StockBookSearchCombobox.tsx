@@ -54,7 +54,9 @@ export function StockBookSearchCombobox({
   const bookMap = new Map(books.map((book) => [book.id, book]))
   const selectedBook = value ? bookMap.get(value) : undefined
   const comboboxInputValue = inputValue || selectedBook?.title || ""
-  const filteredBooks = books.filter((book) => matchesBook(book, comboboxInputValue))
+  const filteredBooks = books.filter((book) =>
+    matchesBook(book, comboboxInputValue)
+  )
   const hasSearchQuery = comboboxInputValue.trim().length > 0
 
   function itemToStringLabel(bookId: string): string {

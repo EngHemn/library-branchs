@@ -148,10 +148,7 @@ export function useEditNeedViewModel(
     state: {
       status,
       error:
-        error ??
-        needQuery.error?.message ??
-        userQuery.error?.message ??
-        null,
+        error ?? needQuery.error?.message ?? userQuery.error?.message ?? null,
       isLoading,
       isReady,
       isSaving: updateMutation.isPending,

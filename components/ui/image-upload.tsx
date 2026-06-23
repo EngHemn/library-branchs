@@ -1,7 +1,13 @@
 "use client"
 
 import { useCallback, useId, useRef, useState } from "react"
-import { EyeIcon, ImageIcon, Loader2Icon, UploadIcon, XIcon } from "lucide-react"
+import {
+  EyeIcon,
+  ImageIcon,
+  Loader2Icon,
+  UploadIcon,
+  XIcon,
+} from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -221,7 +227,8 @@ export function ImageUpload({
             isDragOver
               ? "border-primary bg-primary/5"
               : "border-muted-foreground/30 hover:border-muted-foreground/50 hover:bg-muted/30",
-            (disabled || isLoading) && "pointer-events-none cursor-not-allowed opacity-60"
+            (disabled || isLoading) &&
+              "pointer-events-none cursor-not-allowed opacity-60"
           )}
         >
           {isLoading ? (

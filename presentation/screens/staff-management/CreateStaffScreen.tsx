@@ -2,7 +2,14 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { ArrowLeftIcon, EyeIcon, EyeOffIcon, Loader2Icon, PlusIcon, RefreshCwIcon } from "lucide-react"
+import {
+  ArrowLeftIcon,
+  EyeIcon,
+  EyeOffIcon,
+  Loader2Icon,
+  PlusIcon,
+  RefreshCwIcon,
+} from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -96,7 +103,9 @@ export function CreateStaffScreen({
         <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
           <section className="flex items-center justify-between pt-4">
             <div>
-              <h1 className="text-2xl font-semibold tracking-normal">{t("staff.create.title")}</h1>
+              <h1 className="text-2xl font-semibold tracking-normal">
+                {t("staff.create.title")}
+              </h1>
               <p className="mt-1 text-sm text-muted-foreground">
                 {t("staff.create.description")}
               </p>
@@ -110,7 +119,9 @@ export function CreateStaffScreen({
           {state.error ? (
             <Card className="rounded-lg border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950">
               <CardContent className="py-3">
-                <p className="text-sm font-medium text-red-800 dark:text-red-200">{state.error}</p>
+                <p className="text-sm font-medium text-red-800 dark:text-red-200">
+                  {state.error}
+                </p>
               </CardContent>
             </Card>
           ) : null}
@@ -118,7 +129,9 @@ export function CreateStaffScreen({
           <Card className="rounded-lg">
             <CardHeader>
               <CardTitle>{t("staff.create.detailsTitle")}</CardTitle>
-              <CardDescription>{t("staff.create.detailsDescription")}</CardDescription>
+              <CardDescription>
+                {t("staff.create.detailsDescription")}
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <form
@@ -130,16 +143,22 @@ export function CreateStaffScreen({
               >
                 <div className="grid gap-6 sm:grid-cols-2">
                   <div className="space-y-2">
-                    <Label htmlFor="staffName">{t("staff.fields.fullName")}</Label>
+                    <Label htmlFor="staffName">
+                      {t("staff.fields.fullName")}
+                    </Label>
                     <Input
                       id="staffName"
                       placeholder={t("staff.placeholders.fullName")}
                       value={state.form.staffName}
-                      onChange={(e) => viewModel.setField("staffName", e.target.value)}
+                      onChange={(e) =>
+                        viewModel.setField("staffName", e.target.value)
+                      }
                       disabled={state.isSaving || state.isSaved}
                     />
                     {state.fieldErrors.staffName ? (
-                      <p className="text-sm text-destructive">{state.fieldErrors.staffName}</p>
+                      <p className="text-sm text-destructive">
+                        {state.fieldErrors.staffName}
+                      </p>
                     ) : null}
                   </div>
 
@@ -147,22 +166,34 @@ export function CreateStaffScreen({
                     <Label htmlFor="role">{t("staff.fields.role")}</Label>
                     <Select
                       value={state.form.role}
-                      onValueChange={(value) => viewModel.setField("role", value)}
+                      onValueChange={(value) =>
+                        viewModel.setField("role", value)
+                      }
                       disabled={state.isSaving || state.isSaved}
                     >
                       <SelectTrigger id="role">
-                        <SelectValue placeholder={t("staff.placeholders.selectRole")} />
+                        <SelectValue
+                          placeholder={t("staff.placeholders.selectRole")}
+                        />
                       </SelectTrigger>
                       <SelectContent>
                         {state.showBranchAdminRole ? (
-                          <SelectItem value="branch_admin">{t("staff.roles.branchAdmin")}</SelectItem>
+                          <SelectItem value="branch_admin">
+                            {t("staff.roles.branchAdmin")}
+                          </SelectItem>
                         ) : null}
-                        <SelectItem value="sub_branch_admin">{t("staff.roles.subBranchAdmin")}</SelectItem>
-                        <SelectItem value="staff">{t("staff.roles.staff")}</SelectItem>
+                        <SelectItem value="sub_branch_admin">
+                          {t("staff.roles.subBranchAdmin")}
+                        </SelectItem>
+                        <SelectItem value="staff">
+                          {t("staff.roles.staff")}
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                     {state.fieldErrors.role ? (
-                      <p className="text-sm text-destructive">{state.fieldErrors.role}</p>
+                      <p className="text-sm text-destructive">
+                        {state.fieldErrors.role}
+                      </p>
                     ) : null}
                   </div>
 
@@ -173,11 +204,15 @@ export function CreateStaffScreen({
                       type="email"
                       placeholder={t("staff.placeholders.email")}
                       value={state.form.email}
-                      onChange={(e) => viewModel.setField("email", e.target.value)}
+                      onChange={(e) =>
+                        viewModel.setField("email", e.target.value)
+                      }
                       disabled={state.isSaving || state.isSaved}
                     />
                     {state.fieldErrors.email ? (
-                      <p className="text-sm text-destructive">{state.fieldErrors.email}</p>
+                      <p className="text-sm text-destructive">
+                        {state.fieldErrors.email}
+                      </p>
                     ) : null}
                   </div>
 
@@ -187,11 +222,15 @@ export function CreateStaffScreen({
                       id="phone"
                       placeholder={t("staff.placeholders.phone")}
                       value={state.form.phone}
-                      onChange={(e) => viewModel.setField("phone", e.target.value)}
+                      onChange={(e) =>
+                        viewModel.setField("phone", e.target.value)
+                      }
                       disabled={state.isSaving || state.isSaved}
                     />
                     {state.fieldErrors.phone ? (
-                      <p className="text-sm text-destructive">{state.fieldErrors.phone}</p>
+                      <p className="text-sm text-destructive">
+                        {state.fieldErrors.phone}
+                      </p>
                     ) : null}
                   </div>
 
@@ -200,11 +239,15 @@ export function CreateStaffScreen({
                       <Label htmlFor="branch">{t("staff.fields.branch")}</Label>
                       <Select
                         value={state.form.branchId}
-                        onValueChange={(value) => viewModel.setField("branchId", value)}
+                        onValueChange={(value) =>
+                          viewModel.setField("branchId", value)
+                        }
                         disabled={state.isSaving || state.isSaved}
                       >
                         <SelectTrigger id="branch">
-                          <SelectValue placeholder={t("staff.placeholders.selectBranch")} />
+                          <SelectValue
+                            placeholder={t("staff.placeholders.selectBranch")}
+                          />
                         </SelectTrigger>
                         <SelectContent>
                           {state.branches.map((branch) => (
@@ -215,7 +258,9 @@ export function CreateStaffScreen({
                         </SelectContent>
                       </Select>
                       {state.fieldErrors.branch ? (
-                        <p className="text-sm text-destructive">{state.fieldErrors.branch}</p>
+                        <p className="text-sm text-destructive">
+                          {state.fieldErrors.branch}
+                        </p>
                       ) : null}
                     </div>
                   ) : null}
@@ -231,7 +276,9 @@ export function CreateStaffScreen({
                   </div>
 
                   <div className="space-y-2 sm:col-span-2">
-                    <Label htmlFor="password">{t("staff.fields.password")}</Label>
+                    <Label htmlFor="password">
+                      {t("staff.fields.password")}
+                    </Label>
                     <div className="flex gap-2">
                       <div className="relative flex-1">
                         <Input
@@ -239,7 +286,9 @@ export function CreateStaffScreen({
                           type={showPassword ? "text" : "password"}
                           placeholder={t("staff.placeholders.password")}
                           value={state.form.password}
-                          onChange={(e) => viewModel.setField("password", e.target.value)}
+                          onChange={(e) =>
+                            viewModel.setField("password", e.target.value)
+                          }
                           disabled={state.isSaving || state.isSaved}
                           className="pr-10"
                         />
@@ -249,7 +298,11 @@ export function CreateStaffScreen({
                           className="absolute inset-y-0 right-2 flex items-center text-muted-foreground hover:text-foreground"
                           tabIndex={-1}
                         >
-                          {showPassword ? <EyeOffIcon className="h-4 w-4" /> : <EyeIcon className="h-4 w-4" />}
+                          {showPassword ? (
+                            <EyeOffIcon className="h-4 w-4" />
+                          ) : (
+                            <EyeIcon className="h-4 w-4" />
+                          )}
                         </button>
                       </div>
                       <Button
@@ -264,7 +317,9 @@ export function CreateStaffScreen({
                       </Button>
                     </div>
                     {state.fieldErrors.password ? (
-                      <p className="text-sm text-destructive">{state.fieldErrors.password}</p>
+                      <p className="text-sm text-destructive">
+                        {state.fieldErrors.password}
+                      </p>
                     ) : null}
                   </div>
                 </div>
@@ -272,12 +327,26 @@ export function CreateStaffScreen({
                 <Separator />
 
                 <div className="flex justify-end gap-3">
-                  <Button type="button" variant="outline" onClick={goBack} disabled={state.isSaving}>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={goBack}
+                    disabled={state.isSaving}
+                  >
                     {t("common.cancel")}
                   </Button>
-                  <Button type="submit" disabled={state.isSaving || state.isSaved}>
-                    {state.isSaving ? <Loader2Icon className="animate-spin" /> : <PlusIcon />}
-                    {state.isSaving ? t("common.creating") : t("staff.create.createButton")}
+                  <Button
+                    type="submit"
+                    disabled={state.isSaving || state.isSaved}
+                  >
+                    {state.isSaving ? (
+                      <Loader2Icon className="animate-spin" />
+                    ) : (
+                      <PlusIcon />
+                    )}
+                    {state.isSaving
+                      ? t("common.creating")
+                      : t("staff.create.createButton")}
                   </Button>
                 </div>
               </form>

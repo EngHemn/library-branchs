@@ -1,7 +1,10 @@
 "use client"
 
 import type { Branch } from "@/domain/entities/branch/Branch"
-import type { StaffMember, StaffRole } from "@/domain/entities/staff/StaffMember"
+import type {
+  StaffMember,
+  StaffRole,
+} from "@/domain/entities/staff/StaffMember"
 import type { EditStaffFormErrors } from "@/domain/validators/staff/validateEditStaffForm"
 
 export type EditStaffStatus =

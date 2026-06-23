@@ -35,8 +35,7 @@ const cards: SummaryCardConfig[] = [
     labelKey: "shelves.summary.totalShelves",
     hintKey: "shelves.summary.totalShelvesHint",
     icon: LayersIcon,
-    iconClassName:
-      "bg-sky-100 text-sky-600 dark:bg-sky-950 dark:text-sky-400",
+    iconClassName: "bg-sky-100 text-sky-600 dark:bg-sky-950 dark:text-sky-400",
     accentClassName: "border-l-sky-500",
   },
   {
@@ -125,7 +124,7 @@ export function ShelvesSummaryCards({
               <p className="text-sm font-medium text-muted-foreground">
                 {t(card.labelKey)}
               </p>
-              <p className="text-2xl font-bold tabular-nums tracking-tight">
+              <p className="text-2xl font-bold tracking-tight tabular-nums">
                 {value.toLocaleString()}
               </p>
               <p className="truncate text-xs text-muted-foreground">

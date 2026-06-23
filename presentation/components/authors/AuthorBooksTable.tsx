@@ -8,10 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import {
-  DataTable,
-  type DataTableColumn,
-} from "@/components/ui/data-table"
+import { DataTable, type DataTableColumn } from "@/components/ui/data-table"
 import type { BookStatus } from "@/domain/entities/book/Book"
 import type { AuthorBookItem } from "@/domain/entities/author/AuthorDetail"
 import { useTranslation } from "@/presentation/i18n/useTranslation"

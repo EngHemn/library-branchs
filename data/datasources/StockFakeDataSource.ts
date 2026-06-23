@@ -55,7 +55,9 @@ export class StockFakeDataSource {
   async createStock(input: CreateStockInput): Promise<Result<StockRow>> {
     await delay(500)
 
-    const matchedBook = this.stockRows.find((row) => row.bookId === input.bookId)
+    const matchedBook = this.stockRows.find(
+      (row) => row.bookId === input.bookId
+    )
     if (!matchedBook) {
       return { success: false, error: "Book not found for stock creation." }
     }
@@ -248,7 +250,9 @@ export class StockFakeDataSource {
     return { success: true, data: { ...updated } }
   }
 
-  async transferStock(input: TransferStockInput): Promise<Result<StockMovement>> {
+  async transferStock(
+    input: TransferStockInput
+  ): Promise<Result<StockMovement>> {
     await delay(700)
 
     const fromRow = this.stockRows.find(

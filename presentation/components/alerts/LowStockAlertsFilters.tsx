@@ -57,7 +57,7 @@ export function LowStockAlertsFilters({
           </div>
         </div>
 
-        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end sm:shrink-0">
+        <div className="flex flex-col gap-3 sm:shrink-0 sm:flex-row sm:flex-wrap sm:items-end">
           {showBranchFilter ? (
             <div className="space-y-2 sm:w-48">
               <Label>{t("alerts.branch")}</Label>

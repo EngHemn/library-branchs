@@ -17,10 +17,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
-import {
-  DataTable,
-  type DataTableColumn,
-} from "@/components/ui/data-table"
+import { DataTable, type DataTableColumn } from "@/components/ui/data-table"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type { GroupSalesReport } from "@/domain/entities/group/GroupSalesReport"
 import { GroupSalesHistoryFilters } from "@/presentation/components/groups/GroupSalesHistoryFilters"
@@ -103,7 +100,9 @@ export function GroupReportHistoryTab({
     return (
       <Card className="rounded-lg border-destructive/40">
         <CardHeader>
-          <CardTitle className="text-base">{t("groups.reports.loadError")}</CardTitle>
+          <CardTitle className="text-base">
+            {t("groups.reports.loadError")}
+          </CardTitle>
           <CardDescription>{error}</CardDescription>
         </CardHeader>
         <CardContent>
@@ -342,7 +341,9 @@ export function GroupReportHistoryTab({
     <div className="flex flex-col gap-4">
       <Card className="rounded-lg">
         <CardHeader className="pb-3">
-          <CardTitle className="text-base">{t("groups.filters.filters")}</CardTitle>
+          <CardTitle className="text-base">
+            {t("groups.filters.filters")}
+          </CardTitle>
           <CardDescription>
             {t("groups.reports.filtersDescription")}
           </CardDescription>
@@ -429,7 +430,8 @@ export function GroupReportHistoryTab({
               {t("groups.reports.tabs.authors")} ({report.authors.length})
             </TabsTrigger>
             <TabsTrigger value="translators">
-              {t("groups.reports.tabs.translators")} ({report.translators.length})
+              {t("groups.reports.tabs.translators")} (
+              {report.translators.length})
             </TabsTrigger>
             <TabsTrigger value="categories">
               {t("groups.reports.tabs.categories")} ({report.categories.length})
@@ -452,7 +454,9 @@ export function GroupReportHistoryTab({
                   columns={bookColumns}
                   getRowId={(row) => row.bookId}
                   emptyTitle={t("groups.reports.sections.books.emptyTitle")}
-                  emptyDescription={t("groups.reports.sections.books.emptyDescription")}
+                  emptyDescription={t(
+                    "groups.reports.sections.books.emptyDescription"
+                  )}
                   initialSort={{ key: "totalRevenue", direction: "desc" }}
                   initialPageSize={10}
                 />
@@ -476,7 +480,9 @@ export function GroupReportHistoryTab({
                   columns={authorColumns}
                   getRowId={(row) => row.author}
                   emptyTitle={t("groups.reports.sections.authors.emptyTitle")}
-                  emptyDescription={t("groups.reports.sections.authors.emptyDescription")}
+                  emptyDescription={t(
+                    "groups.reports.sections.authors.emptyDescription"
+                  )}
                   initialSort={{ key: "totalRevenue", direction: "desc" }}
                   initialPageSize={10}
                 />
@@ -499,7 +505,9 @@ export function GroupReportHistoryTab({
                   data={report.translators}
                   columns={translatorColumns}
                   getRowId={(row) => row.translator}
-                  emptyTitle={t("groups.reports.sections.translators.emptyTitle")}
+                  emptyTitle={t(
+                    "groups.reports.sections.translators.emptyTitle"
+                  )}
                   emptyDescription={t(
                     "groups.reports.sections.translators.emptyDescription"
                   )}
@@ -525,7 +533,9 @@ export function GroupReportHistoryTab({
                   data={report.categories}
                   columns={categoryColumns}
                   getRowId={(row) => row.category}
-                  emptyTitle={t("groups.reports.sections.categories.emptyTitle")}
+                  emptyTitle={t(
+                    "groups.reports.sections.categories.emptyTitle"
+                  )}
                   emptyDescription={t(
                     "groups.reports.sections.categories.emptyDescription"
                   )}

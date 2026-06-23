@@ -42,13 +42,23 @@ export function DashboardRecentBooksTable({
       <TableHeader>
         <TableRow>
           <TableHead>{t("dashboard.tables.title")}</TableHead>
-          <TableHead className="hidden sm:table-cell">{t("dashboard.tables.author")}</TableHead>
-          <TableHead className="hidden md:table-cell">{t("dashboard.tables.category")}</TableHead>
+          <TableHead className="hidden sm:table-cell">
+            {t("dashboard.tables.author")}
+          </TableHead>
+          <TableHead className="hidden md:table-cell">
+            {t("dashboard.tables.category")}
+          </TableHead>
           {showBranchColumn ? (
-            <TableHead className="hidden lg:table-cell">{t("dashboard.tables.branch")}</TableHead>
+            <TableHead className="hidden lg:table-cell">
+              {t("dashboard.tables.branch")}
+            </TableHead>
           ) : null}
-          <TableHead className="w-16 text-right">{t("dashboard.tables.stock")}</TableHead>
-          <TableHead className="w-20 text-right">{t("dashboard.tables.available")}</TableHead>
+          <TableHead className="w-16 text-right">
+            {t("dashboard.tables.stock")}
+          </TableHead>
+          <TableHead className="w-20 text-right">
+            {t("dashboard.tables.available")}
+          </TableHead>
           <TableHead>{t("common.status")}</TableHead>
         </TableRow>
       </TableHeader>

@@ -43,7 +43,9 @@ function normalizeBillItems(items: BillLineItem[]): BillLineItem[] {
   const normalized: BillLineItem[] = []
 
   for (const item of items) {
-    const existingIndex = normalized.findIndex((entry) => entry.bookId === item.bookId)
+    const existingIndex = normalized.findIndex(
+      (entry) => entry.bookId === item.bookId
+    )
     if (existingIndex === -1) {
       normalized.push({
         bookId: item.bookId,
@@ -130,7 +132,10 @@ export class BillManagementFakeDataSource {
     const items = normalizeBillItems(input.items)
     const missingBook = items.find((item) => !findLibraryBookById(item.bookId))
     if (missingBook) {
-      return { success: false, error: "One or more selected books could not be found." }
+      return {
+        success: false,
+        error: "One or more selected books could not be found.",
+      }
     }
 
     const newBill: FakeBillRecord = {
@@ -167,7 +172,10 @@ export class BillManagementFakeDataSource {
     const items = normalizeBillItems(input.items)
     const missingBook = items.find((item) => !findLibraryBookById(item.bookId))
     if (missingBook) {
-      return { success: false, error: "One or more selected books could not be found." }
+      return {
+        success: false,
+        error: "One or more selected books could not be found.",
+      }
     }
 
     const currentBill = this.bills[billIndex]

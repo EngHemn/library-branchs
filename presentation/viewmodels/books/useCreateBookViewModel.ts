@@ -18,7 +18,10 @@ import {
   isBranchScopedBooksUser,
   type BookBranchOption,
 } from "@/lib/bookBranchScope"
-import type { CreateBookStatus, CreateBookViewModelState } from "./CreateBookViewModelState"
+import type {
+  CreateBookStatus,
+  CreateBookViewModelState,
+} from "./CreateBookViewModelState"
 import { useBookFormLocation } from "./useBookFormLocation"
 
 type CreateBookViewModel = {

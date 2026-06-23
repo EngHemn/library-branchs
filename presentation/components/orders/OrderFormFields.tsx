@@ -67,7 +67,9 @@ export function OrderFormFields({
                     value={field.value}
                     onValueChange={(value) => {
                       field.onChange(value)
-                      const branch = branchOptions.find((item) => item.id === value)
+                      const branch = branchOptions.find(
+                        (item) => item.id === value
+                      )
                       if (branch) {
                         form.setValue("latitude", branch.latitude)
                         form.setValue("longitude", branch.longitude)
@@ -77,7 +79,9 @@ export function OrderFormFields({
                   >
                     <FormControl>
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder={t("orders.form.branchPlaceholder")} />
+                        <SelectValue
+                          placeholder={t("orders.form.branchPlaceholder")}
+                        />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -153,7 +157,9 @@ export function OrderFormFields({
                 >
                   <FormControl>
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder={t("orders.form.statusPlaceholder")} />
+                      <SelectValue
+                        placeholder={t("orders.form.statusPlaceholder")}
+                      />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>

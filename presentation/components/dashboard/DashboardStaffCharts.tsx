@@ -64,7 +64,9 @@ export function DashboardStaffCharts({
     <div className="grid gap-4 lg:grid-cols-2">
       <Card className="rounded-xl">
         <CardHeader className="pb-2">
-          <CardTitle className="text-base">{t("dashboard.charts.staffByRole")}</CardTitle>
+          <CardTitle className="text-base">
+            {t("dashboard.charts.staffByRole")}
+          </CardTitle>
           <CardDescription>
             {t("dashboard.charts.staffByRoleDescription")}
           </CardDescription>
@@ -91,7 +93,10 @@ export function DashboardStaffCharts({
                 tickLine={false}
                 axisLine={false}
               />
-              <Tooltip cursor={{ fill: "#f9fafb" }} content={<ChartTooltip />} />
+              <Tooltip
+                cursor={{ fill: "#f9fafb" }}
+                content={<ChartTooltip />}
+              />
               <Bar dataKey="value" radius={[4, 4, 0, 0]}>
                 {localizedStaffByRole.map((entry, index) => (
                   <Cell key={index} fill={entry.color} />
@@ -105,7 +110,9 @@ export function DashboardStaffCharts({
       {showBranchChart ? (
         <Card className="rounded-xl">
           <CardHeader className="pb-2">
-            <CardTitle className="text-base">{t("dashboard.charts.staffByBranch")}</CardTitle>
+            <CardTitle className="text-base">
+              {t("dashboard.charts.staffByBranch")}
+            </CardTitle>
             <CardDescription>
               {t("dashboard.charts.staffByBranchDescription")}
             </CardDescription>
@@ -132,7 +139,10 @@ export function DashboardStaffCharts({
                   tickLine={false}
                   axisLine={false}
                 />
-                <Tooltip cursor={{ fill: "#f9fafb" }} content={<ChartTooltip />} />
+                <Tooltip
+                  cursor={{ fill: "#f9fafb" }}
+                  content={<ChartTooltip />}
+                />
                 <Bar dataKey="value" radius={[4, 4, 0, 0]}>
                   {localizedStaffByBranch.map((entry, index) => (
                     <Cell key={index} fill={entry.color} />

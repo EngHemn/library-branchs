@@ -49,10 +49,7 @@ export class ShelfManagementUseCase {
     return this.shelfManagementRepository.updateShelfBook(shelfId, input)
   }
 
-  deleteShelfBook(
-    shelfId: string,
-    shelfBookId: string
-  ): Promise<Result<null>> {
+  deleteShelfBook(shelfId: string, shelfBookId: string): Promise<Result<null>> {
     return this.shelfManagementRepository.deleteShelfBook(shelfId, shelfBookId)
   }
 

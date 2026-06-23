@@ -38,10 +38,7 @@ export interface ShelfManagementRepository {
     shelfId: string,
     input: UpdateShelfBookInput
   ): Promise<Result<ShelfBook>>
-  deleteShelfBook(
-    shelfId: string,
-    shelfBookId: string
-  ): Promise<Result<null>>
+  deleteShelfBook(shelfId: string, shelfBookId: string): Promise<Result<null>>
   getShelfSummary(): Promise<Result<ShelfSummary>>
   getBranchOptions(): Promise<Result<ShelfBranchOption[]>>
   getLocationOptions(): Promise<Result<ShelfLocationOptions>>

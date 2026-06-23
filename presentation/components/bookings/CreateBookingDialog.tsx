@@ -113,7 +113,9 @@ export function CreateBookingDialog({
             <div className="grid gap-4 sm:grid-cols-2">
               {!isBookLocked ? (
                 <div className="space-y-2">
-                  <Label htmlFor="booking-book">{t("bookings.fields.book")} *</Label>
+                  <Label htmlFor="booking-book">
+                    {t("bookings.fields.book")} *
+                  </Label>
                   <Controller
                     control={form.control}
                     name="bookId"
@@ -136,7 +138,9 @@ export function CreateBookingDialog({
               ) : null}
 
               <div className={cn("space-y-2", isBookLocked && "sm:col-span-2")}>
-                <Label htmlFor="booking-member">{t("bookings.fields.member")} *</Label>
+                <Label htmlFor="booking-member">
+                  {t("bookings.fields.member")} *
+                </Label>
                 <Controller
                   control={form.control}
                   name="memberId"
@@ -163,18 +167,26 @@ export function CreateBookingDialog({
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="booking-type">{t("bookings.fields.bookingType")} *</Label>
+                <Label htmlFor="booking-type">
+                  {t("bookings.fields.bookingType")} *
+                </Label>
                 <Controller
                   control={form.control}
                   name="bookingType"
                   render={({ field }) => (
                     <Select value={field.value} onValueChange={field.onChange}>
                       <SelectTrigger id="booking-type" className="w-full">
-                        <SelectValue placeholder={t("bookings.placeholders.selectType")} />
+                        <SelectValue
+                          placeholder={t("bookings.placeholders.selectType")}
+                        />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="outside">{t("bookings.types.outside")}</SelectItem>
-                        <SelectItem value="inside">{t("bookings.types.inside")}</SelectItem>
+                        <SelectItem value="outside">
+                          {t("bookings.types.outside")}
+                        </SelectItem>
+                        <SelectItem value="inside">
+                          {t("bookings.types.inside")}
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   )}
@@ -187,7 +199,9 @@ export function CreateBookingDialog({
                   control={form.control}
                   name="dueDate"
                   render={({ field }) => {
-                    const dateValue = field.value ? new Date(field.value) : undefined
+                    const dateValue = field.value
+                      ? new Date(field.value)
+                      : undefined
                     return (
                       <Popover>
                         <PopoverTrigger asChild>
@@ -221,21 +235,35 @@ export function CreateBookingDialog({
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="booking-status">{t("bookings.fields.status")}</Label>
+                <Label htmlFor="booking-status">
+                  {t("bookings.fields.status")}
+                </Label>
                 <Controller
                   control={form.control}
                   name="status"
                   render={({ field }) => (
                     <Select value={field.value} onValueChange={field.onChange}>
                       <SelectTrigger id="booking-status" className="w-full">
-                        <SelectValue placeholder={t("bookings.placeholders.selectStatus")} />
+                        <SelectValue
+                          placeholder={t("bookings.placeholders.selectStatus")}
+                        />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="reserved">{t("bookings.statuses.reserved")}</SelectItem>
-                        <SelectItem value="borrowed">{t("bookings.statuses.borrowed")}</SelectItem>
-                        <SelectItem value="returned">{t("bookings.statuses.returned")}</SelectItem>
-                        <SelectItem value="overdue">{t("bookings.statuses.overdue")}</SelectItem>
-                        <SelectItem value="cancelled">{t("bookings.statuses.cancelled")}</SelectItem>
+                        <SelectItem value="reserved">
+                          {t("bookings.statuses.reserved")}
+                        </SelectItem>
+                        <SelectItem value="borrowed">
+                          {t("bookings.statuses.borrowed")}
+                        </SelectItem>
+                        <SelectItem value="returned">
+                          {t("bookings.statuses.returned")}
+                        </SelectItem>
+                        <SelectItem value="overdue">
+                          {t("bookings.statuses.overdue")}
+                        </SelectItem>
+                        <SelectItem value="cancelled">
+                          {t("bookings.statuses.cancelled")}
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   )}
@@ -244,7 +272,9 @@ export function CreateBookingDialog({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="booking-notes">{t("bookings.fields.notes")}</Label>
+              <Label htmlFor="booking-notes">
+                {t("bookings.fields.notes")}
+              </Label>
               <Textarea
                 id="booking-notes"
                 placeholder={t("bookings.placeholders.notes")}
@@ -262,7 +292,10 @@ export function CreateBookingDialog({
             >
               {t("common.cancel")}
             </Button>
-            <Button type="submit" disabled={state.isSaving || !form.formState.isValid}>
+            <Button
+              type="submit"
+              disabled={state.isSaving || !form.formState.isValid}
+            >
               <PlusIcon />
               {t("bookings.dialog.createButton")}
             </Button>

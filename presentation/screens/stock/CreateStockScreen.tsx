@@ -78,7 +78,7 @@ export function CreateStockScreen({
     <>
       {state.isLoading ? <LoadingState /> : null}
 
-      {(state.isReady || state.isSaving || state.isSaved) ? (
+      {state.isReady || state.isSaving || state.isSaved ? (
         <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
           <section className="flex items-center justify-between pt-4">
             <div>
@@ -111,7 +111,9 @@ export function CreateStockScreen({
           {state.error ? (
             <Card className="rounded-lg border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950">
               <CardContent className="py-3">
-                <p className="text-sm font-medium text-red-800 dark:text-red-200">{state.error}</p>
+                <p className="text-sm font-medium text-red-800 dark:text-red-200">
+                  {state.error}
+                </p>
               </CardContent>
             </Card>
           ) : null}
@@ -119,7 +121,9 @@ export function CreateStockScreen({
           <Card className="rounded-lg">
             <CardHeader>
               <CardTitle>{t("stock.create.detailsTitle")}</CardTitle>
-              <CardDescription>{t("stock.create.detailsDescription")}</CardDescription>
+              <CardDescription>
+                {t("stock.create.detailsDescription")}
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <CreateStockFormFields
@@ -132,12 +136,26 @@ export function CreateStockScreen({
               >
                 <Separator />
                 <div className="flex justify-end gap-3">
-                  <Button type="button" variant="outline" onClick={goBack} disabled={state.isSaving}>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={goBack}
+                    disabled={state.isSaving}
+                  >
                     {t("common.cancel")}
                   </Button>
-                  <Button type="submit" disabled={state.isSaving || state.isSaved}>
-                    {state.isSaving ? <Loader2Icon className="animate-spin" /> : <PlusIcon />}
-                    {state.isSaving ? t("common.creating") : t("stock.create.createButton")}
+                  <Button
+                    type="submit"
+                    disabled={state.isSaving || state.isSaved}
+                  >
+                    {state.isSaving ? (
+                      <Loader2Icon className="animate-spin" />
+                    ) : (
+                      <PlusIcon />
+                    )}
+                    {state.isSaving
+                      ? t("common.creating")
+                      : t("stock.create.createButton")}
                   </Button>
                 </div>
               </CreateStockFormFields>

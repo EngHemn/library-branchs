@@ -18,12 +18,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import {
-  DataTable,
-  type DataTableColumn,
-} from "@/components/ui/data-table"
+import { DataTable, type DataTableColumn } from "@/components/ui/data-table"
 import type { PermissionStaffRole } from "@/domain/entities/permission/Permission"
-import type { StaffMember, StaffRole } from "@/domain/entities/staff/StaffMember"
+import type {
+  StaffMember,
+  StaffRole,
+} from "@/domain/entities/staff/StaffMember"
 import { BranchLink } from "@/presentation/components/branch-management/BranchLink"
 import { StaffActionButton } from "@/presentation/components/staff-management/StaffActionButton"
 import type { TranslationKey } from "@/presentation/i18n/messages"
@@ -68,9 +68,7 @@ function StaffStatusBadge({ status }: { status: string }) {
       ? t(`common.${status}` as TranslationKey)
       : status
   return (
-    <Badge variant={status === "active" ? "default" : "outline"}>
-      {label}
-    </Badge>
+    <Badge variant={status === "active" ? "default" : "outline"}>{label}</Badge>
   )
 }
 
@@ -156,8 +154,7 @@ export function StaffTable({
           member.status === "active"
             ? t("staff.table.deactivateStaff")
             : t("staff.table.activateStaff")
-        const ToggleIcon =
-          member.status === "active" ? PowerOffIcon : PowerIcon
+        const ToggleIcon = member.status === "active" ? PowerOffIcon : PowerIcon
 
         return (
           <div className="table-action-content">
@@ -193,7 +190,9 @@ export function StaffTable({
       <CardHeader>
         <CardTitle>{t("staff.table.title")}</CardTitle>
         <CardDescription>
-          {t("staff.table.recordCount", { count: staff.length.toLocaleString() })}
+          {t("staff.table.recordCount", {
+            count: staff.length.toLocaleString(),
+          })}
         </CardDescription>
       </CardHeader>
       <CardContent>

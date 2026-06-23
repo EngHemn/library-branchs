@@ -23,7 +23,8 @@ function delay(ms: number): Promise<void> {
 
 function getBranchName(branchId: string): string {
   return (
-    fakeBranches.find((branch) => branch.id === branchId)?.branchName ?? branchId
+    fakeBranches.find((branch) => branch.id === branchId)?.branchName ??
+    branchId
   )
 }
 
@@ -269,11 +270,7 @@ export class NeedFakeDataSource {
       status: "approved",
       activityLog: [
         ...existing.activityLog,
-        createActivityEntry(
-          "approved",
-          "Request approved.",
-          performedBy
-        ),
+        createActivityEntry("approved", "Request approved.", performedBy),
       ],
       updatedAt: now,
     }

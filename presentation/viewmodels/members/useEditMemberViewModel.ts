@@ -13,7 +13,10 @@ import {
   type MemberFormValues,
 } from "@/domain/schemas/memberFormSchema"
 import type { MemberManagementUseCase } from "@/domain/usecases/members/MemberManagementUseCase"
-import type { EditMemberStatus, EditMemberViewModelState } from "./EditMemberViewModelState"
+import type {
+  EditMemberStatus,
+  EditMemberViewModelState,
+} from "./EditMemberViewModelState"
 
 type EditMemberViewModel = {
   state: EditMemberViewModelState

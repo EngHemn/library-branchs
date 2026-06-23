@@ -93,7 +93,7 @@ export function CreateBookScreen({
     <>
       {state.isLoading ? <LoadingState /> : null}
 
-      {(state.isReady || state.isSaving || state.isSaved) ? (
+      {state.isReady || state.isSaving || state.isSaved ? (
         <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
           <section className="flex items-center justify-between pt-4">
             <div>
@@ -123,7 +123,9 @@ export function CreateBookScreen({
           <Card className="rounded-lg">
             <CardHeader>
               <CardTitle>{t("books.create.detailsTitle")}</CardTitle>
-              <CardDescription>{t("books.create.detailsDescription")}</CardDescription>
+              <CardDescription>
+                {t("books.create.detailsDescription")}
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <BookFormFields
@@ -159,9 +161,18 @@ export function CreateBookScreen({
                   >
                     {t("common.cancel")}
                   </Button>
-                  <Button type="submit" disabled={state.isSaving || state.isSaved}>
-                    {state.isSaving ? <Loader2Icon className="animate-spin" /> : <PlusIcon />}
-                    {state.isSaving ? t("common.creating") : t("books.create.createButton")}
+                  <Button
+                    type="submit"
+                    disabled={state.isSaving || state.isSaved}
+                  >
+                    {state.isSaving ? (
+                      <Loader2Icon className="animate-spin" />
+                    ) : (
+                      <PlusIcon />
+                    )}
+                    {state.isSaving
+                      ? t("common.creating")
+                      : t("books.create.createButton")}
                   </Button>
                 </div>
               </BookFormFields>

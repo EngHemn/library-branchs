@@ -21,9 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
-import type {
-  ReportPeriod,
-} from "@/domain/entities/reports/Reports"
+import type { ReportPeriod } from "@/domain/entities/reports/Reports"
 import type {
   ReportBranchFilter,
   ReportBranchFilterOption,
@@ -104,14 +102,18 @@ function DatePickerField({
             )}
           >
             <CalendarIcon className="size-4" />
-            {value ? format(parseISO(value), "MMM d, yyyy") : t("reports.filters.pickDate")}
+            {value
+              ? format(parseISO(value), "MMM d, yyyy")
+              : t("reports.filters.pickDate")}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="start">
           <Calendar
             mode="single"
             selected={selected}
-            onSelect={(date) => onChange(date ? format(date, "yyyy-MM-dd") : "")}
+            onSelect={(date) =>
+              onChange(date ? format(date, "yyyy-MM-dd") : "")
+            }
             disabled={(date) => {
               if (maxDate && date > maxDate) {
                 return true
@@ -156,7 +158,9 @@ export function ReportsFilters({
         <p className="text-xs text-muted-foreground">
           {branchName ? `${branchName} · ` : null}
           {dateFrom && dateTo ? `${dateFrom} → ${dateTo}` : null}
-          {generatedAt ? ` · ${t("reports.filters.generated", { date: formatGeneratedAt(generatedAt) })}` : null}
+          {generatedAt
+            ? ` · ${t("reports.filters.generated", { date: formatGeneratedAt(generatedAt) })}`
+            : null}
         </p>
       </div>
 
@@ -172,7 +176,9 @@ export function ReportsFilters({
           </Label>
           <Select
             value={period}
-            onValueChange={(value) => { if (isReportPeriod(value)) onPeriodChange(value) }}
+            onValueChange={(value) => {
+              if (isReportPeriod(value)) onPeriodChange(value)
+            }}
           >
             <SelectTrigger id="report-period" className="w-full">
               <SelectValue />

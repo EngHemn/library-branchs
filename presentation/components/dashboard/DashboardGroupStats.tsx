@@ -41,21 +41,24 @@ const cards: Array<{
     titleKey: "dashboard.groups.activeGroups",
     descriptionKey: "dashboard.groups.activeGroupsDescription",
     icon: UserCheckIcon,
-    color: "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400",
+    color:
+      "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400",
   },
   {
     key: "totalAssignedBooks",
     titleKey: "dashboard.groups.assignedBooks",
     descriptionKey: "dashboard.groups.assignedBooksDescription",
     icon: BookOpenIcon,
-    color: "bg-violet-100 dark:bg-violet-900/40 text-violet-600 dark:text-violet-400",
+    color:
+      "bg-violet-100 dark:bg-violet-900/40 text-violet-600 dark:text-violet-400",
   },
   {
     key: "totalAssignedStaff",
     titleKey: "dashboard.groups.assignedStaff",
     descriptionKey: "dashboard.groups.assignedStaffDescription",
     icon: UsersIcon,
-    color: "bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400",
+    color:
+      "bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400",
   },
 ]
 

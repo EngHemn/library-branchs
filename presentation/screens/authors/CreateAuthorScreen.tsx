@@ -23,7 +23,9 @@ type CreateAuthorScreenProps = {
   getAuthorsUseCase: GetAuthorsUseCase
 }
 
-export function CreateAuthorScreen({ getAuthorsUseCase }: CreateAuthorScreenProps) {
+export function CreateAuthorScreen({
+  getAuthorsUseCase,
+}: CreateAuthorScreenProps) {
   const router = useRouter()
   const { t } = useTranslation()
   const viewModel = useCreateAuthorViewModel(getAuthorsUseCase)
@@ -88,8 +90,14 @@ export function CreateAuthorScreen({ getAuthorsUseCase }: CreateAuthorScreenProp
                 {t("common.cancel")}
               </Button>
               <Button type="submit" disabled={state.isSaving || state.isSaved}>
-                {state.isSaving ? <Loader2Icon className="animate-spin" /> : <PlusIcon />}
-                {state.isSaving ? t("common.creating") : t("authors.createButton")}
+                {state.isSaving ? (
+                  <Loader2Icon className="animate-spin" />
+                ) : (
+                  <PlusIcon />
+                )}
+                {state.isSaving
+                  ? t("common.creating")
+                  : t("authors.createButton")}
               </Button>
             </div>
           </AuthorFormFields>

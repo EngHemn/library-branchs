@@ -11,7 +11,10 @@ import {
   type TranslatorFormValues,
 } from "@/domain/schemas/translatorFormSchema"
 import type { GetTranslatorsUseCase } from "@/domain/usecases/translators/GetTranslatorsUseCase"
-import type { EditTranslatorStatus, EditTranslatorViewModelState } from "./EditTranslatorViewModelState"
+import type {
+  EditTranslatorStatus,
+  EditTranslatorViewModelState,
+} from "./EditTranslatorViewModelState"
 
 type EditTranslatorViewModel = {
   state: EditTranslatorViewModelState
@@ -38,7 +41,11 @@ export function useEditTranslatorViewModel(
     },
   })
 
-  const { data, status: queryStatus, error: queryError } = useQuery({
+  const {
+    data,
+    status: queryStatus,
+    error: queryError,
+  } = useQuery({
     queryKey: ["translators", translatorId],
     queryFn: async () => {
       const result = await getTranslatorsUseCase.getTranslatorById(translatorId)
@@ -66,11 +73,17 @@ export function useEditTranslatorViewModel(
     error: mutationError,
   } = useMutation({
     mutationFn: async (values: TranslatorFormValues) => {
-      const result = await getTranslatorsUseCase.updateTranslator({ id: translatorId, ...values })
+      const result = await getTranslatorsUseCase.updateTranslator({
+        id: translatorId,
+        ...values,
+      })
       if (!result.success) throw new Error(result.error)
       return result.data
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["translators", translatorId] }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({
+        queryKey: ["translators", translatorId],
+      }),
   })
 
   async function save(values: TranslatorFormValues): Promise<void> {
@@ -81,13 +94,17 @@ export function useEditTranslatorViewModel(
     }
   }
 
-  const status: EditTranslatorStatus =
-    isSaved ? "saved" :
-    isSaving ? "saving" :
-    queryStatus === "error" ? "error" :
-    queryStatus === "pending" ? "loading" :
-    data === null ? "not-found" :
-    "ready"
+  const status: EditTranslatorStatus = isSaved
+    ? "saved"
+    : isSaving
+      ? "saving"
+      : queryStatus === "error"
+        ? "error"
+        : queryStatus === "pending"
+          ? "loading"
+          : data === null
+            ? "not-found"
+            : "ready"
 
   const state: EditTranslatorViewModelState = {
     status,

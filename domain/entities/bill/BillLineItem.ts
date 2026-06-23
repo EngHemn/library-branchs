@@ -5,7 +5,9 @@ export type BillLineItem = {
   newPrice: number | null
 }
 
-export function getBillLineUnitPrice(item: Pick<BillLineItem, "initialPrice" | "newPrice">): number {
+export function getBillLineUnitPrice(
+  item: Pick<BillLineItem, "initialPrice" | "newPrice">
+): number {
   if (item.newPrice != null && item.newPrice > 0) {
     return item.newPrice
   }

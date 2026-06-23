@@ -61,7 +61,11 @@ function getBookGridClassName(isSubBranchUser: boolean): string {
   )
 }
 
-function LoadingGrid({ isSubBranchUser = false }: { isSubBranchUser?: boolean }) {
+function LoadingGrid({
+  isSubBranchUser = false,
+}: {
+  isSubBranchUser?: boolean
+}) {
   return (
     <div className={getBookGridClassName(isSubBranchUser)}>
       {Array.from({ length: 8 }).map((_, i) => (
@@ -164,12 +168,14 @@ export function BooksForSaleGrid({
   }
 
   return (
-    <div className="flex flex-1  flex-col">
+    <div className="flex flex-1 flex-col">
       <div className="sticky top-0 z-10 flex flex-col gap-2 border-b bg-background p-4">
         {displayedBranch ? (
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-semibold">{displayedBranch.branchName}</p>
+              <p className="text-sm font-semibold">
+                {displayedBranch.branchName}
+              </p>
               <p className="text-xs text-muted-foreground">
                 {displayedBranch.address}
               </p>
@@ -178,7 +184,9 @@ export function BooksForSaleGrid({
         ) : (
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-semibold">{t("sales.books.allBranchesCatalog")}</p>
+              <p className="text-sm font-semibold">
+                {t("sales.books.allBranchesCatalog")}
+              </p>
               <p className="text-xs text-muted-foreground">
                 {t("sales.books.allBranchesHint")}
               </p>
@@ -211,7 +219,7 @@ export function BooksForSaleGrid({
 
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
           <div className="relative flex-1">
-            <SearchIcon className="absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+            <SearchIcon className="absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               className="pl-8"
               placeholder={t("sales.books.searchPlaceholder")}
@@ -221,38 +229,38 @@ export function BooksForSaleGrid({
           </div>
 
           <div className="flex flex-wrap gap-2">
-          <FilterCombobox
-            value={languageFilter}
-            onValueChange={onLanguageFilterChange}
-            placeholder={t("sales.books.language")}
-            allLabel={t("sales.books.allLanguages")}
-            options={languages}
-            widthClassName="w-[150px]"
-          />
-          <FilterCombobox
-            value={categoryFilter}
-            onValueChange={onCategoryFilterChange}
-            placeholder={t("sales.books.category")}
-            allLabel={t("sales.books.allCategories")}
-            options={categories}
-            widthClassName="w-[170px]"
-          />
-          <FilterCombobox
-            value={authorFilter}
-            onValueChange={onAuthorFilterChange}
-            placeholder={t("sales.books.author")}
-            allLabel={t("sales.books.allAuthors")}
-            options={authors}
-            widthClassName="w-[180px]"
-          />
-          <FilterCombobox
-            value={translatorFilter}
-            onValueChange={onTranslatorFilterChange}
-            placeholder={t("sales.books.translator")}
-            allLabel={t("sales.books.allTranslators")}
-            options={translators}
-            widthClassName="w-[180px]"
-          />
+            <FilterCombobox
+              value={languageFilter}
+              onValueChange={onLanguageFilterChange}
+              placeholder={t("sales.books.language")}
+              allLabel={t("sales.books.allLanguages")}
+              options={languages}
+              widthClassName="w-[150px]"
+            />
+            <FilterCombobox
+              value={categoryFilter}
+              onValueChange={onCategoryFilterChange}
+              placeholder={t("sales.books.category")}
+              allLabel={t("sales.books.allCategories")}
+              options={categories}
+              widthClassName="w-[170px]"
+            />
+            <FilterCombobox
+              value={authorFilter}
+              onValueChange={onAuthorFilterChange}
+              placeholder={t("sales.books.author")}
+              allLabel={t("sales.books.allAuthors")}
+              options={authors}
+              widthClassName="w-[180px]"
+            />
+            <FilterCombobox
+              value={translatorFilter}
+              onValueChange={onTranslatorFilterChange}
+              placeholder={t("sales.books.translator")}
+              allLabel={t("sales.books.allTranslators")}
+              options={translators}
+              widthClassName="w-[180px]"
+            />
           </div>
         </div>
       </div>
@@ -283,9 +291,7 @@ export function BooksForSaleGrid({
                 cartQuantity={qty}
                 isShoppingBranch={!shoppingBranch || !isViewingOtherBranch}
                 onAdd={() => handleCartAction(book)}
-                onUpdateQuantity={(newQty) =>
-                  onUpdateQuantity(book.id, newQty)
-                }
+                onUpdateQuantity={(newQty) => onUpdateQuantity(book.id, newQty)}
               />
             )
           })}

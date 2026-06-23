@@ -158,7 +158,8 @@ export function useSalesHistoryViewModel(
   salesUseCase: SalesUseCase
 ): SalesHistoryViewModel {
   const { t } = useTranslation()
-  const [filters, setFilters] = useState<SalesHistoryFilterState>(defaultFilters)
+  const [filters, setFilters] =
+    useState<SalesHistoryFilterState>(defaultFilters)
 
   const userQuery = useQuery({
     queryKey: ["currentUser"],

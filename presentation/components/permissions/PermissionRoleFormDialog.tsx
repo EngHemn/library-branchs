@@ -70,7 +70,9 @@ export function PermissionRoleFormDialog({
           }}
         >
           <div className="space-y-2">
-            <Label htmlFor="role-name">{t("permissions.roleForm.roleName")}</Label>
+            <Label htmlFor="role-name">
+              {t("permissions.roleForm.roleName")}
+            </Label>
             <Input
               id="role-name"
               value={name}

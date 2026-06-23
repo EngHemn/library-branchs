@@ -3,15 +3,26 @@
 import { useEffect, useRef, useState } from "react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
-import type { PermissionCode, PermissionConfig, PermissionRole } from "@/domain/entities/permission/Permission"
+import type {
+  PermissionCode,
+  PermissionConfig,
+  PermissionRole,
+} from "@/domain/entities/permission/Permission"
 import type { User } from "@/domain/entities/User"
 import { filterPermissionRolesForUser } from "@/domain/services/staffPermissionsScope"
 import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { PermissionManagementUseCase } from "@/domain/usecases/permission/PermissionManagementUseCase"
 import { usePermissionsData } from "./usePermissionsData"
-import { usePermissionsRoleDialog, type RoleDialogMode, type RoleFormState } from "./usePermissionsRoleDialog"
+import {
+  usePermissionsRoleDialog,
+  type RoleDialogMode,
+  type RoleFormState,
+} from "./usePermissionsRoleDialog"
 import { usePermissionsDeleteDialog } from "./usePermissionsDeleteDialog"
-import type { PermissionsPageStatus, PermissionsViewModelState } from "./PermissionsViewModelState"
+import type {
+  PermissionsPageStatus,
+  PermissionsViewModelState,
+} from "./PermissionsViewModelState"
 
 type PermissionsViewModel = {
   state: PermissionsViewModelState
@@ -40,10 +51,8 @@ export function usePermissionsViewModel(
   permissionManagementUseCase: PermissionManagementUseCase
 ): PermissionsViewModel {
   const queryClient = useQueryClient()
-  const { data, isPending, isFetching, isError, error, refetch } = usePermissionsData(
-    authUseCase,
-    permissionManagementUseCase
-  )
+  const { data, isPending, isFetching, isError, error, refetch } =
+    usePermissionsData(authUseCase, permissionManagementUseCase)
 
   const roles = data?.roles ?? []
   const config = data?.config ?? null
@@ -68,7 +77,8 @@ export function usePermissionsViewModel(
       ? selectedRoleId
       : (visibleRoles[0]?.id ?? null)
 
-  const selectedRole = visibleRoles.find((r) => r.id === effectiveSelectedRoleId) ?? null
+  const selectedRole =
+    visibleRoles.find((r) => r.id === effectiveSelectedRoleId) ?? null
 
   const filteredRoles = (() => {
     const normalized = searchQuery.trim().toLowerCase()
@@ -111,7 +121,8 @@ export function usePermissionsViewModel(
       const result = await authUseCase.logout()
       if (!result.success) throw new Error(result.error)
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["permissions"] }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["permissions"] }),
   })
 
   const { mutate: savePerms, isPending: isSaving } = useMutation({
@@ -124,7 +135,8 @@ export function usePermissionsViewModel(
       if (!result.success) throw new Error(result.error)
       return result.data
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["permissions"] }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["permissions"] }),
   })
 
   const status: PermissionsPageStatus = (() => {
@@ -156,7 +168,9 @@ export function usePermissionsViewModel(
     const category = config.categories.find((c) => c.name === categoryName)
     if (!category) return
     setDraftPermissions((current) => {
-      const withoutCategory = current.filter((p) => !category.permissions.includes(p))
+      const withoutCategory = current.filter(
+        (p) => !category.permissions.includes(p)
+      )
       return [...withoutCategory, ...category.permissions]
     })
   }
@@ -165,7 +179,9 @@ export function usePermissionsViewModel(
     if (!config) return
     const category = config.categories.find((c) => c.name === categoryName)
     if (!category) return
-    setDraftPermissions((current) => current.filter((p) => !category.permissions.includes(p)))
+    setDraftPermissions((current) =>
+      current.filter((p) => !category.permissions.includes(p))
+    )
   }
 
   function resetPermissions(): void {
@@ -211,7 +227,7 @@ export function usePermissionsViewModel(
     roleFormError: roleDialog.roleFormError,
     deleteRoleDialog: deleteDialog.deleteRoleDialog,
     deleteRoleError: deleteDialog.deleteRoleError,
-    error: isError ? error?.message ?? null : null,
+    error: isError ? (error?.message ?? null) : null,
     isLoading: isPending || isFetching,
     isReady: status === "success",
     isUnauthenticated: status === "unauthenticated",

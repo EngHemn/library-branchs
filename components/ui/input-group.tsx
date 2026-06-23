@@ -123,7 +123,7 @@ function InputGroupInput({
       type={type}
       data-slot="input-group-control"
       className={cn(
-        "h-full min-h-0 w-full min-w-0 flex-1 rounded-none border-0 bg-transparent px-2.5 py-1 text-base shadow-none outline-none ring-0 file:inline-flex file:h-6 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus:rounded-none focus:bg-transparent focus-visible:rounded-none focus-visible:border-0 focus-visible:bg-transparent focus-visible:ring-0 disabled:pointer-events-none disabled:cursor-not-allowed disabled:bg-transparent disabled:opacity-50 md:text-sm dark:bg-transparent dark:disabled:bg-transparent",
+        "h-full min-h-0 w-full min-w-0 flex-1 rounded-none border-0 bg-transparent px-2.5 py-1 text-base shadow-none ring-0 outline-none file:inline-flex file:h-6 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus:rounded-none focus:bg-transparent focus-visible:rounded-none focus-visible:border-0 focus-visible:bg-transparent focus-visible:ring-0 disabled:pointer-events-none disabled:cursor-not-allowed disabled:bg-transparent disabled:opacity-50 md:text-sm dark:bg-transparent dark:disabled:bg-transparent",
         className
       )}
       {...props}

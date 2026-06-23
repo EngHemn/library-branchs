@@ -63,9 +63,11 @@ function filterNeeds(
   dateTo: string | null
 ): NeedListItem[] {
   return needs.filter((need) => {
-    if (categoryFilter !== "all" && need.category !== categoryFilter) return false
+    if (categoryFilter !== "all" && need.category !== categoryFilter)
+      return false
     if (branchFilter !== "all" && need.branchId !== branchFilter) return false
-    if (priorityFilter !== "all" && need.priority !== priorityFilter) return false
+    if (priorityFilter !== "all" && need.priority !== priorityFilter)
+      return false
     if (statusFilter !== "all" && need.status !== statusFilter) return false
 
     const requestDate = need.requestDate.slice(0, 10)
@@ -82,9 +84,11 @@ export function useNeedsViewModel(
 ): NeedsViewModel {
   const queryClient = useQueryClient()
   const [searchQuery, setSearchQuery] = useState("")
-  const [categoryFilter, setCategoryFilter] = useState<NeedCategoryFilter>("all")
+  const [categoryFilter, setCategoryFilter] =
+    useState<NeedCategoryFilter>("all")
   const [branchFilter, setBranchFilter] = useState<NeedBranchFilter>("all")
-  const [priorityFilter, setPriorityFilter] = useState<NeedPriorityFilter>("all")
+  const [priorityFilter, setPriorityFilter] =
+    useState<NeedPriorityFilter>("all")
   const [statusFilter, setStatusFilter] = useState<NeedStatusFilter>("all")
   const [dateFrom, setDateFrom] = useState<string | null>(null)
   const [dateTo, setDateTo] = useState<string | null>(null)
@@ -175,8 +179,7 @@ export function useNeedsViewModel(
   const allNeeds = needsQuery.data ?? []
   const scopedNeeds =
     user !== null ? filterNeedsByBranchScope(allNeeds, user) : []
-  const summary =
-    user !== null ? buildScopedNeedSummary(scopedNeeds) : null
+  const summary = user !== null ? buildScopedNeedSummary(scopedNeeds) : null
 
   const isBranchScopedUser = user !== null && isBranchScopedDashboardUser(user)
 
@@ -210,8 +213,7 @@ export function useNeedsViewModel(
   return {
     state: {
       needsStatus,
-      needsError:
-        needsQuery.error?.message ?? userQuery.error?.message ?? null,
+      needsError: needsQuery.error?.message ?? userQuery.error?.message ?? null,
       summary,
       summaryStatus,
       searchQuery,

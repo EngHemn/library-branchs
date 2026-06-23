@@ -5,7 +5,10 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 import type { Author } from "@/domain/entities/author/Author"
 import type { GetAuthorsUseCase } from "@/domain/usecases/authors/GetAuthorsUseCase"
-import type { AuthorsStatus, AuthorsViewModelState } from "./AuthorsViewModelState"
+import type {
+  AuthorsStatus,
+  AuthorsViewModelState,
+} from "./AuthorsViewModelState"
 
 type AuthorsViewModel = {
   state: AuthorsViewModelState
@@ -20,7 +23,9 @@ export function useAuthorsViewModel(
 ): AuthorsViewModel {
   const queryClient = useQueryClient()
   const [searchQuery, setSearchQuery] = useState("")
-  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all")
+  const [statusFilter, setStatusFilter] = useState<
+    "all" | "active" | "inactive"
+  >("all")
 
   const {
     data: authors,
@@ -77,9 +82,11 @@ export function useAuthorsViewModel(
   })
 
   const status: AuthorsStatus =
-    queryStatus === "success" ? "ready" :
-    queryStatus === "error" ? "error" :
-    "loading"
+    queryStatus === "success"
+      ? "ready"
+      : queryStatus === "error"
+        ? "error"
+        : "loading"
 
   const state: AuthorsViewModelState = {
     status,

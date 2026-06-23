@@ -36,7 +36,10 @@ export class AuthFakeDataSource {
     }
 
     if (user) {
-      window.localStorage.setItem(AUTH_SESSION_STORAGE_KEY, JSON.stringify(user))
+      window.localStorage.setItem(
+        AUTH_SESSION_STORAGE_KEY,
+        JSON.stringify(user)
+      )
       setAuthBranchTypeCookie(user.branchType)
       return
     }

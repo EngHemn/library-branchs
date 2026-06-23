@@ -20,7 +20,9 @@ function generateInitialSalesHistory(): Sale[] {
 
   for (let index = 0; index < INITIAL_SALES_COUNT; index += 1) {
     const branch = fakeBranches[index % fakeBranches.length]
-    const branchBooks = fakeSaleBooks.filter((book) => book.branchId === branch.id)
+    const branchBooks = fakeSaleBooks.filter(
+      (book) => book.branchId === branch.id
+    )
     const firstBook = branchBooks[index % branchBooks.length]
     const secondBook = branchBooks[(index + 1) % branchBooks.length]
 

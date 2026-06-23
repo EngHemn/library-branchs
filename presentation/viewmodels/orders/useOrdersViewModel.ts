@@ -87,7 +87,9 @@ function getSubBranchFilterOptions(
   const networkIds = getSubBranchNetworkBranchIds(userBranchId)
 
   const otherBranches = allDashboardBranches
-    .filter((branch) => networkIds.includes(branch.id) && branch.id !== userBranchId)
+    .filter(
+      (branch) => networkIds.includes(branch.id) && branch.id !== userBranchId
+    )
     .map((branch) => ({ value: branch.id, label: branch.name }))
     .sort((left, right) => left.label.localeCompare(right.label))
 
@@ -370,15 +372,21 @@ export function useOrdersViewModel(
     setFilters((current) => ({ ...current, branchFilter }))
   }
 
-  function setStatusFilter(statusFilter: OrdersFilterState["statusFilter"]): void {
+  function setStatusFilter(
+    statusFilter: OrdersFilterState["statusFilter"]
+  ): void {
     setFilters((current) => ({ ...current, statusFilter }))
   }
 
-  function setCategoryFilter(categoryFilter: OrdersFilterState["categoryFilter"]): void {
+  function setCategoryFilter(
+    categoryFilter: OrdersFilterState["categoryFilter"]
+  ): void {
     setFilters((current) => ({ ...current, categoryFilter }))
   }
 
-  function setAuthorFilter(authorFilter: OrdersFilterState["authorFilter"]): void {
+  function setAuthorFilter(
+    authorFilter: OrdersFilterState["authorFilter"]
+  ): void {
     setFilters((current) => ({ ...current, authorFilter }))
   }
 

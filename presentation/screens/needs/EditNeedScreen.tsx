@@ -94,7 +94,9 @@ export function EditNeedScreen({
       <Card className="rounded-lg">
         <CardHeader>
           <CardTitle>{t("needs.edit.detailsTitle")}</CardTitle>
-          <CardDescription>{t("needs.edit.detailsDescription")}</CardDescription>
+          <CardDescription>
+            {t("needs.edit.detailsDescription")}
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <NeedFormFields

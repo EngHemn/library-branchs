@@ -34,7 +34,9 @@ export function useBranchDetailActionsHook(
       const result = await branchDetailUseCase.deleteSubBranch(id)
       return result.success
     },
-    onSuccess: (ok) => { if (ok) invalidate() },
+    onSuccess: (ok) => {
+      if (ok) invalidate()
+    },
   })
 
   const toggleSubBranchStatusMutation = useMutation({
@@ -42,7 +44,9 @@ export function useBranchDetailActionsHook(
       const result = await branchDetailUseCase.toggleSubBranchStatus(id)
       return result.success
     },
-    onSuccess: (ok) => { if (ok) invalidate() },
+    onSuccess: (ok) => {
+      if (ok) invalidate()
+    },
   })
 
   const deleteBookMutation = useMutation({
@@ -50,7 +54,9 @@ export function useBranchDetailActionsHook(
       const result = await branchDetailUseCase.deleteBook(id)
       return result.success
     },
-    onSuccess: (ok) => { if (ok) invalidate() },
+    onSuccess: (ok) => {
+      if (ok) invalidate()
+    },
   })
 
   const toggleBookStatusMutation = useMutation({
@@ -58,7 +64,9 @@ export function useBranchDetailActionsHook(
       const result = await branchDetailUseCase.toggleBookStatus(id)
       return result.success
     },
-    onSuccess: (ok) => { if (ok) invalidate() },
+    onSuccess: (ok) => {
+      if (ok) invalidate()
+    },
   })
 
   const deleteAuthorMutation = useMutation({
@@ -66,7 +74,9 @@ export function useBranchDetailActionsHook(
       const result = await branchDetailUseCase.deleteAuthor(id)
       return result.success
     },
-    onSuccess: (ok) => { if (ok) invalidate() },
+    onSuccess: (ok) => {
+      if (ok) invalidate()
+    },
   })
 
   const toggleAuthorStatusMutation = useMutation({
@@ -74,7 +84,9 @@ export function useBranchDetailActionsHook(
       const result = await branchDetailUseCase.toggleAuthorStatus(id)
       return result.success
     },
-    onSuccess: (ok) => { if (ok) invalidate() },
+    onSuccess: (ok) => {
+      if (ok) invalidate()
+    },
   })
 
   const deleteTranslatorMutation = useMutation({
@@ -82,7 +94,9 @@ export function useBranchDetailActionsHook(
       const result = await branchDetailUseCase.deleteTranslator(id)
       return result.success
     },
-    onSuccess: (ok) => { if (ok) invalidate() },
+    onSuccess: (ok) => {
+      if (ok) invalidate()
+    },
   })
 
   const toggleTranslatorStatusMutation = useMutation({
@@ -90,7 +104,9 @@ export function useBranchDetailActionsHook(
       const result = await branchDetailUseCase.toggleTranslatorStatus(id)
       return result.success
     },
-    onSuccess: (ok) => { if (ok) invalidate() },
+    onSuccess: (ok) => {
+      if (ok) invalidate()
+    },
   })
 
   const deleteStaffMutation = useMutation({
@@ -98,7 +114,9 @@ export function useBranchDetailActionsHook(
       const result = await branchDetailUseCase.deleteStaff(id)
       return result.success
     },
-    onSuccess: (ok) => { if (ok) invalidate() },
+    onSuccess: (ok) => {
+      if (ok) invalidate()
+    },
   })
 
   const toggleStaffStatusMutation = useMutation({
@@ -106,7 +124,9 @@ export function useBranchDetailActionsHook(
       const result = await branchDetailUseCase.toggleStaffStatus(id)
       return result.success
     },
-    onSuccess: (ok) => { if (ok) invalidate() },
+    onSuccess: (ok) => {
+      if (ok) invalidate()
+    },
   })
 
   const deleteMemberMutation = useMutation({
@@ -114,7 +134,9 @@ export function useBranchDetailActionsHook(
       const result = await branchDetailUseCase.deleteMember(id)
       return result.success
     },
-    onSuccess: (ok) => { if (ok) invalidate() },
+    onSuccess: (ok) => {
+      if (ok) invalidate()
+    },
   })
 
   const toggleMemberStatusMutation = useMutation({
@@ -122,7 +144,9 @@ export function useBranchDetailActionsHook(
       const result = await branchDetailUseCase.toggleMemberStatus(id)
       return result.success
     },
-    onSuccess: (ok) => { if (ok) invalidate() },
+    onSuccess: (ok) => {
+      if (ok) invalidate()
+    },
   })
 
   async function deleteSubBranch(id: string): Promise<void> {

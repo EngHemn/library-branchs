@@ -10,10 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import {
-  DataTable,
-  type DataTableColumn,
-} from "@/components/ui/data-table"
+import { DataTable, type DataTableColumn } from "@/components/ui/data-table"
 import type { BillProduct } from "@/domain/entities/bill/BillDetail"
 import { BillActionButton } from "@/presentation/components/bills/BillActionButton"
 import { formatBillPrice } from "@/presentation/components/bills/billDisplay"
@@ -34,7 +31,10 @@ type ProductColumnKey =
   | "finalPrice"
   | "actions"
 
-export function BillProductsTable({ products, onView }: BillProductsTableProps) {
+export function BillProductsTable({
+  products,
+  onView,
+}: BillProductsTableProps) {
   const { t } = useTranslation()
   const { locale } = useLocale()
 
@@ -53,7 +53,9 @@ export function BillProductsTable({ products, onView }: BillProductsTableProps) 
         sortable: true,
         sortValue: (product) => product.isbn,
         cell: (product) => (
-          <span className="font-mono text-xs text-muted-foreground">{product.isbn}</span>
+          <span className="font-mono text-xs text-muted-foreground">
+            {product.isbn}
+          </span>
         ),
       },
       {
@@ -88,7 +90,9 @@ export function BillProductsTable({ products, onView }: BillProductsTableProps) 
         sortable: true,
         sortValue: (product) => product.finalPrice,
         cell: (product) => (
-          <span className="font-semibold">{formatBillPrice(product.finalPrice, locale)}</span>
+          <span className="font-semibold">
+            {formatBillPrice(product.finalPrice, locale)}
+          </span>
         ),
       },
       {

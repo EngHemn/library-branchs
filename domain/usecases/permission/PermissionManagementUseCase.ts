@@ -19,7 +19,9 @@ export class PermissionManagementUseCase {
     return this.permissionRepository.getPermissionConfig()
   }
 
-  createRole(input: CreatePermissionRoleInput): Promise<Result<PermissionRole>> {
+  createRole(
+    input: CreatePermissionRoleInput
+  ): Promise<Result<PermissionRole>> {
     return this.permissionRepository.createRole(input)
   }
 

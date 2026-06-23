@@ -1,6 +1,9 @@
 "use client"
 
-import type { BillBookOption, BillBranchOption } from "@/domain/repositories/BillManagementRepository"
+import type {
+  BillBookOption,
+  BillBranchOption,
+} from "@/domain/repositories/BillManagementRepository"
 
 export type CreateBillStatus = "loading" | "ready" | "saving" | "saved"
 

@@ -44,7 +44,9 @@ function toAsyncStatus(
   return "idle"
 }
 
-export function useStockQueries(stockUseCase: StockUseCase): StockQueriesResult {
+export function useStockQueries(
+  stockUseCase: StockUseCase
+): StockQueriesResult {
   const queryClient = useQueryClient()
   const [submitError, setSubmitError] = useState<string | null>(null)
 
@@ -81,7 +83,8 @@ export function useStockQueries(stockUseCase: StockUseCase): StockQueriesResult 
       if (!result.success) throw new Error(result.error)
       return result.data
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["stock-rows"] }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["stock-rows"] }),
     onError: (err: Error) => setSubmitError(err.message),
   })
 
@@ -91,7 +94,8 @@ export function useStockQueries(stockUseCase: StockUseCase): StockQueriesResult 
       if (!result.success) throw new Error(result.error)
       return result.data
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["stock-rows"] }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["stock-rows"] }),
     onError: (err: Error) => setSubmitError(err.message),
   })
 

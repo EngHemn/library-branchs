@@ -1,7 +1,12 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { ArrowLeftIcon, Loader2Icon, RefreshCwIcon, SaveIcon } from "lucide-react"
+import {
+  ArrowLeftIcon,
+  Loader2Icon,
+  RefreshCwIcon,
+  SaveIcon,
+} from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -50,7 +55,10 @@ function LoadingState() {
   )
 }
 
-export function EditAuthorScreen({ authorId, getAuthorsUseCase }: EditAuthorScreenProps) {
+export function EditAuthorScreen({
+  authorId,
+  getAuthorsUseCase,
+}: EditAuthorScreenProps) {
   const router = useRouter()
   const { t } = useTranslation()
   const viewModel = useEditAuthorViewModel(authorId, getAuthorsUseCase)
@@ -140,7 +148,9 @@ export function EditAuthorScreen({ authorId, getAuthorsUseCase }: EditAuthorScre
           <Card className="rounded-lg">
             <CardHeader>
               <CardTitle>{t("authors.detailsTitle")}</CardTitle>
-              <CardDescription>{t("authors.editDetailsDescription")}</CardDescription>
+              <CardDescription>
+                {t("authors.editDetailsDescription")}
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <AuthorFormFields
@@ -158,9 +168,18 @@ export function EditAuthorScreen({ authorId, getAuthorsUseCase }: EditAuthorScre
                   >
                     {t("common.cancel")}
                   </Button>
-                  <Button type="submit" disabled={state.isSaving || state.isSaved}>
-                    {state.isSaving ? <Loader2Icon className="animate-spin" /> : <SaveIcon />}
-                    {state.isSaving ? t("common.saving") : t("authors.saveChanges")}
+                  <Button
+                    type="submit"
+                    disabled={state.isSaving || state.isSaved}
+                  >
+                    {state.isSaving ? (
+                      <Loader2Icon className="animate-spin" />
+                    ) : (
+                      <SaveIcon />
+                    )}
+                    {state.isSaving
+                      ? t("common.saving")
+                      : t("authors.saveChanges")}
                   </Button>
                 </div>
               </AuthorFormFields>

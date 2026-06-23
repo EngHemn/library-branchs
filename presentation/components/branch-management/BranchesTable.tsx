@@ -18,10 +18,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import {
-  DataTable,
-  type DataTableColumn,
-} from "@/components/ui/data-table"
+import { DataTable, type DataTableColumn } from "@/components/ui/data-table"
 import type { Branch } from "@/domain/entities/branch/Branch"
 import { BranchActionButton } from "@/presentation/components/branch-management/BranchActionButton"
 import { BranchAdminLink } from "@/presentation/components/branch-management/BranchAdminLink"
@@ -190,7 +187,9 @@ export function BranchesTable({
       <CardHeader>
         <CardTitle>{t("branches.table.title")}</CardTitle>
         <CardDescription>
-          {t("branches.table.recordCount", { count: branches.length.toLocaleString() })}
+          {t("branches.table.recordCount", {
+            count: branches.length.toLocaleString(),
+          })}
         </CardDescription>
       </CardHeader>
       <CardContent>

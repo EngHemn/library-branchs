@@ -2,11 +2,7 @@
 
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
-import {
-  AlertTriangleIcon,
-  BookOpenIcon,
-  RefreshCwIcon,
-} from "lucide-react"
+import { AlertTriangleIcon, BookOpenIcon, RefreshCwIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -25,7 +21,10 @@ import { DashboardBookCharts } from "@/presentation/components/dashboard/Dashboa
 import { DashboardBookingCharts } from "@/presentation/components/dashboard/DashboardBookingCharts"
 import { DashboardFilters } from "@/presentation/components/dashboard/DashboardFilters"
 import { DashboardGroupStats } from "@/presentation/components/dashboard/DashboardGroupStats"
-import { DashboardNeedsAlertsStats, DashboardAlertsSection } from "@/presentation/components/dashboard/DashboardNeedsAlertsStats"
+import {
+  DashboardNeedsAlertsStats,
+  DashboardAlertsSection,
+} from "@/presentation/components/dashboard/DashboardNeedsAlertsStats"
 import { DashboardMetricsGrid } from "@/presentation/components/dashboard/DashboardMetricsGrid"
 import { DashboardOverviewCharts } from "@/presentation/components/dashboard/DashboardOverviewCharts"
 import { DashboardRecentBookingsTable } from "@/presentation/components/dashboard/DashboardRecentBookingsTable"
@@ -81,13 +80,19 @@ function LoadingDashboard() {
   )
 }
 
-function EmptyTabContent({ labelKey }: { labelKey: "bookings" | "books" | "members" | "sales" | "staff" }) {
+function EmptyTabContent({
+  labelKey,
+}: {
+  labelKey: "bookings" | "books" | "members" | "sales" | "staff"
+}) {
   const { t } = useTranslation()
 
   return (
     <div className="flex min-h-48 items-center justify-center rounded-xl border border-dashed">
       <p className="text-sm text-muted-foreground">
-        {t("dashboard.emptyTab", { label: t(`dashboard.emptyLabels.${labelKey}`) })}
+        {t("dashboard.emptyTab", {
+          label: t(`dashboard.emptyLabels.${labelKey}`),
+        })}
       </p>
     </div>
   )
@@ -99,7 +104,10 @@ export function DashboardScreen({
 }: DashboardScreenProps) {
   const router = useRouter()
   const { t } = useTranslation()
-  const viewModel = useDashboardViewModel(authUseCase, getDashboardSummaryUseCase)
+  const viewModel = useDashboardViewModel(
+    authUseCase,
+    getDashboardSummaryUseCase
+  )
   const { state } = viewModel
 
   useEffect(() => {
@@ -142,7 +150,9 @@ export function DashboardScreen({
         <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
           <section className="flex flex-col gap-2 pt-4 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <h1 className="text-2xl font-bold tracking-tight">{t("dashboard.title")}</h1>
+              <h1 className="text-2xl font-bold tracking-tight">
+                {t("dashboard.title")}
+              </h1>
               <p className="mt-1 text-sm text-muted-foreground">
                 {t("dashboard.subtitle", { name: user.fullName })}
               </p>
@@ -172,7 +182,9 @@ export function DashboardScreen({
 
           <Tabs defaultValue="overview">
             <TabsList className="h-auto flex-wrap gap-1">
-              <TabsTrigger value="overview">{t("dashboard.tabs.overview")}</TabsTrigger>
+              <TabsTrigger value="overview">
+                {t("dashboard.tabs.overview")}
+              </TabsTrigger>
               <TabsTrigger value="bookings">
                 {t("dashboard.tabs.bookings")}
                 {state.filteredBookings.length > 0 && (
@@ -235,7 +247,9 @@ export function DashboardScreen({
               <div className="grid gap-4 lg:grid-cols-[1fr_340px]">
                 <Card className="rounded-xl">
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-base">{t("dashboard.overview.recentActivity")}</CardTitle>
+                    <CardTitle className="text-base">
+                      {t("dashboard.overview.recentActivity")}
+                    </CardTitle>
                     <CardDescription>
                       {t("dashboard.overview.recentActivityDescription")}
                     </CardDescription>
@@ -252,14 +266,18 @@ export function DashboardScreen({
                         <AlertTriangleIcon className="size-4 text-amber-600 dark:text-amber-400" />
                       </span>
                       <div className="min-w-0">
-                        <CardTitle className="text-sm">{t("dashboard.overview.stockAlerts")}</CardTitle>
+                        <CardTitle className="text-sm">
+                          {t("dashboard.overview.stockAlerts")}
+                        </CardTitle>
                         <CardDescription className="text-xs">
                           {t("dashboard.overview.stockAlertsDescription")}
                         </CardDescription>
                       </div>
                     </CardHeader>
                     <CardContent>
-                      <p className="text-3xl font-bold">{summary.stockAlerts}</p>
+                      <p className="text-3xl font-bold">
+                        {summary.stockAlerts}
+                      </p>
                       <p className="mt-1 text-xs text-muted-foreground">
                         {t("dashboard.overview.stockAlertsHelper")}
                       </p>
@@ -272,14 +290,18 @@ export function DashboardScreen({
                         <BookOpenIcon className="size-4 text-rose-600 dark:text-rose-400" />
                       </span>
                       <div className="min-w-0">
-                        <CardTitle className="text-sm">{t("dashboard.overview.overdueReturns")}</CardTitle>
+                        <CardTitle className="text-sm">
+                          {t("dashboard.overview.overdueReturns")}
+                        </CardTitle>
                         <CardDescription className="text-xs">
                           {t("dashboard.overview.overdueReturnsDescription")}
                         </CardDescription>
                       </div>
                     </CardHeader>
                     <CardContent>
-                      <p className="text-3xl font-bold">{summary.overdueBookings}</p>
+                      <p className="text-3xl font-bold">
+                        {summary.overdueBookings}
+                      </p>
                       <p className="mt-1 text-xs text-muted-foreground">
                         {t("dashboard.overview.overdueReturnsHelper")}
                       </p>
@@ -299,7 +321,9 @@ export function DashboardScreen({
               ) : (
                 <Card className="rounded-xl">
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-base">{t("dashboard.sections.recentBookings")}</CardTitle>
+                    <CardTitle className="text-base">
+                      {t("dashboard.sections.recentBookings")}
+                    </CardTitle>
                     <CardDescription>
                       {t("dashboard.sections.recentBookingsDescription")}
                     </CardDescription>
@@ -324,7 +348,9 @@ export function DashboardScreen({
               ) : (
                 <Card className="rounded-xl">
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-base">{t("dashboard.sections.recentBooks")}</CardTitle>
+                    <CardTitle className="text-base">
+                      {t("dashboard.sections.recentBooks")}
+                    </CardTitle>
                     <CardDescription>
                       {t("dashboard.sections.recentBooksDescription")}
                     </CardDescription>
@@ -345,7 +371,9 @@ export function DashboardScreen({
               ) : (
                 <Card className="rounded-xl">
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-base">{t("dashboard.sections.members")}</CardTitle>
+                    <CardTitle className="text-base">
+                      {t("dashboard.sections.members")}
+                    </CardTitle>
                     <CardDescription>
                       {t("dashboard.sections.membersDescription")}
                     </CardDescription>
@@ -366,7 +394,9 @@ export function DashboardScreen({
               ) : (
                 <Card className="rounded-xl">
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-base">{t("dashboard.sections.sales")}</CardTitle>
+                    <CardTitle className="text-base">
+                      {t("dashboard.sections.sales")}
+                    </CardTitle>
                     <CardDescription>
                       {t("dashboard.sections.salesDescription")}
                     </CardDescription>
@@ -392,7 +422,9 @@ export function DashboardScreen({
               ) : (
                 <Card className="rounded-xl">
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-base">{t("dashboard.sections.staffMembers")}</CardTitle>
+                    <CardTitle className="text-base">
+                      {t("dashboard.sections.staffMembers")}
+                    </CardTitle>
                     <CardDescription>
                       {t("dashboard.sections.staffMembersDescription")}
                     </CardDescription>

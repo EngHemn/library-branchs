@@ -1,4 +1,8 @@
-import type { GroupBookOption, GroupBranchOption, GroupStaffOption } from "@/domain/repositories/GroupRepository"
+import type {
+  GroupBookOption,
+  GroupBranchOption,
+  GroupStaffOption,
+} from "@/domain/repositories/GroupRepository"
 
 export type CreateGroupStatus = "loading" | "ready" | "saving" | "saved"
 

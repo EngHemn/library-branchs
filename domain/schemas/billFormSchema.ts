@@ -17,7 +17,9 @@ export const billFormSchema = z.object({
   phoneNumber: z.string().min(1, validationKeys.phoneNumberRequired),
   price: z.number().positive(validationKeys.pricePositive),
   imageUrl: optionalImageUrlSchema,
-  items: z.array(billLineItemFormSchema).min(1, validationKeys.selectAtLeastOneBook),
+  items: z
+    .array(billLineItemFormSchema)
+    .min(1, validationKeys.selectAtLeastOneBook),
 })
 
 export type BillFormLineItem = z.output<typeof billLineItemFormSchema>

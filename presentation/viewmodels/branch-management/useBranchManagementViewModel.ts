@@ -16,7 +16,16 @@ import type { BranchManagementUseCase } from "@/domain/usecases/branch/BranchMan
 import { useLocale } from "@/presentation/i18n/useLocale"
 import { translate } from "@/presentation/i18n/messages"
 import { useBranchRequestActionsHook } from "./useBranchRequestActionsHook"
-import type { ActiveBranchFilter, ActiveBranchFilterId, BranchFilterState, BranchManagementDialog, BranchManagementStatus, BranchManagementViewModelState, BranchStatusFilter, BranchTypeFilter } from "./BranchManagementViewModelState"
+import type {
+  ActiveBranchFilter,
+  ActiveBranchFilterId,
+  BranchFilterState,
+  BranchManagementDialog,
+  BranchManagementStatus,
+  BranchManagementViewModelState,
+  BranchStatusFilter,
+  BranchTypeFilter,
+} from "./BranchManagementViewModelState"
 
 type BranchManagementViewModel = {
   state: BranchManagementViewModelState
@@ -32,11 +41,23 @@ type BranchManagementViewModel = {
   closeDialog: () => void
   deleteBranch: (branchId: string) => Promise<void>
   toggleBranchStatus: (branchId: string) => Promise<void>
-  approveMainBranchRequest: (requestId: string, password: string) => Promise<void>
-  rejectMainBranchRequest: (requestId: string, message?: string) => Promise<void>
-  approveSubBranchRequest: (requestId: string, password: string) => Promise<void>
+  approveMainBranchRequest: (
+    requestId: string,
+    password: string
+  ) => Promise<void>
+  rejectMainBranchRequest: (
+    requestId: string,
+    message?: string
+  ) => Promise<void>
+  approveSubBranchRequest: (
+    requestId: string,
+    password: string
+  ) => Promise<void>
   rejectSubBranchRequest: (requestId: string, message?: string) => Promise<void>
-  replyToMainBranchRequest: (requestId: string, message: string) => Promise<void>
+  replyToMainBranchRequest: (
+    requestId: string,
+    message: string
+  ) => Promise<void>
   replyToSubBranchRequest: (requestId: string, message: string) => Promise<void>
   toggleMainRequestNote: (requestId: string) => void
   toggleSubRequestNote: (requestId: string) => void
@@ -62,8 +83,10 @@ function calculateBranchStats(branches: Branch[]): BranchStats {
       totalBranches: stats.totalBranches + 1,
       mainBranches: stats.mainBranches + (branch.type === "main" ? 1 : 0),
       subBranches: stats.subBranches + (branch.type === "sub" ? 1 : 0),
-      activeBranches: stats.activeBranches + (branch.status === "active" ? 1 : 0),
-      inactiveBranches: stats.inactiveBranches + (branch.status === "inactive" ? 1 : 0),
+      activeBranches:
+        stats.activeBranches + (branch.status === "active" ? 1 : 0),
+      inactiveBranches:
+        stats.inactiveBranches + (branch.status === "inactive" ? 1 : 0),
     }),
     emptyStats
   )
@@ -72,9 +95,13 @@ function calculateBranchStats(branches: Branch[]): BranchStats {
 function matchesBranchSearch(branch: Branch, searchQuery: string): boolean {
   const normalized = searchQuery.trim().toLowerCase()
   if (!normalized) return true
-  return [branch.branchName, branch.phone, branch.address, branch.email, branch.adminName].some(
-    (v) => v.toLowerCase().includes(normalized)
-  )
+  return [
+    branch.branchName,
+    branch.phone,
+    branch.address,
+    branch.email,
+    branch.adminName,
+  ].some((v) => v.toLowerCase().includes(normalized))
 }
 
 function toggleRequestId(ids: string[], id: string): string[] {
@@ -88,8 +115,12 @@ export function useBranchManagementViewModel(
   const queryClient = useQueryClient()
   const { locale } = useLocale()
   const [filters, setFilters] = useState<BranchFilterState>(defaultFilters)
-  const [expandedMainRequestIds, setExpandedMainRequestIds] = useState<string[]>([])
-  const [expandedSubRequestIds, setExpandedSubRequestIds] = useState<string[]>([])
+  const [expandedMainRequestIds, setExpandedMainRequestIds] = useState<
+    string[]
+  >([])
+  const [expandedSubRequestIds, setExpandedSubRequestIds] = useState<string[]>(
+    []
+  )
   const [dialog, setDialog] = useState<BranchManagementDialog>(null)
 
   const {
@@ -116,11 +147,12 @@ export function useBranchManagementViewModel(
   } = useQuery({
     queryKey: ["branchManagement"],
     queryFn: async () => {
-      const [branchesResult, mainRequestsResult, subRequestsResult] = await Promise.all([
-        branchManagementUseCase.getBranches(),
-        branchManagementUseCase.getMainBranchRequests(),
-        branchManagementUseCase.getSubBranchRequests(),
-      ])
+      const [branchesResult, mainRequestsResult, subRequestsResult] =
+        await Promise.all([
+          branchManagementUseCase.getBranches(),
+          branchManagementUseCase.getMainBranchRequests(),
+          branchManagementUseCase.getSubBranchRequests(),
+        ])
       if (!branchesResult.success) throw new Error(branchesResult.error)
       if (!mainRequestsResult.success) throw new Error(mainRequestsResult.error)
       if (!subRequestsResult.success) throw new Error(subRequestsResult.error)
@@ -138,7 +170,8 @@ export function useBranchManagementViewModel(
       const result = await branchManagementUseCase.deleteBranch(branchId)
       if (!result.success) throw new Error(result.error)
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["branchManagement"] }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["branchManagement"] }),
     onError: (err: Error) =>
       setDialog({
         title: translate(locale, "branches.actionUnavailable"),
@@ -152,7 +185,8 @@ export function useBranchManagementViewModel(
       if (!result.success) throw new Error(result.error)
       return result.data
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["branchManagement"] }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["branchManagement"] }),
     onError: (err: Error) =>
       setDialog({
         title: translate(locale, "branches.actionUnavailable"),
@@ -162,7 +196,8 @@ export function useBranchManagementViewModel(
 
   const requestActions = useBranchRequestActionsHook({
     branchManagementUseCase,
-    userFullName: user?.fullName ?? translate(locale, "branches.actions.workspaceAdmin"),
+    userFullName:
+      user?.fullName ?? translate(locale, "branches.actions.workspaceAdmin"),
     setDialog,
     setExpandedMainRequestIds,
     setExpandedSubRequestIds,
@@ -253,34 +288,47 @@ export function useBranchManagementViewModel(
 
   const activeFilters: ActiveBranchFilter[] = []
   if (filters.searchQuery.trim()) {
-    activeFilters.push({ id: "search", label: "search", value: filters.searchQuery.trim() })
+    activeFilters.push({
+      id: "search",
+      label: "search",
+      value: filters.searchQuery.trim(),
+    })
   }
   if (filters.typeFilter !== "all") {
     activeFilters.push({ id: "type", label: "type", value: filters.typeFilter })
   }
   if (filters.statusFilter !== "all") {
-    activeFilters.push({ id: "status", label: "status", value: filters.statusFilter })
+    activeFilters.push({
+      id: "status",
+      label: "status",
+      value: filters.statusFilter,
+    })
   }
 
   const isUnauthenticated = !isUserLoading && !isUserError && user === null
   const hasError = isUserError || isBranchError
-  const isLoadingState = isUserLoading || (!isUnauthenticated && !isUserError && isBranchLoading)
+  const isLoadingState =
+    isUserLoading || (!isUnauthenticated && !isUserError && isBranchLoading)
 
   const errorMessage: string | null = isUserError
-    ? (userQueryError instanceof Error ? userQueryError.message : "Unknown error")
+    ? userQueryError instanceof Error
+      ? userQueryError.message
+      : "Unknown error"
     : isBranchError
-    ? (branchQueryError instanceof Error ? branchQueryError.message : "Unknown error")
-    : null
+      ? branchQueryError instanceof Error
+        ? branchQueryError.message
+        : "Unknown error"
+      : null
 
   const status: BranchManagementStatus = isLoadingState
     ? "loading"
     : hasError
-    ? "error"
-    : isUnauthenticated
-    ? "unauthenticated"
-    : branchData
-    ? "success"
-    : "idle"
+      ? "error"
+      : isUnauthenticated
+        ? "unauthenticated"
+        : branchData
+          ? "success"
+          : "idle"
 
   const state: BranchManagementViewModelState = {
     status,

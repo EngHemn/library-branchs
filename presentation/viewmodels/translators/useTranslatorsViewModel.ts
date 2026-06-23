@@ -5,7 +5,11 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 import type { Translator } from "@/domain/entities/translator/Translator"
 import type { GetTranslatorsUseCase } from "@/domain/usecases/translators/GetTranslatorsUseCase"
-import type { TranslatorLanguageFilter, TranslatorsStatus, TranslatorsViewModelState } from "./TranslatorsViewModelState"
+import type {
+  TranslatorLanguageFilter,
+  TranslatorsStatus,
+  TranslatorsViewModelState,
+} from "./TranslatorsViewModelState"
 
 type TranslatorsViewModel = {
   state: TranslatorsViewModelState
@@ -29,8 +33,11 @@ export function useTranslatorsViewModel(
 ): TranslatorsViewModel {
   const queryClient = useQueryClient()
   const [searchQuery, setSearchQuery] = useState("")
-  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all")
-  const [languageFilter, setLanguageFilter] = useState<TranslatorLanguageFilter>("all")
+  const [statusFilter, setStatusFilter] = useState<
+    "all" | "active" | "inactive"
+  >("all")
+  const [languageFilter, setLanguageFilter] =
+    useState<TranslatorLanguageFilter>("all")
 
   const {
     data: translators,
@@ -56,7 +63,8 @@ export function useTranslatorsViewModel(
       if (!result.success) throw new Error(result.error)
       return result.data
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["translators"] }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["translators"] }),
   })
 
   async function deleteTranslator(translatorId: string): Promise<void> {
@@ -92,9 +100,11 @@ export function useTranslatorsViewModel(
   })
 
   const status: TranslatorsStatus =
-    queryStatus === "success" ? "ready" :
-    queryStatus === "error" ? "error" :
-    "loading"
+    queryStatus === "success"
+      ? "ready"
+      : queryStatus === "error"
+        ? "error"
+        : "loading"
 
   const state: TranslatorsViewModelState = {
     status,

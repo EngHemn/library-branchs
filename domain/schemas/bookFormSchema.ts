@@ -8,13 +8,10 @@ const optionalString = z.preprocess(
   z.string()
 )
 
-const optionalNonNegativeNumber = z.preprocess(
-  (value) => {
-    if (value === "" || value === null || value === undefined) return 0
-    return value
-  },
-  z.coerce.number().min(0)
-)
+const optionalNonNegativeNumber = z.preprocess((value) => {
+  if (value === "" || value === null || value === undefined) return 0
+  return value
+}, z.coerce.number().min(0))
 
 export const bookFormSchema = z.object({
   title: z.string().min(1, validationKeys.titleRequired),

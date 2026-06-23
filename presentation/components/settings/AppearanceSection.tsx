@@ -36,9 +36,9 @@ function ModePreview({ mode }: { mode: string }) {
   if (mode === "dark") {
     return (
       <div className="overflow-hidden rounded-md border border-border">
-        <div className="flex h-[80px] flex-col bg-zinc-950 p-2 gap-1">
+        <div className="flex h-[80px] flex-col gap-1 bg-zinc-950 p-2">
           <div className="h-2 w-16 rounded bg-zinc-800" />
-          <div className="flex gap-1 flex-1">
+          <div className="flex flex-1 gap-1">
             <div className="w-10 rounded bg-zinc-800" />
             <div className="flex-1 rounded bg-zinc-900" />
           </div>
@@ -51,16 +51,16 @@ function ModePreview({ mode }: { mode: string }) {
     return (
       <div className="overflow-hidden rounded-md border border-border">
         <div className="flex h-[80px]">
-          <div className="flex flex-1 flex-col bg-white p-2 gap-1">
+          <div className="flex flex-1 flex-col gap-1 bg-white p-2">
             <div className="h-2 w-8 rounded bg-zinc-200" />
-            <div className="flex gap-1 flex-1">
+            <div className="flex flex-1 gap-1">
               <div className="w-5 rounded bg-zinc-100" />
               <div className="flex-1 rounded bg-zinc-50" />
             </div>
           </div>
-          <div className="flex flex-1 flex-col bg-zinc-950 p-2 gap-1">
+          <div className="flex flex-1 flex-col gap-1 bg-zinc-950 p-2">
             <div className="h-2 w-8 rounded bg-zinc-800" />
-            <div className="flex gap-1 flex-1">
+            <div className="flex flex-1 gap-1">
               <div className="w-5 rounded bg-zinc-800" />
               <div className="flex-1 rounded bg-zinc-900" />
             </div>
@@ -72,9 +72,9 @@ function ModePreview({ mode }: { mode: string }) {
 
   return (
     <div className="overflow-hidden rounded-md border border-border">
-      <div className="flex h-[80px] flex-col bg-white p-2 gap-1">
+      <div className="flex h-[80px] flex-col gap-1 bg-white p-2">
         <div className="h-2 w-16 rounded bg-zinc-200" />
-        <div className="flex gap-1 flex-1">
+        <div className="flex flex-1 gap-1">
           <div className="w-10 rounded bg-zinc-100" />
           <div className="flex-1 rounded bg-zinc-50" />
         </div>
@@ -106,7 +106,7 @@ export function AppearanceSection() {
                 type="button"
                 onClick={() => setTheme(option.id)}
                 className={cn(
-                  "group flex flex-col gap-2 rounded-xl border-2 p-1 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                  "group flex flex-col gap-2 rounded-xl border-2 p-1 transition-all focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
                   isSelected
                     ? "border-primary"
                     : "border-border hover:border-primary/40"
@@ -116,9 +116,7 @@ export function AppearanceSection() {
                 <span className="flex items-center justify-center gap-1.5 pb-1 text-xs font-medium">
                   {option.icon}
                   {option.label}
-                  {isSelected && (
-                    <CheckIcon className="h-3 w-3 text-primary" />
-                  )}
+                  {isSelected && <CheckIcon className="h-3 w-3 text-primary" />}
                 </span>
               </button>
             )
@@ -150,7 +148,7 @@ export function AppearanceSection() {
                 onClick={() => setColorTheme(ct.id)}
                 className={cn(
                   "group flex flex-col items-center gap-2 rounded-lg p-1.5 transition-all duration-200 ease-in-out",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                  "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none",
                   isSelected && "ring-2 ring-offset-2 ring-offset-background"
                 )}
                 style={
@@ -181,9 +179,7 @@ export function AppearanceSection() {
                       ? "text-white shadow-sm"
                       : "bg-muted text-muted-foreground group-hover:text-foreground/80"
                   )}
-                  style={
-                    isSelected ? { backgroundColor: ct.color } : undefined
-                  }
+                  style={isSelected ? { backgroundColor: ct.color } : undefined}
                 >
                   {ct.label}
                 </span>

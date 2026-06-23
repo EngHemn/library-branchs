@@ -36,10 +36,7 @@ function getFilterDisplayValue(
   return filter.value
 }
 
-export function ActiveFilters({
-  filters,
-  onClearFilter,
-}: ActiveFiltersProps) {
+export function ActiveFilters({ filters, onClearFilter }: ActiveFiltersProps) {
   const { t } = useTranslation()
 
   if (filters.length === 0) {
@@ -48,28 +45,30 @@ export function ActiveFilters({
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <span className="text-sm text-muted-foreground">{t("branches.filters.activeFilters")}</span>
+      <span className="text-sm text-muted-foreground">
+        {t("branches.filters.activeFilters")}
+      </span>
       {filters.map((filter) => {
         const label = t(filterLabelKeys[filter.id])
         const displayValue = getFilterDisplayValue(t, filter)
 
         return (
-        <Badge
-          key={filter.id}
-          variant="secondary"
-          className="h-7 rounded-lg pr-1"
-        >
-          <span className="font-medium">{label}:</span>
-          <span>{displayValue}</span>
-          <button
-            type="button"
-            aria-label={t("branches.filters.clearFilter", { label })}
-            className="ml-0.5 inline-flex size-5 items-center justify-center rounded-md text-muted-foreground hover:bg-background hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-            onClick={() => onClearFilter(filter.id)}
+          <Badge
+            key={filter.id}
+            variant="secondary"
+            className="h-7 rounded-lg pr-1"
           >
-            <XIcon className="size-3" />
-          </button>
-        </Badge>
+            <span className="font-medium">{label}:</span>
+            <span>{displayValue}</span>
+            <button
+              type="button"
+              aria-label={t("branches.filters.clearFilter", { label })}
+              className="ml-0.5 inline-flex size-5 items-center justify-center rounded-md text-muted-foreground hover:bg-background hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+              onClick={() => onClearFilter(filter.id)}
+            >
+              <XIcon className="size-3" />
+            </button>
+          </Badge>
         )
       })}
     </div>

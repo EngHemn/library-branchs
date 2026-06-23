@@ -1,6 +1,14 @@
 import { getBranchViewHref } from "@/lib/branchLink"
-import { getGroupEditHref, getGroupViewHref, getGroupViewTabHref } from "@/lib/groupLink"
-import { getNeedEditHref, getNeedViewHref, getNeedViewTabHref } from "@/lib/needLink"
+import {
+  getGroupEditHref,
+  getGroupViewHref,
+  getGroupViewTabHref,
+} from "@/lib/groupLink"
+import {
+  getNeedEditHref,
+  getNeedViewHref,
+  getNeedViewTabHref,
+} from "@/lib/needLink"
 
 export const dashboardPaths = {
   needs: {
@@ -55,7 +63,8 @@ export const dashboardPaths = {
     list: "/dashboard/translators",
     create: "/dashboard/translators/create",
     detail: (translatorId: string) => `/dashboard/translators/${translatorId}`,
-    edit: (translatorId: string) => `/dashboard/translators/${translatorId}/edit`,
+    edit: (translatorId: string) =>
+      `/dashboard/translators/${translatorId}/edit`,
   },
   staff: {
     list: "/dashboard/staff",

@@ -1,13 +1,12 @@
-import type { GroupAssignedBook, GroupDetail } from "@/domain/entities/group/Group"
+import type {
+  GroupAssignedBook,
+  GroupDetail,
+} from "@/domain/entities/group/Group"
 import type { GroupSalesReport } from "@/domain/entities/group/GroupSalesReport"
 import type { Sale } from "@/domain/entities/sales/Sale"
 import type { User } from "@/domain/entities/User"
 
-export type GroupDetailStatus =
-  | "loading"
-  | "ready"
-  | "not_found"
-  | "error"
+export type GroupDetailStatus = "loading" | "ready" | "not_found" | "error"
 
 export type GroupSalesHistoryStatus = "idle" | "loading" | "success" | "error"
 

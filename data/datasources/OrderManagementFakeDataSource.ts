@@ -4,7 +4,10 @@ import {
 } from "@/data/shared/libraryBooksStore"
 import { fakeOrders, type FakeOrderRecord } from "@/data/fake/fakeOrders"
 import { fakeBranches } from "@/data/fake/fakeBranches"
-import { getBranchLocation, resolveOrderCoordinates } from "@/data/shared/branchLocation"
+import {
+  getBranchLocation,
+  resolveOrderCoordinates,
+} from "@/data/shared/branchLocation"
 import { toOrderDetail } from "@/data/mappers/orderDetailMapper"
 import type { Order } from "@/domain/entities/order/Order"
 import type { OrderDetail } from "@/domain/entities/order/OrderDetail"
@@ -69,7 +72,9 @@ export class OrderManagementFakeDataSource {
     const order = this.orders.find((item) => item.id === orderId)
     return {
       success: true,
-      data: order ? toOrderDetail({ ...order, bookIds: [...order.bookIds] }) : null,
+      data: order
+        ? toOrderDetail({ ...order, bookIds: [...order.bookIds] })
+        : null,
     }
   }
 
@@ -109,9 +114,14 @@ export class OrderManagementFakeDataSource {
     }
 
     const uniqueBookIds = [...new Set(input.bookIds)]
-    const missingBook = uniqueBookIds.find((bookId) => !findLibraryBookById(bookId))
+    const missingBook = uniqueBookIds.find(
+      (bookId) => !findLibraryBookById(bookId)
+    )
     if (missingBook) {
-      return { success: false, error: "One or more selected books could not be found." }
+      return {
+        success: false,
+        error: "One or more selected books could not be found.",
+      }
     }
 
     const coordinates = resolveOrderCoordinates(
@@ -156,9 +166,14 @@ export class OrderManagementFakeDataSource {
     }
 
     const uniqueBookIds = [...new Set(input.bookIds)]
-    const missingBook = uniqueBookIds.find((bookId) => !findLibraryBookById(bookId))
+    const missingBook = uniqueBookIds.find(
+      (bookId) => !findLibraryBookById(bookId)
+    )
     if (missingBook) {
-      return { success: false, error: "One or more selected books could not be found." }
+      return {
+        success: false,
+        error: "One or more selected books could not be found.",
+      }
     }
 
     const coordinates = resolveOrderCoordinates(

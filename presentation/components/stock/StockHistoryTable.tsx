@@ -22,12 +22,7 @@ import {
 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Dialog,
   DialogContent,
@@ -56,7 +51,10 @@ import {
 import { Skeleton } from "@/components/ui/skeleton"
 import { Separator } from "@/components/ui/separator"
 import { MovementBadge } from "./MovementBadge"
-import type { StockMovement, MovementType } from "@/domain/entities/stock/StockMovement"
+import type {
+  StockMovement,
+  MovementType,
+} from "@/domain/entities/stock/StockMovement"
 import { BranchLink } from "@/presentation/components/branch-management/BranchLink"
 import {
   BookLink,
@@ -161,7 +159,9 @@ export function StockHistoryTable({
   )
   const [draftDateFrom, setDraftDateFrom] = useState<string | null>(dateFrom)
   const [draftDateTo, setDraftDateTo] = useState<string | null>(dateTo)
-  const [draftUserFilter, setDraftUserFilter] = useState<string | null>(userFilter)
+  const [draftUserFilter, setDraftUserFilter] = useState<string | null>(
+    userFilter
+  )
 
   const activeFilterCount = [
     typeFilter,
@@ -187,7 +187,9 @@ export function StockHistoryTable({
     })
   }
 
-  const selectedBranch = availableBranches.find((branch) => branch.id === branchFilter)
+  const selectedBranch = availableBranches.find(
+    (branch) => branch.id === branchFilter
+  )
   if (showBranchFilter && selectedBranch) {
     activeFilterChips.push({
       key: `branch-${selectedBranch.id}`,
@@ -401,7 +403,9 @@ export function StockHistoryTable({
           variant="ghost"
           size="icon"
           className="size-8"
-          onClick={() => openNoteDialog(row.original.bookTitle, row.original.notes)}
+          onClick={() =>
+            openNoteDialog(row.original.bookTitle, row.original.notes)
+          }
           aria-label={t("stock.history.viewNoteFor", {
             title: row.original.bookTitle,
           })}
@@ -439,7 +443,7 @@ export function StockHistoryTable({
           <div className="space-y-3">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="relative sm:w-full sm:max-w-md">
-                <SearchIcon className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                <SearchIcon className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
                   id="history-search"
                   placeholder={t("stock.history.searchPlaceholder")}
@@ -450,7 +454,10 @@ export function StockHistoryTable({
               </div>
 
               <div className="flex items-center justify-end gap-2">
-                <Button variant="outline" onClick={() => setIsFilterDialogOpen(true)}>
+                <Button
+                  variant="outline"
+                  onClick={() => setIsFilterDialogOpen(true)}
+                >
                   <ListFilterIcon />
                   {t("stock.history.filters")}
                   {activeFilterCount > 0 ? (
@@ -483,7 +490,9 @@ export function StockHistoryTable({
                       type="button"
                       onClick={chip.onRemove}
                       className="rounded-full p-0.5 hover:bg-primary/20"
-                      aria-label={t("stock.history.removeFilter", { label: chip.label })}
+                      aria-label={t("stock.history.removeFilter", {
+                        label: chip.label,
+                      })}
                     >
                       <XIcon className="size-3" />
                     </button>
@@ -545,7 +554,10 @@ export function StockHistoryTable({
                       setDraftBranchFilter(value === "all" ? null : value)
                     }
                   >
-                    <SelectTrigger id="history-branch-filter" className="w-full">
+                    <SelectTrigger
+                      id="history-branch-filter"
+                      className="w-full"
+                    >
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -641,7 +653,7 @@ export function StockHistoryTable({
         </DialogContent>
       </Dialog>
 
-      <Card className="rounded-lg overflow-hidden">
+      <Card className="overflow-hidden rounded-lg">
         {isLoading ? (
           <HistoryTableSkeleton />
         ) : movements.length === 0 ? (
@@ -649,7 +661,9 @@ export function StockHistoryTable({
             <div className="mb-3 rounded-full bg-muted p-4">
               <History className="h-8 w-8 text-muted-foreground" />
             </div>
-            <p className="text-base font-semibold">{t("stock.history.emptyTitle")}</p>
+            <p className="text-base font-semibold">
+              {t("stock.history.emptyTitle")}
+            </p>
             <p className="mt-1 text-sm text-muted-foreground">
               {t("stock.history.emptyDescription")}
             </p>

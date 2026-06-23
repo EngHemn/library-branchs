@@ -76,7 +76,9 @@ export function GroupSalesHistoryTab({
     return (
       <Card className="rounded-lg border-destructive/40">
         <CardHeader>
-          <CardTitle className="text-base">{t("groups.sales.loadError")}</CardTitle>
+          <CardTitle className="text-base">
+            {t("groups.sales.loadError")}
+          </CardTitle>
           <CardDescription>{error}</CardDescription>
         </CardHeader>
         <CardContent>
@@ -105,7 +107,9 @@ export function GroupSalesHistoryTab({
     <div className="flex flex-col gap-4">
       <Card className="rounded-lg">
         <CardHeader className="pb-3">
-          <CardTitle className="text-base">{t("groups.filters.filters")}</CardTitle>
+          <CardTitle className="text-base">
+            {t("groups.filters.filters")}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <GroupSalesHistoryFilters

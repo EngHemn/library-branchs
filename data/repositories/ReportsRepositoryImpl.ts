@@ -1,5 +1,8 @@
 import type { ReportsFakeDataSource } from "@/data/datasources/ReportsFakeDataSource"
-import type { ReportsBundle, ReportsQuery } from "@/domain/entities/reports/Reports"
+import type {
+  ReportsBundle,
+  ReportsQuery,
+} from "@/domain/entities/reports/Reports"
 import type { ReportsRepository } from "@/domain/repositories/ReportsRepository"
 import type { Result } from "@/domain/result/Result"
 

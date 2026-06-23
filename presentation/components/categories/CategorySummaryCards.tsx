@@ -8,7 +8,9 @@ type CategorySummaryCardsProps = {
   categories: Category[]
 }
 
-export function CategorySummaryCards({ categories }: CategorySummaryCardsProps) {
+export function CategorySummaryCards({
+  categories,
+}: CategorySummaryCardsProps) {
   const { t } = useTranslation()
 
   if (categories.length === 0) {
@@ -22,7 +24,7 @@ export function CategorySummaryCards({ categories }: CategorySummaryCardsProps) 
           <CardContent className="flex items-start justify-between gap-4 py-4">
             <div className="min-w-0 flex-1">
               <h3 className="font-semibold">{category.name}</h3>
-              <p className="mt-1 text-sm text-muted-foreground line-clamp-2">
+              <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
                 {category.description}
               </p>
             </div>

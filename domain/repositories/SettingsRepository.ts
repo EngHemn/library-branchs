@@ -16,5 +16,7 @@ export interface SettingsRepository {
   updateBorrowingRules(
     input: UpdateBorrowingRulesInput
   ): Promise<Result<Settings>>
-  updateNotifications(input: UpdateNotificationsInput): Promise<Result<Settings>>
+  updateNotifications(
+    input: UpdateNotificationsInput
+  ): Promise<Result<Settings>>
 }

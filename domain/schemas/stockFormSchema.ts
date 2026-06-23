@@ -6,7 +6,10 @@ export const createStockFormSchema = z.object({
   bookId: z.string().min(1, validationKeys.bookRequired),
   branchId: z.string().min(1, validationKeys.branchRequired),
   subBranchId: z.string().default("none"),
-  initialStock: z.coerce.number().int().min(0, validationKeys.initialStockNegative),
+  initialStock: z.coerce
+    .number()
+    .int()
+    .min(0, validationKeys.initialStockNegative),
   minStock: z.coerce.number().int().min(1, validationKeys.minStockMin),
 })
 

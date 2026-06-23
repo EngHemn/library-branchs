@@ -46,8 +46,12 @@ export function PermissionDeleteRoleDialog({
           </DialogTitle>
           <DialogDescription>
             {isSystem
-              ? t("permissions.deleteDialog.systemDescription", { name: roleName })
-              : t("permissions.deleteDialog.confirmDescription", { name: roleName })}
+              ? t("permissions.deleteDialog.systemDescription", {
+                  name: roleName,
+                })
+              : t("permissions.deleteDialog.confirmDescription", {
+                  name: roleName,
+                })}
           </DialogDescription>
         </DialogHeader>
 

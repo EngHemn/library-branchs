@@ -42,35 +42,27 @@ export function validateBranchForm(
   branchType: "main" | "sub"
 ): Result<UpdateBranchInput> {
   const errors: BranchFormErrors = {
-    branchName: input.branchName.trim()
-      ? null
-      : "Branch name is required",
+    branchName: input.branchName.trim() ? null : "Branch name is required",
     email: validateEmail(input.email),
-    adminName: input.adminName.trim()
-      ? null
-      : "Admin name is required",
-    address: input.address.trim()
-      ? null
-      : "Address is required",
+    adminName: input.adminName.trim() ? null : "Admin name is required",
+    address: input.address.trim() ? null : "Address is required",
     phone: validatePhone(input.phone),
     parentBranch:
       branchType === "sub" && !input.parentBranch
         ? "Parent branch is required for sub branches"
         : null,
     password:
-      input.password !== undefined && input.password.trim().length > 0 && input.password.trim().length < 6
+      input.password !== undefined &&
+      input.password.trim().length > 0 &&
+      input.password.trim().length < 6
         ? "Password must be at least 6 characters"
         : null,
   }
 
-  const hasErrors = Object.values(errors).some(
-    (error) => error !== null
-  )
+  const hasErrors = Object.values(errors).some((error) => error !== null)
 
   if (hasErrors) {
-    const firstError = Object.values(errors).find(
-      (error) => error !== null
-    )
+    const firstError = Object.values(errors).find((error) => error !== null)
 
     return {
       success: false,
@@ -99,23 +91,19 @@ export function getFieldErrors(
   branchType: "main" | "sub"
 ): BranchFormErrors {
   return {
-    branchName: input.branchName.trim()
-      ? null
-      : "Branch name is required",
+    branchName: input.branchName.trim() ? null : "Branch name is required",
     email: validateEmail(input.email),
-    adminName: input.adminName.trim()
-      ? null
-      : "Admin name is required",
-    address: input.address.trim()
-      ? null
-      : "Address is required",
+    adminName: input.adminName.trim() ? null : "Admin name is required",
+    address: input.address.trim() ? null : "Address is required",
     phone: validatePhone(input.phone),
     parentBranch:
       branchType === "sub" && !input.parentBranch
         ? "Parent branch is required for sub branches"
         : null,
     password:
-      input.password !== undefined && input.password.trim().length > 0 && input.password.trim().length < 6
+      input.password !== undefined &&
+      input.password.trim().length > 0 &&
+      input.password.trim().length < 6
         ? "Password must be at least 6 characters"
         : null,
   }

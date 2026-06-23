@@ -8,9 +8,7 @@ import type {
 } from "@/domain/repositories/TranslatorManagementRepository"
 import type { Result } from "@/domain/result/Result"
 
-export class TranslatorManagementRepositoryImpl
-  implements TranslatorManagementRepository
-{
+export class TranslatorManagementRepositoryImpl implements TranslatorManagementRepository {
   constructor(
     private readonly translatorManagementFakeDataSource: TranslatorManagementFakeDataSource
   ) {}
@@ -19,8 +17,12 @@ export class TranslatorManagementRepositoryImpl
     return this.translatorManagementFakeDataSource.getTranslators()
   }
 
-  getTranslatorById(translatorId: string): Promise<Result<TranslatorDetail | null>> {
-    return this.translatorManagementFakeDataSource.getTranslatorById(translatorId)
+  getTranslatorById(
+    translatorId: string
+  ): Promise<Result<TranslatorDetail | null>> {
+    return this.translatorManagementFakeDataSource.getTranslatorById(
+      translatorId
+    )
   }
 
   createTranslator(input: CreateTranslatorInput): Promise<Result<Translator>> {
@@ -32,6 +34,8 @@ export class TranslatorManagementRepositoryImpl
   }
 
   deleteTranslator(translatorId: string): Promise<Result<null>> {
-    return this.translatorManagementFakeDataSource.deleteTranslator(translatorId)
+    return this.translatorManagementFakeDataSource.deleteTranslator(
+      translatorId
+    )
   }
 }

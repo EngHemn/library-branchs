@@ -65,7 +65,9 @@ export function DashboardBookingCharts({
     <div className="grid gap-4 lg:grid-cols-[1fr_300px]">
       <Card className="rounded-xl">
         <CardHeader className="pb-2">
-          <CardTitle className="text-base">{t("dashboard.charts.bookingsByStatus")}</CardTitle>
+          <CardTitle className="text-base">
+            {t("dashboard.charts.bookingsByStatus")}
+          </CardTitle>
           <CardDescription>
             {t("dashboard.charts.bookingsByStatusDetail")}
           </CardDescription>
@@ -96,7 +98,10 @@ export function DashboardBookingCharts({
                 axisLine={false}
                 width={68}
               />
-              <Tooltip cursor={{ fill: "#f9fafb" }} content={<ChartTooltip />} />
+              <Tooltip
+                cursor={{ fill: "#f9fafb" }}
+                content={<ChartTooltip />}
+              />
               <Bar dataKey="value" radius={[0, 4, 4, 0]}>
                 {localizedBookingsByStatus.map((entry, index) => (
                   <Cell key={index} fill={entry.color} />
@@ -109,7 +114,9 @@ export function DashboardBookingCharts({
 
       <Card className="rounded-xl">
         <CardHeader className="pb-2">
-          <CardTitle className="text-base">{t("dashboard.charts.bookingsByType")}</CardTitle>
+          <CardTitle className="text-base">
+            {t("dashboard.charts.bookingsByType")}
+          </CardTitle>
           <CardDescription>
             {t("dashboard.charts.bookingsByTypeDescription", {
               total: total.toLocaleString(),

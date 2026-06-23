@@ -101,7 +101,9 @@ export function GroupSummaryCards({
               <Icon className="size-4" />
             </div>
             <div className="flex flex-col">
-              <span className="text-sm text-muted-foreground">{card.label}</span>
+              <span className="text-sm text-muted-foreground">
+                {card.label}
+              </span>
               <span className="text-lg font-semibold tabular-nums">
                 {card.value.toLocaleString(locale)}
               </span>

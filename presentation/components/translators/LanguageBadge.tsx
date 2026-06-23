@@ -11,11 +11,7 @@ export function LanguageBadge({ language }: LanguageBadgeProps) {
   return (
     <Badge
       variant={builtIn ? "secondary" : "outline"}
-      className={
-        builtIn
-          ? "font-normal"
-          : "font-normal text-muted-foreground"
-      }
+      className={builtIn ? "font-normal" : "font-normal text-muted-foreground"}
     >
       {language}
     </Badge>

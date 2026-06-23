@@ -46,7 +46,10 @@ function LoadingState() {
   )
 }
 
-export function ViewBillScreen({ billId, getBillsUseCase }: ViewBillScreenProps) {
+export function ViewBillScreen({
+  billId,
+  getBillsUseCase,
+}: ViewBillScreenProps) {
   const router = useRouter()
   const viewModel = useBillDetailViewModel(billId, getBillsUseCase)
   const { t } = useTranslation()
@@ -69,10 +72,15 @@ export function ViewBillScreen({ billId, getBillsUseCase }: ViewBillScreenProps)
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
               <CardTitle>{t("bills.notFoundTitle")}</CardTitle>
-              <CardDescription>{t("bills.notFoundDescription")}</CardDescription>
+              <CardDescription>
+                {t("bills.notFoundDescription")}
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button variant="outline" onClick={() => router.push("/dashboard/bills")}>
+              <Button
+                variant="outline"
+                onClick={() => router.push("/dashboard/bills")}
+              >
                 <ArrowLeftIcon />
                 {t("bills.backToBills")}
               </Button>
@@ -107,7 +115,9 @@ export function ViewBillScreen({ billId, getBillsUseCase }: ViewBillScreenProps)
           <BillDetailHeader
             bill={state.bill}
             onBack={goBack}
-            onEdit={() => router.push(`/dashboard/bills/${state.bill?.id}/edit`)}
+            onEdit={() =>
+              router.push(`/dashboard/bills/${state.bill?.id}/edit`)
+            }
           />
 
           <Card className="rounded-lg">

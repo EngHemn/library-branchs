@@ -87,7 +87,10 @@ export function BranchManagementPage({
 }: BranchManagementPageProps) {
   const router = useRouter()
   const { t } = useTranslation()
-  const viewModel = useBranchManagementViewModel(authUseCase, branchManagementUseCase)
+  const viewModel = useBranchManagementViewModel(
+    authUseCase,
+    branchManagementUseCase
+  )
   const { state } = viewModel
   const [pendingRequestAction, setPendingRequestAction] =
     useState<BranchRequestConfirmAction | null>(null)
@@ -99,7 +102,9 @@ export function BranchManagementPage({
     useState<BranchRequestReplyAction | null>(null)
   const [isSendingReply, setIsSendingReply] = useState(false)
   const [isApprovingRequest, setIsApprovingRequest] = useState(false)
-  const [pendingDeleteBranch, setPendingDeleteBranch] = useState<Branch | null>(null)
+  const [pendingDeleteBranch, setPendingDeleteBranch] = useState<Branch | null>(
+    null
+  )
 
   useEffect(() => {
     if (state.isUnauthenticated) {
@@ -195,7 +200,9 @@ export function BranchManagementPage({
 
   return (
     <>
-      {state.isLoading || state.isUnauthenticated ? <LoadingBranchManagementPage /> : null}
+      {state.isLoading || state.isUnauthenticated ? (
+        <LoadingBranchManagementPage />
+      ) : null}
 
       {state.error ? (
         <div className="flex flex-1 items-center justify-center p-4">
@@ -234,8 +241,12 @@ export function BranchManagementPage({
 
             <Tabs defaultValue="branches" className="gap-4">
               <TabsList className="grid w-full grid-cols-2 sm:w-fit">
-                <TabsTrigger value="branches">{t("branches.tabs.branches")}</TabsTrigger>
-                <TabsTrigger value="sub-requests">{t("branches.tabs.subRequests")}</TabsTrigger>
+                <TabsTrigger value="branches">
+                  {t("branches.tabs.branches")}
+                </TabsTrigger>
+                <TabsTrigger value="sub-requests">
+                  {t("branches.tabs.subRequests")}
+                </TabsTrigger>
               </TabsList>
 
               <TabsContent value="branches" className="space-y-4">
@@ -255,10 +266,16 @@ export function BranchManagementPage({
                 <BranchesTable
                   branches={state.filteredBranches}
                   hideTypeColumn
-                  onView={(branch) => router.push(`/dashboard/branches/${branch.id}`)}
-                  onEdit={(branch) => router.push(`/dashboard/branches/${branch.id}/edit`)}
+                  onView={(branch) =>
+                    router.push(`/dashboard/branches/${branch.id}`)
+                  }
+                  onEdit={(branch) =>
+                    router.push(`/dashboard/branches/${branch.id}/edit`)
+                  }
                   onDelete={setPendingDeleteBranch}
-                  onToggleStatus={(branch) => void viewModel.toggleBranchStatus(branch.id)}
+                  onToggleStatus={(branch) =>
+                    void viewModel.toggleBranchStatus(branch.id)
+                  }
                 />
               </TabsContent>
 
@@ -277,7 +294,9 @@ export function BranchManagementPage({
                       longitude: request.longitude,
                     })
                   }
-                  onToggleNote={(request) => viewModel.toggleSubRequestNote(request.id)}
+                  onToggleNote={(request) =>
+                    viewModel.toggleSubRequestNote(request.id)
+                  }
                 />
               </TabsContent>
             </Tabs>
@@ -335,7 +354,10 @@ export function BranchManagementPage({
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setPendingDeleteBranch(null)}>
+            <Button
+              variant="outline"
+              onClick={() => setPendingDeleteBranch(null)}
+            >
               {t("common.cancel")}
             </Button>
             <Button variant="destructive" onClick={handleConfirmDeleteBranch}>
@@ -354,7 +376,9 @@ export function BranchManagementPage({
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{state.dialog?.title ?? ""}</DialogTitle>
-            <DialogDescription>{state.dialog?.description ?? ""}</DialogDescription>
+            <DialogDescription>
+              {state.dialog?.description ?? ""}
+            </DialogDescription>
           </DialogHeader>
           <DialogFooter showCloseButton />
         </DialogContent>

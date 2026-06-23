@@ -19,7 +19,11 @@ import {
   matchesDashboardBranchFilter,
   type DashboardBranchScope,
 } from "@/lib/dashboardBranchScope"
-import type { DashboardFilterState, DashboardStatus, DashboardViewModelState } from "./DashboardViewModelState"
+import type {
+  DashboardFilterState,
+  DashboardStatus,
+  DashboardViewModelState,
+} from "./DashboardViewModelState"
 
 type DashboardViewModel = {
   state: DashboardViewModelState
@@ -77,7 +81,12 @@ function matchesDateFilter(
 }
 
 function applyFilters<
-  T extends { branchId: string; createdAt?: string; addedAt?: string; registeredAt?: string },
+  T extends {
+    branchId: string
+    createdAt?: string
+    addedAt?: string
+    registeredAt?: string
+  },
 >(
   items: T[],
   filterState: DashboardFilterState,
@@ -86,12 +95,17 @@ function applyFilters<
 ): T[] {
   return items.filter((item) => {
     if (
-      !matchesDashboardBranchFilter(item.branchId, filterState.branchId, scopedBranchIds)
+      !matchesDashboardBranchFilter(
+        item.branchId,
+        filterState.branchId,
+        scopedBranchIds
+      )
     ) {
       return false
     }
     const dateValue = item[dateKey]
-    if (!matchesDateFilter(dateValue, filterState.dateFrom, filterState.dateTo)) return false
+    if (!matchesDateFilter(dateValue, filterState.dateFrom, filterState.dateTo))
+      return false
     return true
   })
 }
@@ -110,18 +124,20 @@ export function useDashboardViewModel(
   getDashboardSummaryUseCase: GetDashboardSummaryUseCase
 ): DashboardViewModel {
   const queryClient = useQueryClient()
-  const [filterState, setFilterState] = useState<DashboardFilterState>(defaultFilterState)
-  const { data, isPending, isFetching, isError, error, refetch } = useQuery<DashboardQueryData>({
-    queryKey: ["dashboard"],
-    queryFn: async () => {
-      const currentUserResult = await authUseCase.getCurrentUser()
-      if (!currentUserResult.success) throw new Error(currentUserResult.error)
-      if (!currentUserResult.data) return { user: null, summary: null }
-      const summaryResult = await getDashboardSummaryUseCase.getSummary()
-      if (!summaryResult.success) throw new Error(summaryResult.error)
-      return { user: currentUserResult.data, summary: summaryResult.data }
-    },
-  })
+  const [filterState, setFilterState] =
+    useState<DashboardFilterState>(defaultFilterState)
+  const { data, isPending, isFetching, isError, error, refetch } =
+    useQuery<DashboardQueryData>({
+      queryKey: ["dashboard"],
+      queryFn: async () => {
+        const currentUserResult = await authUseCase.getCurrentUser()
+        if (!currentUserResult.success) throw new Error(currentUserResult.error)
+        if (!currentUserResult.data) return { user: null, summary: null }
+        const summaryResult = await getDashboardSummaryUseCase.getSummary()
+        if (!summaryResult.success) throw new Error(summaryResult.error)
+        return { user: currentUserResult.data, summary: summaryResult.data }
+      },
+    })
 
   const { mutateAsync: logoutAsync } = useMutation({
     mutationFn: async () => {
@@ -154,28 +170,42 @@ export function useDashboardViewModel(
       if (isBranchSelectionValid(prev.branchId, branchScope)) return prev
       return { ...prev, branchId: branchScope.defaultBranchId }
     })
-  }, [branchScope?.defaultBranchId, branchScope?.allowAllBranches, branchScope?.branchIds.join(",")])
+  }, [
+    branchScope?.defaultBranchId,
+    branchScope?.allowAllBranches,
+    branchScope?.branchIds.join(","),
+  ])
 
-  const filteredBookings: DashboardBooking[] =
-    summary
-      ? applyFilters(summary.recentBookings, filterState, scopedBranchIds, "createdAt")
-      : []
-  const filteredBooks: DashboardBook[] =
-    summary
-      ? applyFilters(summary.recentBooks, filterState, scopedBranchIds, "addedAt")
-      : []
-  const filteredMembers: DashboardMember[] =
-    summary
-      ? applyFilters(summary.recentMembers, filterState, scopedBranchIds, "registeredAt")
-      : []
-  const filteredSales: DashboardSale[] =
-    summary
-      ? applyFilters(summary.recentSales, filterState, scopedBranchIds, "createdAt")
-      : []
-  const filteredStaff: DashboardStaff[] =
-    summary
-      ? filterByBranch(summary.recentStaff, filterState.branchId, scopedBranchIds)
-      : []
+  const filteredBookings: DashboardBooking[] = summary
+    ? applyFilters(
+        summary.recentBookings,
+        filterState,
+        scopedBranchIds,
+        "createdAt"
+      )
+    : []
+  const filteredBooks: DashboardBook[] = summary
+    ? applyFilters(summary.recentBooks, filterState, scopedBranchIds, "addedAt")
+    : []
+  const filteredMembers: DashboardMember[] = summary
+    ? applyFilters(
+        summary.recentMembers,
+        filterState,
+        scopedBranchIds,
+        "registeredAt"
+      )
+    : []
+  const filteredSales: DashboardSale[] = summary
+    ? applyFilters(
+        summary.recentSales,
+        filterState,
+        scopedBranchIds,
+        "createdAt"
+      )
+    : []
+  const filteredStaff: DashboardStaff[] = summary
+    ? filterByBranch(summary.recentStaff, filterState.branchId, scopedBranchIds)
+    : []
 
   async function reload(): Promise<void> {
     await refetch()

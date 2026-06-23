@@ -1,10 +1,10 @@
 "use client"
 
+import type { StockRow, StockSummary } from "@/domain/entities/stock/Stock"
 import type {
-  StockRow,
-  StockSummary,
-} from "@/domain/entities/stock/Stock"
-import type { StockMovement, MovementType } from "@/domain/entities/stock/StockMovement"
+  StockMovement,
+  MovementType,
+} from "@/domain/entities/stock/StockMovement"
 
 export type AsyncStatus = "idle" | "loading" | "success" | "error"
 

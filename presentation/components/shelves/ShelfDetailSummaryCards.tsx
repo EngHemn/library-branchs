@@ -16,7 +16,9 @@ function getUtilizationPercent(shelf: Shelf): number {
   return Math.round((shelf.bookCount / shelf.capacity) * 100)
 }
 
-export function ShelfDetailSummaryCards({ shelf }: ShelfDetailSummaryCardsProps) {
+export function ShelfDetailSummaryCards({
+  shelf,
+}: ShelfDetailSummaryCardsProps) {
   const { t } = useTranslation()
   const availableSpace = Math.max(shelf.capacity - shelf.bookCount, 0)
   const utilization = getUtilizationPercent(shelf)
@@ -58,7 +60,9 @@ export function ShelfDetailSummaryCards({ shelf }: ShelfDetailSummaryCardsProps)
               <item.icon className="size-5 text-muted-foreground" />
             </div>
             <div>
-              <p className="text-xs text-muted-foreground">{t(item.labelKey)}</p>
+              <p className="text-xs text-muted-foreground">
+                {t(item.labelKey)}
+              </p>
               <p className="font-semibold">{item.value}</p>
               <p className="text-xs text-muted-foreground">{item.subValue}</p>
             </div>

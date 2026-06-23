@@ -12,7 +12,9 @@ const categoryManagementFakeDataSource = new CategoryManagementFakeDataSource()
 const categoryManagementRepository = new CategoryManagementRepositoryImpl(
   categoryManagementFakeDataSource
 )
-const getCategoriesUseCase = new GetCategoriesUseCase(categoryManagementRepository)
+const getCategoriesUseCase = new GetCategoriesUseCase(
+  categoryManagementRepository
+)
 
 function CategoriesPageFallback() {
   return (

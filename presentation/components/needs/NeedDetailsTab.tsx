@@ -27,14 +27,23 @@ export function NeedDetailsTab({ need }: NeedDetailsTabProps) {
   return (
     <dl className="space-y-4">
       <DetailRow label={t("needs.detailsTab.name")} value={need.name} />
-      <DetailRow label={t("needs.detailsTab.category")} value={t(`needs.categories.${need.category}` as any)} />
+      <DetailRow
+        label={t("needs.detailsTab.category")}
+        value={t(`needs.categories.${need.category}` as any)}
+      />
       <DetailRow
         label={t("needs.detailsTab.description")}
         value={need.description || "—"}
       />
-      <DetailRow label={t("needs.detailsTab.quantity")} value={need.quantity.toLocaleString()} />
+      <DetailRow
+        label={t("needs.detailsTab.quantity")}
+        value={need.quantity.toLocaleString()}
+      />
       <DetailRow label={t("needs.detailsTab.branch")} value={need.branchName} />
-      <DetailRow label={t("needs.detailsTab.requestedBy")} value={need.requestedBy} />
+      <DetailRow
+        label={t("needs.detailsTab.requestedBy")}
+        value={need.requestedBy}
+      />
       <DetailRow
         label={t("needs.detailsTab.priority")}
         value={<NeedPriorityBadge priority={need.priority} />}

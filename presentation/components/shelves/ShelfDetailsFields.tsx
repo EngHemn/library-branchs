@@ -75,7 +75,9 @@ export function ShelfDetailsFields({
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue
-                      placeholder={t("shelves.form.fields.shelfTypePlaceholder")}
+                      placeholder={t(
+                        "shelves.form.fields.shelfTypePlaceholder"
+                      )}
                     />
                   </SelectTrigger>
                 </FormControl>
@@ -157,7 +159,9 @@ export function ShelfDetailsFields({
                 </FormControl>
                 <SelectContent>
                   <SelectItem value="active">{t("common.active")}</SelectItem>
-                  <SelectItem value="inactive">{t("common.inactive")}</SelectItem>
+                  <SelectItem value="inactive">
+                    {t("common.inactive")}
+                  </SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />

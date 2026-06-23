@@ -115,7 +115,11 @@ function EditBookingDialogContent({
             {t("common.cancel")}
           </Button>
           <Button type="submit" disabled={state.isSaving || state.isSaved}>
-            {state.isSaving ? <Loader2Icon className="animate-spin" /> : <SaveIcon />}
+            {state.isSaving ? (
+              <Loader2Icon className="animate-spin" />
+            ) : (
+              <SaveIcon />
+            )}
             {state.isSaving ? t("common.saving") : t("common.saveChanges")}
           </Button>
         </DialogFooter>
@@ -135,7 +139,7 @@ export function EditBookingDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="min-w-2xl max-h-[90vh] overflow-y-auto"
+        className="max-h-[90vh] min-w-2xl overflow-y-auto"
         onPointerDownOutside={preventDialogDismissForCombobox}
         onInteractOutside={preventDialogDismissForCombobox}
         onFocusOutside={preventDialogDismissForCombobox}

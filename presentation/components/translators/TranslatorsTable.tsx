@@ -11,10 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import {
-  DataTable,
-  type DataTableColumn,
-} from "@/components/ui/data-table"
+import { DataTable, type DataTableColumn } from "@/components/ui/data-table"
 import type { Translator } from "@/domain/entities/translator/Translator"
 import { TranslatorActionButton } from "@/presentation/components/translators/TranslatorActionButton"
 import { useTranslation } from "@/presentation/i18n/useTranslation"
@@ -84,7 +81,9 @@ export function TranslatorsTable({
           variant="secondary"
           className="bg-violet-100 text-violet-700 dark:bg-violet-950 dark:text-violet-300"
         >
-          {t("translators.table.translatedCount", { count: translator.totalBooks })}
+          {t("translators.table.translatedCount", {
+            count: translator.totalBooks,
+          })}
         </Badge>
       ),
     },

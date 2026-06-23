@@ -11,7 +11,10 @@ import {
 } from "@/domain/schemas/stockFormSchema"
 import type { StockRow } from "@/domain/entities/stock/Stock"
 import type { StockUseCase } from "@/domain/usecases/stock/StockUseCase"
-import type { EditStockStatus, EditStockViewModelState } from "./EditStockViewModelState"
+import type {
+  EditStockStatus,
+  EditStockViewModelState,
+} from "./EditStockViewModelState"
 
 type EditStockViewModel = {
   state: EditStockViewModelState
