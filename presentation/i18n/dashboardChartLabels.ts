@@ -1,7 +1,10 @@
 import type { DashboardChartBar } from "@/domain/entities/dashboard/DashboardSummary"
 import type { TranslationKey } from "@/presentation/i18n/messages"
 
-type TranslateFn = (key: TranslationKey, params?: Record<string, string | number>) => string
+type TranslateFn = (
+  key: TranslationKey,
+  params?: Record<string, string | number>
+) => string
 
 const CHART_LABEL_KEYS: Record<string, TranslationKey> = {
   borrowed: "dashboard.bookingStatus.borrowed",

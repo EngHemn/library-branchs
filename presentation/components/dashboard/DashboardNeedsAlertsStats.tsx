@@ -41,13 +41,15 @@ const statCards: Array<{
     key: "pendingRequests",
     titleKey: "dashboard.needs.pendingRequests",
     icon: ClipboardListIcon,
-    color: "bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400",
+    color:
+      "bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400",
   },
   {
     key: "approvedRequests",
     titleKey: "dashboard.needs.approvedRequests",
     icon: ClipboardListIcon,
-    color: "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400",
+    color:
+      "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400",
   },
   {
     key: "criticalRequests",
@@ -59,7 +61,8 @@ const statCards: Array<{
     key: "lowStockBooks",
     titleKey: "dashboard.needs.lowStockBooks",
     icon: BookOpenIcon,
-    color: "bg-orange-100 dark:bg-orange-900/40 text-orange-600 dark:text-orange-400",
+    color:
+      "bg-orange-100 dark:bg-orange-900/40 text-orange-600 dark:text-orange-400",
   },
   {
     key: "outOfStockBooks",
@@ -82,16 +85,20 @@ export function DashboardNeedsAlertsStats({
 
         return (
           <Card key={card.key} className="rounded-xl">
-          <CardContent className="pt-4">
-            <div className="flex items-center justify-between gap-3">
-              <span className={`flex items-center justify-center size-10 rounded-lg ${card.color}`}>
-                <Icon className="size-4" />
-              </span>
-              <p className="text-3xl font-bold tabular-nums">{value.toLocaleString()}</p>
-            </div>
-            <CardTitle className="text-sm mt-2">{t(card.titleKey)}</CardTitle>
-          </CardContent>
-        </Card> 
+            <CardContent className="pt-4">
+              <div className="flex items-center justify-between gap-3">
+                <span
+                  className={`flex size-10 items-center justify-center rounded-lg ${card.color}`}
+                >
+                  <Icon className="size-4" />
+                </span>
+                <p className="text-3xl font-bold tabular-nums">
+                  {value.toLocaleString()}
+                </p>
+              </div>
+              <CardTitle className="mt-2 text-sm">{t(card.titleKey)}</CardTitle>
+            </CardContent>
+          </Card>
         )
       })}
     </div>
@@ -130,7 +137,9 @@ export function DashboardAlertsSection({
     <div className="grid gap-4 lg:grid-cols-2">
       <Card className="rounded-xl">
         <CardHeader className="pb-3">
-          <CardTitle className="text-base">{t("dashboard.needs.criticalSectionTitle")}</CardTitle>
+          <CardTitle className="text-base">
+            {t("dashboard.needs.criticalSectionTitle")}
+          </CardTitle>
           <CardDescription>
             {t("dashboard.needs.criticalSectionDescription")}{" "}
             <Link
@@ -173,7 +182,9 @@ export function DashboardAlertsSection({
 
       <Card className="rounded-xl">
         <CardHeader className="pb-3">
-          <CardTitle className="text-base">{t("dashboard.needs.lowStockSectionTitle")}</CardTitle>
+          <CardTitle className="text-base">
+            {t("dashboard.needs.lowStockSectionTitle")}
+          </CardTitle>
           <CardDescription>
             {t("dashboard.needs.lowStockSectionDescription")}{" "}
             <Link
@@ -200,7 +211,9 @@ export function DashboardAlertsSection({
                   <p className="font-medium tabular-nums">
                     {book.currentStock} / {book.minimumStock}
                   </p>
-                  <p className="text-muted-foreground">{t("dashboard.needs.currentMin")}</p>
+                  <p className="text-muted-foreground">
+                    {t("dashboard.needs.currentMin")}
+                  </p>
                 </div>
               </div>
             ))

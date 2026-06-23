@@ -43,9 +43,7 @@ export default function DashboardLayout({
     enabled: mounted,
   })
 
-  const resolvedUser = mounted
-    ? (sessionUser ?? readStoredSessionUser())
-    : null
+  const resolvedUser = mounted ? (sessionUser ?? readStoredSessionUser()) : null
 
   useEffect(() => {
     if (!mounted || !isFetched) return

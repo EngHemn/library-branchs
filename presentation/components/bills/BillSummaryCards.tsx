@@ -3,10 +3,7 @@
 import Link from "next/link"
 import { Building2Icon, CalendarIcon, PhoneIcon, UserIcon } from "lucide-react"
 
-import {
-  Card,
-  CardContent,
-} from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import type { BillDetail } from "@/domain/entities/bill/BillDetail"
 import {
   formatBillDate,
@@ -59,7 +56,10 @@ export function BillSummaryCards({ bill }: BillSummaryCardsProps) {
             <div>
               <p className="text-xs text-muted-foreground">{item.label}</p>
               {"href" in item && item.href ? (
-                <Link href={item.href} className="font-semibold hover:underline">
+                <Link
+                  href={item.href}
+                  className="font-semibold hover:underline"
+                >
                   {item.value}
                 </Link>
               ) : (

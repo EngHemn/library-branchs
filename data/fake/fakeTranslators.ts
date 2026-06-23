@@ -5,7 +5,8 @@ export const fakeTranslators: Translator[] = [
     id: "TR-001",
     name: "John Purcell",
     language: "English",
-    biography: "Translator specializing in contemporary fiction and technical literature.",
+    biography:
+      "Translator specializing in contemporary fiction and technical literature.",
     totalBooks: 6,
     status: "active",
     branchId: "BR-001",
@@ -50,7 +51,8 @@ export const fakeTranslators: Translator[] = [
     id: "TR-006",
     name: "Richard Pevear",
     language: "English",
-    biography: "Translator of Russian classics in collaboration with Larissa Volokhonsky.",
+    biography:
+      "Translator of Russian classics in collaboration with Larissa Volokhonsky.",
     totalBooks: 18,
     status: "active",
     branchId: "BR-009",
@@ -59,7 +61,8 @@ export const fakeTranslators: Translator[] = [
     id: "TR-007",
     name: "Larissa Volokhonsky",
     language: "English",
-    biography: "Translator of Russian literature and co-translator with Richard Pevear.",
+    biography:
+      "Translator of Russian literature and co-translator with Richard Pevear.",
     totalBooks: 18,
     status: "active",
     branchId: "BR-009",

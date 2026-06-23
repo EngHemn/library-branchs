@@ -55,7 +55,9 @@ export class BranchManagementFakeDataSource {
   ): Promise<Result<MainBranchRequest | null>> {
     await delay(200)
 
-    const request = this.mainBranchRequests.find((item) => item.id === requestId)
+    const request = this.mainBranchRequests.find(
+      (item) => item.id === requestId
+    )
 
     return {
       success: true,
@@ -204,7 +206,9 @@ export class BranchManagementFakeDataSource {
   ): Promise<Result<Branch>> {
     await delay(300)
 
-    const request = this.mainBranchRequests.find((item) => item.id === requestId)
+    const request = this.mainBranchRequests.find(
+      (item) => item.id === requestId
+    )
 
     if (!request) {
       return {

@@ -212,13 +212,20 @@ export function BooksFilters({
           className={`grid gap-3 ${showBranchFilter ? "sm:grid-cols-2 lg:grid-cols-4" : "sm:grid-cols-3"}`}
         >
           <div className="space-y-2">
-            <Label htmlFor="books-category-filter">{t("books.filters.category")}</Label>
-            <Select value={categoryFilter} onValueChange={onCategoryFilterChange}>
+            <Label htmlFor="books-category-filter">
+              {t("books.filters.category")}
+            </Label>
+            <Select
+              value={categoryFilter}
+              onValueChange={onCategoryFilterChange}
+            >
               <SelectTrigger id="books-category-filter" className="w-full">
                 <SelectValue placeholder={t("books.filters.allCategories")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">{t("books.filters.allCategories")}</SelectItem>
+                <SelectItem value="all">
+                  {t("books.filters.allCategories")}
+                </SelectItem>
                 {categories.map((category) => (
                   <SelectItem key={category} value={category}>
                     {category}
@@ -229,13 +236,17 @@ export function BooksFilters({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="books-author-filter">{t("books.filters.author")}</Label>
+            <Label htmlFor="books-author-filter">
+              {t("books.filters.author")}
+            </Label>
             <Select value={authorFilter} onValueChange={onAuthorFilterChange}>
               <SelectTrigger id="books-author-filter" className="w-full">
                 <SelectValue placeholder={t("books.filters.allAuthors")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">{t("books.filters.allAuthors")}</SelectItem>
+                <SelectItem value="all">
+                  {t("books.filters.allAuthors")}
+                </SelectItem>
                 {authors.map((author) => (
                   <SelectItem key={author} value={author}>
                     {author}
@@ -246,7 +257,9 @@ export function BooksFilters({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="books-translator-filter">{t("books.filters.translator")}</Label>
+            <Label htmlFor="books-translator-filter">
+              {t("books.filters.translator")}
+            </Label>
             <Select
               value={translatorFilter}
               onValueChange={onTranslatorFilterChange}
@@ -255,7 +268,9 @@ export function BooksFilters({
                 <SelectValue placeholder={t("books.filters.allTranslators")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">{t("books.filters.allTranslators")}</SelectItem>
+                <SelectItem value="all">
+                  {t("books.filters.allTranslators")}
+                </SelectItem>
                 {translators.map((translator) => (
                   <SelectItem key={translator} value={translator}>
                     {translator}
@@ -267,7 +282,9 @@ export function BooksFilters({
 
           {showBranchFilter ? (
             <div className="space-y-2">
-              <Label htmlFor="books-branch-filter">{t("books.filters.branch")}</Label>
+              <Label htmlFor="books-branch-filter">
+                {t("books.filters.branch")}
+              </Label>
               <Select value={branchFilter} onValueChange={onBranchFilterChange}>
                 <SelectTrigger id="books-branch-filter" className="w-full">
                   <SelectValue placeholder={t("books.filters.allBranches")} />
@@ -300,7 +317,9 @@ export function BooksFilters({
                     type="button"
                     onClick={chip.onRemove}
                     className="rounded-full p-0.5 hover:bg-primary/20"
-                    aria-label={t("books.filters.clearFilter", { label: chip.label })}
+                    aria-label={t("books.filters.clearFilter", {
+                      label: chip.label,
+                    })}
                   >
                     <XIcon className="size-3" />
                   </button>

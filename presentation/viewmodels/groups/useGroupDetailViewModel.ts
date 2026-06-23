@@ -29,10 +29,18 @@ import type {
 type GroupDetailViewModel = {
   state: GroupDetailViewModelState
   setBooksSearchQuery: (searchQuery: string) => void
-  setBooksCategoryFilter: (categoryFilter: GroupBooksFilterState["categoryFilter"]) => void
-  setBooksAuthorFilter: (authorFilter: GroupBooksFilterState["authorFilter"]) => void
-  setBooksBranchFilter: (branchFilter: GroupBooksFilterState["branchFilter"]) => void
-  setSalesBranchFilter: (branchFilter: GroupSalesFilterState["branchFilter"]) => void
+  setBooksCategoryFilter: (
+    categoryFilter: GroupBooksFilterState["categoryFilter"]
+  ) => void
+  setBooksAuthorFilter: (
+    authorFilter: GroupBooksFilterState["authorFilter"]
+  ) => void
+  setBooksBranchFilter: (
+    branchFilter: GroupBooksFilterState["branchFilter"]
+  ) => void
+  setSalesBranchFilter: (
+    branchFilter: GroupSalesFilterState["branchFilter"]
+  ) => void
   setSalesDateFrom: (dateFrom: string | null) => void
   setSalesDateTo: (dateTo: string | null) => void
   reload: () => Promise<void>
@@ -94,7 +102,10 @@ function getUniqueBookValues(
   return Array.from(new Set(books.map(accessor))).sort()
 }
 
-function matchesBookSearch(book: GroupAssignedBook, searchQuery: string): boolean {
+function matchesBookSearch(
+  book: GroupAssignedBook,
+  searchQuery: string
+): boolean {
   const normalizedQuery = searchQuery.trim().toLowerCase()
   if (!normalizedQuery) return true
   return book.title.toLowerCase().includes(normalizedQuery)
@@ -151,7 +162,10 @@ function filterGroupBooks(
       return false
     }
 
-    if (filters.authorFilter !== "all" && book.author !== filters.authorFilter) {
+    if (
+      filters.authorFilter !== "all" &&
+      book.author !== filters.authorFilter
+    ) {
       return false
     }
 
@@ -194,11 +208,13 @@ export function useGroupDetailViewModel(
   options?: GroupDetailViewModelOptions
 ): GroupDetailViewModel {
   const { t } = useTranslation()
-  const [booksFilters, setBooksFilters] = useState<GroupBooksFilterState>(() => ({
-    ...defaultBooksFilters,
-    branchFilter:
-      options?.initialBooksBranchFilter ?? defaultBooksFilters.branchFilter,
-  }))
+  const [booksFilters, setBooksFilters] = useState<GroupBooksFilterState>(
+    () => ({
+      ...defaultBooksFilters,
+      branchFilter:
+        options?.initialBooksBranchFilter ?? defaultBooksFilters.branchFilter,
+    })
+  )
   const [salesFilters, setSalesFilters] =
     useState<GroupSalesFilterState>(defaultSalesFilters)
 
@@ -258,7 +274,8 @@ export function useGroupDetailViewModel(
   const isBranchScopedUser = user ? isBranchScopedDashboardUser(user) : false
   const showBooksBranchFilter = !isBranchScopedUser
   const showSalesBranchFilter = !isBranchScopedUser
-  const showSalesBranchColumn = !isBranchScopedUser && salesFilters.branchFilter !== "current"
+  const showSalesBranchColumn =
+    !isBranchScopedUser && salesFilters.branchFilter !== "current"
   const branchFilterOptions = user
     ? getBranchFilterOptions(
         user,
@@ -271,7 +288,10 @@ export function useGroupDetailViewModel(
     : []
 
   const groupBooks = groupQuery.data?.books ?? []
-  const bookCategories = getUniqueBookValues(groupBooks, (book) => book.category)
+  const bookCategories = getUniqueBookValues(
+    groupBooks,
+    (book) => book.category
+  )
   const bookAuthors = getUniqueBookValues(groupBooks, (book) => book.author)
 
   const filteredBooks =

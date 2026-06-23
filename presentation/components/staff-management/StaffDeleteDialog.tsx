@@ -48,9 +48,15 @@ export function StaffDeleteDialog({
           <Button variant="outline" onClick={onClose} disabled={isDeleting}>
             {t("common.cancel")}
           </Button>
-          <Button variant="destructive" onClick={onConfirm} disabled={isDeleting}>
+          <Button
+            variant="destructive"
+            onClick={onConfirm}
+            disabled={isDeleting}
+          >
             {isDeleting ? <Loader2Icon className="animate-spin" /> : null}
-            {isDeleting ? t("staff.deleteDialog.deleting") : t("staff.deleteDialog.confirm")}
+            {isDeleting
+              ? t("staff.deleteDialog.deleting")
+              : t("staff.deleteDialog.confirm")}
           </Button>
         </DialogFooter>
       </DialogContent>

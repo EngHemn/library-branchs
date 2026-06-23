@@ -59,13 +59,24 @@ const reportTabs: {
   { value: "groups", labelKey: "reports.tabs.groups", icon: LayersIcon },
   { value: "members", labelKey: "reports.tabs.members", icon: UsersIcon },
   { value: "authors", labelKey: "reports.tabs.authors", icon: PenLineIcon },
-  { value: "translators", labelKey: "reports.tabs.translators", icon: LanguagesIcon },
-  { value: "bookings", labelKey: "reports.tabs.bookings", icon: CalendarCheckIcon },
+  {
+    value: "translators",
+    labelKey: "reports.tabs.translators",
+    icon: LanguagesIcon,
+  },
+  {
+    value: "bookings",
+    labelKey: "reports.tabs.bookings",
+    icon: CalendarCheckIcon,
+  },
   { value: "books", labelKey: "reports.tabs.books", icon: BookOpenIcon },
   { value: "orders", labelKey: "reports.tabs.orders", icon: ClipboardListIcon },
 ]
 
-function chartsForTab(charts: ReportChart[], category: ReportCategory): ReportChart[] {
+function chartsForTab(
+  charts: ReportChart[],
+  category: ReportCategory
+): ReportChart[] {
   return charts
     .filter((chart) => chart.category === category)
     .slice(0, REPORT_CHARTS_PER_TAB)
@@ -75,7 +86,10 @@ function kpisForTab(kpis: ReportKpi[], category: ReportCategory): ReportKpi[] {
   return kpis.filter((kpi) => kpi.category === category)
 }
 
-function tablesForTab(tables: ReportTable[], category: ReportCategory): ReportTable[] {
+function tablesForTab(
+  tables: ReportTable[],
+  category: ReportCategory
+): ReportTable[] {
   if (category === "overview" || category === "orders") {
     return tables.filter((table) => table.category === category)
   }
@@ -104,7 +118,10 @@ function LoadingReportsScreen() {
   )
 }
 
-export function ReportsScreen({ authUseCase, getReportsUseCase }: ReportsScreenProps) {
+export function ReportsScreen({
+  authUseCase,
+  getReportsUseCase,
+}: ReportsScreenProps) {
   const { t } = useTranslation()
   const viewModel = useReportsViewModel(authUseCase, getReportsUseCase)
   const { state } = viewModel
@@ -180,7 +197,10 @@ export function ReportsScreen({ authUseCase, getReportsUseCase }: ReportsScreenP
             }
           >
             <div className="overflow-x-auto pb-1">
-              <TabsList variant="line" className="w-max min-w-full justify-start">
+              <TabsList
+                variant="line"
+                className="w-max min-w-full justify-start"
+              >
                 {reportTabs.map((tab) => (
                   <TabsTrigger key={tab.value} value={tab.value}>
                     <tab.icon className="size-4" />
@@ -205,8 +225,12 @@ export function ReportsScreen({ authUseCase, getReportsUseCase }: ReportsScreenP
                     <BookMarkedIcon className="size-4" />
                     <span>
                       {tabCharts.length === 1
-                        ? t("reports.chartsCountOne", { count: tabCharts.length })
-                        : t("reports.chartsCountOther", { count: tabCharts.length })}{" "}
+                        ? t("reports.chartsCountOne", {
+                            count: tabCharts.length,
+                          })
+                        : t("reports.chartsCountOther", {
+                            count: tabCharts.length,
+                          })}{" "}
                       · {reports.branchName} · {state.dateFrom} → {state.dateTo}
                     </span>
                   </div>

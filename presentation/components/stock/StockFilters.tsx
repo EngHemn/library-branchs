@@ -2,12 +2,7 @@
 
 import { RotateCcwIcon, SearchIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {
@@ -37,7 +32,11 @@ type StockFiltersProps = {
 
 type StockStatusFilter = "all" | "low_stock" | "out_of_stock"
 
-const STOCK_STATUS_VALUES = new Set<string>(["all", "low_stock", "out_of_stock"])
+const STOCK_STATUS_VALUES = new Set<string>([
+  "all",
+  "low_stock",
+  "out_of_stock",
+])
 function isStockStatusFilter(value: string): value is StockStatusFilter {
   return STOCK_STATUS_VALUES.has(value)
 }
@@ -99,7 +98,7 @@ export function StockFilters({
           <div className="space-y-2">
             <Label htmlFor="stock-search">{t("common.search")}</Label>
             <div className="relative">
-              <SearchIcon className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+              <SearchIcon className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 id="stock-search"
                 value={searchQuery}
@@ -112,7 +111,9 @@ export function StockFilters({
 
           {showSubBranchFilter ? (
             <div className="space-y-2">
-              <Label htmlFor="sub-branch-filter">{t("stock.table.subBranch")}</Label>
+              <Label htmlFor="sub-branch-filter">
+                {t("stock.table.subBranch")}
+              </Label>
               <Select
                 value={selectedSubBranchId ?? "all"}
                 onValueChange={(v) => onSubBranchChange(v === "all" ? null : v)}
@@ -154,7 +155,9 @@ export function StockFilters({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="status-filter">{t("stock.filters.stockStatus")}</Label>
+            <Label htmlFor="status-filter">
+              {t("stock.filters.stockStatus")}
+            </Label>
             <Select
               value={statusFilterValue}
               onValueChange={(v) => {
@@ -166,8 +169,12 @@ export function StockFilters({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">{t("common.all")}</SelectItem>
-                <SelectItem value="low_stock">{t("stock.filters.lowStock")}</SelectItem>
-                <SelectItem value="out_of_stock">{t("stock.filters.outOfStock")}</SelectItem>
+                <SelectItem value="low_stock">
+                  {t("stock.filters.lowStock")}
+                </SelectItem>
+                <SelectItem value="out_of_stock">
+                  {t("stock.filters.outOfStock")}
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>

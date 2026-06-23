@@ -18,7 +18,10 @@ const toneDotClass: Record<DashboardActivityTone, string> = {
   warning: "bg-amber-500",
 }
 
-const ACTIVITY_KEYS: Record<string, { title: TranslationKey; description: TranslationKey; time: TranslationKey }> = {
+const ACTIVITY_KEYS: Record<
+  string,
+  { title: TranslationKey; description: TranslationKey; time: TranslationKey }
+> = {
   "act-001": {
     title: "dashboard.activities.act-001.title",
     description: "dashboard.activities.act-001.description",
@@ -51,7 +54,9 @@ const ACTIVITY_KEYS: Record<string, { title: TranslationKey; description: Transl
   },
 }
 
-export function DashboardActivityFeed({ activities }: DashboardActivityFeedProps) {
+export function DashboardActivityFeed({
+  activities,
+}: DashboardActivityFeedProps) {
   const { t } = useTranslation()
 
   return (
@@ -72,7 +77,7 @@ export function DashboardActivityFeed({ activities }: DashboardActivityFeedProps
             </div>
             <div className="min-w-0 flex-1 pb-4">
               <div className="flex items-start justify-between gap-2">
-                <p className="text-sm font-medium leading-5">
+                <p className="text-sm leading-5 font-medium">
                   {keys ? t(keys.title) : activity.title}
                 </p>
                 <span className="shrink-0 text-xs text-muted-foreground">

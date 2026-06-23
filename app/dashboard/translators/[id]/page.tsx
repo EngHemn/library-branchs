@@ -13,16 +13,24 @@ type ViewTranslatorPageProps = {
   }>
 }
 
-const translatorManagementFakeDataSource = new TranslatorManagementFakeDataSource()
+const translatorManagementFakeDataSource =
+  new TranslatorManagementFakeDataSource()
 const translatorManagementRepository = new TranslatorManagementRepositoryImpl(
   translatorManagementFakeDataSource
 )
-const getTranslatorsUseCase = new GetTranslatorsUseCase(translatorManagementRepository)
+const getTranslatorsUseCase = new GetTranslatorsUseCase(
+  translatorManagementRepository
+)
 
-export default function ViewTranslatorPage({ params }: ViewTranslatorPageProps) {
+export default function ViewTranslatorPage({
+  params,
+}: ViewTranslatorPageProps) {
   const { id } = use(params)
 
   return (
-    <ViewTranslatorScreen translatorId={id} getTranslatorsUseCase={getTranslatorsUseCase} />
+    <ViewTranslatorScreen
+      translatorId={id}
+      getTranslatorsUseCase={getTranslatorsUseCase}
+    />
   )
 }

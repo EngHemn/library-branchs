@@ -78,7 +78,9 @@ export function LoginForm({
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="main">{t("auth.mainBranch")}</SelectItem>
-              <SelectItem value="main_no_sub">{t("auth.mainBranchNoSub")}</SelectItem>
+              <SelectItem value="main_no_sub">
+                {t("auth.mainBranchNoSub")}
+              </SelectItem>
               <SelectItem value="sub">{t("auth.subBranch")}</SelectItem>
             </SelectContent>
           </Select>

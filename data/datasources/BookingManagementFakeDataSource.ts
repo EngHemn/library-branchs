@@ -83,7 +83,9 @@ export class BookingManagementFakeDataSource {
           branches: fakeBranches.map((branch) => ({
             value: branch.id,
             label: branch.branchName,
-            searchText: [branch.email, branch.address].filter(Boolean).join(" "),
+            searchText: [branch.email, branch.address]
+              .filter(Boolean)
+              .join(" "),
           })),
           members: fakeMembers.map((member) => ({
             value: member.id,
@@ -107,7 +109,9 @@ export class BookingManagementFakeDataSource {
     try {
       await delay(300)
 
-      const index = this.bookings.findIndex((booking) => booking.id === input.id)
+      const index = this.bookings.findIndex(
+        (booking) => booking.id === input.id
+      )
 
       if (index === -1) {
         return {
@@ -193,10 +197,7 @@ export class BookingManagementFakeDataSource {
 
       const booking = this.bookings[index]
 
-      if (
-        booking.status !== "borrowed" &&
-        booking.status !== "overdue"
-      ) {
+      if (booking.status !== "borrowed" && booking.status !== "overdue") {
         return {
           success: false,
           error: "Only borrowed or overdue bookings can be returned",
@@ -241,10 +242,7 @@ export class BookingManagementFakeDataSource {
 
       const booking = this.bookings[index]
 
-      if (
-        booking.status !== "borrowed" &&
-        booking.status !== "overdue"
-      ) {
+      if (booking.status !== "borrowed" && booking.status !== "overdue") {
         return {
           success: false,
           error: "Only borrowed or overdue bookings can be extended",

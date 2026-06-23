@@ -68,7 +68,9 @@ export function ShelvesFilters({
               <SelectValue placeholder={t("shelves.filters.allBranches")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">{t("shelves.filters.allBranches")}</SelectItem>
+              <SelectItem value="all">
+                {t("shelves.filters.allBranches")}
+              </SelectItem>
               {branchOptions.map((branch) => (
                 <SelectItem key={branch.id} value={branch.id}>
                   {branch.name}
@@ -88,7 +90,9 @@ export function ShelvesFilters({
             <SelectValue placeholder={t("shelves.filters.allShelfTypes")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">{t("shelves.filters.allShelfTypes")}</SelectItem>
+            <SelectItem value="all">
+              {t("shelves.filters.allShelfTypes")}
+            </SelectItem>
             {SHELF_TYPES.map((type) => (
               <SelectItem key={type} value={type}>
                 {getShelfTypeLabel(type)}
@@ -107,7 +111,9 @@ export function ShelvesFilters({
             <SelectValue placeholder={t("shelves.filters.allStatus")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">{t("shelves.filters.allStatus")}</SelectItem>
+            <SelectItem value="all">
+              {t("shelves.filters.allStatus")}
+            </SelectItem>
             <SelectItem value="active">{t("common.active")}</SelectItem>
             <SelectItem value="inactive">{t("common.inactive")}</SelectItem>
           </SelectContent>

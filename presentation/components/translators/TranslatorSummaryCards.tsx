@@ -10,11 +10,13 @@ type TranslatorSummaryCardsProps = {
   translator: TranslatorDetail
 }
 
-export function TranslatorSummaryCards({ translator }: TranslatorSummaryCardsProps) {
+export function TranslatorSummaryCards({
+  translator,
+}: TranslatorSummaryCardsProps) {
   const { t } = useTranslation()
 
   return (
-    <section className="grid gap-4 sm:grid-cols-1 max-w-sm">
+    <section className="grid max-w-sm gap-4 sm:grid-cols-1">
       <Card className="rounded-lg">
         <CardContent className="flex items-center gap-4 py-4">
           <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-muted">

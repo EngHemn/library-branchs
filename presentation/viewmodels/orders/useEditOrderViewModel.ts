@@ -16,7 +16,10 @@ import {
   resolveUserBranchId,
 } from "@/lib/dashboardBranchScope"
 import { toOrderDateInputValue } from "@/presentation/components/orders/orderDisplay"
-import type { EditOrderStatus, EditOrderViewModelState } from "./EditOrderViewModelState"
+import type {
+  EditOrderStatus,
+  EditOrderViewModelState,
+} from "./EditOrderViewModelState"
 
 type EditOrderViewModel = {
   state: EditOrderViewModelState
@@ -44,6 +47,7 @@ export function useEditOrderViewModel(
       totalAmount: 0,
       notes: "",
       bookIds: [],
+      items: [],
       latitude: null,
       longitude: null,
     },
@@ -90,20 +94,36 @@ export function useEditOrderViewModel(
       branchId: detailQuery.data.branchId,
       supplierName: detailQuery.data.supplierName,
       orderDate: toOrderDateInputValue(detailQuery.data.orderDate),
-      expectedDeliveryDate: toOrderDateInputValue(detailQuery.data.expectedDeliveryDate),
+      expectedDeliveryDate: toOrderDateInputValue(
+        detailQuery.data.expectedDeliveryDate
+      ),
       status: detailQuery.data.status,
       phoneNumber: detailQuery.data.phoneNumber,
       supplierEmail: detailQuery.data.supplierEmail ?? "",
       totalAmount: detailQuery.data.totalAmount,
       notes: detailQuery.data.notes ?? "",
       bookIds: [...detailQuery.data.bookIds],
+      items: detailQuery.data.items.map((item) => {
+        const bookOpt = optionsQuery.data?.books.find((b) => b.id === item.bookId)
+        return {
+          bookId: item.bookId,
+          quantity: item.quantity,
+          initialPrice: bookOpt ? bookOpt.price : item.unitPrice,
+          unitPrice: item.unitPrice,
+        }
+      }),
       latitude: detailQuery.data.latitude,
       longitude: detailQuery.data.longitude,
     })
-  }, [detailQuery.data, form])
+  }, [detailQuery.data, optionsQuery.data, form])
 
   useEffect(() => {
-    if (!user || !isBranchScopedDashboardUser(user) || form.getValues("branchId")) return
+    if (
+      !user ||
+      !isBranchScopedDashboardUser(user) ||
+      form.getValues("branchId")
+    )
+      return
     form.setValue("branchId", userBranchId)
   }, [user, userBranchId, form])
 

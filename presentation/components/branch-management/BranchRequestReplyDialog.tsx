@@ -101,7 +101,9 @@ export function BranchRequestReplyDialog({
             </DialogHeader>
 
             <div className="space-y-2">
-              <Label htmlFor="replyMessage">{t("branches.replyDialog.message")}</Label>
+              <Label htmlFor="replyMessage">
+                {t("branches.replyDialog.message")}
+              </Label>
               <Textarea
                 id="replyMessage"
                 placeholder={t("branches.replyDialog.messagePlaceholder")}
@@ -115,7 +117,9 @@ export function BranchRequestReplyDialog({
                 }}
                 rows={4}
               />
-              {error ? <p className="text-sm text-destructive">{error}</p> : null}
+              {error ? (
+                <p className="text-sm text-destructive">{error}</p>
+              ) : null}
             </div>
 
             <DialogFooter>
@@ -123,7 +127,9 @@ export function BranchRequestReplyDialog({
                 {t("common.cancel")}
               </Button>
               <Button onClick={handleConfirm} disabled={isSending}>
-                {isSending ? t("branches.replyDialog.sending") : t("branches.replyDialog.sendReply")}
+                {isSending
+                  ? t("branches.replyDialog.sending")
+                  : t("branches.replyDialog.sendReply")}
               </Button>
             </DialogFooter>
           </>

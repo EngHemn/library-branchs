@@ -10,7 +10,12 @@ import type { StaffMember } from "@/domain/entities/staff/StaffMember"
 import type { Translator } from "@/domain/entities/translator/Translator"
 import type { BranchDetailUseCase } from "@/domain/usecases/branch/BranchDetailUseCase"
 
-export type BranchDetailStatus = "idle" | "loading" | "loaded" | "not-found" | "error"
+export type BranchDetailStatus =
+  | "idle"
+  | "loading"
+  | "loaded"
+  | "not-found"
+  | "error"
 
 export type TabKey =
   | "details"

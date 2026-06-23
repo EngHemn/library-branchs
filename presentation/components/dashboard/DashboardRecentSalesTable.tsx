@@ -28,18 +28,28 @@ export function DashboardRecentSalesTable({
       <TableHeader>
         <TableRow>
           <TableHead className="w-24">{t("dashboard.tables.saleId")}</TableHead>
-          <TableHead className="w-24 text-right">{t("dashboard.tables.items")}</TableHead>
-          <TableHead className="w-28 text-right">{t("dashboard.tables.total")}</TableHead>
+          <TableHead className="w-24 text-right">
+            {t("dashboard.tables.items")}
+          </TableHead>
+          <TableHead className="w-28 text-right">
+            {t("dashboard.tables.total")}
+          </TableHead>
           {showBranchColumn ? (
-            <TableHead className="hidden md:table-cell">{t("dashboard.tables.branch")}</TableHead>
+            <TableHead className="hidden md:table-cell">
+              {t("dashboard.tables.branch")}
+            </TableHead>
           ) : null}
-          <TableHead className="hidden sm:table-cell">{t("dashboard.tables.dateTime")}</TableHead>
+          <TableHead className="hidden sm:table-cell">
+            {t("dashboard.tables.dateTime")}
+          </TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         {sales.map((sale) => (
           <TableRow key={sale.id}>
-            <TableCell className="font-mono text-xs text-muted-foreground">{sale.id}</TableCell>
+            <TableCell className="font-mono text-xs text-muted-foreground">
+              {sale.id}
+            </TableCell>
             <TableCell className="text-right text-sm text-muted-foreground">
               {sale.itemCount}
             </TableCell>

@@ -34,9 +34,15 @@ const CATEGORY_KEYS: Record<string, TranslationKey> = {
   Alerts: "permissions.categories.Alerts",
 }
 
-type Translate = (key: TranslationKey, params?: Record<string, string | number>) => string
+type Translate = (
+  key: TranslationKey,
+  params?: Record<string, string | number>
+) => string
 
-export function getPermissionRoleName(role: PermissionRole, t: Translate): string {
+export function getPermissionRoleName(
+  role: PermissionRole,
+  t: Translate
+): string {
   const key = SYSTEM_ROLE_NAME_KEYS[role.id]
   return key ? t(key) : role.name
 }
@@ -52,12 +58,18 @@ export function getPermissionRoleDescription(
   return role.description.trim() ? role.description : null
 }
 
-export function translatePermissionError(message: string, t: Translate): string {
+export function translatePermissionError(
+  message: string,
+  t: Translate
+): string {
   const key = PERMISSION_ERROR_KEYS[message]
   return key ? t(key) : message
 }
 
-export function getPermissionCategoryName(categoryName: string, t: Translate): string {
+export function getPermissionCategoryName(
+  categoryName: string,
+  t: Translate
+): string {
   const key = CATEGORY_KEYS[categoryName]
   return key ? t(key) : categoryName
 }

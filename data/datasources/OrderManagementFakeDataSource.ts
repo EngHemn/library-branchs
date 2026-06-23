@@ -4,7 +4,10 @@ import {
 } from "@/data/shared/libraryBooksStore"
 import { fakeOrders, type FakeOrderRecord } from "@/data/fake/fakeOrders"
 import { fakeBranches } from "@/data/fake/fakeBranches"
-import { getBranchLocation, resolveOrderCoordinates } from "@/data/shared/branchLocation"
+import {
+  getBranchLocation,
+  resolveOrderCoordinates,
+} from "@/data/shared/branchLocation"
 import { toOrderDetail } from "@/data/mappers/orderDetailMapper"
 import type { Order } from "@/domain/entities/order/Order"
 import type { OrderDetail } from "@/domain/entities/order/OrderDetail"
@@ -31,6 +34,10 @@ function toOrderListItem(record: FakeOrderRecord): Order {
     record.longitude
   )
 
+  const totalQuantity = record.items
+    ? record.items.reduce((sum, item) => sum + item.quantity, 0)
+    : record.bookIds.length
+
   return {
     id: record.id,
     branchId: record.branchId,
@@ -41,7 +48,7 @@ function toOrderListItem(record: FakeOrderRecord): Order {
     expectedDeliveryDate: record.expectedDeliveryDate,
     status: record.status,
     totalAmount: record.totalAmount,
-    itemCount: record.itemCount,
+    itemCount: totalQuantity,
     phoneNumber: record.phoneNumber,
     notes: record.notes ?? null,
     bookIds: [...record.bookIds],
@@ -69,7 +76,9 @@ export class OrderManagementFakeDataSource {
     const order = this.orders.find((item) => item.id === orderId)
     return {
       success: true,
-      data: order ? toOrderDetail({ ...order, bookIds: [...order.bookIds] }) : null,
+      data: order
+        ? toOrderDetail({ ...order, bookIds: [...order.bookIds] })
+        : null,
     }
   }
 
@@ -109,9 +118,14 @@ export class OrderManagementFakeDataSource {
     }
 
     const uniqueBookIds = [...new Set(input.bookIds)]
-    const missingBook = uniqueBookIds.find((bookId) => !findLibraryBookById(bookId))
+    const missingBook = uniqueBookIds.find(
+      (bookId) => !findLibraryBookById(bookId)
+    )
     if (missingBook) {
-      return { success: false, error: "One or more selected books could not be found." }
+      return {
+        success: false,
+        error: "One or more selected books could not be found.",
+      }
     }
 
     const coordinates = resolveOrderCoordinates(
@@ -119,6 +133,10 @@ export class OrderManagementFakeDataSource {
       input.latitude,
       input.longitude
     )
+
+    const totalQuantity = input.items
+      ? input.items.reduce((sum, item) => sum + item.quantity, 0)
+      : uniqueBookIds.length
 
     const newOrder: FakeOrderRecord = {
       id: `ORD-${String(nextOrderId++)}`,
@@ -129,11 +147,16 @@ export class OrderManagementFakeDataSource {
       expectedDeliveryDate: toOrderDateTime(input.expectedDeliveryDate),
       status: input.status,
       totalAmount: input.totalAmount,
-      itemCount: uniqueBookIds.length,
+      itemCount: totalQuantity,
       phoneNumber: input.phoneNumber.trim(),
       supplierEmail: input.supplierEmail?.trim() || null,
       notes: input.notes?.trim() || null,
       bookIds: uniqueBookIds,
+      items: input.items?.map((item) => ({
+        bookId: item.bookId,
+        quantity: item.quantity,
+        unitPrice: item.unitPrice,
+      })),
       latitude: coordinates.latitude,
       longitude: coordinates.longitude,
     }
@@ -156,9 +179,14 @@ export class OrderManagementFakeDataSource {
     }
 
     const uniqueBookIds = [...new Set(input.bookIds)]
-    const missingBook = uniqueBookIds.find((bookId) => !findLibraryBookById(bookId))
+    const missingBook = uniqueBookIds.find(
+      (bookId) => !findLibraryBookById(bookId)
+    )
     if (missingBook) {
-      return { success: false, error: "One or more selected books could not be found." }
+      return {
+        success: false,
+        error: "One or more selected books could not be found.",
+      }
     }
 
     const coordinates = resolveOrderCoordinates(
@@ -166,6 +194,10 @@ export class OrderManagementFakeDataSource {
       input.latitude,
       input.longitude
     )
+
+    const totalQuantity = input.items
+      ? input.items.reduce((sum, item) => sum + item.quantity, 0)
+      : uniqueBookIds.length
 
     const currentOrder = this.orders[orderIndex]
     const updatedOrder: FakeOrderRecord = {
@@ -180,11 +212,16 @@ export class OrderManagementFakeDataSource {
       ),
       status: input.status,
       totalAmount: input.totalAmount,
-      itemCount: uniqueBookIds.length,
+      itemCount: totalQuantity,
       phoneNumber: input.phoneNumber.trim(),
       supplierEmail: input.supplierEmail?.trim() || null,
       notes: input.notes?.trim() || null,
       bookIds: uniqueBookIds,
+      items: input.items?.map((item) => ({
+        bookId: item.bookId,
+        quantity: item.quantity,
+        unitPrice: item.unitPrice,
+      })),
       latitude: coordinates.latitude,
       longitude: coordinates.longitude,
     }

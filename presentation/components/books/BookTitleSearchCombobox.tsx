@@ -68,7 +68,9 @@ export function BookTitleSearchCombobox({
   ): void {
     onTitleChange(nextInput)
 
-    const selectedBook = selectedBookId ? bookMap.get(selectedBookId) : undefined
+    const selectedBook = selectedBookId
+      ? bookMap.get(selectedBookId)
+      : undefined
     if (
       eventDetails?.reason === "input-change" &&
       selectedBook &&

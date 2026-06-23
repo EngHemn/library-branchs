@@ -55,7 +55,9 @@ function LoadingCategoriesScreen() {
   )
 }
 
-export function CategoriesScreen({ getCategoriesUseCase }: CategoriesScreenProps) {
+export function CategoriesScreen({
+  getCategoriesUseCase,
+}: CategoriesScreenProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { t } = useTranslation()

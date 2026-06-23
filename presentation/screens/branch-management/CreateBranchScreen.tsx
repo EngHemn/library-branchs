@@ -2,7 +2,14 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { ArrowLeftIcon, EyeIcon, EyeOffIcon, Loader2Icon, PlusIcon, RefreshCwIcon } from "lucide-react"
+import {
+  ArrowLeftIcon,
+  EyeIcon,
+  EyeOffIcon,
+  Loader2Icon,
+  PlusIcon,
+  RefreshCwIcon,
+} from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -93,12 +100,16 @@ export function CreateBranchScreen({
         </div>
       ) : null}
 
-      {(state.isReady || state.isSaving || state.isSaved) ? (
+      {state.isReady || state.isSaving || state.isSaved ? (
         <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
           <section className="flex items-center justify-between pt-4">
             <div>
-              <h1 className="text-2xl font-semibold tracking-normal">{t("branches.create.title")}</h1>
-              <p className="mt-1 text-sm text-muted-foreground">{t("branches.create.subtitle")}</p>
+              <h1 className="text-2xl font-semibold tracking-normal">
+                {t("branches.create.title")}
+              </h1>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {t("branches.create.subtitle")}
+              </p>
             </div>
             <Button variant="outline" onClick={goBack}>
               <ArrowLeftIcon />
@@ -109,7 +120,9 @@ export function CreateBranchScreen({
           {state.error ? (
             <Card className="rounded-lg border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950">
               <CardContent className="py-3">
-                <p className="text-sm font-medium text-red-800 dark:text-red-200">{state.error}</p>
+                <p className="text-sm font-medium text-red-800 dark:text-red-200">
+                  {state.error}
+                </p>
               </CardContent>
             </Card>
           ) : null}
@@ -117,7 +130,9 @@ export function CreateBranchScreen({
           <Card className="rounded-lg">
             <CardHeader>
               <CardTitle>{t("branches.create.detailsTitle")}</CardTitle>
-              <CardDescription>{t("branches.create.detailsDescription")}</CardDescription>
+              <CardDescription>
+                {t("branches.create.detailsDescription")}
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <form
@@ -129,72 +144,102 @@ export function CreateBranchScreen({
               >
                 <div className="grid gap-6 sm:grid-cols-2">
                   <div className="space-y-2">
-                    <Label htmlFor="branchName">{t("branches.create.fields.branchName")}</Label>
+                    <Label htmlFor="branchName">
+                      {t("branches.create.fields.branchName")}
+                    </Label>
                     <Input
                       id="branchName"
                       placeholder={t("branches.create.placeholders.branchName")}
                       value={state.form.branchName}
-                      onChange={(e) => viewModel.setField("branchName", e.target.value)}
+                      onChange={(e) =>
+                        viewModel.setField("branchName", e.target.value)
+                      }
                       disabled={state.isSaving || state.isSaved}
                     />
                     {state.fieldErrors.branchName ? (
-                      <p className="text-sm text-destructive">{state.fieldErrors.branchName}</p>
+                      <p className="text-sm text-destructive">
+                        {state.fieldErrors.branchName}
+                      </p>
                     ) : null}
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="email">{t("branches.create.fields.email")}</Label>
+                    <Label htmlFor="email">
+                      {t("branches.create.fields.email")}
+                    </Label>
                     <Input
                       id="email"
                       type="email"
                       placeholder={t("branches.create.placeholders.email")}
                       value={state.form.email}
-                      onChange={(e) => viewModel.setField("email", e.target.value)}
+                      onChange={(e) =>
+                        viewModel.setField("email", e.target.value)
+                      }
                       disabled={state.isSaving || state.isSaved}
                     />
                     {state.fieldErrors.email ? (
-                      <p className="text-sm text-destructive">{state.fieldErrors.email}</p>
+                      <p className="text-sm text-destructive">
+                        {state.fieldErrors.email}
+                      </p>
                     ) : null}
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="adminName">{t("branches.create.fields.adminName")}</Label>
+                    <Label htmlFor="adminName">
+                      {t("branches.create.fields.adminName")}
+                    </Label>
                     <Input
                       id="adminName"
                       placeholder={t("branches.create.placeholders.adminName")}
                       value={state.form.adminName}
-                      onChange={(e) => viewModel.setField("adminName", e.target.value)}
+                      onChange={(e) =>
+                        viewModel.setField("adminName", e.target.value)
+                      }
                       disabled={state.isSaving || state.isSaved}
                     />
                     {state.fieldErrors.adminName ? (
-                      <p className="text-sm text-destructive">{state.fieldErrors.adminName}</p>
+                      <p className="text-sm text-destructive">
+                        {state.fieldErrors.adminName}
+                      </p>
                     ) : null}
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="phone">{t("branches.create.fields.phone")}</Label>
+                    <Label htmlFor="phone">
+                      {t("branches.create.fields.phone")}
+                    </Label>
                     <Input
                       id="phone"
                       placeholder={t("branches.create.placeholders.phone")}
                       value={state.form.phone}
-                      onChange={(e) => viewModel.setField("phone", e.target.value)}
+                      onChange={(e) =>
+                        viewModel.setField("phone", e.target.value)
+                      }
                       disabled={state.isSaving || state.isSaved}
                     />
                     {state.fieldErrors.phone ? (
-                      <p className="text-sm text-destructive">{state.fieldErrors.phone}</p>
+                      <p className="text-sm text-destructive">
+                        {state.fieldErrors.phone}
+                      </p>
                     ) : null}
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="password">{t("branches.create.fields.password")}</Label>
+                    <Label htmlFor="password">
+                      {t("branches.create.fields.password")}
+                    </Label>
                     <div className="flex gap-2">
                       <div className="relative flex-1">
                         <Input
                           id="password"
                           type={showPassword ? "text" : "password"}
-                          placeholder={t("branches.create.placeholders.password")}
+                          placeholder={t(
+                            "branches.create.placeholders.password"
+                          )}
                           value={state.form.password}
-                          onChange={(e) => viewModel.setField("password", e.target.value)}
+                          onChange={(e) =>
+                            viewModel.setField("password", e.target.value)
+                          }
                           disabled={state.isSaving || state.isSaved}
                           className="pr-10"
                         />
@@ -204,7 +249,11 @@ export function CreateBranchScreen({
                           className="absolute inset-y-0 right-2 flex items-center text-muted-foreground hover:text-foreground"
                           tabIndex={-1}
                         >
-                          {showPassword ? <EyeOffIcon className="h-4 w-4" /> : <EyeIcon className="h-4 w-4" />}
+                          {showPassword ? (
+                            <EyeOffIcon className="h-4 w-4" />
+                          ) : (
+                            <EyeIcon className="h-4 w-4" />
+                          )}
                         </button>
                       </div>
                       <Button
@@ -219,21 +268,29 @@ export function CreateBranchScreen({
                       </Button>
                     </div>
                     {state.fieldErrors.password ? (
-                      <p className="text-sm text-destructive">{state.fieldErrors.password}</p>
+                      <p className="text-sm text-destructive">
+                        {state.fieldErrors.password}
+                      </p>
                     ) : null}
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="address">{t("branches.create.fields.address")}</Label>
+                    <Label htmlFor="address">
+                      {t("branches.create.fields.address")}
+                    </Label>
                     <Input
                       id="address"
                       placeholder={t("branches.create.placeholders.address")}
                       value={state.form.address}
-                      onChange={(e) => viewModel.setField("address", e.target.value)}
+                      onChange={(e) =>
+                        viewModel.setField("address", e.target.value)
+                      }
                       disabled={state.isSaving || state.isSaved}
                     />
                     {state.fieldErrors.address ? (
-                      <p className="text-sm text-destructive">{state.fieldErrors.address}</p>
+                      <p className="text-sm text-destructive">
+                        {state.fieldErrors.address}
+                      </p>
                     ) : null}
                   </div>
 
@@ -261,12 +318,26 @@ export function CreateBranchScreen({
                 <Separator />
 
                 <div className="flex justify-end gap-3">
-                  <Button type="button" variant="outline" onClick={goBack} disabled={state.isSaving}>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={goBack}
+                    disabled={state.isSaving}
+                  >
                     {t("common.cancel")}
                   </Button>
-                  <Button type="submit" disabled={state.isSaving || state.isSaved}>
-                    {state.isSaving ? <Loader2Icon className="animate-spin" /> : <PlusIcon />}
-                    {state.isSaving ? t("branches.create.creating") : t("branches.createBranch")}
+                  <Button
+                    type="submit"
+                    disabled={state.isSaving || state.isSaved}
+                  >
+                    {state.isSaving ? (
+                      <Loader2Icon className="animate-spin" />
+                    ) : (
+                      <PlusIcon />
+                    )}
+                    {state.isSaving
+                      ? t("branches.create.creating")
+                      : t("branches.createBranch")}
                   </Button>
                 </div>
               </form>

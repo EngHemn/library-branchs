@@ -102,13 +102,17 @@ function FilterOptionCombobox<T extends string>({
     onValueChange((nextValue ?? "all") as T)
   }
 
-  function handleInputValueChange(nextInput: string, eventDetails?: { reason?: string }): void {
+  function handleInputValueChange(
+    nextInput: string,
+    eventDetails?: { reason?: string }
+  ): void {
     setInputValue(nextInput)
     if (
       eventDetails?.reason === "input-change" &&
       value !== "all" &&
       selectedOption &&
-      nextInput.trim().toLowerCase() !== selectedOption.label.trim().toLowerCase()
+      nextInput.trim().toLowerCase() !==
+        selectedOption.label.trim().toLowerCase()
     ) {
       onValueChange("all" as T)
     }
@@ -165,7 +169,10 @@ export function ActivityLogsFilters({
     value: option.value,
     label: option.label,
   }))
-  const staffFilterOptions = staffOptions.map((s) => ({ value: s.id, label: s.name }))
+  const staffFilterOptions = staffOptions.map((s) => ({
+    value: s.id,
+    label: s.name,
+  }))
 
   const localizedActionOptions = ACTION_OPTIONS.map((opt) => ({
     ...opt,

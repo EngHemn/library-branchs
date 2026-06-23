@@ -134,7 +134,9 @@ export function DataTable<TItem, TColumnKey extends string>({
   const [pageSize, setPageSize] = React.useState<number>(initialPageSize)
   const [pageIndex, setPageIndex] = React.useState<number>(0)
 
-  const sortedColumn = sortKey ? columns.find((column) => column.key === sortKey) : null
+  const sortedColumn = sortKey
+    ? columns.find((column) => column.key === sortKey)
+    : null
   const sortedData = (() => {
     if (!sortKey || !sortedColumn?.sortable || !sortedColumn.sortValue) {
       return data
@@ -261,7 +263,7 @@ export function DataTable<TItem, TColumnKey extends string>({
                   <TableRow className="bg-muted/30 hover:bg-muted/30">
                     <TableCell
                       colSpan={columns.length}
-                      className="whitespace-normal p-3"
+                      className="p-3 whitespace-normal"
                     >
                       {renderExpandedRow(item)}
                     </TableCell>

@@ -41,12 +41,20 @@ export function DashboardRecentMembersTable({
       <TableHeader>
         <TableRow>
           <TableHead>{t("dashboard.tables.member")}</TableHead>
-          <TableHead className="hidden sm:table-cell">{t("dashboard.tables.id")}</TableHead>
+          <TableHead className="hidden sm:table-cell">
+            {t("dashboard.tables.id")}
+          </TableHead>
           {showBranchColumn ? (
-            <TableHead className="hidden md:table-cell">{t("dashboard.tables.branch")}</TableHead>
+            <TableHead className="hidden md:table-cell">
+              {t("dashboard.tables.branch")}
+            </TableHead>
           ) : null}
-          <TableHead className="w-24 text-right">{t("dashboard.tables.bookings")}</TableHead>
-          <TableHead className="hidden lg:table-cell">{t("dashboard.tables.registered")}</TableHead>
+          <TableHead className="w-24 text-right">
+            {t("dashboard.tables.bookings")}
+          </TableHead>
+          <TableHead className="hidden lg:table-cell">
+            {t("dashboard.tables.registered")}
+          </TableHead>
           <TableHead>{t("common.status")}</TableHead>
         </TableRow>
       </TableHeader>
@@ -66,7 +74,9 @@ export function DashboardRecentMembersTable({
                 />
               </TableCell>
             ) : null}
-            <TableCell className="text-right text-sm">{member.activeBookings}</TableCell>
+            <TableCell className="text-right text-sm">
+              {member.activeBookings}
+            </TableCell>
             <TableCell className="hidden text-sm text-muted-foreground lg:table-cell">
               {member.registrationDate}
             </TableCell>

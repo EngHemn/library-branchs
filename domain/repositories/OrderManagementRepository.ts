@@ -36,6 +36,11 @@ export type CreateOrderInput = {
   totalAmount: number
   notes?: string | null
   bookIds: string[]
+  items?: {
+    bookId: string
+    quantity: number
+    unitPrice: number
+  }[]
   latitude?: number | null
   longitude?: number | null
 }

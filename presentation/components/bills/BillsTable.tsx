@@ -11,10 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import {
-  DataTable,
-  type DataTableColumn,
-} from "@/components/ui/data-table"
+import { DataTable, type DataTableColumn } from "@/components/ui/data-table"
 import type { Bill } from "@/domain/entities/bill/Bill"
 import { BillActionButton } from "@/presentation/components/bills/BillActionButton"
 import {
@@ -63,7 +60,9 @@ export function BillsTable({
         sortable: true,
         sortValue: (bill) => bill.id,
         cell: (bill) => (
-          <span className="font-mono text-xs text-muted-foreground">{bill.id}</span>
+          <span className="font-mono text-xs text-muted-foreground">
+            {bill.id}
+          </span>
         ),
       },
       {
@@ -71,7 +70,9 @@ export function BillsTable({
         header: t("bills.table.company"),
         sortable: true,
         sortValue: (bill) => bill.companyName,
-        cell: (bill) => <span className="font-semibold">{bill.companyName}</span>,
+        cell: (bill) => (
+          <span className="font-semibold">{bill.companyName}</span>
+        ),
       },
       {
         key: "branchName",
@@ -87,7 +88,9 @@ export function BillsTable({
         sortValue: (bill) => billDateSortValue(bill.billDate),
         cell: (bill) => (
           <div className="text-sm">
-            <p className="font-medium">{formatBillDate(bill.billDate, locale)}</p>
+            <p className="font-medium">
+              {formatBillDate(bill.billDate, locale)}
+            </p>
             <p className="text-xs text-muted-foreground">
               {formatBillTime(bill.billDate, locale)}
             </p>
@@ -131,7 +134,9 @@ export function BillsTable({
         header: t("bills.table.addedBy"),
         sortable: true,
         sortValue: (bill) => bill.addedBy.staffName,
-        cell: (bill) => <span className="text-sm">{bill.addedBy.staffName}</span>,
+        cell: (bill) => (
+          <span className="text-sm">{bill.addedBy.staffName}</span>
+        ),
       },
       {
         key: "actions",
@@ -173,7 +178,9 @@ export function BillsTable({
       <CardHeader>
         <CardTitle>{t("bills.table.title")}</CardTitle>
         <CardDescription>
-          {t("bills.table.recordCount", { count: bills.length.toLocaleString(locale) })}
+          {t("bills.table.recordCount", {
+            count: bills.length.toLocaleString(locale),
+          })}
         </CardDescription>
       </CardHeader>
       <CardContent>

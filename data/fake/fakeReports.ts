@@ -175,12 +175,15 @@ function formatKpiValue(
 
 function buildKpis(query: ReportsQuery): ReportKpi[] {
   const seed = hashSeed(`${query.branchId}-${query.dateFrom}-${query.dateTo}`)
-  const multiplier = getBranchMultiplier(query.branchId) * getDateMultiplier(query)
+  const multiplier =
+    getBranchMultiplier(query.branchId) * getDateMultiplier(query)
   const trends: ReportMetricTrend[] = ["up", "down", "neutral", "up"]
 
   return (Object.keys(kpiTemplates) as ReportCategory[]).flatMap((category) =>
     kpiTemplates[category].map((template, index) => {
-      const value = Math.round(template.baseValue * multiplier * (0.9 + (seed % 20) / 100))
+      const value = Math.round(
+        template.baseValue * multiplier * (0.9 + (seed % 20) / 100)
+      )
       const changeValue = ((seed + index * 7) % 18) - 4
       const change =
         changeValue === 0
@@ -201,13 +204,19 @@ function buildKpis(query: ReportsQuery): ReportKpi[] {
 }
 
 function buildCharts(query: ReportsQuery): ReportChart[] {
-  const seed = hashSeed(`${query.branchId}-${query.dateFrom}-${query.dateTo}-${query.period}`)
-  const multiplier = getBranchMultiplier(query.branchId) * getDateMultiplier(query)
+  const seed = hashSeed(
+    `${query.branchId}-${query.dateFrom}-${query.dateTo}-${query.period}`
+  )
+  const multiplier =
+    getBranchMultiplier(query.branchId) * getDateMultiplier(query)
   const timeLabels = getTimeLabels(query)
 
   return (Object.keys(reportChartTemplates) as ReportCategory[]).flatMap(
     (category) => {
-      const templates = reportChartTemplates[category].slice(0, REPORT_CHARTS_PER_TAB)
+      const templates = reportChartTemplates[category].slice(
+        0,
+        REPORT_CHARTS_PER_TAB
+      )
 
       return templates.map((template, index) => {
         const labels =
@@ -270,7 +279,10 @@ function buildOrderReportRows(
   valuePrefix?: string
 ): Record<string, string>[] {
   return labels.map((label, index) => {
-    const orders = Math.max(1, Math.round(12 * multiplier * (0.7 + ((seed + index * 13) % 60) / 100)))
+    const orders = Math.max(
+      1,
+      Math.round(12 * multiplier * (0.7 + ((seed + index * 13) % 60) / 100))
+    )
     const units = Math.max(1, Math.round(orders * (2 + (index % 3))))
     const value = Math.round(orders * (180 + index * 45) * multiplier)
 
@@ -278,7 +290,10 @@ function buildOrderReportRows(
       name: label,
       orders: orders.toLocaleString(),
       units: units.toLocaleString(),
-      value: valuePrefix === "$" ? `$${value.toLocaleString()}` : value.toLocaleString(),
+      value:
+        valuePrefix === "$"
+          ? `$${value.toLocaleString()}`
+          : value.toLocaleString(),
     }
   })
 }
@@ -287,10 +302,14 @@ function buildTables(query: ReportsQuery): ReportTable[] {
   const branchLabel =
     query.branchId === "all"
       ? "All branches"
-      : (fakeBranches.find((b) => b.id === query.branchId)?.branchName ?? "Branch")
+      : (fakeBranches.find((b) => b.id === query.branchId)?.branchName ??
+        "Branch")
 
-  const seed = hashSeed(`${query.branchId}-${query.dateFrom}-${query.dateTo}-orders`)
-  const multiplier = getBranchMultiplier(query.branchId) * getDateMultiplier(query)
+  const seed = hashSeed(
+    `${query.branchId}-${query.dateFrom}-${query.dateTo}-orders`
+  )
+  const multiplier =
+    getBranchMultiplier(query.branchId) * getDateMultiplier(query)
 
   const orderTableColumns = [
     { key: "name", label: "Name" },
@@ -337,7 +356,12 @@ function buildTables(query: ReportsQuery): ReportTable[] {
       description: "Order activity for translated editions",
       category: "orders",
       columns: orderTableColumns,
-      rows: buildOrderReportRows(orderReportTranslators, seed + 31, multiplier, "$"),
+      rows: buildOrderReportRows(
+        orderReportTranslators,
+        seed + 31,
+        multiplier,
+        "$"
+      ),
     },
     {
       id: "table-orders-by-category",
@@ -345,7 +369,12 @@ function buildTables(query: ReportsQuery): ReportTable[] {
       description: "Order volume and value by book category",
       category: "orders",
       columns: orderTableColumns,
-      rows: buildOrderReportRows(orderReportCategories, seed + 47, multiplier, "$"),
+      rows: buildOrderReportRows(
+        orderReportCategories,
+        seed + 47,
+        multiplier,
+        "$"
+      ),
     },
   ]
 }
@@ -367,7 +396,8 @@ export function getReportBranchOptions(): { id: string; name: string }[] {
 export function getFakeReports(query: ReportsQuery): ReportsBundle {
   const branches = getReportBranchOptions()
   const branchName =
-    branches.find((branch) => branch.id === query.branchId)?.name ?? "All branches"
+    branches.find((branch) => branch.id === query.branchId)?.name ??
+    "All branches"
 
   return {
     period: query.period,

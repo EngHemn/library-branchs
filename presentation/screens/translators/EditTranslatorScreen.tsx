@@ -1,7 +1,12 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { ArrowLeftIcon, Loader2Icon, RefreshCwIcon, SaveIcon } from "lucide-react"
+import {
+  ArrowLeftIcon,
+  Loader2Icon,
+  RefreshCwIcon,
+  SaveIcon,
+} from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -50,10 +55,16 @@ function LoadingState() {
   )
 }
 
-export function EditTranslatorScreen({ translatorId, getTranslatorsUseCase }: EditTranslatorScreenProps) {
+export function EditTranslatorScreen({
+  translatorId,
+  getTranslatorsUseCase,
+}: EditTranslatorScreenProps) {
   const router = useRouter()
   const { t } = useTranslation()
-  const viewModel = useEditTranslatorViewModel(translatorId, getTranslatorsUseCase)
+  const viewModel = useEditTranslatorViewModel(
+    translatorId,
+    getTranslatorsUseCase
+  )
   const { state, form } = viewModel
 
   useDashboardBreadcrumbs([
@@ -130,7 +141,9 @@ export function EditTranslatorScreen({ translatorId, getTranslatorsUseCase }: Ed
           {state.error && state.isReady ? (
             <Card className="rounded-lg border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950">
               <CardContent className="py-3">
-                <p className="text-sm font-medium text-red-800 dark:text-red-200">{state.error}</p>
+                <p className="text-sm font-medium text-red-800 dark:text-red-200">
+                  {state.error}
+                </p>
               </CardContent>
             </Card>
           ) : null}
@@ -138,7 +151,9 @@ export function EditTranslatorScreen({ translatorId, getTranslatorsUseCase }: Ed
           <Card className="rounded-lg">
             <CardHeader>
               <CardTitle>{t("translators.detailsTitle")}</CardTitle>
-              <CardDescription>{t("translators.editDetailsDescription")}</CardDescription>
+              <CardDescription>
+                {t("translators.editDetailsDescription")}
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <TranslatorFormFields
@@ -148,12 +163,26 @@ export function EditTranslatorScreen({ translatorId, getTranslatorsUseCase }: Ed
               >
                 <Separator />
                 <div className="flex justify-end gap-3">
-                  <Button type="button" variant="outline" onClick={goBack} disabled={state.isSaving}>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={goBack}
+                    disabled={state.isSaving}
+                  >
                     {t("common.cancel")}
                   </Button>
-                  <Button type="submit" disabled={state.isSaving || state.isSaved}>
-                    {state.isSaving ? <Loader2Icon className="animate-spin" /> : <SaveIcon />}
-                    {state.isSaving ? t("common.saving") : t("translators.saveChanges")}
+                  <Button
+                    type="submit"
+                    disabled={state.isSaving || state.isSaved}
+                  >
+                    {state.isSaving ? (
+                      <Loader2Icon className="animate-spin" />
+                    ) : (
+                      <SaveIcon />
+                    )}
+                    {state.isSaving
+                      ? t("common.saving")
+                      : t("translators.saveChanges")}
                   </Button>
                 </div>
               </TranslatorFormFields>

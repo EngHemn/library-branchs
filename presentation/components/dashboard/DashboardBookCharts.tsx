@@ -62,7 +62,9 @@ export function DashboardBookCharts({
     <div className="grid gap-4 lg:grid-cols-2">
       <Card className="rounded-xl">
         <CardHeader className="pb-2">
-          <CardTitle className="text-base">{t("dashboard.charts.booksByStatus")}</CardTitle>
+          <CardTitle className="text-base">
+            {t("dashboard.charts.booksByStatus")}
+          </CardTitle>
           <CardDescription>
             {t("dashboard.charts.booksByStatusDescription")}
           </CardDescription>
@@ -94,7 +96,10 @@ export function DashboardBookCharts({
                 axisLine={false}
                 width={78}
               />
-              <Tooltip cursor={{ fill: "#f9fafb" }} content={<ChartTooltip />} />
+              <Tooltip
+                cursor={{ fill: "#f9fafb" }}
+                content={<ChartTooltip />}
+              />
               <Bar dataKey="value" radius={[0, 4, 4, 0]}>
                 {localizedBooksByStatus.map((entry, index) => (
                   <Cell key={index} fill={entry.color} />
@@ -107,7 +112,9 @@ export function DashboardBookCharts({
 
       <Card className="rounded-xl">
         <CardHeader className="pb-2">
-          <CardTitle className="text-base">{t("dashboard.charts.booksByCategory")}</CardTitle>
+          <CardTitle className="text-base">
+            {t("dashboard.charts.booksByCategory")}
+          </CardTitle>
           <CardDescription>
             {t("dashboard.charts.booksByCategoryDescription")}
           </CardDescription>
@@ -139,7 +146,10 @@ export function DashboardBookCharts({
                 axisLine={false}
                 width={78}
               />
-              <Tooltip cursor={{ fill: "#f9fafb" }} content={<ChartTooltip />} />
+              <Tooltip
+                cursor={{ fill: "#f9fafb" }}
+                content={<ChartTooltip />}
+              />
               <Bar dataKey="value" radius={[0, 4, 4, 0]}>
                 {localizedBooksByCategory.map((entry, index) => (
                   <Cell key={index} fill={entry.color} />

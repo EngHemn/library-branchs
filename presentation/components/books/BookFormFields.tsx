@@ -148,7 +148,9 @@ function SearchableCombobox({
           </ComboboxList>
         ) : (
           <div className="flex flex-col items-center gap-3 px-3 py-6">
-            <p className="text-sm text-muted-foreground">{t("common.noResults")}</p>
+            <p className="text-sm text-muted-foreground">
+              {t("common.noResults")}
+            </p>
             {showAddButton ? (
               <Button
                 type="button"
@@ -203,10 +205,7 @@ export function BookFormFields({
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-6"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <div className="grid gap-6 sm:grid-cols-2">
           <FormField
             control={form.control}
@@ -386,11 +385,7 @@ export function BookFormFields({
               <FormItem>
                 <FormLabel>{t("books.fields.publicationDate")} *</FormLabel>
                 <FormControl>
-                  <Input
-                    type="date"
-                    disabled={disabled}
-                    {...field}
-                  />
+                  <Input type="date" disabled={disabled} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

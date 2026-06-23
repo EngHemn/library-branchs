@@ -22,7 +22,9 @@ export class PermissionRepositoryImpl implements PermissionRepository {
     return this.dataSource.getPermissionConfig()
   }
 
-  createRole(input: CreatePermissionRoleInput): Promise<Result<PermissionRole>> {
+  createRole(
+    input: CreatePermissionRoleInput
+  ): Promise<Result<PermissionRole>> {
     return this.dataSource.createRole(input)
   }
 

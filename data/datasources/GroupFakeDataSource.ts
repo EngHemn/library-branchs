@@ -47,7 +47,8 @@ function toListItem(group: LibraryGroup): GroupListItem {
 
 function getBranchName(branchId: string): string {
   return (
-    fakeBranches.find((branch) => branch.id === branchId)?.branchName ?? branchId
+    fakeBranches.find((branch) => branch.id === branchId)?.branchName ??
+    branchId
   )
 }
 
@@ -74,7 +75,9 @@ function resolveBooks(bookIds: string[]): GroupAssignedBook[] {
 function resolveStaff(staffIds: string[]): GroupAssignedStaff[] {
   return staffIds
     .map((staffId) => fakeStaff.find((member) => member.id === staffId))
-    .filter((member): member is NonNullable<typeof member> => member !== undefined)
+    .filter(
+      (member): member is NonNullable<typeof member> => member !== undefined
+    )
     .map((member) => ({
       id: member.id,
       staffName: member.staffName,
@@ -144,7 +147,9 @@ export class GroupFakeDataSource {
   async getGroupById(id: string): Promise<Result<GroupDetail | null>> {
     await delay(300)
 
-    const group = this.groups.find((item) => item.id === id && isActiveGroup(item))
+    const group = this.groups.find(
+      (item) => item.id === id && isActiveGroup(item)
+    )
 
     if (!group) {
       return { success: true, data: null }

@@ -63,7 +63,9 @@ function matchesSearch(log: ActivityLog, query: string): boolean {
     log.id,
     log.ipAddress,
   ]
-  return searchableValues.some((value) => value.toLowerCase().includes(normalizedQuery))
+  return searchableValues.some((value) =>
+    value.toLowerCase().includes(normalizedQuery)
+  )
 }
 
 function resolveBranchFilterId(
@@ -136,7 +138,10 @@ function filterLogs(
         return false
       }
     } else if (branchFilter !== "all") {
-      const effectiveBranchId = resolveBranchFilterId(branchFilter, userBranchId)
+      const effectiveBranchId = resolveBranchFilterId(
+        branchFilter,
+        userBranchId
+      )
       if (log.branchId !== effectiveBranchId) {
         return false
       }
@@ -157,7 +162,8 @@ export function useActivityLogsViewModel(
   const { t } = useTranslation()
   const [searchQuery, setSearchQuery] = useState("")
   const [actionFilter, setActionFilter] = useState<ActivityActionFilter>("all")
-  const [branchFilter, setBranchFilterState] = useState<ActivityBranchFilter>("current")
+  const [branchFilter, setBranchFilterState] =
+    useState<ActivityBranchFilter>("current")
   const [staffFilter, setStaffFilter] = useState<ActivityStaffFilter>("all")
 
   const userQuery = useQuery({
@@ -187,7 +193,9 @@ export function useActivityLogsViewModel(
   const user = userQuery.data ?? null
   const userBranchId = user ? resolveUserBranchId(user) : ""
   const isSingleBranchScoped = user ? isBranchScopedDashboardUser(user) : false
-  const branchScope = user ? getDashboardBranchScope(user, allDashboardBranches) : null
+  const branchScope = user
+    ? getDashboardBranchScope(user, allDashboardBranches)
+    : null
   const scopedBranchIds = branchScope?.branchIds ?? []
   const showBranchFilter = !isSingleBranchScoped
   const branchFilterOptions = user ? getBranchFilterOptions(user, t) : []
@@ -201,9 +209,16 @@ export function useActivityLogsViewModel(
     }
 
     setBranchFilterState((current) =>
-      isBranchSelectionValid(current, branchScope, userBranchId) ? current : "current"
+      isBranchSelectionValid(current, branchScope, userBranchId)
+        ? current
+        : "current"
     )
-  }, [user, userBranchId, isSingleBranchScoped, branchScope?.branchIds.join(",")])
+  }, [
+    user,
+    userBranchId,
+    isSingleBranchScoped,
+    branchScope?.branchIds.join(","),
+  ])
 
   const status: AsyncStatus = (() => {
     if (userQuery.isPending || isPending || isFetching) return "loading"
@@ -235,7 +250,11 @@ export function useActivityLogsViewModel(
 
   function setBranchFilter(value: ActivityBranchFilter): void {
     if (isSingleBranchScoped) return
-    if (branchScope && !isBranchSelectionValid(value, branchScope, userBranchId)) return
+    if (
+      branchScope &&
+      !isBranchSelectionValid(value, branchScope, userBranchId)
+    )
+      return
     setBranchFilterState(value)
   }
 
@@ -245,8 +264,7 @@ export function useActivityLogsViewModel(
     error:
       (userQuery.isError && userQuery.error instanceof Error
         ? userQuery.error.message
-        : null) ??
-      (isError && error instanceof Error ? error.message : null),
+        : null) ?? (isError && error instanceof Error ? error.message : null),
     searchQuery,
     actionFilter,
     branchFilter,

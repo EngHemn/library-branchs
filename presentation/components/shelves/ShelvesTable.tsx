@@ -10,10 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import {
-  DataTable,
-  type DataTableColumn,
-} from "@/components/ui/data-table"
+import { DataTable, type DataTableColumn } from "@/components/ui/data-table"
 import type { Shelf } from "@/domain/entities/shelf/Shelf"
 import { formatShelfLocationParts } from "@/lib/shelfLocationDisplay"
 import { ShelfActionButton } from "@/presentation/components/shelves/ShelfActionButton"

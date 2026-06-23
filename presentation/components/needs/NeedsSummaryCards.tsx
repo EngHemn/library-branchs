@@ -34,8 +34,7 @@ const cards: SummaryCardConfig[] = [
     translationKey: "needs.summary.totalRequests",
     translationHintKey: "needs.summary.totalRequestsHint",
     icon: ClipboardListIcon,
-    iconClassName:
-      "bg-sky-100 text-sky-600 dark:bg-sky-950 dark:text-sky-400",
+    iconClassName: "bg-sky-100 text-sky-600 dark:bg-sky-950 dark:text-sky-400",
     accentClassName: "border-l-sky-500",
   },
   {
@@ -61,8 +60,7 @@ const cards: SummaryCardConfig[] = [
     translationKey: "needs.summary.critical",
     translationHintKey: "needs.summary.criticalHint",
     icon: AlertTriangleIcon,
-    iconClassName:
-      "bg-red-100 text-red-600 dark:bg-red-950 dark:text-red-400",
+    iconClassName: "bg-red-100 text-red-600 dark:bg-red-950 dark:text-red-400",
     accentClassName: "border-l-red-500",
   },
 ]
@@ -108,7 +106,7 @@ export function NeedsSummaryCards({
           <Card
             key={card.key}
             className={cn(
-              "flex flex-row items-center gap-4 rounded-xl  p-4 shadow-sm transition-shadow hover:shadow-md",
+              "flex flex-row items-center gap-4 rounded-xl p-4 shadow-sm transition-shadow hover:shadow-md",
               card.accentClassName
             )}
           >
@@ -124,7 +122,7 @@ export function NeedsSummaryCards({
               <p className="text-sm font-medium text-muted-foreground">
                 {t(card.translationKey as any)}
               </p>
-              <p className="text-2xl font-bold tabular-nums tracking-tight">
+              <p className="text-2xl font-bold tracking-tight tabular-nums">
                 {value.toLocaleString()}
               </p>
               <p className="truncate text-xs text-muted-foreground">

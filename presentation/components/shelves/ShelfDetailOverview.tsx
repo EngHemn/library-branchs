@@ -4,12 +4,7 @@ import type { ReactNode } from "react"
 import { PencilIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import type { Shelf } from "@/domain/entities/shelf/Shelf"
 import { getShelfTypeLabel } from "@/domain/entities/shelf/ShelfType"
@@ -73,7 +68,10 @@ export function ShelfDetailOverview({
             value={getShelfTypeLabel(shelf.shelfType)}
           />
           {showBranchField ? (
-            <InfoItem label={t("shelves.detail.branch")} value={shelf.branchName} />
+            <InfoItem
+              label={t("shelves.detail.branch")}
+              value={shelf.branchName}
+            />
           ) : null}
           <InfoItem
             label={t("shelves.detail.capacity")}

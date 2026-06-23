@@ -20,14 +20,18 @@ function delay(ms: number): Promise<void> {
 }
 
 export class BranchDetailFakeDataSource {
-  private branchDetails: BranchDetail[] = fakeBranchDetails.map((d) => ({ ...d }))
+  private branchDetails: BranchDetail[] = fakeBranchDetails.map((d) => ({
+    ...d,
+  }))
   private books: Book[] = fakeBooks.map((b) => ({ ...b }))
   private authors: Author[] = fakeAuthors.map((a) => ({ ...a }))
   private translators: Translator[] = fakeTranslators.map((t) => ({ ...t }))
   private staff: StaffMember[] = fakeStaff.map((s) => ({ ...s }))
   private members: Member[] = fakeMembers.map((m) => ({ ...m }))
 
-  async getBranchDetail(branchId: string): Promise<Result<BranchDetail | null>> {
+  async getBranchDetail(
+    branchId: string
+  ): Promise<Result<BranchDetail | null>> {
     await delay(300)
 
     const detail = this.branchDetails.find((d) => d.id === branchId)
@@ -227,7 +231,9 @@ export class BranchDetailFakeDataSource {
     return { success: true, data: null }
   }
 
-  async toggleTranslatorStatus(translatorId: string): Promise<Result<Translator>> {
+  async toggleTranslatorStatus(
+    translatorId: string
+  ): Promise<Result<Translator>> {
     await delay(200)
 
     const translator = this.translators.find((t) => t.id === translatorId)

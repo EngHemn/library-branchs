@@ -33,10 +33,7 @@ const roleVariant: Record<
   security: "outline",
 }
 
-const statusVariant: Record<
-  DashboardStaffStatus,
-  "default" | "outline"
-> = {
+const statusVariant: Record<DashboardStaffStatus, "default" | "outline"> = {
   active: "default",
   inactive: "outline",
 }
@@ -52,12 +49,18 @@ export function DashboardStaffTable({
       <TableHeader>
         <TableRow>
           <TableHead>{t("dashboard.tables.name")}</TableHead>
-          <TableHead className="hidden sm:table-cell">{t("dashboard.tables.staffId")}</TableHead>
+          <TableHead className="hidden sm:table-cell">
+            {t("dashboard.tables.staffId")}
+          </TableHead>
           <TableHead>{t("dashboard.tables.role")}</TableHead>
           {showBranchColumn ? (
-            <TableHead className="hidden md:table-cell">{t("dashboard.tables.branch")}</TableHead>
+            <TableHead className="hidden md:table-cell">
+              {t("dashboard.tables.branch")}
+            </TableHead>
           ) : null}
-          <TableHead className="hidden md:table-cell">{t("dashboard.tables.email")}</TableHead>
+          <TableHead className="hidden md:table-cell">
+            {t("dashboard.tables.email")}
+          </TableHead>
           <TableHead>{t("common.status")}</TableHead>
         </TableRow>
       </TableHeader>

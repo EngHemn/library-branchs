@@ -119,7 +119,8 @@ export function NeedsFilters({
   )?.name
 
   const activeFilterChips = useMemo(() => {
-    const chips: Array<{ key: string; label: string; onRemove: () => void }> = []
+    const chips: Array<{ key: string; label: string; onRemove: () => void }> =
+      []
 
     if (categoryFilter !== "all") {
       chips.push({
@@ -134,7 +135,9 @@ export function NeedsFilters({
     if (showBranchFilter && branchFilter !== "all" && selectedBranchLabel) {
       chips.push({
         key: `branch-${branchFilter}`,
-        label: t("needs.filters.filterChipBranch", { name: selectedBranchLabel }),
+        label: t("needs.filters.filterChipBranch", {
+          name: selectedBranchLabel,
+        }),
         onRemove: () => onBranchFilterChange("all"),
       })
     }
@@ -228,7 +231,10 @@ export function NeedsFilters({
           </div>
 
           <div className="flex items-center justify-end gap-2">
-            <Button variant="outline" onClick={() => setIsFilterDialogOpen(true)}>
+            <Button
+              variant="outline"
+              onClick={() => setIsFilterDialogOpen(true)}
+            >
               <ListFilterIcon />
               {t("needs.filters.filters")}
               {activeFilterCount > 0 ? (
@@ -265,7 +271,9 @@ export function NeedsFilters({
                     type="button"
                     onClick={chip.onRemove}
                     className="rounded-full p-0.5 hover:bg-primary/20"
-                    aria-label={t("needs.filters.removeFilter", { label: chip.label })}
+                    aria-label={t("needs.filters.removeFilter", {
+                      label: chip.label,
+                    })}
                   >
                     <XIcon className="size-3" />
                   </button>
@@ -300,10 +308,14 @@ export function NeedsFilters({
                   }
                 >
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder={t("needs.filters.allCategories")} />
+                    <SelectValue
+                      placeholder={t("needs.filters.allCategories")}
+                    />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">{t("needs.filters.allCategories")}</SelectItem>
+                    <SelectItem value="all">
+                      {t("needs.filters.allCategories")}
+                    </SelectItem>
                     {NEED_CATEGORIES.map((category) => (
                       <SelectItem key={category} value={category}>
                         {t(`needs.categories.${category}` as any)}
@@ -323,10 +335,14 @@ export function NeedsFilters({
                     }
                   >
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder={t("needs.filters.allBranches")} />
+                      <SelectValue
+                        placeholder={t("needs.filters.allBranches")}
+                      />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">{t("needs.filters.allBranches")}</SelectItem>
+                      <SelectItem value="all">
+                        {t("needs.filters.allBranches")}
+                      </SelectItem>
                       {branchOptions.map((branch) => (
                         <SelectItem key={branch.id} value={branch.id}>
                           {branch.name}
@@ -348,10 +364,14 @@ export function NeedsFilters({
                   }
                 >
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder={t("needs.filters.allPriorities")} />
+                    <SelectValue
+                      placeholder={t("needs.filters.allPriorities")}
+                    />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">{t("needs.filters.allPriorities")}</SelectItem>
+                    <SelectItem value="all">
+                      {t("needs.filters.allPriorities")}
+                    </SelectItem>
                     {NEED_PRIORITIES.map((priority) => (
                       <SelectItem key={priority} value={priority}>
                         {t(`needs.priorities.${priority}` as any)}
@@ -373,7 +393,9 @@ export function NeedsFilters({
                     <SelectValue placeholder={t("needs.filters.allStatuses")} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">{t("needs.filters.allStatuses")}</SelectItem>
+                    <SelectItem value="all">
+                      {t("needs.filters.allStatuses")}
+                    </SelectItem>
                     {NEED_STATUSES.map((status) => (
                       <SelectItem key={status} value={status}>
                         {t(`needs.statuses.${status}` as any)}
@@ -386,7 +408,9 @@ export function NeedsFilters({
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="needs-dialog-date-from">{t("needs.filters.dateFrom")}</Label>
+                <Label htmlFor="needs-dialog-date-from">
+                  {t("needs.filters.dateFrom")}
+                </Label>
                 <Input
                   id="needs-dialog-date-from"
                   type="date"
@@ -399,13 +423,17 @@ export function NeedsFilters({
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="needs-dialog-date-to">{t("needs.filters.dateTo")}</Label>
+                <Label htmlFor="needs-dialog-date-to">
+                  {t("needs.filters.dateTo")}
+                </Label>
                 <Input
                   id="needs-dialog-date-to"
                   type="date"
                   value={draftDateTo ?? ""}
                   min={draftDateFrom ?? undefined}
-                  onChange={(event) => setDraftDateTo(event.target.value || null)}
+                  onChange={(event) =>
+                    setDraftDateTo(event.target.value || null)
+                  }
                 />
               </div>
             </div>

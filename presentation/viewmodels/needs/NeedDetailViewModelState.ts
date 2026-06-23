@@ -1,4 +1,9 @@
-export type NeedDetailStatus = "idle" | "loading" | "success" | "error" | "not_found"
+export type NeedDetailStatus =
+  | "idle"
+  | "loading"
+  | "success"
+  | "error"
+  | "not_found"
 
 export type NeedDetailViewModelState = {
   status: NeedDetailStatus

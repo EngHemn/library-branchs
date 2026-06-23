@@ -7,7 +7,9 @@ import type { BranchManagementUseCase } from "@/domain/usecases/branch/BranchMan
 export function useBranchNameLookup(
   branchManagementUseCase: BranchManagementUseCase
 ): Record<string, string> {
-  const [branchNameToId, setBranchNameToId] = useState<Record<string, string>>({})
+  const [branchNameToId, setBranchNameToId] = useState<Record<string, string>>(
+    {}
+  )
 
   useEffect(() => {
     let cancelled = false
@@ -18,7 +20,9 @@ export function useBranchNameLookup(
       }
 
       setBranchNameToId(
-        Object.fromEntries(result.data.map((branch) => [branch.branchName, branch.id]))
+        Object.fromEntries(
+          result.data.map((branch) => [branch.branchName, branch.id])
+        )
       )
     })
 

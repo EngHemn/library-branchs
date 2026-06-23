@@ -119,7 +119,9 @@ export function StockSummaryCards({
               <Icon className="size-4" />
             </div>
             <div className="flex flex-col">
-              <span className="text-sm text-muted-foreground">{card.label}</span>
+              <span className="text-sm text-muted-foreground">
+                {card.label}
+              </span>
               <span className="text-lg font-semibold">
                 {card.value.toLocaleString()}
               </span>

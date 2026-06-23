@@ -3,7 +3,9 @@ import type { NotificationRepository } from "@/domain/repositories/NotificationR
 import type { Result } from "@/domain/result/Result"
 
 export class NotificationsUseCase {
-  constructor(private readonly notificationRepository: NotificationRepository) {}
+  constructor(
+    private readonly notificationRepository: NotificationRepository
+  ) {}
 
   getNotifications(): Promise<Result<Notification[]>> {
     return this.notificationRepository.getNotifications()

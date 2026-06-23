@@ -46,16 +46,24 @@ function LoadingState() {
   )
 }
 
-export function ViewTranslatorScreen({ translatorId, getTranslatorsUseCase }: ViewTranslatorScreenProps) {
+export function ViewTranslatorScreen({
+  translatorId,
+  getTranslatorsUseCase,
+}: ViewTranslatorScreenProps) {
   const router = useRouter()
   const { t } = useTranslation()
-  const viewModel = useTranslatorDetailViewModel(translatorId, getTranslatorsUseCase)
+  const viewModel = useTranslatorDetailViewModel(
+    translatorId,
+    getTranslatorsUseCase
+  )
   const { state } = viewModel
 
   useDashboardBreadcrumbs([
     { label: t("breadcrumbs.workspace"), href: "/dashboard" },
     { label: t("nav.translators"), href: "/dashboard/translators" },
-    { label: state.translator?.name ?? t("translators.view.breadcrumbFallback") },
+    {
+      label: state.translator?.name ?? t("translators.view.breadcrumbFallback"),
+    },
   ])
 
   const goBack = () => router.back()
@@ -110,7 +118,9 @@ export function ViewTranslatorScreen({ translatorId, getTranslatorsUseCase }: Vi
             <TranslatorDetailHeader
               translator={state.translator}
               onBack={goBack}
-              onEdit={() => router.push(`/dashboard/translators/${translatorId}/edit`)}
+              onEdit={() =>
+                router.push(`/dashboard/translators/${translatorId}/edit`)
+              }
             />
           </section>
           <TranslatorSummaryCards translator={state.translator} />

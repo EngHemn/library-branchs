@@ -136,7 +136,10 @@ export function useCreateShelfViewModel(
   const selectedBranchName =
     branchOptions.find((branch) => branch.id === branchId)?.name ?? ""
 
-  async function addLocationValue(stepId: string, value: string): Promise<void> {
+  async function addLocationValue(
+    stepId: string,
+    value: string
+  ): Promise<void> {
     locationMutations.clearError()
     const added = await locationMutations.addLocationValue(stepId, value)
     if (added) {
@@ -218,8 +221,13 @@ export function useCreateShelfViewModel(
       const currentStepId = steps[locationStepIndex]?.id
       const locationValues = form.getValues("locationValues")
 
-      if (!currentStepId || !hasLocationStepValue(locationValues, currentStepId)) {
-        setError(`Select or add a value for ${steps[locationStepIndex]?.label ?? "this step"}.`)
+      if (
+        !currentStepId ||
+        !hasLocationStepValue(locationValues, currentStepId)
+      ) {
+        setError(
+          `Select or add a value for ${steps[locationStepIndex]?.label ?? "this step"}.`
+        )
         return
       }
 
@@ -228,10 +236,12 @@ export function useCreateShelfViewModel(
         return
       }
 
-      if (!hasAllLocationStepValues(
-        locationValues,
-        steps.map((step) => step.id)
-      )) {
+      if (
+        !hasAllLocationStepValues(
+          locationValues,
+          steps.map((step) => step.id)
+        )
+      ) {
         setError("Complete every location step before continuing.")
         return
       }

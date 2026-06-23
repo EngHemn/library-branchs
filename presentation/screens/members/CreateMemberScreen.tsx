@@ -97,7 +97,7 @@ export function CreateMemberScreen({
         </div>
       ) : null}
 
-      {(state.isReady || state.isSaving || state.isSaved) ? (
+      {state.isReady || state.isSaving || state.isSaved ? (
         <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
           <section className="flex items-center justify-between pt-4">
             <div>
@@ -140,7 +140,9 @@ export function CreateMemberScreen({
           <Card className="rounded-lg">
             <CardHeader>
               <CardTitle>{t("members.create.detailsTitle")}</CardTitle>
-              <CardDescription>{t("members.create.detailsDescription")}</CardDescription>
+              <CardDescription>
+                {t("members.create.detailsDescription")}
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <MemberFormFields
@@ -158,9 +160,18 @@ export function CreateMemberScreen({
                   >
                     {t("common.cancel")}
                   </Button>
-                  <Button type="submit" disabled={state.isSaving || state.isSaved}>
-                    {state.isSaving ? <Loader2Icon className="animate-spin" /> : <PlusIcon />}
-                    {state.isSaving ? t("common.creating") : t("members.create.createButton")}
+                  <Button
+                    type="submit"
+                    disabled={state.isSaving || state.isSaved}
+                  >
+                    {state.isSaving ? (
+                      <Loader2Icon className="animate-spin" />
+                    ) : (
+                      <PlusIcon />
+                    )}
+                    {state.isSaving
+                      ? t("common.creating")
+                      : t("members.create.createButton")}
                   </Button>
                 </div>
               </MemberFormFields>

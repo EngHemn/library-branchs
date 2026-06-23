@@ -37,10 +37,7 @@ type BookingsFiltersProps = {
   onDateToChange: (dateTo: string | null) => void
 }
 
-const STATUS_FILTER_KEYS: Record<
-  BookingStatusFilter,
-  TranslationKey
-> = {
+const STATUS_FILTER_KEYS: Record<BookingStatusFilter, TranslationKey> = {
   all: "bookings.filters.allStatus",
   reserved: "bookings.statuses.reserved",
   borrowed: "bookings.statuses.borrowed",

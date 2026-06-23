@@ -14,8 +14,20 @@ import type { User } from "@/domain/entities/User"
 import { isBranchScopedStaffPermissionsUser } from "@/domain/services/staffPermissionsScope"
 import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { StaffManagementUseCase } from "@/domain/usecases/staff/StaffManagementUseCase"
-import { resolveUserBranchId, getDashboardBranchScope } from "@/lib/dashboardBranchScope"
-import type { StaffBranchFilter, StaffBranchFilterOption, StaffFilterState, StaffManagementDialog, StaffManagementPageStatus, StaffManagementViewModelState, StaffRoleFilter, StaffStatusFilter } from "./StaffManagementViewModelState"
+import {
+  resolveUserBranchId,
+  getDashboardBranchScope,
+} from "@/lib/dashboardBranchScope"
+import type {
+  StaffBranchFilter,
+  StaffBranchFilterOption,
+  StaffFilterState,
+  StaffManagementDialog,
+  StaffManagementPageStatus,
+  StaffManagementViewModelState,
+  StaffRoleFilter,
+  StaffStatusFilter,
+} from "./StaffManagementViewModelState"
 import { useStaffDeleteDialog } from "./useStaffDeleteDialog"
 
 type StaffManagementViewModel = {
@@ -172,7 +184,10 @@ export function useStaffManagementViewModel(
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["staff"] }),
     onError: (err: Error) =>
-      setDialog({ title: "Staff action unavailable", description: err.message }),
+      setDialog({
+        title: "Staff action unavailable",
+        description: err.message,
+      }),
   })
 
   async function reload(): Promise<void> {
@@ -213,10 +228,7 @@ export function useStaffManagementViewModel(
   const isUnauthenticated = userQuery.isSuccess && userQuery.data === null
   const isLoading =
     userQuery.isPending || (!!userQuery.data && staffQuery.isPending)
-  const isReady =
-    userQuery.isSuccess &&
-    !!user &&
-    staffQuery.isSuccess
+  const isReady = userQuery.isSuccess && !!user && staffQuery.isSuccess
 
   let status: StaffManagementPageStatus
   if (isLoading) {
@@ -236,10 +248,13 @@ export function useStaffManagementViewModel(
       ? staff.filter((member) => member.branchId === resolveUserBranchId(user))
       : staff
 
-  const showBranchFilter = user ? !isBranchScopedStaffPermissionsUser(user) : true
-  const showBranchColumn =
-    showBranchFilter && filters.branchFilter === "all"
-  const showBranchAdminRole = user ? !isBranchScopedStaffPermissionsUser(user) : true
+  const showBranchFilter = user
+    ? !isBranchScopedStaffPermissionsUser(user)
+    : true
+  const showBranchColumn = showBranchFilter && filters.branchFilter === "all"
+  const showBranchAdminRole = user
+    ? !isBranchScopedStaffPermissionsUser(user)
+    : true
   const branchFilterOptions = user ? getStaffBranchFilterOptions(user) : []
 
   const filteredStaff = scopedStaff.filter(

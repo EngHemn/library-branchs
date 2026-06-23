@@ -16,10 +16,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import {
-  DataTable,
-  type DataTableColumn,
-} from "@/components/ui/data-table"
+import { DataTable, type DataTableColumn } from "@/components/ui/data-table"
 import { Skeleton } from "@/components/ui/skeleton"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import type { StockRow } from "@/domain/entities/stock/Stock"
@@ -81,7 +78,9 @@ function SubBranchCell({ group }: { group: StockTableGroup }) {
 
   const count = group.subBranchRows.length
   const labelKey =
-    count === 1 ? "stock.table.subBranchCount" : "stock.table.subBranchCountPlural"
+    count === 1
+      ? "stock.table.subBranchCount"
+      : "stock.table.subBranchCountPlural"
 
   return <Badge variant="secondary">{t(labelKey, { count })}</Badge>
 }
@@ -123,7 +122,9 @@ export function StockTable({
             onClick={() => onToggleGroupExpanded(group.id)}
             aria-label={
               isExpanded
-                ? t("stock.table.collapseSubBranches", { title: group.bookTitle })
+                ? t("stock.table.collapseSubBranches", {
+                    title: group.bookTitle,
+                  })
                 : t("stock.table.expandSubBranches", { title: group.bookTitle })
             }
             aria-expanded={isExpanded}
@@ -264,7 +265,9 @@ export function StockTable({
     hiddenColumnKeys.add("subBranch")
   }
 
-  const columns = allColumns.filter((column) => !hiddenColumnKeys.has(column.key))
+  const columns = allColumns.filter(
+    (column) => !hiddenColumnKeys.has(column.key)
+  )
 
   if (isLoading) {
     return (
@@ -281,7 +284,9 @@ export function StockTable({
           <div className="mb-3 rounded-full bg-muted p-4">
             <PackageIcon className="h-8 w-8 text-muted-foreground" />
           </div>
-          <p className="text-base font-semibold">{t("stock.table.emptyTitle")}</p>
+          <p className="text-base font-semibold">
+            {t("stock.table.emptyTitle")}
+          </p>
           <p className="mt-1 text-sm text-muted-foreground">
             {t("stock.table.emptyDescription")}
           </p>
@@ -298,7 +303,9 @@ export function StockTable({
         { count: groups.length.toLocaleString() }
       )
     : t(
-        groups.length === 1 ? "stock.table.recordCount" : "stock.table.recordCountPlural",
+        groups.length === 1
+          ? "stock.table.recordCount"
+          : "stock.table.recordCountPlural",
         { count: groups.length.toLocaleString() }
       )
 

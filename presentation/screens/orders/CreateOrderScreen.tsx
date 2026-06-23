@@ -55,7 +55,10 @@ export function CreateOrderScreen({
   const searchParams = useSearchParams()
   const returnTo = searchParams.get("returnTo") ?? "/dashboard/orders"
   const currentPath = `/dashboard/orders/create?returnTo=${encodeURIComponent(returnTo)}`
-  const createBookHref = buildCreateHrefWithReturn(CREATE_BOOK_PATH, currentPath)
+  const createBookHref = buildCreateHrefWithReturn(
+    CREATE_BOOK_PATH,
+    currentPath
+  )
   const viewModel = useCreateOrderViewModel(authUseCase, getOrdersUseCase)
   const { t } = useTranslation()
   const { state, form } = viewModel
@@ -78,8 +81,12 @@ export function CreateOrderScreen({
     <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
       <section className="flex items-center justify-between pt-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-normal">{t("orders.create.title")}</h1>
-          <p className="mt-1 text-sm text-muted-foreground">{t("orders.create.subtitle")}</p>
+          <h1 className="text-2xl font-semibold tracking-normal">
+            {t("orders.create.title")}
+          </h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {t("orders.create.subtitle")}
+          </p>
         </div>
         <Button variant="outline" onClick={goBack}>
           <ArrowLeftIcon />
@@ -100,7 +107,9 @@ export function CreateOrderScreen({
       <Card className="rounded-lg">
         <CardHeader>
           <CardTitle>{t("orders.create.detailsTitle")}</CardTitle>
-          <CardDescription>{t("orders.create.detailsDescription")}</CardDescription>
+          <CardDescription>
+            {t("orders.create.detailsDescription")}
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <OrderFormFields
@@ -123,8 +132,14 @@ export function CreateOrderScreen({
                 {t("common.cancel")}
               </Button>
               <Button type="submit" disabled={state.isSaving || state.isSaved}>
-                {state.isSaving ? <Loader2Icon className="animate-spin" /> : <PlusIcon />}
-                {state.isSaving ? t("common.creating") : t("orders.create.createButton")}
+                {state.isSaving ? (
+                  <Loader2Icon className="animate-spin" />
+                ) : (
+                  <PlusIcon />
+                )}
+                {state.isSaving
+                  ? t("common.creating")
+                  : t("orders.create.createButton")}
               </Button>
             </div>
           </OrderFormFields>

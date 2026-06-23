@@ -38,7 +38,12 @@ export function BranchChangeDialog({
       : "sales.branchChange.cartItemsFromPlural"
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => { if (!open) onCancel() }}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) onCancel()
+      }}
+    >
       <DialogContent className="min-w-lg">
         <DialogHeader>
           <div className="mb-2 flex items-center gap-2">

@@ -1,10 +1,19 @@
 "use client"
 
-import type { PermissionCode, PermissionConfig, PermissionRole } from "@/domain/entities/permission/Permission"
+import type {
+  PermissionCode,
+  PermissionConfig,
+  PermissionRole,
+} from "@/domain/entities/permission/Permission"
 import type { User } from "@/domain/entities/User"
 import type { RoleDialogMode, RoleFormState } from "./usePermissionsRoleDialog"
 
-export type PermissionsPageStatus = "idle" | "loading" | "success" | "unauthenticated" | "error"
+export type PermissionsPageStatus =
+  | "idle"
+  | "loading"
+  | "success"
+  | "unauthenticated"
+  | "error"
 
 export type PermissionsViewModelState = {
   status: PermissionsPageStatus
@@ -23,7 +32,11 @@ export type PermissionsViewModelState = {
   roleForm: RoleFormState
   roleFormNameError: string | null
   roleFormError: string | null
-  deleteRoleDialog: { roleId: string; roleName: string; isSystem: boolean } | null
+  deleteRoleDialog: {
+    roleId: string
+    roleName: string
+    isSystem: boolean
+  } | null
   deleteRoleError: string | null
   error: string | null
   isLoading: boolean

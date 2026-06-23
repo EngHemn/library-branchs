@@ -39,7 +39,9 @@ export function PermissionRoleSidebar({
       <div className="border-b p-4">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <h2 className="text-base font-semibold">{t("permissions.sidebar.title")}</h2>
+            <h2 className="text-base font-semibold">
+              {t("permissions.sidebar.title")}
+            </h2>
             <p className="mt-1 text-xs text-muted-foreground">
               {t("permissions.sidebar.description")}
             </p>
@@ -55,7 +57,7 @@ export function PermissionRoleSidebar({
           {t("permissions.sidebar.addRole")}
         </Button>
         <div className="relative mt-3">
-          <SearchIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <SearchIcon className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder={t("permissions.sidebar.searchPlaceholder")}
             value={searchQuery}
@@ -79,15 +81,18 @@ export function PermissionRoleSidebar({
               )}
             >
               <div className="flex items-center gap-2">
-                <p className="text-sm font-medium">{getPermissionRoleName(role, t)}</p>
+                <p className="text-sm font-medium">
+                  {getPermissionRoleName(role, t)}
+                </p>
                 {role.isSystem ? (
-                  <span className="rounded bg-muted px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                  <span className="rounded bg-muted px-1.5 py-0.5 text-[10px] font-medium tracking-wide text-muted-foreground uppercase">
                     {t("permissions.system")}
                   </span>
                 ) : null}
               </div>
               <p className="mt-0.5 line-clamp-2 text-xs text-muted-foreground">
-                {getPermissionRoleDescription(role, t) ?? t("permissions.noDescription")}
+                {getPermissionRoleDescription(role, t) ??
+                  t("permissions.noDescription")}
               </p>
             </button>
           ))}
@@ -99,7 +104,12 @@ export function PermissionRoleSidebar({
                   : t("permissions.sidebar.empty")}
               </p>
               {!hasSearchQuery ? (
-                <Button type="button" variant="secondary" size="sm" onClick={onAddRole}>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  size="sm"
+                  onClick={onAddRole}
+                >
                   <PlusIcon className="size-4" />
                   {t("permissions.sidebar.addRole")}
                 </Button>

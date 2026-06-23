@@ -18,7 +18,11 @@ type BillDetailHeaderProps = {
   onEdit: () => void
 }
 
-export function BillDetailHeader({ bill, onBack, onEdit }: BillDetailHeaderProps) {
+export function BillDetailHeader({
+  bill,
+  onBack,
+  onEdit,
+}: BillDetailHeaderProps) {
   const { t } = useTranslation()
   const { locale } = useLocale()
 
@@ -26,7 +30,9 @@ export function BillDetailHeader({ bill, onBack, onEdit }: BillDetailHeaderProps
     <section className="flex flex-col gap-4 pt-4 sm:flex-row sm:items-start sm:justify-between">
       <div>
         <p className="font-mono text-xs text-muted-foreground">{bill.id}</p>
-        <h1 className="text-2xl font-bold tracking-normal">{bill.companyName}</h1>
+        <h1 className="text-2xl font-bold tracking-normal">
+          {bill.companyName}
+        </h1>
         <p className="mt-1 text-sm text-muted-foreground">
           {t("bills.detail.importBillFor", {
             branchName: bill.branchName,

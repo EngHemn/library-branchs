@@ -3,7 +3,10 @@
 import { useState } from "react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
-import type { PermissionCode, PermissionRole } from "@/domain/entities/permission/Permission"
+import type {
+  PermissionCode,
+  PermissionRole,
+} from "@/domain/entities/permission/Permission"
 import type { PermissionManagementUseCase } from "@/domain/usecases/permission/PermissionManagementUseCase"
 import { useTranslation } from "@/presentation/i18n/useTranslation"
 
@@ -37,18 +40,25 @@ export type RoleDialogResult = {
   submitRoleForm: () => Promise<void>
 }
 
-export function usePermissionsRoleDialog(options: RoleDialogOptions): RoleDialogResult {
+export function usePermissionsRoleDialog(
+  options: RoleDialogOptions
+): RoleDialogResult {
   const { t } = useTranslation()
   const queryClient = useQueryClient()
 
-  const [roleDialogMode, setRoleDialogMode] = useState<RoleDialogMode | null>(null)
+  const [roleDialogMode, setRoleDialogMode] = useState<RoleDialogMode | null>(
+    null
+  )
   const [roleForm, setRoleForm] = useState<RoleFormState>(emptyRoleForm)
-  const [roleFormNameError, setRoleFormNameError] = useState<string | null>(null)
+  const [roleFormNameError, setRoleFormNameError] = useState<string | null>(
+    null
+  )
   const [roleFormError, setRoleFormError] = useState<string | null>(null)
 
   const { mutateAsync: createRoleAsync, isPending: isCreating } = useMutation({
     mutationFn: async (payload: { name: string; description: string }) => {
-      const result = await options.permissionManagementUseCase.createRole(payload)
+      const result =
+        await options.permissionManagementUseCase.createRole(payload)
       if (!result.success) throw new Error(result.error)
       return result.data
     },
@@ -89,7 +99,10 @@ export function usePermissionsRoleDialog(options: RoleDialogOptions): RoleDialog
   function openEditRoleDialog(): void {
     if (!options.selectedRole) return
     setRoleDialogMode("edit")
-    setRoleForm({ name: options.selectedRole.name, description: options.selectedRole.description })
+    setRoleForm({
+      name: options.selectedRole.name,
+      description: options.selectedRole.description,
+    })
     setRoleFormNameError(null)
     setRoleFormError(null)
   }

@@ -50,8 +50,7 @@ export function BranchLocationTab({ branchDetail }: BranchLocationTabProps) {
       L.Icon.Default.mergeOptions({
         iconRetinaUrl:
           "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-        iconUrl:
-          "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+        iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
         shadowUrl:
           "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
       })
@@ -110,7 +109,9 @@ export function BranchLocationTab({ branchDetail }: BranchLocationTabProps) {
             <MapPinIcon className="size-6 text-muted-foreground" />
           </div>
           <div className="text-center">
-            <p className="font-medium">{t("branches.location.noLocationSet")}</p>
+            <p className="font-medium">
+              {t("branches.location.noLocationSet")}
+            </p>
             <p className="mt-1 text-sm text-muted-foreground">
               {t("branches.location.noLocationDescription")}
             </p>
@@ -144,7 +145,9 @@ export function BranchLocationTab({ branchDetail }: BranchLocationTabProps) {
 
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="space-y-1.5">
-              <Label htmlFor="view-latitude">{t("branches.location.latitude")}</Label>
+              <Label htmlFor="view-latitude">
+                {t("branches.location.latitude")}
+              </Label>
               <Input
                 id="view-latitude"
                 value={String(branchDetail.latitude)}
@@ -153,7 +156,9 @@ export function BranchLocationTab({ branchDetail }: BranchLocationTabProps) {
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="view-longitude">{t("branches.location.longitude")}</Label>
+              <Label htmlFor="view-longitude">
+                {t("branches.location.longitude")}
+              </Label>
               <Input
                 id="view-longitude"
                 value={String(branchDetail.longitude)}
@@ -173,7 +178,9 @@ export function BranchLocationTab({ branchDetail }: BranchLocationTabProps) {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground">{branchDetail.address}</p>
+          <p className="text-sm text-muted-foreground">
+            {branchDetail.address}
+          </p>
         </CardContent>
       </Card>
     </div>

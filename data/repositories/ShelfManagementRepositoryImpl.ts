@@ -13,9 +13,7 @@ import type {
 import type { Result } from "@/domain/result/Result"
 
 export class ShelfManagementRepositoryImpl implements ShelfManagementRepository {
-  constructor(
-    private readonly dataSource: ShelfManagementFakeDataSource
-  ) {}
+  constructor(private readonly dataSource: ShelfManagementFakeDataSource) {}
 
   getShelves(): Promise<Result<Shelf[]>> {
     return this.dataSource.getShelves()
@@ -50,10 +48,7 @@ export class ShelfManagementRepositoryImpl implements ShelfManagementRepository 
     return this.dataSource.updateShelfBook(shelfId, input)
   }
 
-  deleteShelfBook(
-    shelfId: string,
-    shelfBookId: string
-  ): Promise<Result<null>> {
+  deleteShelfBook(shelfId: string, shelfBookId: string): Promise<Result<null>> {
     return this.dataSource.deleteShelfBook(shelfId, shelfBookId)
   }
 

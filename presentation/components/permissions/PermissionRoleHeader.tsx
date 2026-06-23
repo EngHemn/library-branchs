@@ -79,13 +79,20 @@ export function PermissionRoleHeader({
           <Trash2Icon className="h-3.5 w-3.5" />
           {t("permissions.header.deleteRole")}
         </Button>
-        <Button variant="outline" size="sm" onClick={onReset} disabled={!isDirty}>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={onReset}
+          disabled={!isDirty}
+        >
           <RotateCcwIcon className="h-3.5 w-3.5" />
           {t("permissions.header.reset")}
         </Button>
         <Button size="sm" onClick={onSave} disabled={isSaving || !isDirty}>
           <SaveIcon className="h-3.5 w-3.5" />
-          {isSaving ? t("common.saving") : t("permissions.header.savePermissions")}
+          {isSaving
+            ? t("common.saving")
+            : t("permissions.header.savePermissions")}
         </Button>
       </div>
     </div>

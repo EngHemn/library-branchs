@@ -57,7 +57,10 @@ export function EditBillScreen({
   const searchParams = useSearchParams()
   const returnTo = searchParams.get("returnTo") ?? `/dashboard/bills/${billId}`
   const currentPath = `/dashboard/bills/${billId}/edit?returnTo=${encodeURIComponent(returnTo)}`
-  const createBookHref = buildCreateHrefWithReturn(CREATE_BOOK_PATH, currentPath)
+  const createBookHref = buildCreateHrefWithReturn(
+    CREATE_BOOK_PATH,
+    currentPath
+  )
   const viewModel = useEditBillViewModel(billId, authUseCase, getBillsUseCase)
   const { t } = useTranslation()
   const { state, form } = viewModel
@@ -81,10 +84,15 @@ export function EditBillScreen({
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
               <CardTitle>{t("bills.notFoundTitle")}</CardTitle>
-              <CardDescription>{t("bills.notFoundDescription")}</CardDescription>
+              <CardDescription>
+                {t("bills.notFoundDescription")}
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button variant="outline" onClick={() => router.push("/dashboard/bills")}>
+              <Button
+                variant="outline"
+                onClick={() => router.push("/dashboard/bills")}
+              >
                 <ArrowLeftIcon />
                 {t("bills.backToBills")}
               </Button>
@@ -114,8 +122,12 @@ export function EditBillScreen({
         <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
           <section className="flex items-center justify-between pt-4">
             <div>
-              <h1 className="text-2xl font-semibold tracking-normal">{t("bills.edit.title")}</h1>
-              <p className="mt-1 text-sm text-muted-foreground">{t("bills.edit.subtitle")}</p>
+              <h1 className="text-2xl font-semibold tracking-normal">
+                {t("bills.edit.title")}
+              </h1>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {t("bills.edit.subtitle")}
+              </p>
             </div>
             <Button variant="outline" onClick={goBack}>
               <ArrowLeftIcon />
@@ -136,7 +148,9 @@ export function EditBillScreen({
           <Card className="rounded-lg">
             <CardHeader>
               <CardTitle>{t("bills.edit.detailsTitle")}</CardTitle>
-              <CardDescription>{t("bills.edit.detailsDescription")}</CardDescription>
+              <CardDescription>
+                {t("bills.edit.detailsDescription")}
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <BillFormFields
@@ -158,13 +172,18 @@ export function EditBillScreen({
                   >
                     {t("common.cancel")}
                   </Button>
-                  <Button type="submit" disabled={state.isSaving || state.isSaved}>
+                  <Button
+                    type="submit"
+                    disabled={state.isSaving || state.isSaved}
+                  >
                     {state.isSaving ? (
                       <Loader2Icon className="animate-spin" />
                     ) : (
                       <SaveIcon />
                     )}
-                    {state.isSaving ? t("common.saving") : t("common.saveChanges")}
+                    {state.isSaving
+                      ? t("common.saving")
+                      : t("common.saveChanges")}
                   </Button>
                 </div>
               </BillFormFields>

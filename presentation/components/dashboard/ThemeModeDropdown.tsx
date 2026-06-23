@@ -72,10 +72,7 @@ export function ThemeModeDropdown() {
       <DropdownMenuContent align="end" className="w-40">
         <DropdownMenuLabel>{t("header.theme")}</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuRadioGroup
-          value={activeTheme}
-          onValueChange={setTheme}
-        >
+        <DropdownMenuRadioGroup value={activeTheme} onValueChange={setTheme}>
           {options.map((option) => {
             const Icon = option.icon
             return (

@@ -35,7 +35,10 @@ export function OrderLocationMap({
 
   const normalizedLatitude = normalizeCoordinate(latitude)
   const normalizedLongitude = normalizeCoordinate(longitude)
-  const hasLocation = hasValidMapCoordinates(normalizedLatitude, normalizedLongitude)
+  const hasLocation = hasValidMapCoordinates(
+    normalizedLatitude,
+    normalizedLongitude
+  )
 
   useEffect(() => {
     if (!mapContainerRef.current || mapInstanceRef.current) {
@@ -53,8 +56,7 @@ export function OrderLocationMap({
       L.Icon.Default.mergeOptions({
         iconRetinaUrl:
           "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-        iconUrl:
-          "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+        iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
         shadowUrl:
           "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
       })
@@ -105,7 +107,9 @@ export function OrderLocationMap({
           if (markerRef.current) {
             markerRef.current.setLatLng([lat, lng])
           } else {
-            const newMarker = L.marker([lat, lng], { draggable: true }).addTo(map)
+            const newMarker = L.marker([lat, lng], { draggable: true }).addTo(
+              map
+            )
             newMarker.on("dragend", () => {
               const position = newMarker.getLatLng()
               onLocationChange(
@@ -189,9 +193,15 @@ export function OrderLocationMap({
   }, [])
 
   return (
-    <div className={`w-full overflow-hidden rounded-md border ${heightClassName}`}>
+    <div
+      className={`w-full overflow-hidden rounded-md border ${heightClassName}`}
+    >
       {mapState === "loading" ? <Skeleton className="h-full w-full" /> : null}
-      <div ref={mapContainerRef} className="h-full w-full" style={{ zIndex: 0 }} />
+      <div
+        ref={mapContainerRef}
+        className="h-full w-full"
+        style={{ zIndex: 0 }}
+      />
     </div>
   )
 }

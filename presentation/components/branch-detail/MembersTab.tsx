@@ -11,10 +11,7 @@ import {
 
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import {
-  DataTable,
-  type DataTableColumn,
-} from "@/components/ui/data-table"
+import { DataTable, type DataTableColumn } from "@/components/ui/data-table"
 import { Input } from "@/components/ui/input"
 import type { Member, MemberStatus } from "@/domain/entities/member/Member"
 import type { BranchPermissions } from "@/domain/entities/permission/BranchPermissions"
@@ -43,7 +40,10 @@ type MemberColumnKey =
   | "status"
   | "actions"
 
-const memberStatusVariants: Record<MemberStatus, "default" | "outline" | "destructive"> = {
+const memberStatusVariants: Record<
+  MemberStatus,
+  "default" | "outline" | "destructive"
+> = {
   active: "default",
   inactive: "outline",
   suspended: "destructive",
@@ -82,9 +82,7 @@ export function MembersTab({
       sortable: true,
       sortValue: (m) => m.registerBranch,
       cell: (m) => (
-        <span className="block max-w-[180px] truncate">
-          {m.registerBranch}
-        </span>
+        <span className="block max-w-[180px] truncate">{m.registerBranch}</span>
       ),
     },
     {
@@ -172,7 +170,7 @@ export function MembersTab({
       <CardHeader className="flex-row items-center justify-between gap-4 space-y-0">
         <CardTitle>{t("branches.view.tabs.members")}</CardTitle>
         <div className="relative w-full max-w-xs">
-          <SearchIcon className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <SearchIcon className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder={t("branches.detail.shared.searchMembers")}
             value={searchQuery}

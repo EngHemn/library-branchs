@@ -85,7 +85,7 @@ function BranchItem({
           <div className="min-w-0">
             <p
               className={cn(
-                "truncate text-sm font-medium leading-tight",
+                "truncate text-sm leading-tight font-medium",
                 isShoppingBranch && "text-primary"
               )}
             >
@@ -201,7 +201,7 @@ function MainBranchGroup({
             </button>
           </CollapsibleTrigger>
 
-          <CollapsibleContent className="flex flex-col gap-1.5 border-l pl-3 pt-1.5 ml-2">
+          <CollapsibleContent className="ml-2 flex flex-col gap-1.5 border-l pt-1.5 pl-3">
             {subBranches.map((sub) => (
               <BranchItem
                 key={sub.id}
@@ -214,9 +214,7 @@ function MainBranchGroup({
                 cartItemCount={cartItemCount}
                 isSub
                 onViewBooks={() => onViewBooks(sub.id)}
-                onRequestShopFromBranch={() =>
-                  onRequestShopFromBranch(sub.id)
-                }
+                onRequestShopFromBranch={() => onRequestShopFromBranch(sub.id)}
               />
             ))}
           </CollapsibleContent>
@@ -256,7 +254,7 @@ export function BranchSelector({
   }
 
   return (
-    <div className="flex flex-col gap-3  p-3">
+    <div className="flex flex-col gap-3 p-3">
       {branchNodes.map((node) => (
         <MainBranchGroup
           key={node.branch.id}

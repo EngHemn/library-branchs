@@ -16,7 +16,9 @@ export class GetTranslatorsUseCase {
     return this.translatorManagementRepository.getTranslators()
   }
 
-  getTranslatorById(translatorId: string): Promise<Result<TranslatorDetail | null>> {
+  getTranslatorById(
+    translatorId: string
+  ): Promise<Result<TranslatorDetail | null>> {
     return this.translatorManagementRepository.getTranslatorById(translatorId)
   }
 

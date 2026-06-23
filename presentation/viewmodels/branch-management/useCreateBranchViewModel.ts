@@ -14,7 +14,11 @@ import {
 } from "@/domain/validators/branch/validateCreateBranchForm"
 import { readStoredSessionUser } from "@/lib/authSession"
 import { generatePassword } from "@/lib/generatePassword"
-import type { CreateBranchFormState, CreateBranchStatus, CreateBranchViewModelState } from "./CreateBranchViewModelState"
+import type {
+  CreateBranchFormState,
+  CreateBranchStatus,
+  CreateBranchViewModelState,
+} from "./CreateBranchViewModelState"
 
 type CreateBranchViewModel = {
   state: CreateBranchViewModelState
@@ -79,7 +83,12 @@ export function useCreateBranchViewModel(
     setMounted(true)
   }, [])
 
-  const { data: prereqs, isPending: isLoadingPrereqs, isError: isPrereqsError, error: prereqsError } = useQuery({
+  const {
+    data: prereqs,
+    isPending: isLoadingPrereqs,
+    isError: isPrereqsError,
+    error: prereqsError,
+  } = useQuery({
     queryKey: ["createBranchPrerequisites"],
     enabled: mounted,
     queryFn: async () => {
@@ -108,11 +117,17 @@ export function useCreateBranchViewModel(
     },
   })
 
-  function setField(field: keyof CreateBranchFormState, value: string | null): void {
+  function setField(
+    field: keyof CreateBranchFormState,
+    value: string | null
+  ): void {
     setForm((currentForm) => ({ ...currentForm, [field]: value }))
   }
 
-  function setLocation(latitude: number | null, longitude: number | null): void {
+  function setLocation(
+    latitude: number | null,
+    longitude: number | null
+  ): void {
     setForm((currentForm) => ({ ...currentForm, latitude, longitude }))
   }
 
@@ -133,18 +148,21 @@ export function useCreateBranchViewModel(
   }
 
   const fieldErrors: CreateBranchFormErrors = prereqs?.parentBranchName
-    ? getCreateBranchFieldErrors(formToCreateInput(form, prereqs.parentBranchName))
+    ? getCreateBranchFieldErrors(
+        formToCreateInput(form, prereqs.parentBranchName)
+      )
     : emptyFieldErrors
 
-  const status: CreateBranchStatus = !mounted || isLoadingPrereqs
-    ? "loading"
-    : isPrereqsError
-    ? "error"
-    : saveMutation.isPending
-    ? "saving"
-    : savedBranchId !== null
-    ? "saved"
-    : "ready"
+  const status: CreateBranchStatus =
+    !mounted || isLoadingPrereqs
+      ? "loading"
+      : isPrereqsError
+        ? "error"
+        : saveMutation.isPending
+          ? "saving"
+          : savedBranchId !== null
+            ? "saved"
+            : "ready"
 
   const state: CreateBranchViewModelState = {
     status,
@@ -152,10 +170,14 @@ export function useCreateBranchViewModel(
     fieldErrors: showFieldErrors ? fieldErrors : emptyFieldErrors,
     savedBranchId,
     error: isPrereqsError
-      ? (prereqsError instanceof Error ? prereqsError.message : "Unknown error")
+      ? prereqsError instanceof Error
+        ? prereqsError.message
+        : "Unknown error"
       : saveMutation.isError
-      ? (saveMutation.error instanceof Error ? saveMutation.error.message : null)
-      : null,
+        ? saveMutation.error instanceof Error
+          ? saveMutation.error.message
+          : null
+        : null,
     isLoading: status === "loading",
     isReady: status === "ready",
     isSaving: status === "saving",

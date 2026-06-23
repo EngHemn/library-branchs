@@ -87,7 +87,9 @@ export function GroupBooksTab({
     <div className="flex flex-col gap-4">
       <Card className="rounded-lg">
         <CardHeader className="pb-3">
-          <CardTitle className="text-base">{t("groups.filters.filters")}</CardTitle>
+          <CardTitle className="text-base">
+            {t("groups.filters.filters")}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <GroupBooksFilters
@@ -109,7 +111,9 @@ export function GroupBooksTab({
 
       <Card className="rounded-lg">
         <CardHeader className="pb-3">
-          <CardTitle className="text-base">{t("groups.books.assignedTitle")}</CardTitle>
+          <CardTitle className="text-base">
+            {t("groups.books.assignedTitle")}
+          </CardTitle>
           <CardDescription>
             {t("groups.books.shownCount", {
               shown: books.length.toLocaleString(locale),
@@ -128,18 +132,24 @@ export function GroupBooksTab({
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-16">{t("groups.books.cover")}</TableHead>
+                  <TableHead className="w-16">
+                    {t("groups.books.cover")}
+                  </TableHead>
                   <TableHead>{t("groups.books.title")}</TableHead>
                   <TableHead>{t("groups.books.author")}</TableHead>
                   {showBranchFilter ? (
                     <TableHead>{t("groups.books.branch")}</TableHead>
                   ) : null}
                   <TableHead>{t("groups.books.isbn")}</TableHead>
-                  <TableHead className="text-center">{t("groups.books.stock")}</TableHead>
+                  <TableHead className="text-center">
+                    {t("groups.books.stock")}
+                  </TableHead>
                   <TableHead className="text-center">
                     {t("groups.books.available")}
                   </TableHead>
-                  <TableHead className="text-center">{t("groups.books.price")}</TableHead>
+                  <TableHead className="text-center">
+                    {t("groups.books.price")}
+                  </TableHead>
                   <TableHead>{t("groups.books.availability")}</TableHead>
                 </TableRow>
               </TableHeader>
@@ -165,7 +175,9 @@ export function GroupBooksTab({
                     {showBranchFilter ? (
                       <TableCell>{book.branchName}</TableCell>
                     ) : null}
-                    <TableCell className="font-mono text-xs">{book.isbn}</TableCell>
+                    <TableCell className="font-mono text-xs">
+                      {book.isbn}
+                    </TableCell>
                     <TableCell className="text-center tabular-nums">
                       {book.stock.toLocaleString(locale)}
                     </TableCell>

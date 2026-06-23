@@ -126,15 +126,25 @@ export function ReportRechart({ chart }: ReportRechartProps) {
                 <Tooltip content={tooltip} />
               </PieChart>
             ) : chart.type === "line" ? (
-              <LineChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+              <LineChart
+                data={data}
+                margin={{ top: 8, right: 8, left: 0, bottom: 0 }}
+              >
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  className="stroke-border"
+                />
                 <XAxis
                   dataKey="name"
                   tick={{ fontSize: 11 }}
                   tickLine={false}
                   axisLine={false}
                 />
-                <YAxis tick={{ fontSize: 11 }} tickLine={false} axisLine={false} />
+                <YAxis
+                  tick={{ fontSize: 11 }}
+                  tickLine={false}
+                  axisLine={false}
+                />
                 <Tooltip content={tooltip} />
                 <Line
                   type="monotone"
@@ -145,15 +155,25 @@ export function ReportRechart({ chart }: ReportRechartProps) {
                 />
               </LineChart>
             ) : chart.type === "area" ? (
-              <AreaChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+              <AreaChart
+                data={data}
+                margin={{ top: 8, right: 8, left: 0, bottom: 0 }}
+              >
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  className="stroke-border"
+                />
                 <XAxis
                   dataKey="name"
                   tick={{ fontSize: 11 }}
                   tickLine={false}
                   axisLine={false}
                 />
-                <YAxis tick={{ fontSize: 11 }} tickLine={false} axisLine={false} />
+                <YAxis
+                  tick={{ fontSize: 11 }}
+                  tickLine={false}
+                  axisLine={false}
+                />
                 <Tooltip content={tooltip} />
                 <Area
                   type="monotone"
@@ -165,17 +185,31 @@ export function ReportRechart({ chart }: ReportRechartProps) {
                 />
               </AreaChart>
             ) : (
-              <BarChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+              <BarChart
+                data={data}
+                margin={{ top: 8, right: 8, left: 0, bottom: 0 }}
+              >
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  className="stroke-border"
+                />
                 <XAxis
                   dataKey="name"
                   tick={{ fontSize: 11 }}
                   tickLine={false}
                   axisLine={false}
                 />
-                <YAxis tick={{ fontSize: 11 }} tickLine={false} axisLine={false} />
+                <YAxis
+                  tick={{ fontSize: 11 }}
+                  tickLine={false}
+                  axisLine={false}
+                />
                 <Tooltip content={tooltip} />
-                <Bar dataKey="value" fill="var(--chart-1)" radius={[4, 4, 0, 0]} />
+                <Bar
+                  dataKey="value"
+                  fill="var(--chart-1)"
+                  radius={[4, 4, 0, 0]}
+                />
               </BarChart>
             )}
           </ResponsiveContainer>

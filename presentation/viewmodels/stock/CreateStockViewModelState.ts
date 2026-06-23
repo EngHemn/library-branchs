@@ -2,7 +2,13 @@
 
 import type { StockBookOption } from "@/presentation/components/stock/StockBookSearchCombobox"
 
-export type CreateStockStatus = "idle" | "loading" | "ready" | "saving" | "saved" | "error"
+export type CreateStockStatus =
+  | "idle"
+  | "loading"
+  | "ready"
+  | "saving"
+  | "saved"
+  | "error"
 
 export type CreateStockViewModelState = {
   status: CreateStockStatus

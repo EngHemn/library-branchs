@@ -42,14 +42,22 @@ export function DashboardRecentBookingsTable({
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead className="w-24">{t("dashboard.tables.bookingId")}</TableHead>
+          <TableHead className="w-24">
+            {t("dashboard.tables.bookingId")}
+          </TableHead>
           <TableHead>{t("dashboard.tables.bookTitle")}</TableHead>
           <TableHead>{t("dashboard.tables.member")}</TableHead>
           {showBranchColumn ? (
-            <TableHead className="hidden md:table-cell">{t("dashboard.tables.branch")}</TableHead>
+            <TableHead className="hidden md:table-cell">
+              {t("dashboard.tables.branch")}
+            </TableHead>
           ) : null}
-          <TableHead className="hidden lg:table-cell">{t("dashboard.tables.type")}</TableHead>
-          <TableHead className="hidden sm:table-cell">{t("dashboard.tables.dueDate")}</TableHead>
+          <TableHead className="hidden lg:table-cell">
+            {t("dashboard.tables.type")}
+          </TableHead>
+          <TableHead className="hidden sm:table-cell">
+            {t("dashboard.tables.dueDate")}
+          </TableHead>
           <TableHead>{t("common.status")}</TableHead>
         </TableRow>
       </TableHeader>
@@ -81,7 +89,10 @@ export function DashboardRecentBookingsTable({
               {booking.dueDate}
             </TableCell>
             <TableCell>
-              <Badge variant={statusVariant[booking.status]} className="text-xs">
+              <Badge
+                variant={statusVariant[booking.status]}
+                className="text-xs"
+              >
                 {t(`dashboard.bookingStatus.${booking.status}`)}
               </Badge>
             </TableCell>

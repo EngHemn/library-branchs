@@ -142,9 +142,7 @@ export function LibraryInfoSection({
 
         <div className="flex justify-end">
           <Button type="submit" disabled={isSaving}>
-            {isSaving && (
-              <LoaderCircleIcon className="animate-spin" />
-            )}
+            {isSaving && <LoaderCircleIcon className="animate-spin" />}
             Save Changes
           </Button>
         </div>

@@ -27,7 +27,9 @@ export function OrderDetailHeader({ order, onEdit }: OrderDetailHeaderProps) {
     <section className="flex flex-col gap-4 pt-4 sm:flex-row sm:items-start sm:justify-between">
       <div>
         <p className="font-mono text-xs text-muted-foreground">{order.id}</p>
-        <h1 className="text-2xl font-bold tracking-normal">{order.supplierName}</h1>
+        <h1 className="text-2xl font-bold tracking-normal">
+          {order.supplierName}
+        </h1>
         <p className="mt-1 text-sm text-muted-foreground">
           {t("orders.detail.purchaseOrderFor", {
             branchName: order.branchName,

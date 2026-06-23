@@ -1,18 +1,10 @@
 "use client"
 
-import {
-  ArrowRightLeft,
-  MinusIcon,
-  PencilIcon,
-  PlusIcon,
-} from "lucide-react"
+import { ArrowRightLeft, MinusIcon, PencilIcon, PlusIcon } from "lucide-react"
 import { IoSettingsOutline } from "react-icons/io5"
 
 import { Button } from "@/components/ui/button"
-import {
-  DataTable,
-  type DataTableColumn,
-} from "@/components/ui/data-table"
+import { DataTable, type DataTableColumn } from "@/components/ui/data-table"
 import {
   DropdownMenu,
   DropdownMenuContent,

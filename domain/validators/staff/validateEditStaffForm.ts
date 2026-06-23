@@ -76,7 +76,9 @@ export function getEditStaffFieldErrors(
     email: validateEmail(input.email),
     phone: validatePhone(input.phone),
     password:
-      input.password !== undefined && input.password.trim().length > 0 && input.password.trim().length < 6
+      input.password !== undefined &&
+      input.password.trim().length > 0 &&
+      input.password.trim().length < 6
         ? "Password must be at least 6 characters"
         : null,
   }

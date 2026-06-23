@@ -77,7 +77,9 @@ export function OrderLocationSection({ order }: OrderLocationSectionProps) {
 
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-1.5">
-            <Label htmlFor="order-view-latitude">{t("orders.location.latitude")}</Label>
+            <Label htmlFor="order-view-latitude">
+              {t("orders.location.latitude")}
+            </Label>
             <Input
               id="order-view-latitude"
               value={latitude !== null ? String(latitude) : "—"}
@@ -86,7 +88,9 @@ export function OrderLocationSection({ order }: OrderLocationSectionProps) {
             />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="order-view-longitude">{t("orders.location.longitude")}</Label>
+            <Label htmlFor="order-view-longitude">
+              {t("orders.location.longitude")}
+            </Label>
             <Input
               id="order-view-longitude"
               value={longitude !== null ? String(longitude) : "—"}

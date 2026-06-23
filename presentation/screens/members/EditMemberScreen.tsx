@@ -1,7 +1,12 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { ArrowLeftIcon, Loader2Icon, RefreshCwIcon, SaveIcon } from "lucide-react"
+import {
+  ArrowLeftIcon,
+  Loader2Icon,
+  RefreshCwIcon,
+  SaveIcon,
+} from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -75,10 +80,15 @@ export function EditMemberScreen({
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
               <CardTitle>{t("members.notFoundTitle")}</CardTitle>
-              <CardDescription>{t("members.notFoundDescription")}</CardDescription>
+              <CardDescription>
+                {t("members.notFoundDescription")}
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button variant="outline" onClick={() => router.push("/dashboard/members")}>
+              <Button
+                variant="outline"
+                onClick={() => router.push("/dashboard/members")}
+              >
                 <ArrowLeftIcon />
                 {t("members.backToMembers")}
               </Button>
@@ -95,7 +105,10 @@ export function EditMemberScreen({
               <CardDescription>{state.error}</CardDescription>
             </CardHeader>
             <CardContent className="flex gap-3">
-              <Button variant="outline" onClick={() => router.push("/dashboard/members")}>
+              <Button
+                variant="outline"
+                onClick={() => router.push("/dashboard/members")}
+              >
                 <ArrowLeftIcon />
                 {t("members.backToMembers")}
               </Button>
@@ -115,7 +128,9 @@ export function EditMemberScreen({
               <h1 className="text-2xl font-semibold tracking-normal">
                 {t("members.edit.title")}
               </h1>
-              <p className="mt-1 text-sm text-muted-foreground">{t("members.edit.subtitle")}</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {t("members.edit.subtitle")}
+              </p>
             </div>
             <Button variant="outline" onClick={goBack}>
               <ArrowLeftIcon />
@@ -139,7 +154,9 @@ export function EditMemberScreen({
           {state.error && state.isReady ? (
             <Card className="rounded-lg border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950">
               <CardContent className="py-3">
-                <p className="text-sm font-medium text-red-800 dark:text-red-200">{state.error}</p>
+                <p className="text-sm font-medium text-red-800 dark:text-red-200">
+                  {state.error}
+                </p>
               </CardContent>
             </Card>
           ) : null}
@@ -147,7 +164,9 @@ export function EditMemberScreen({
           <Card className="rounded-lg">
             <CardHeader>
               <CardTitle>{t("members.create.detailsTitle")}</CardTitle>
-              <CardDescription>{t("members.edit.detailsDescription")}</CardDescription>
+              <CardDescription>
+                {t("members.edit.detailsDescription")}
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <MemberFormFields
@@ -157,12 +176,26 @@ export function EditMemberScreen({
               >
                 <Separator />
                 <div className="flex justify-end gap-3">
-                  <Button type="button" variant="outline" onClick={goBack} disabled={state.isSaving}>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={goBack}
+                    disabled={state.isSaving}
+                  >
                     {t("common.cancel")}
                   </Button>
-                  <Button type="submit" disabled={state.isSaving || state.isSaved}>
-                    {state.isSaving ? <Loader2Icon className="animate-spin" /> : <SaveIcon />}
-                    {state.isSaving ? t("common.saving") : t("common.saveChanges")}
+                  <Button
+                    type="submit"
+                    disabled={state.isSaving || state.isSaved}
+                  >
+                    {state.isSaving ? (
+                      <Loader2Icon className="animate-spin" />
+                    ) : (
+                      <SaveIcon />
+                    )}
+                    {state.isSaving
+                      ? t("common.saving")
+                      : t("common.saveChanges")}
                   </Button>
                 </div>
               </MemberFormFields>

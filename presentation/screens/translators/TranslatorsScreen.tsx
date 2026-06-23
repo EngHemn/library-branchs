@@ -47,12 +47,16 @@ function LoadingTranslatorsScreen() {
   )
 }
 
-export function TranslatorsScreen({ getTranslatorsUseCase }: TranslatorsScreenProps) {
+export function TranslatorsScreen({
+  getTranslatorsUseCase,
+}: TranslatorsScreenProps) {
   const router = useRouter()
   const { t } = useTranslation()
   const viewModel = useTranslatorsViewModel(getTranslatorsUseCase)
   const { state } = viewModel
-  const [deleteTranslator, setDeleteTranslator] = useState<Translator | null>(null)
+  const [deleteTranslator, setDeleteTranslator] = useState<Translator | null>(
+    null
+  )
 
   useDashboardBreadcrumbs([
     { label: t("breadcrumbs.workspace"), href: "/dashboard" },
@@ -93,12 +97,16 @@ export function TranslatorsScreen({ getTranslatorsUseCase }: TranslatorsScreenPr
           <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
             <section className="flex flex-col gap-3 pt-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <h1 className="text-2xl font-bold tracking-normal">{t("translators.title")}</h1>
+                <h1 className="text-2xl font-bold tracking-normal">
+                  {t("translators.title")}
+                </h1>
                 <p className="mt-1 text-sm text-muted-foreground">
                   {t("translators.subtitle")}
                 </p>
               </div>
-              <Button onClick={() => router.push("/dashboard/translators/create")}>
+              <Button
+                onClick={() => router.push("/dashboard/translators/create")}
+              >
                 <PlusIcon />
                 {t("translators.addTranslator")}
               </Button>
@@ -116,8 +124,12 @@ export function TranslatorsScreen({ getTranslatorsUseCase }: TranslatorsScreenPr
 
             <TranslatorsTable
               translators={state.filteredTranslators}
-              onView={(translator) => router.push(`/dashboard/translators/${translator.id}`)}
-              onEdit={(translator) => router.push(`/dashboard/translators/${translator.id}/edit`)}
+              onView={(translator) =>
+                router.push(`/dashboard/translators/${translator.id}`)
+              }
+              onEdit={(translator) =>
+                router.push(`/dashboard/translators/${translator.id}/edit`)
+              }
               onDelete={(translator) => setDeleteTranslator(translator)}
             />
           </div>

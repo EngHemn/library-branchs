@@ -153,8 +153,7 @@ export const staff = {
     },
     table: {
       title: "الموظفون",
-      recordCount:
-        "{count} سجل موظف. الصلاحيات موروثة من دور كل موظف.",
+      recordCount: "{count} سجل موظف. الصلاحيات موروثة من دور كل موظف.",
       name: "الاسم",
       phone: "الهاتف",
       role: "الدور",
@@ -379,10 +378,9 @@ export const permissions = {
     deleteDialog: {
       cannotDeleteTitle: "Cannot Delete Role",
       deleteTitle: "Delete Role",
-      systemDescription:
-        "{name} is a system role and cannot be deleted.",
+      systemDescription: "{name} is a system role and cannot be deleted.",
       confirmDescription:
-        'Are you sure you want to delete {name}? Staff members assigned to this role must be reassigned first. This action cannot be undone.',
+        "Are you sure you want to delete {name}? Staff members assigned to this role must be reassigned first. This action cannot be undone.",
       deleting: "Deleting...",
       confirm: "Delete Role",
     },
@@ -465,7 +463,7 @@ export const permissions = {
       deleteTitle: "حذف الدور",
       systemDescription: "{name} دور نظام ولا يمكن حذفه.",
       confirmDescription:
-        'هل أنت متأكد من حذف {name}؟ يجب إعادة تعيين الموظفين المرتبطين بهذا الدور أولًا. لا يمكن التراجع عن هذا الإجراء.',
+        "هل أنت متأكد من حذف {name}؟ يجب إعادة تعيين الموظفين المرتبطين بهذا الدور أولًا. لا يمكن التراجع عن هذا الإجراء.",
       deleting: "جارٍ الحذف...",
       confirm: "حذف الدور",
     },
@@ -488,8 +486,7 @@ export const permissions = {
       roleNameExists: "يوجد دور بهذا الاسم بالفعل",
       roleNotFound: "الدور غير موجود",
       systemRoleCannotDelete: "لا يمكن حذف أدوار النظام",
-      roleAssignedToStaff:
-        "لا يمكن حذف دور مُعيَّن لأعضاء الفريق",
+      roleAssignedToStaff: "لا يمكن حذف دور مُعيَّن لأعضاء الفريق",
     },
   },
   ku: {
@@ -549,7 +546,7 @@ export const permissions = {
       deleteTitle: "سڕینەوەی ڕۆڵ",
       systemDescription: "{name} ڕۆڵی سیستەمە و ناتوانرێت بسڕدرێتەوە.",
       confirmDescription:
-        'دڵنیایت لە سڕینەوەی {name}؟ پێویستە ئەندامانی ستافی پەیوەست بەم ڕۆڵە سەرەتا ڕێکبخرێن. ناتوانرێت ئەم کردارە بگەڕێنرێتەوە.',
+        "دڵنیایت لە سڕینەوەی {name}؟ پێویستە ئەندامانی ستافی پەیوەست بەم ڕۆڵە سەرەتا ڕێکبخرێن. ناتوانرێت ئەم کردارە بگەڕێنرێتەوە.",
       deleting: "دەسڕدرێت...",
       confirm: "سڕینەوەی ڕۆڵ",
     },
@@ -560,7 +557,8 @@ export const permissions = {
       },
       sub_branch_admin: {
         name: "بەڕێوەبەری لقی لاوەکی",
-        description: "بەڕێوەبردنی سەرچاوەکانی لقی لاوەکی و کردارە سنووردارەکانی ستاف.",
+        description:
+          "بەڕێوەبردنی سەرچاوەکانی لقی لاوەکی و کردارە سنووردارەکانی ستاف.",
       },
       staff: {
         name: "ستاف",
@@ -608,7 +606,8 @@ export const groups = {
       breadcrumb: "Edit Group",
       title: "Edit Group",
       subtitle: "Update the information for this group.",
-      detailsDescription: "Update group information, assigned books, and staff.",
+      detailsDescription:
+        "Update group information, assigned books, and staff.",
       updateSuccess: "Group updated successfully.",
     },
     view: {
@@ -747,7 +746,8 @@ export const groups = {
       assignedCount: "{count} staff member(s) assigned",
     },
     selectedStaff: {
-      empty: "No staff assigned yet. Use the selector above to add staff members.",
+      empty:
+        "No staff assigned yet. Use the selector above to add staff members.",
       staffName: "Staff Name",
       remove: "Remove",
       removeAria: "Remove {staffName}",
@@ -760,7 +760,8 @@ export const groups = {
     reports: {
       loadError: "Unable to load report history",
       empty: "No sales recorded for this group yet.",
-      filtersDescription: "Branch and date filters apply to all report sections.",
+      filtersDescription:
+        "Branch and date filters apply to all report sections.",
       completedSales: "Completed Sales",
       unitsSold: "Units Sold",
       totalRevenue: "Total Revenue",
@@ -817,8 +818,7 @@ export const groups = {
     addGroup: "إضافة مجموعة",
     backToGroups: "العودة إلى المجموعات",
     notFoundTitle: "المجموعة غير موجودة",
-    notFoundDescription:
-      "المجموعة التي تبحث عنها غير موجودة أو تمت إزالتها.",
+    notFoundDescription: "المجموعة التي تبحث عنها غير موجودة أو تمت إزالتها.",
     loadErrorTitle: "تعذر تحميل المجموعة",
     bookStatus: {
       available: "متاح",
@@ -972,7 +972,8 @@ export const groups = {
       phone: "الهاتف",
     },
     staffSelector: {
-      searchPlaceholder: "البحث عن الموظفين بالاسم أو الدور أو البريد أو الهاتف...",
+      searchPlaceholder:
+        "البحث عن الموظفين بالاسم أو الدور أو البريد أو الهاتف...",
       noMatch: "لا يوجد موظفون يطابقون بحثك.",
       noAvailable: "لا يوجد موظفون متاحون.",
       assignedCount: "{count} موظف معيّن",
@@ -991,7 +992,8 @@ export const groups = {
     reports: {
       loadError: "تعذر تحميل سجل التقارير",
       empty: "لا توجد مبيعات مسجّلة لهذه المجموعة بعد.",
-      filtersDescription: "تنطبق عوامل تصفية الفرع والتاريخ على جميع أقسام التقرير.",
+      filtersDescription:
+        "تنطبق عوامل تصفية الفرع والتاريخ على جميع أقسام التقرير.",
       completedSales: "المبيعات المكتملة",
       unitsSold: "الوحدات المباعة",
       totalRevenue: "إجمالي الإيرادات",
@@ -1023,19 +1025,22 @@ export const groups = {
           title: "المؤلفون",
           description: "أداء المبيعات مجمّعًا حسب المؤلف.",
           emptyTitle: "لا مبيعات للمؤلفين",
-          emptyDescription: "لا توجد مبيعات مؤلفين تطابق عوامل التصفية الحالية.",
+          emptyDescription:
+            "لا توجد مبيعات مؤلفين تطابق عوامل التصفية الحالية.",
         },
         translators: {
           title: "المترجمون",
           description: "أداء المبيعات مجمّعًا حسب المترجم.",
           emptyTitle: "لا مبيعات للمترجمين",
-          emptyDescription: "لا توجد مبيعات مترجمين تطابق عوامل التصفية الحالية.",
+          emptyDescription:
+            "لا توجد مبيعات مترجمين تطابق عوامل التصفية الحالية.",
         },
         categories: {
           title: "التصنيفات",
           description: "أداء المبيعات مجمّعًا حسب التصنيف.",
           emptyTitle: "لا مبيعات للتصنيفات",
-          emptyDescription: "لا توجد مبيعات تصنيفات تطابق عوامل التصفية الحالية.",
+          emptyDescription:
+            "لا توجد مبيعات تصنيفات تطابق عوامل التصفية الحالية.",
         },
       },
     },
@@ -1135,8 +1140,7 @@ export const groups = {
       status: "دۆخ",
       branch: "لق",
       bookAssignment: "دیاریکردنی کتێب",
-      bookAssignmentDescription:
-        "کتێب لە کتێبخانە هەڵبژێرە بۆ ئەم گرووپە.",
+      bookAssignmentDescription: "کتێب لە کتێبخانە هەڵبژێرە بۆ ئەم گرووپە.",
       staffAssignment: "دیاریکردنی ستاف",
       staffAssignmentDescription:
         "یەک یان زیاتر ئەندامی ستاف دیاری بکە بۆ بەڕێوەبردنی ئەم گرووپە.",
@@ -1222,11 +1226,13 @@ export const groups = {
     reports: {
       loadError: "نەتوانرا مێژووی ڕاپۆرت باربکرێت",
       empty: "هێشتا هیچ فرۆشتنێک بۆ ئەم گرووپە تۆمار نەکراوە.",
-      filtersDescription: "فلتەری لق و بەروار بۆ هەموو بەشەکانی ڕاپۆرت جێبەجێ دەبێت.",
+      filtersDescription:
+        "فلتەری لق و بەروار بۆ هەموو بەشەکانی ڕاپۆرت جێبەجێ دەبێت.",
       completedSales: "فرۆشتنە تەواوبووەکان",
       unitsSold: "یەکەی فرۆشراو",
       totalRevenue: "کۆی داهات",
-      noCompletedSales: "هیچ فرۆشتنێکی تەواوبوو لەگەڵ فلتەرە ئێستاییەکان ناگونجێت.",
+      noCompletedSales:
+        "هیچ فرۆشتنێکی تەواوبوو لەگەڵ فلتەرە ئێستاییەکان ناگونجێت.",
       tabs: {
         books: "کتێبەکان",
         authors: "نووسەرەکان",
@@ -1248,25 +1254,29 @@ export const groups = {
           title: "کتێبەکان",
           description: "ئەدای فرۆشتن بەپێی ناونیشانی کتێب.",
           emptyTitle: "هیچ فرۆشتنی کتێب نییە",
-          emptyDescription: "هیچ فرۆشتنی کتێب لەگەڵ فلتەرە ئێستاییەکان ناگونجێت.",
+          emptyDescription:
+            "هیچ فرۆشتنی کتێب لەگەڵ فلتەرە ئێستاییەکان ناگونجێت.",
         },
         authors: {
           title: "نووسەرەکان",
           description: "ئەدای فرۆشتن بەپێی نووسەر.",
           emptyTitle: "هیچ فرۆشتنی نووسەر نییە",
-          emptyDescription: "هیچ فرۆشتنی نووسەر لەگەڵ فلتەرە ئێستاییەکان ناگونجێت.",
+          emptyDescription:
+            "هیچ فرۆشتنی نووسەر لەگەڵ فلتەرە ئێستاییەکان ناگونجێت.",
         },
         translators: {
           title: "وەرگێڕەکان",
           description: "ئەدای فرۆشتن بەپێی وەرگێڕ.",
           emptyTitle: "هیچ فرۆشتنی وەرگێڕ نییە",
-          emptyDescription: "هیچ فرۆشتنی وەرگێڕ لەگەڵ فلتەرە ئێستاییەکان ناگونجێت.",
+          emptyDescription:
+            "هیچ فرۆشتنی وەرگێڕ لەگەڵ فلتەرە ئێستاییەکان ناگونجێت.",
         },
         categories: {
           title: "پۆلەکان",
           description: "ئەدای فرۆشتن بەپێی پۆل.",
           emptyTitle: "هیچ فرۆشتنی پۆل نییە",
-          emptyDescription: "هیچ فرۆشتنی پۆل لەگەڵ فلتەرە ئێستاییەکان ناگونجێت.",
+          emptyDescription:
+            "هیچ فرۆشتنی پۆل لەگەڵ فلتەرە ئێستاییەکان ناگونجێت.",
         },
       },
     },

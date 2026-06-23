@@ -14,7 +14,11 @@ export type DashboardBranch = {
   name: string
 }
 
-export type DashboardBookStatus = "available" | "borrowed" | "reserved" | "unavailable"
+export type DashboardBookStatus =
+  | "available"
+  | "borrowed"
+  | "reserved"
+  | "unavailable"
 
 export type DashboardBook = {
   id: string

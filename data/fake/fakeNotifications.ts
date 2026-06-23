@@ -20,7 +20,7 @@ const initialNotifications: Notification[] = [
   {
     id: "NTF-003",
     title: "Low stock alert",
-    message: "\"The Silent Patient\" has only 2 copies left at BR-002.",
+    message: '"The Silent Patient" has only 2 copies left at BR-002.',
     createdAt: "2026-05-29T08:30:00.000Z",
     read: false,
     type: "warning",
@@ -51,7 +51,9 @@ const initialNotifications: Notification[] = [
   },
 ]
 
-let notificationStore: Notification[] = initialNotifications.map((n) => ({ ...n }))
+let notificationStore: Notification[] = initialNotifications.map((n) => ({
+  ...n,
+}))
 
 export function getFakeNotifications(): Notification[] {
   return notificationStore

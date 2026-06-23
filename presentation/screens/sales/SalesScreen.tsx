@@ -47,7 +47,9 @@ export function SalesScreen({ authUseCase, salesUseCase }: SalesScreenProps) {
       branchNodes={state.branchNodes}
       shoppingBranchId={state.shoppingBranchId}
       displayedBranchId={state.displayedBranchId}
-      isLoading={state.branchesStatus === "idle" || state.branchesStatus === "loading"}
+      isLoading={
+        state.branchesStatus === "idle" || state.branchesStatus === "loading"
+      }
       error={state.branchesError}
       cartItemCount={state.cartItemCount}
       onViewBooks={viewModel.viewBranchBooks}
@@ -112,7 +114,9 @@ export function SalesScreen({ authUseCase, salesUseCase }: SalesScreenProps) {
       <div className="flex flex-1 flex-col overflow-hidden">
         <div className="flex shrink-0 items-center justify-end gap-2 border-b px-4 py-2">
           <Button variant="outline" size="sm" asChild>
-            <Link href="/dashboard/sales/history">{t("sales.screen.salesHistory")}</Link>
+            <Link href="/dashboard/sales/history">
+              {t("sales.screen.salesHistory")}
+            </Link>
           </Button>
 
           <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
@@ -147,7 +151,7 @@ export function SalesScreen({ authUseCase, salesUseCase }: SalesScreenProps) {
           {state.showBranchSidebar ? (
             <aside className="flex w-1/4 shrink-0 flex-col border-r">
               <div className="border-b px-4 py-3">
-                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                <p className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
                   {t("sales.screen.branches")}
                 </p>
               </div>
@@ -172,11 +176,19 @@ export function SalesScreen({ authUseCase, salesUseCase }: SalesScreenProps) {
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent value="branches" className="mt-0 flex-1 overflow-hidden pt-2">
-                <ScrollArea className="h-full">{branchSelectorPanel}</ScrollArea>
+              <TabsContent
+                value="branches"
+                className="mt-0 flex-1 overflow-hidden pt-2"
+              >
+                <ScrollArea className="h-full">
+                  {branchSelectorPanel}
+                </ScrollArea>
               </TabsContent>
 
-              <TabsContent value="books" className="mt-0 flex-1 overflow-hidden">
+              <TabsContent
+                value="books"
+                className="mt-0 flex-1 overflow-hidden"
+              >
                 <ScrollArea className="h-full">{booksGridPanel}</ScrollArea>
               </TabsContent>
             </Tabs>

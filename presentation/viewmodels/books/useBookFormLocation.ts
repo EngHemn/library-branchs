@@ -66,7 +66,10 @@ export function useBookFormLocation(
     )
   }
 
-  async function addLocationValue(stepId: string, value: string): Promise<void> {
+  async function addLocationValue(
+    stepId: string,
+    value: string
+  ): Promise<void> {
     locationMutations.clearError()
     const added = await locationMutations.addLocationValue(stepId, value)
     if (added) {

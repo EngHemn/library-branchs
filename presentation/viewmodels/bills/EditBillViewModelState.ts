@@ -1,6 +1,9 @@
 "use client"
 
-import type { BillBookOption, BillBranchOption } from "@/domain/repositories/BillManagementRepository"
+import type {
+  BillBookOption,
+  BillBranchOption,
+} from "@/domain/repositories/BillManagementRepository"
 import type { GetBillsUseCase } from "@/domain/usecases/bills/GetBillsUseCase"
 
 export type EditBillStatus =

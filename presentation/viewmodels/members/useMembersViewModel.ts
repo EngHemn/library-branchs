@@ -23,7 +23,9 @@ type MembersViewModel = {
   state: MembersViewModelState
   setSearchQuery: (searchQuery: string) => void
   setStatusFilter: (statusFilter: MemberStatusFilter) => void
-  setBranchRegisteredFilter: (branchRegisteredFilter: MemberBranchFilter) => void
+  setBranchRegisteredFilter: (
+    branchRegisteredFilter: MemberBranchFilter
+  ) => void
   setBranchUsedFilter: (branchUsedFilter: MemberBranchFilter) => void
   setDateFrom: (dateFrom: string | null) => void
   setDateTo: (dateTo: string | null) => void
@@ -146,14 +148,16 @@ export function useMembersViewModel(
     enabled: userQuery.isSuccess,
   })
 
-  const { mutateAsync: deleteMemberAsync, isPending: isDeleting } = useMutation({
-    mutationFn: async (memberId: string) => {
-      const result = await memberManagementUseCase.deleteMember(memberId)
-      if (!result.success) throw new Error(result.error)
-      return result.data
-    },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["members"] }),
-  })
+  const { mutateAsync: deleteMemberAsync, isPending: isDeleting } = useMutation(
+    {
+      mutationFn: async (memberId: string) => {
+        const result = await memberManagementUseCase.deleteMember(memberId)
+        if (!result.success) throw new Error(result.error)
+        return result.data
+      },
+      onSuccess: () => queryClient.invalidateQueries({ queryKey: ["members"] }),
+    }
+  )
 
   const user = userQuery.data ?? null
   const members = membersQuery.data ?? []

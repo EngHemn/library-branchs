@@ -16,7 +16,10 @@ import {
 } from "@/lib/shelfBranchScope"
 import { formatShelfLocationParts } from "@/lib/shelfLocationDisplay"
 import type { ShelfBranchFilter } from "@/presentation/components/shelves/ShelvesFilters"
-import type { AsyncStatus, ShelvesViewModelState } from "./ShelvesViewModelState"
+import type {
+  AsyncStatus,
+  ShelvesViewModelState,
+} from "./ShelvesViewModelState"
 
 type ShelvesViewModel = {
   state: ShelvesViewModelState
@@ -123,9 +126,7 @@ export function useShelvesViewModel(
   }, [user, hasInitializedBranch])
 
   const allShelves = shelvesQuery.data ?? []
-  const scopedShelves = user
-    ? filterShelvesByBranchScope(allShelves, user)
-    : []
+  const scopedShelves = user ? filterShelvesByBranchScope(allShelves, user) : []
   const filteredShelves = filterShelves(
     scopedShelves,
     searchQuery,

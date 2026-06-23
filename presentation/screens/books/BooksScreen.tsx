@@ -94,7 +94,9 @@ export function BooksScreen({
 
   return (
     <>
-      {state.isLoading || state.isUnauthenticated ? <LoadingBooksScreen /> : null}
+      {state.isLoading || state.isUnauthenticated ? (
+        <LoadingBooksScreen />
+      ) : null}
 
       {state.error ? (
         <div className="flex flex-1 items-center justify-center p-4">
@@ -184,7 +186,9 @@ export function BooksScreen({
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{state.dialog?.title ?? ""}</DialogTitle>
-            <DialogDescription>{state.dialog?.description ?? ""}</DialogDescription>
+            <DialogDescription>
+              {state.dialog?.description ?? ""}
+            </DialogDescription>
           </DialogHeader>
           <DialogFooter showCloseButton />
         </DialogContent>

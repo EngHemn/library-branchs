@@ -17,7 +17,11 @@ import {
   validateCreateStaffForm,
 } from "@/domain/validators/staff/validateCreateStaffForm"
 import { generatePassword } from "@/lib/generatePassword"
-import type { CreateStaffFormState, CreateStaffStatus, CreateStaffViewModelState } from "./CreateStaffViewModelState"
+import type {
+  CreateStaffFormState,
+  CreateStaffStatus,
+  CreateStaffViewModelState,
+} from "./CreateStaffViewModelState"
 
 type CreateStaffViewModel = {
   state: CreateStaffViewModelState
@@ -135,12 +139,17 @@ export function useCreateStaffViewModel(
 
   const user = userQuery.data ?? null
   const branches = branchesQuery.data ?? []
-  const showBranchField = user ? !isBranchScopedStaffPermissionsUser(user) : true
-  const showBranchAdminRole = user ? !isBranchScopedStaffPermissionsUser(user) : true
+  const showBranchField = user
+    ? !isBranchScopedStaffPermissionsUser(user)
+    : true
+  const showBranchAdminRole = user
+    ? !isBranchScopedStaffPermissionsUser(user)
+    : true
   const userBranchId = user ? resolveUserBranchId(user) : ""
 
   useEffect(() => {
-    if (!user || !isBranchScopedStaffPermissionsUser(user) || form.branchId) return
+    if (!user || !isBranchScopedStaffPermissionsUser(user) || form.branchId)
+      return
     setForm((current) => ({ ...current, branchId: userBranchId }))
   }, [user, userBranchId, form.branchId])
 

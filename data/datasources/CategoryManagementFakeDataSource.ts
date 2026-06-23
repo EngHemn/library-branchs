@@ -17,9 +17,7 @@ function delay(ms: number): Promise<void> {
   })
 }
 
-function withBookCounts(
-  seeds: Omit<Category, "totalBooks">[]
-): Category[] {
+function withBookCounts(seeds: Omit<Category, "totalBooks">[]): Category[] {
   return seeds.map((seed) => ({
     ...seed,
     totalBooks: countBooksForCategoryName(seed.name),
@@ -56,7 +54,10 @@ export class CategoryManagementFakeDataSource {
       (category) => category.name.toLowerCase() === normalizedName.toLowerCase()
     )
     if (exists) {
-      return { success: false, error: "A category with this name already exists." }
+      return {
+        success: false,
+        error: "A category with this name already exists.",
+      }
     }
 
     const newCategory: Category = {
@@ -86,7 +87,10 @@ export class CategoryManagementFakeDataSource {
         category.name.toLowerCase() === normalizedName.toLowerCase()
     )
     if (duplicate) {
-      return { success: false, error: "A category with this name already exists." }
+      return {
+        success: false,
+        error: "A category with this name already exists.",
+      }
     }
 
     const currentCategory = this.categories[categoryIndex]

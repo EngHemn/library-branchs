@@ -94,9 +94,7 @@ export function NeedsScreen({
           <h1 className="text-2xl font-semibold tracking-tight">
             {t("needs.title")}
           </h1>
-          <p className="text-sm text-muted-foreground">
-            {t("needs.subtitle")}
-          </p>
+          <p className="text-sm text-muted-foreground">{t("needs.subtitle")}</p>
         </div>
         <div className="flex flex-wrap gap-2">
           <Button
@@ -149,18 +147,14 @@ export function NeedsScreen({
         showBranchColumn={state.showBranchFilter}
         onView={(need) => router.push(dashboardPaths.needs.detail(need.id))}
         onEdit={(need) => router.push(dashboardPaths.needs.edit(need.id))}
-        onDelete={(need) =>
-          viewModel.openDeleteNeedDialog(need.id, need.name)
-        }
+        onDelete={(need) => viewModel.openDeleteNeedDialog(need.id, need.name)}
         onApprove={async (need) => {
           const success = await viewModel.approveNeed(need.id)
           if (success) {
             toast.success(t("needs.approveSuccess"))
           }
         }}
-        onReject={(need) =>
-          viewModel.openRejectNeedDialog(need.id, need.name)
-        }
+        onReject={(need) => viewModel.openRejectNeedDialog(need.id, need.name)}
       />
 
       <NeedDeleteDialog

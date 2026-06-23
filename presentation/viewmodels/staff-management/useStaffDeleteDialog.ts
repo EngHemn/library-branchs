@@ -31,19 +31,20 @@ export function useStaffDeleteDialog(
     useState<StaffDeleteDialogState | null>(null)
   const [deleteStaffError, setDeleteStaffError] = useState<string | null>(null)
 
-  const { mutateAsync: deleteStaffAsync, isPending: isDeletingStaff } = useMutation({
-    mutationFn: async (staffId: string) => {
-      const result = await options.staffManagementUseCase.deleteStaff(staffId)
-      if (!result.success) throw new Error(result.error)
-      return staffId
-    },
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["staff"] })
-      setDeleteStaffDialog(null)
-      setDeleteStaffError(null)
-    },
-    onError: (err: Error) => setDeleteStaffError(err.message),
-  })
+  const { mutateAsync: deleteStaffAsync, isPending: isDeletingStaff } =
+    useMutation({
+      mutationFn: async (staffId: string) => {
+        const result = await options.staffManagementUseCase.deleteStaff(staffId)
+        if (!result.success) throw new Error(result.error)
+        return staffId
+      },
+      onSuccess: () => {
+        void queryClient.invalidateQueries({ queryKey: ["staff"] })
+        setDeleteStaffDialog(null)
+        setDeleteStaffError(null)
+      },
+      onError: (err: Error) => setDeleteStaffError(err.message),
+    })
 
   function openDeleteStaffDialog(staffId: string, staffName: string): void {
     setDeleteStaffError(null)

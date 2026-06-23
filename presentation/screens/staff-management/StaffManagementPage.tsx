@@ -55,7 +55,10 @@ export function StaffManagementPage({
 }: StaffManagementPageProps) {
   const router = useRouter()
   const { t } = useTranslation()
-  const viewModel = useStaffManagementViewModel(authUseCase, staffManagementUseCase)
+  const viewModel = useStaffManagementViewModel(
+    authUseCase,
+    staffManagementUseCase
+  )
   const { state } = viewModel
 
   useEffect(() => {
@@ -73,7 +76,9 @@ export function StaffManagementPage({
 
   return (
     <>
-      {state.isLoading || state.isUnauthenticated ? <LoadingStaffManagementPage /> : null}
+      {state.isLoading || state.isUnauthenticated ? (
+        <LoadingStaffManagementPage />
+      ) : null}
 
       {state.error ? (
         <div className="flex flex-1 items-center justify-center p-4">
@@ -128,11 +133,15 @@ export function StaffManagementPage({
               staff={state.filteredStaff}
               showBranchColumn={state.showBranchColumn}
               onView={(member) => router.push(`/dashboard/staff/${member.id}`)}
-              onEdit={(member) => router.push(`/dashboard/staff/${member.id}/edit`)}
+              onEdit={(member) =>
+                router.push(`/dashboard/staff/${member.id}/edit`)
+              }
               onDelete={(member) =>
                 viewModel.openDeleteStaffDialog(member.id, member.staffName)
               }
-              onToggleStatus={(member) => void viewModel.toggleStaffStatus(member.id)}
+              onToggleStatus={(member) =>
+                void viewModel.toggleStaffStatus(member.id)
+              }
             />
           </div>
         </TooltipProvider>
@@ -147,7 +156,9 @@ export function StaffManagementPage({
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{state.dialog?.title ?? ""}</DialogTitle>
-            <DialogDescription>{state.dialog?.description ?? ""}</DialogDescription>
+            <DialogDescription>
+              {state.dialog?.description ?? ""}
+            </DialogDescription>
           </DialogHeader>
           <DialogFooter showCloseButton />
         </DialogContent>

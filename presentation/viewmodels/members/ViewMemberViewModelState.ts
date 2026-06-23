@@ -3,7 +3,12 @@
 import type { MemberDetail } from "@/domain/entities/member/MemberDetail"
 import type { MemberManagementUseCase } from "@/domain/usecases/members/MemberManagementUseCase"
 
-export type ViewMemberStatus = "idle" | "loading" | "loaded" | "not-found" | "error"
+export type ViewMemberStatus =
+  | "idle"
+  | "loading"
+  | "loaded"
+  | "not-found"
+  | "error"
 
 export type ViewMemberTabKey =
   | "details"

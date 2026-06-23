@@ -6,6 +6,9 @@ import { salesUseCase } from "@/app/dashboard/sales/salesDependencies"
 
 export default function Page() {
   return (
-    <SalesScreen authUseCase={dashboardAuthUseCase} salesUseCase={salesUseCase} />
+    <SalesScreen
+      authUseCase={dashboardAuthUseCase}
+      salesUseCase={salesUseCase}
+    />
   )
 }

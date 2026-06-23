@@ -1,10 +1,6 @@
 "use client"
 
-import {
-  ArrowDownRightIcon,
-  ArrowUpRightIcon,
-  MinusIcon,
-} from "lucide-react"
+import { ArrowDownRightIcon, ArrowUpRightIcon, MinusIcon } from "lucide-react"
 
 import {
   Card,
@@ -12,7 +8,10 @@ import {
   CardDescription,
   CardHeader,
 } from "@/components/ui/card"
-import type { ReportKpi, ReportMetricTrend } from "@/domain/entities/reports/Reports"
+import type {
+  ReportKpi,
+  ReportMetricTrend,
+} from "@/domain/entities/reports/Reports"
 
 type ReportsSummaryCardsProps = {
   kpis: ReportKpi[]

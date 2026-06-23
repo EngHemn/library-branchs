@@ -8,9 +8,7 @@ import type {
 } from "@/domain/repositories/CategoryManagementRepository"
 import type { Result } from "@/domain/result/Result"
 
-export class CategoryManagementRepositoryImpl
-  implements CategoryManagementRepository
-{
+export class CategoryManagementRepositoryImpl implements CategoryManagementRepository {
   constructor(
     private readonly categoryManagementFakeDataSource: CategoryManagementFakeDataSource
   ) {}

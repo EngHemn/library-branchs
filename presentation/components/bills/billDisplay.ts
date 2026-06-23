@@ -22,7 +22,10 @@ export function toBillDateInputValue(value: string): string {
   return `${year}-${month}-${day}`
 }
 
-export function toBillDateTime(dateValue: string, existingBillDate?: string): string {
+export function toBillDateTime(
+  dateValue: string,
+  existingBillDate?: string
+): string {
   if (/^\d{4}-\d{2}-\d{2}T/.test(dateValue)) {
     return dateValue
   }

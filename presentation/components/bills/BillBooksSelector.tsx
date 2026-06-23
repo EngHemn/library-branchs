@@ -2,7 +2,13 @@
 
 import { useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
-import { EyeIcon, MinusIcon, PencilIcon, PlusIcon, SearchIcon } from "lucide-react"
+import {
+  EyeIcon,
+  MinusIcon,
+  PencilIcon,
+  PlusIcon,
+  SearchIcon,
+} from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -45,7 +51,10 @@ export function BillBooksSelector({
   const { locale } = useLocale()
   const [searchQuery, setSearchQuery] = useState("")
 
-  const selectedBookIds = useMemo(() => items.map((item) => item.bookId), [items])
+  const selectedBookIds = useMemo(
+    () => items.map((item) => item.bookId),
+    [items]
+  )
 
   const filteredBooks = useMemo(
     () => bookOptions.filter((book) => matchesBook(book, searchQuery)),
@@ -59,7 +68,10 @@ export function BillBooksSelector({
           const book = bookOptions.find((option) => option.id === item.bookId)
           return book ? { item, book } : null
         })
-        .filter((row): row is { item: BillFormLineItem; book: BillBookOption } => row !== null),
+        .filter(
+          (row): row is { item: BillFormLineItem; book: BillBookOption } =>
+            row !== null
+        ),
     [items, bookOptions]
   )
 
@@ -93,12 +105,21 @@ export function BillBooksSelector({
 
   function updateItem(bookId: string, patch: Partial<BillFormLineItem>): void {
     onItemsChange(
-      items.map((item) => (item.bookId === bookId ? { ...item, ...patch } : item))
+      items.map((item) =>
+        item.bookId === bookId ? { ...item, ...patch } : item
+      )
     )
   }
 
-  function updateQuantity(bookId: string, nextQuantity: number, maxQuantity: number): void {
-    const safeQuantity = Math.min(Math.max(nextQuantity, 1), Math.max(maxQuantity, 1))
+  function updateQuantity(
+    bookId: string,
+    nextQuantity: number,
+    maxQuantity: number
+  ): void {
+    const safeQuantity = Math.min(
+      Math.max(nextQuantity, 1),
+      Math.max(maxQuantity, 1)
+    )
     updateItem(bookId, { quantity: safeQuantity })
   }
 
@@ -111,6 +132,23 @@ export function BillBooksSelector({
     const parsed = Number(value)
     updateItem(bookId, {
       newPrice: Number.isFinite(parsed) && parsed > 0 ? parsed : null,
+    })
+  }
+
+  function updateFinalPrice(
+    bookId: string,
+    value: string,
+    quantity: number
+  ): void {
+    if (value.trim() === "") {
+      updateItem(bookId, { newPrice: null })
+      return
+    }
+
+    const parsed = Number(value)
+    updateItem(bookId, {
+      newPrice:
+        Number.isFinite(parsed) && parsed > 0 ? parsed / quantity : null,
     })
   }
 
@@ -140,11 +178,15 @@ export function BillBooksSelector({
                 <Checkbox
                   checked={isChecked}
                   disabled={disabled}
-                  onCheckedChange={(checked) => toggleBook(book.id, checked === true)}
+                  onCheckedChange={(checked) =>
+                    toggleBook(book.id, checked === true)
+                  }
                 />
                 <span className="min-w-0 flex-1">
                   <span className="block font-medium">{book.title}</span>
-                  <span className="text-xs text-muted-foreground">{book.isbn}</span>
+                  <span className="text-xs text-muted-foreground">
+                    {book.isbn}
+                  </span>
                 </span>
               </label>
             )
@@ -201,14 +243,30 @@ export function BillBooksSelector({
             <table className="w-full text-sm">
               <thead className="bg-muted/20 text-left text-xs text-muted-foreground uppercase">
                 <tr>
-                  <th className="px-3 py-2">{t("bills.booksSelector.columns.title")}</th>
-                  <th className="px-3 py-2">{t("bills.booksSelector.columns.isbn")}</th>
-                  <th className="px-3 py-2">{t("bills.booksSelector.columns.stock")}</th>
-                  <th className="px-3 py-2">{t("bills.booksSelector.columns.initialPrice")}</th>
-                  <th className="px-3 py-2">{t("bills.booksSelector.columns.newPrice")}</th>
-                  <th className="px-3 py-2">{t("bills.booksSelector.columns.quantity")}</th>
-                  <th className="px-3 py-2">{t("bills.booksSelector.columns.finalPrice")}</th>
-                  <th className="px-3 py-2 text-right">{t("bills.booksSelector.columns.actions")}</th>
+                  <th className="px-3 py-2">
+                    {t("bills.booksSelector.columns.title")}
+                  </th>
+                  <th className="px-3 py-2">
+                    {t("bills.booksSelector.columns.isbn")}
+                  </th>
+                  <th className="px-3 py-2">
+                    {t("bills.booksSelector.columns.stock")}
+                  </th>
+                  <th className="px-3 py-2">
+                    {t("bills.booksSelector.columns.initialPrice")}
+                  </th>
+                  <th className="px-3 py-2">
+                    {t("bills.booksSelector.columns.newPrice")}
+                  </th>
+                  <th className="px-3 py-2">
+                    {t("bills.booksSelector.columns.quantity")}
+                  </th>
+                  <th className="px-3 py-2">
+                    {t("bills.booksSelector.columns.finalPrice")}
+                  </th>
+                  <th className="px-3 py-2 text-right">
+                    {t("bills.booksSelector.columns.actions")}
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -225,14 +283,18 @@ export function BillBooksSelector({
                         {book.isbn}
                       </td>
                       <td className="px-3 py-2">{book.stock}</td>
-                      <td className="px-3 py-2">{formatBillPrice(item.initialPrice, locale)}</td>
+                      <td className="px-3 py-2">
+                        {formatBillPrice(item.initialPrice, locale)}
+                      </td>
                       <td className="px-3 py-2">
                         <Input
                           type="number"
                           min={0}
                           step="0.01"
                           value={item.newPrice ?? ""}
-                          onChange={(event) => updateNewPrice(book.id, event.target.value)}
+                          onChange={(event) =>
+                            updateNewPrice(book.id, event.target.value)
+                          }
                           disabled={disabled}
                           placeholder={item.initialPrice.toFixed(2)}
                           className="h-8 w-28"
@@ -246,7 +308,13 @@ export function BillBooksSelector({
                             variant="outline"
                             className="h-7 w-7"
                             disabled={disabled || !canDecrease}
-                            onClick={() => updateQuantity(book.id, item.quantity - 1, maxQuantity)}
+                            onClick={() =>
+                              updateQuantity(
+                                book.id,
+                                item.quantity - 1,
+                                maxQuantity
+                              )
+                            }
                           >
                             <MinusIcon className="size-3.5" />
                           </Button>
@@ -259,14 +327,41 @@ export function BillBooksSelector({
                             variant="outline"
                             className="h-7 w-7"
                             disabled={disabled || !canIncrease}
-                            onClick={() => updateQuantity(book.id, item.quantity + 1, maxQuantity)}
+                            onClick={() =>
+                              updateQuantity(
+                                book.id,
+                                item.quantity + 1,
+                                maxQuantity
+                              )
+                            }
                           >
                             <PlusIcon className="size-3.5" />
                           </Button>
                         </div>
                       </td>
-                      <td className="px-3 py-2 font-semibold">
-                        {formatBillPrice(finalPrice, locale)}
+                      <td className="px-3 py-2">
+                        <Input
+                          type="number"
+                          min={0}
+                          step="0.01"
+                          value={
+                            item.newPrice != null
+                              ? (item.newPrice * item.quantity).toFixed(2)
+                              : ""
+                          }
+                          onChange={(event) =>
+                            updateFinalPrice(
+                              book.id,
+                              event.target.value,
+                              item.quantity
+                            )
+                          }
+                          placeholder={(
+                            item.initialPrice * item.quantity
+                          ).toFixed(2)}
+                          disabled={disabled}
+                          className="h-8 w-28 font-semibold"
+                        />
                       </td>
                       <td className="px-3 py-2">
                         <div className="flex items-center justify-end gap-2">
@@ -276,9 +371,13 @@ export function BillBooksSelector({
                             variant="outline"
                             className="h-7 w-7"
                             disabled={disabled}
-                            aria-label={t("bills.booksSelector.actions.viewBook")}
+                            aria-label={t(
+                              "bills.booksSelector.actions.viewBook"
+                            )}
                             title={t("bills.booksSelector.actions.viewBook")}
-                            onClick={() => router.push(`/dashboard/books/${book.id}`)}
+                            onClick={() =>
+                              router.push(`/dashboard/books/${book.id}`)
+                            }
                           >
                             <EyeIcon className="size-3.5" />
                           </Button>
@@ -288,9 +387,13 @@ export function BillBooksSelector({
                             variant="outline"
                             className="h-7 w-7"
                             disabled={disabled}
-                            aria-label={t("bills.booksSelector.actions.editBook")}
+                            aria-label={t(
+                              "bills.booksSelector.actions.editBook"
+                            )}
                             title={t("bills.booksSelector.actions.editBook")}
-                            onClick={() => router.push(`/dashboard/books/${book.id}/edit`)}
+                            onClick={() =>
+                              router.push(`/dashboard/books/${book.id}/edit`)
+                            }
                           >
                             <PencilIcon className="size-3.5" />
                           </Button>

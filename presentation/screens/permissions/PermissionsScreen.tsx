@@ -50,7 +50,10 @@ export function PermissionsScreen({
 }: PermissionsScreenProps) {
   const router = useRouter()
   const { t } = useTranslation()
-  const viewModel = usePermissionsViewModel(authUseCase, permissionManagementUseCase)
+  const viewModel = usePermissionsViewModel(
+    authUseCase,
+    permissionManagementUseCase
+  )
   const { state } = viewModel
 
   useEffect(() => {
@@ -68,7 +71,9 @@ export function PermissionsScreen({
 
   return (
     <>
-      {state.isLoading || state.isUnauthenticated ? <LoadingPermissionsScreen /> : null}
+      {state.isLoading || state.isUnauthenticated ? (
+        <LoadingPermissionsScreen />
+      ) : null}
 
       {state.error ? (
         <div className="flex flex-1 items-center justify-center p-4">
@@ -91,7 +96,9 @@ export function PermissionsScreen({
         <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
           <section className="pt-4">
             <h1 className="text-2xl font-semibold">{t("permissions.title")}</h1>
-            <p className="mt-1 text-sm text-gray-500">{t("permissions.subtitle")}</p>
+            <p className="mt-1 text-sm text-gray-500">
+              {t("permissions.subtitle")}
+            </p>
           </section>
 
           <div className="grid flex-1 grid-cols-1 gap-6 lg:grid-cols-[280px_1fr]">

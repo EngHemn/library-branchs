@@ -114,12 +114,17 @@ export function BranchRequestApproveDialog({
             <div className="space-y-4">
               <div className="rounded-lg border bg-muted/30 px-3 py-2 text-sm">
                 <p>
-                  <span className="text-muted-foreground">{t("branches.approveDialog.admin")}</span>{" "}
+                  <span className="text-muted-foreground">
+                    {t("branches.approveDialog.admin")}
+                  </span>{" "}
                   {action.request.adminName}
                 </p>
                 <p className="mt-1">
-                  <span className="text-muted-foreground">{t("branches.approveDialog.address")}</span>{" "}
-                  {action.request.address || t("branches.approveDialog.notProvided")}
+                  <span className="text-muted-foreground">
+                    {t("branches.approveDialog.address")}
+                  </span>{" "}
+                  {action.request.address ||
+                    t("branches.approveDialog.notProvided")}
                 </p>
               </div>
 
@@ -147,7 +152,9 @@ export function BranchRequestApproveDialog({
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="approvePassword">{t("branches.approveDialog.adminPassword")}</Label>
+                <Label htmlFor="approvePassword">
+                  {t("branches.approveDialog.adminPassword")}
+                </Label>
                 <div className="flex gap-2">
                   <div className="relative flex-1">
                     <Input
@@ -187,16 +194,27 @@ export function BranchRequestApproveDialog({
                     <RefreshCwIcon className="h-4 w-4" />
                   </Button>
                 </div>
-                {error ? <p className="text-sm text-destructive">{error}</p> : null}
+                {error ? (
+                  <p className="text-sm text-destructive">{error}</p>
+                ) : null}
               </div>
             </div>
 
             <DialogFooter>
-              <Button variant="outline" onClick={onCancel} disabled={isSubmitting}>
+              <Button
+                variant="outline"
+                onClick={onCancel}
+                disabled={isSubmitting}
+              >
                 {t("common.cancel")}
               </Button>
-              <Button onClick={handleConfirm} disabled={isSubmitting || !hasLocation}>
-                {isSubmitting ? t("branches.approveDialog.approving") : t("branches.approveDialog.approveRequest")}
+              <Button
+                onClick={handleConfirm}
+                disabled={isSubmitting || !hasLocation}
+              >
+                {isSubmitting
+                  ? t("branches.approveDialog.approving")
+                  : t("branches.approveDialog.approveRequest")}
               </Button>
             </DialogFooter>
           </>

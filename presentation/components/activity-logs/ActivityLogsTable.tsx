@@ -8,10 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import {
-  DataTable,
-  type DataTableColumn,
-} from "@/components/ui/data-table"
+import { DataTable, type DataTableColumn } from "@/components/ui/data-table"
 import type { ActivityLog } from "@/domain/entities/activity-log/ActivityLog"
 import { BranchLink } from "@/presentation/components/branch-management/BranchLink"
 import { ActivityLogActionBadge } from "@/presentation/components/activity-logs/ActivityLogActionBadge"
@@ -59,7 +56,9 @@ export function ActivityLogsTable({ logs }: ActivityLogsTableProps) {
       sortable: true,
       sortValue: (log) => timestampSortValue(log.createdAt),
       cell: (log) => (
-        <span className="whitespace-nowrap text-sm">{formatTimestamp(log.createdAt)}</span>
+        <span className="text-sm whitespace-nowrap">
+          {formatTimestamp(log.createdAt)}
+        </span>
       ),
     },
     {
@@ -89,7 +88,9 @@ export function ActivityLogsTable({ logs }: ActivityLogsTableProps) {
             {log.entityType}
           </Badge>
           {log.entityId ? (
-            <p className="font-mono text-xs text-muted-foreground">{log.entityId}</p>
+            <p className="font-mono text-xs text-muted-foreground">
+              {log.entityId}
+            </p>
           ) : null}
         </div>
       ),
@@ -101,8 +102,14 @@ export function ActivityLogsTable({ logs }: ActivityLogsTableProps) {
       sortValue: (log) => log.staffName,
       cell: (log) => (
         <div>
-          <StaffLink staffId={log.staffId} name={log.staffName} className="text-sm" />
-          <p className="font-mono text-xs text-muted-foreground">{log.staffId}</p>
+          <StaffLink
+            staffId={log.staffId}
+            name={log.staffName}
+            className="text-sm"
+          />
+          <p className="font-mono text-xs text-muted-foreground">
+            {log.staffId}
+          </p>
         </div>
       ),
     },
@@ -125,7 +132,9 @@ export function ActivityLogsTable({ logs }: ActivityLogsTableProps) {
       sortable: true,
       sortValue: (log) => log.ipAddress,
       cell: (log) => (
-        <span className="font-mono text-xs text-muted-foreground">{log.ipAddress}</span>
+        <span className="font-mono text-xs text-muted-foreground">
+          {log.ipAddress}
+        </span>
       ),
       className: "hidden lg:table-cell",
       headerClassName: "hidden lg:table-cell",
@@ -135,7 +144,9 @@ export function ActivityLogsTable({ logs }: ActivityLogsTableProps) {
   return (
     <Card className="rounded-lg">
       <CardHeader className="pb-3">
-        <CardTitle className="text-base">{t("activityLogs.table.title")}</CardTitle>
+        <CardTitle className="text-base">
+          {t("activityLogs.table.title")}
+        </CardTitle>
         <CardDescription>
           {logs.length === 0
             ? t("activityLogs.table.noLogsFound")

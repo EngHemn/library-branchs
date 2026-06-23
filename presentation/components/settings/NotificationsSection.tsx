@@ -95,9 +95,7 @@ export function NotificationsSection({
                   </FormItem>
                 )}
               />
-              {index < notificationFields.length - 1 && (
-                <Separator />
-              )}
+              {index < notificationFields.length - 1 && <Separator />}
             </div>
           ))}
         </div>

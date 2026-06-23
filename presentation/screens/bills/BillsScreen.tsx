@@ -50,7 +50,10 @@ function LoadingBillsScreen() {
   )
 }
 
-export function BillsScreen({ authUseCase, getBillsUseCase }: BillsScreenProps) {
+export function BillsScreen({
+  authUseCase,
+  getBillsUseCase,
+}: BillsScreenProps) {
   const router = useRouter()
   const viewModel = useBillsViewModel(authUseCase, getBillsUseCase)
   const { state } = viewModel
@@ -99,8 +102,12 @@ export function BillsScreen({ authUseCase, getBillsUseCase }: BillsScreenProps) 
           <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
             <section className="flex flex-col gap-3 pt-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <h1 className="text-2xl font-bold tracking-normal">{t("bills.title")}</h1>
-                <p className="mt-1 text-sm text-muted-foreground">{t("bills.subtitle")}</p>
+                <h1 className="text-2xl font-bold tracking-normal">
+                  {t("bills.title")}
+                </h1>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {t("bills.subtitle")}
+                </p>
               </div>
               <Button onClick={() => router.push("/dashboard/bills/create")}>
                 <PlusIcon />

@@ -1,6 +1,9 @@
 "use client"
 
-export function translateNotificationTitle(title: string, t: (key: any, params?: any) => string): string {
+export function translateNotificationTitle(
+  title: string,
+  t: (key: any, params?: any) => string
+): string {
   switch (title) {
     case "Overdue book reminder":
       return t("notifications.titles.overdueReminder")
@@ -25,11 +28,16 @@ export function translateNotificationTitle(title: string, t: (key: any, params?:
   }
 }
 
-export function translateNotificationMessage(message: string, t: (key: any, params?: any) => string): string {
+export function translateNotificationMessage(
+  message: string,
+  t: (key: any, params?: any) => string
+): string {
   // 1. Overdue reminder
   // "Member MBR-0182 has 2 books past due date."
   {
-    const match = message.match(/^Member\s+(MBR-\d+)\s+has\s+(\d+)\s+books?\s+past\s+due\s+date\.$/i)
+    const match = message.match(
+      /^Member\s+(MBR-\d+)\s+has\s+(\d+)\s+books?\s+past\s+due\s+date\.$/i
+    )
     if (match) {
       return t("notifications.messages.overdueReminder", {
         memberId: match[1],
@@ -41,7 +49,9 @@ export function translateNotificationMessage(message: string, t: (key: any, para
   // 2. New member registered
   // "Sara Al-Masri joined Central Library & Bookshop."
   {
-    const match = message.match(/^(.+?)\s+joined\s+Central\s+Library\s+&\s+Bookshop\.$/i)
+    const match = message.match(
+      /^(.+?)\s+joined\s+Central\s+Library\s+&\s+Bookshop\.$/i
+    )
     if (match) {
       return t("notifications.messages.newMember", { name: match[1] })
     }
@@ -51,7 +61,9 @@ export function translateNotificationMessage(message: string, t: (key: any, para
   // "The Silent Patient" has only 2 copies left at BR-002.
   // or "The Silent Patient" has 2 copies left at Central Library.
   {
-    const match = message.match(/^"(.+?)"\s+has\s+(?:only\s+)?(\d+)\s+copies?\s+left\s+at\s+(.+?)\.$/i)
+    const match = message.match(
+      /^"(.+?)"\s+has\s+(?:only\s+)?(\d+)\s+copies?\s+left\s+at\s+(.+?)\.$/i
+    )
     if (match) {
       return t("notifications.messages.lowStock", {
         title: match[1],
@@ -82,7 +94,9 @@ export function translateNotificationMessage(message: string, t: (key: any, para
   // 5. Daily sales summary
   // "Yesterday's sales totaled $1,240.50 across all branches."
   {
-    const match = message.match(/^Yesterday's\s+sales\s+totaled\s+\$(.+?)\s+across\s+all\s+branches\.$/i)
+    const match = message.match(
+      /^Yesterday's\s+sales\s+totaled\s+\$(.+?)\s+across\s+all\s+branches\.$/i
+    )
     if (match) {
       return t("notifications.messages.salesSummary", { amount: match[1] })
     }
@@ -91,7 +105,9 @@ export function translateNotificationMessage(message: string, t: (key: any, para
   // 6. Permission update
   // "Staff role permissions were updated for Brian Foster."
   {
-    const match = message.match(/^Staff\s+role\s+permissions\s+were\s+updated\s+for\s+(.+?)\.$/i)
+    const match = message.match(
+      /^Staff\s+role\s+permissions\s+were\s+updated\s+for\s+(.+?)\.$/i
+    )
     if (match) {
       return t("notifications.messages.permissionUpdate", { name: match[1] })
     }
@@ -100,7 +116,9 @@ export function translateNotificationMessage(message: string, t: (key: any, para
   // 7. Need request approved
   // "Network Switch Upgrade" at Northside Books has been approved.
   {
-    const match = message.match(/^"(.+?)"\s+at\s+(.+?)\s+has\s+been\s+approved\.$/i)
+    const match = message.match(
+      /^"(.+?)"\s+at\s+(.+?)\s+has\s+been\s+approved\.$/i
+    )
     if (match) {
       return t("notifications.messages.needApproved", {
         name: match[1],
@@ -124,7 +142,9 @@ export function translateNotificationMessage(message: string, t: (key: any, para
   // 9. Book out of stock
   // "The Silent Patient" is out of stock at Central Library.
   {
-    const match = message.match(/^"(.+?)"\s+is\s+out\s+of\s+stock\s+at\s+(.+?)\.$/i)
+    const match = message.match(
+      /^"(.+?)"\s+is\s+out\s+of\s+stock\s+at\s+(.+?)\.$/i
+    )
     if (match) {
       return t("notifications.messages.outOfStock", {
         title: match[1],

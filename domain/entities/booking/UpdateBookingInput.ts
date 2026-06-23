@@ -1,4 +1,7 @@
-import type { BookingStatus, BookingType } from "@/domain/entities/booking/Booking"
+import type {
+  BookingStatus,
+  BookingType,
+} from "@/domain/entities/booking/Booking"
 
 export type UpdateBookingInput = {
   id: string

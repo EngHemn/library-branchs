@@ -45,7 +45,10 @@ type EditBranchFormProps = {
   error: string | null
   isSaving: boolean
   isSaved: boolean
-  onFieldChange: (field: keyof EditBranchFormField, value: string | null) => void
+  onFieldChange: (
+    field: keyof EditBranchFormField,
+    value: string | null
+  ) => void
   onSave: () => void
   onCancel: () => void
 }
@@ -99,7 +102,9 @@ export function EditBranchForm({
 
         <div className="grid gap-5 sm:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor="branchName">{t("branches.create.fields.branchName")}</Label>
+            <Label htmlFor="branchName">
+              {t("branches.create.fields.branchName")}
+            </Label>
             <Input
               id="branchName"
               value={form.branchName}
@@ -124,7 +129,9 @@ export function EditBranchForm({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="adminName">{t("branches.create.fields.adminName")}</Label>
+            <Label htmlFor="adminName">
+              {t("branches.create.fields.adminName")}
+            </Label>
             <Input
               id="adminName"
               value={form.adminName}
@@ -149,7 +156,9 @@ export function EditBranchForm({
           </div>
 
           <div className="space-y-2 sm:col-span-2">
-            <Label htmlFor="address">{t("branches.create.fields.address")}</Label>
+            <Label htmlFor="address">
+              {t("branches.create.fields.address")}
+            </Label>
             <Input
               id="address"
               value={form.address}
@@ -172,7 +181,9 @@ export function EditBranchForm({
 
           {branchType === "sub" ? (
             <div className="space-y-2 sm:col-span-2">
-              <Label htmlFor="parentBranch">{t("branches.editForm.parentBranch")}</Label>
+              <Label htmlFor="parentBranch">
+                {t("branches.editForm.parentBranch")}
+              </Label>
               <Select
                 value={form.parentBranch ?? ""}
                 disabled={isDisabled}
@@ -185,7 +196,9 @@ export function EditBranchForm({
                   className="w-full"
                   aria-invalid={Boolean(fieldErrors.parentBranch)}
                 >
-                  <SelectValue placeholder={t("branches.editForm.selectParentBranch")} />
+                  <SelectValue
+                    placeholder={t("branches.editForm.selectParentBranch")}
+                  />
                 </SelectTrigger>
                 <SelectContent>
                   {mainBranches.map((branch) => (
@@ -204,17 +217,10 @@ export function EditBranchForm({
       <Separator />
 
       <CardFooter className="flex justify-end gap-3 pt-6">
-        <Button
-          variant="outline"
-          disabled={isDisabled}
-          onClick={onCancel}
-        >
+        <Button variant="outline" disabled={isDisabled} onClick={onCancel}>
           {t("common.cancel")}
         </Button>
-        <Button
-          disabled={isDisabled}
-          onClick={onSave}
-        >
+        <Button disabled={isDisabled} onClick={onSave}>
           {isSaving ? (
             <>
               <Loader2Icon className="size-4 animate-spin" />

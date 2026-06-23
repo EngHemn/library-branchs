@@ -11,10 +11,7 @@ import {
 
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import {
-  DataTable,
-  type DataTableColumn,
-} from "@/components/ui/data-table"
+import { DataTable, type DataTableColumn } from "@/components/ui/data-table"
 import { Input } from "@/components/ui/input"
 import type { Author } from "@/domain/entities/author/Author"
 import type { BranchPermissions } from "@/domain/entities/permission/BranchPermissions"
@@ -135,7 +132,7 @@ export function AuthorsTab({
       <CardHeader className="flex-row items-center justify-between gap-4 space-y-0">
         <CardTitle>{t("branches.view.tabs.authors")}</CardTitle>
         <div className="relative w-full max-w-xs">
-          <SearchIcon className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <SearchIcon className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder={t("branches.detail.shared.searchAuthors")}
             value={searchQuery}

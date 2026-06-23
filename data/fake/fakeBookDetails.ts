@@ -17,7 +17,8 @@ export const fakeBookDetails: BookDetail[] = [
     branchId: "BR-001",
     firstAddedBranch: "Erbil Main Branch",
     branchCount: 3,
-    description: "A haunting tale of friendship, betrayal, and redemption set against the backdrop of a changing Afghanistan.",
+    description:
+      "A haunting tale of friendship, betrayal, and redemption set against the backdrop of a changing Afghanistan.",
     pages: 371,
     publicationDate: "2003-05-29",
     shelfHint: "Fiction / A-H / Row 3",
@@ -129,7 +130,8 @@ export const fakeBookDetails: BookDetail[] = [
     branchId: "BR-001",
     firstAddedBranch: "Erbil Main Branch",
     branchCount: 2,
-    description: "A powerful story of two Afghan women whose lives intertwine across decades of war and hardship.",
+    description:
+      "A powerful story of two Afghan women whose lives intertwine across decades of war and hardship.",
     pages: 432,
     publicationDate: "2007-05-22",
     shelfHint: "Fiction / A-H / Row 3",
@@ -200,7 +202,8 @@ export const fakeBookDetails: BookDetail[] = [
     branchId: "BR-001",
     firstAddedBranch: "Erbil Main Branch",
     branchCount: 1,
-    description: "A celebrated collection of Kurdish poems exploring freedom, identity, and the beauty of the homeland.",
+    description:
+      "A celebrated collection of Kurdish poems exploring freedom, identity, and the beauty of the homeland.",
     pages: 192,
     publicationDate: "1998-03-15",
     shelfHint: "Poetry / B / Row 1",
@@ -250,7 +253,8 @@ export const fakeBookDetails: BookDetail[] = [
     branchId: "BR-004",
     firstAddedBranch: "Sulaymaniyah Main Branch",
     branchCount: 2,
-    description: "The first book of the Nobel Prize-winning Cairo Trilogy depicting Egyptian family life in the early 20th century.",
+    description:
+      "The first book of the Nobel Prize-winning Cairo Trilogy depicting Egyptian family life in the early 20th century.",
     pages: 498,
     publicationDate: "1956-01-01",
     shelfHint: "Fiction / M-N / Row 5",
@@ -331,7 +335,8 @@ export const fakeBookDetails: BookDetail[] = [
     branchId: "BR-004",
     firstAddedBranch: "Sulaymaniyah Main Branch",
     branchCount: 1,
-    description: "An epic tale of a young man's rebellion against feudal oppression in the mountains of Anatolia.",
+    description:
+      "An epic tale of a young man's rebellion against feudal oppression in the mountains of Anatolia.",
     pages: 368,
     publicationDate: "1955-01-01",
     shelfHint: "Fiction / K-L / Row 4",
@@ -391,7 +396,8 @@ export const fakeBookDetails: BookDetail[] = [
     branchId: "BR-002",
     firstAddedBranch: "Northside Books",
     branchCount: 1,
-    description: "A comprehensive guide to the design and analysis of computer algorithms.",
+    description:
+      "A comprehensive guide to the design and analysis of computer algorithms.",
     pages: 1292,
     publicationDate: "2009-07-31",
     shelfHint: "Row 4 / Shelf B",
@@ -430,7 +436,8 @@ export const fakeBookDetails: BookDetail[] = [
     branchId: "BR-011",
     firstAddedBranch: "Solo Reading Room",
     branchCount: 1,
-    description: "The classic fantasy adventure of Bilbo Baggins and his quest to reclaim the Lonely Mountain.",
+    description:
+      "The classic fantasy adventure of Bilbo Baggins and his quest to reclaim the Lonely Mountain.",
     pages: 310,
     publicationDate: "1937-09-21",
     shelfHint: "Fiction Section / A-Z",
@@ -469,7 +476,8 @@ export const fakeBookDetails: BookDetail[] = [
     branchId: "BR-011",
     firstAddedBranch: "Solo Reading Room",
     branchCount: 1,
-    description: "A dystopian novel warning against totalitarianism and extreme state control.",
+    description:
+      "A dystopian novel warning against totalitarianism and extreme state control.",
     pages: 328,
     publicationDate: "1949-06-08",
     shelfHint: "Classic Literature",

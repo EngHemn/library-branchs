@@ -1,6 +1,10 @@
 import type { Notification } from "@/domain/entities/notification/Notification"
 import type { Result } from "@/domain/result/Result"
-import { getFakeNotifications, markAllFakeNotificationsAsRead, markFakeNotificationAsRead } from "@/data/fake/fakeNotifications"
+import {
+  getFakeNotifications,
+  markAllFakeNotificationsAsRead,
+  markFakeNotificationAsRead,
+} from "@/data/fake/fakeNotifications"
 
 function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms))

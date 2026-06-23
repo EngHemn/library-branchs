@@ -17,10 +17,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import {
-  DataTable,
-  type DataTableColumn,
-} from "@/components/ui/data-table"
+import { DataTable, type DataTableColumn } from "@/components/ui/data-table"
 import {
   Popover,
   PopoverContent,
@@ -127,7 +124,9 @@ function MemberBranchesUsedDropdown({
   const { t } = useTranslation()
 
   if (branches.length === 0) {
-    return <span className="text-sm text-muted-foreground">{t("common.none")}</span>
+    return (
+      <span className="text-sm text-muted-foreground">{t("common.none")}</span>
+    )
   }
 
   if (branches.length === 1) {
@@ -147,17 +146,23 @@ function MemberBranchesUsedDropdown({
           className={`inline-flex h-7 max-w-[200px] items-center gap-1.5 rounded-md px-2.5 text-xs font-medium transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none ${branchBadgeClassName}`}
         >
           <Building2Icon className="size-3.5 shrink-0" />
-          <span>{t("members.branchesUsed.count", { count: branches.length })}</span>
+          <span>
+            {t("members.branchesUsed.count", { count: branches.length })}
+          </span>
           <ChevronDownIcon className="size-3 shrink-0 opacity-70" />
         </button>
       </PopoverTrigger>
       <PopoverContent align="start" className="w-72 p-0">
         <PopoverHeader className="border-b px-3 py-2.5">
-          <PopoverTitle className="text-sm">{t("members.branchesUsed.title")}</PopoverTitle>
+          <PopoverTitle className="text-sm">
+            {t("members.branchesUsed.title")}
+          </PopoverTitle>
           <PopoverDescription>
             {branches.length === 1
               ? t("members.branchesUsed.visited", { count: branches.length })
-              : t("members.branchesUsed.visitedPlural", { count: branches.length })}
+              : t("members.branchesUsed.visitedPlural", {
+                  count: branches.length,
+                })}
           </PopoverDescription>
         </PopoverHeader>
         <ul className="max-h-48 overflow-y-auto p-1.5">
@@ -183,7 +188,9 @@ function MemberBranchesUsedDropdown({
                     <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-md bg-sky-100 text-sky-600 dark:bg-sky-950 dark:text-sky-400">
                       <Building2Icon className="size-3.5" />
                     </span>
-                    <span className="min-w-0 leading-snug font-medium">{branch}</span>
+                    <span className="min-w-0 leading-snug font-medium">
+                      {branch}
+                    </span>
                   </div>
                 )}
               </li>
@@ -312,7 +319,9 @@ export function MembersTable({
       <CardHeader>
         <CardTitle>{t("members.table.title")}</CardTitle>
         <CardDescription>
-          {t("members.table.recordCount", { count: members.length.toLocaleString() })}
+          {t("members.table.recordCount", {
+            count: members.length.toLocaleString(),
+          })}
         </CardDescription>
       </CardHeader>
       <CardContent>

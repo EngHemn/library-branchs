@@ -31,9 +31,7 @@ export class SettingsFakeDataSource {
     return { success: true, data: { ...currentSettings } }
   }
 
-  async updateBorrowingRules(
-    input: BorrowingRules
-  ): Promise<Result<Settings>> {
+  async updateBorrowingRules(input: BorrowingRules): Promise<Result<Settings>> {
     await delay(700)
     currentSettings = {
       ...currentSettings,

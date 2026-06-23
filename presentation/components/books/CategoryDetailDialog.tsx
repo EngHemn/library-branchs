@@ -50,7 +50,9 @@ export function CategoryDetailDialog({
                 <p className="text-sm text-muted-foreground">Status</p>
                 <div className="mt-1">
                   <Badge
-                    variant={category.status === "active" ? "default" : "outline"}
+                    variant={
+                      category.status === "active" ? "default" : "outline"
+                    }
                   >
                     {category.status === "active" ? "Active" : "Inactive"}
                   </Badge>

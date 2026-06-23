@@ -1,12 +1,6 @@
 "use client"
 
-import {
-  CheckIcon,
-  EyeIcon,
-  PencilIcon,
-  Trash2Icon,
-  XIcon,
-} from "lucide-react"
+import { CheckIcon, EyeIcon, PencilIcon, Trash2Icon, XIcon } from "lucide-react"
 
 import {
   Card,
@@ -15,10 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import {
-  DataTable,
-  type DataTableColumn,
-} from "@/components/ui/data-table"
+import { DataTable, type DataTableColumn } from "@/components/ui/data-table"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import type { NeedListItem } from "@/domain/entities/need/Need"
 import { NeedActionButton } from "@/presentation/components/needs/NeedActionButton"
@@ -175,9 +166,14 @@ export function NeedsTable({
           <CardDescription>
             {needs.length === 0
               ? t("needs.table.noMatch")
-              : t(needs.length === 1 ? "needs.table.recordCount" : "needs.table.recordCountPlural", {
-                  count: needs.length,
-                })}
+              : t(
+                  needs.length === 1
+                    ? "needs.table.recordCount"
+                    : "needs.table.recordCountPlural",
+                  {
+                    count: needs.length,
+                  }
+                )}
           </CardDescription>
         </CardHeader>
         <CardContent className="p-0">

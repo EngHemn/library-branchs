@@ -168,14 +168,20 @@ export function MemberDetailsTab({
             <InfoRow icon={PhoneIcon} label={t("members.fields.phone")}>
               {member.phone}
             </InfoRow>
-            <InfoRow icon={Building2Icon} label={t("members.fields.registeredBranch")}>
+            <InfoRow
+              icon={Building2Icon}
+              label={t("members.fields.registeredBranch")}
+            >
               <BranchLink
                 branchId={member.branchId}
                 branchName={member.registerBranch}
               />
             </InfoRow>
             {showBranchesUsedSection ? (
-              <InfoRow icon={Building2Icon} label={t("members.table.branchesUsed")}>
+              <InfoRow
+                icon={Building2Icon}
+                label={t("members.table.branchesUsed")}
+              >
                 <div className="flex flex-wrap gap-1">
                   {member.allBranchesUsed.map((branch) => {
                     const branchId = branchNameToId?.[branch]

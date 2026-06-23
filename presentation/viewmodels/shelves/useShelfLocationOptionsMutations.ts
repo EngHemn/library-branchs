@@ -36,7 +36,9 @@ export function useShelfLocationOptionsMutations(
 
   const mutation = useMutation({
     mutationFn: async (
-      action: () => Promise<{ success: true } | { success: false; error: string }>
+      action: () => Promise<
+        { success: true } | { success: false; error: string }
+      >
     ) => {
       const result = await action()
       if (!result.success) throw new Error(result.error)

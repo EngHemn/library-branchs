@@ -21,10 +21,7 @@ import {
   ComboboxItem,
   ComboboxList,
 } from "@/components/ui/combobox"
-import {
-  DataTable,
-  type DataTableColumn,
-} from "@/components/ui/data-table"
+import { DataTable, type DataTableColumn } from "@/components/ui/data-table"
 import { Input } from "@/components/ui/input"
 import type { Author } from "@/domain/entities/author/Author"
 import type { Book, BookStatus } from "@/domain/entities/book/Book"
@@ -135,7 +132,10 @@ function FilterCombobox({
   )
 }
 
-function resolveAuthorHref(name: string, branchAuthors: Author[]): string | null {
+function resolveAuthorHref(
+  name: string,
+  branchAuthors: Author[]
+): string | null {
   const branchMatch = branchAuthors.find((author) => author.name === name)
   if (branchMatch) {
     return `/dashboard/authors/${branchMatch.id}`
@@ -246,7 +246,9 @@ export function BooksTab({
           className="size-10 rounded-md"
           imageClassName="rounded-md"
           fallback={
-            <span className="text-xs text-muted-foreground">{t("branches.detail.shared.notAvailable")}</span>
+            <span className="text-xs text-muted-foreground">
+              {t("branches.detail.shared.notAvailable")}
+            </span>
           }
         />
       ),
@@ -349,8 +351,7 @@ export function BooksTab({
           b.status === "available"
             ? t("branches.detail.shared.deactivate")
             : t("branches.detail.shared.activate")
-        const ToggleIcon =
-          b.status === "available" ? PowerOffIcon : PowerIcon
+        const ToggleIcon = b.status === "available" ? PowerOffIcon : PowerIcon
 
         return (
           <div className="table-action-content">
@@ -392,7 +393,7 @@ export function BooksTab({
           <CardTitle>{t("branches.view.tabs.books")}</CardTitle>
           <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
             <div className="relative w-full max-w-xs">
-              <SearchIcon className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+              <SearchIcon className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder={t("branches.detail.shared.searchBooks")}
                 value={searchQuery}

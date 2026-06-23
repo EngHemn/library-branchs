@@ -77,10 +77,7 @@ type GroupLinkProps = {
 
 export function GroupLink({ groupId, name, className }: GroupLinkProps) {
   return (
-    <DashboardEntityLink
-      href={getGroupViewHref(groupId)}
-      className={className}
-    >
+    <DashboardEntityLink href={getGroupViewHref(groupId)} className={className}>
       {name}
     </DashboardEntityLink>
   )
@@ -144,7 +141,10 @@ export function TranslatorLink({ name, className }: TranslatorLinkProps) {
   }
 
   return (
-    <OptionalEntityLink href={getTranslatorViewHref(name)} className={className}>
+    <OptionalEntityLink
+      href={getTranslatorViewHref(name)}
+      className={className}
+    >
       {name}
     </OptionalEntityLink>
   )
@@ -178,4 +178,3 @@ export function buildCreateHrefWithReturn(
   const params = new URLSearchParams({ returnTo })
   return `${basePath}?${params.toString()}`
 }
-

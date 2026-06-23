@@ -43,7 +43,10 @@ export function ActivityLogsScreen({
   getActivityLogsUseCase,
 }: ActivityLogsScreenProps) {
   const { t } = useTranslation()
-  const viewModel = useActivityLogsViewModel(authUseCase, getActivityLogsUseCase)
+  const viewModel = useActivityLogsViewModel(
+    authUseCase,
+    getActivityLogsUseCase
+  )
   const { state } = viewModel
 
   useDashboardBreadcrumbs([
@@ -102,7 +105,9 @@ export function ActivityLogsScreen({
 
       <Card className="rounded-lg">
         <CardHeader className="pb-3">
-          <CardTitle className="text-base">{t("activityLogs.filters.title")}</CardTitle>
+          <CardTitle className="text-base">
+            {t("activityLogs.filters.title")}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <ActivityLogsFilters

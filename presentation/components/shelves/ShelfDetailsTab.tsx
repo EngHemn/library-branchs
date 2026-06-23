@@ -37,7 +37,10 @@ export function ShelfDetailsTab({
         value={<ShelfTypeBadge shelfType={shelf.shelfType} />}
       />
       {showBranchField ? (
-        <DetailRow label={t("shelves.detail.branch")} value={shelf.branchName} />
+        <DetailRow
+          label={t("shelves.detail.branch")}
+          value={shelf.branchName}
+        />
       ) : null}
       <DetailRow
         label={t("shelves.detail.location")}

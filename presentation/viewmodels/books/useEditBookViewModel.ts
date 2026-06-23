@@ -12,7 +12,10 @@ import {
 import type { GetBooksUseCase } from "@/domain/usecases/books/GetBooksUseCase"
 import type { ShelfManagementUseCase } from "@/domain/usecases/shelves/ShelfManagementUseCase"
 import { shelfHintToLocationValues } from "@/lib/bookLocationForm"
-import type { EditBookStatus, EditBookViewModelState } from "./EditBookViewModelState"
+import type {
+  EditBookStatus,
+  EditBookViewModelState,
+} from "./EditBookViewModelState"
 import { useBookFormLocation } from "./useBookFormLocation"
 
 type EditBookViewModel = {

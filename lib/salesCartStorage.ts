@@ -20,7 +20,9 @@ type StoredSalesCartShape = {
   displayedBranchId: string | null
 }
 
-function isSaleBook(value: Record<string, string | number | null>): value is SaleBook {
+function isSaleBook(
+  value: Record<string, string | number | null>
+): value is SaleBook {
   return (
     typeof value.id === "string" &&
     typeof value.title === "string" &&
@@ -112,7 +114,10 @@ export function readStoredSalesCart(userId: string): StoredSalesCart {
   }
 }
 
-export function writeStoredSalesCart(userId: string, cartState: StoredSalesCart): void {
+export function writeStoredSalesCart(
+  userId: string,
+  cartState: StoredSalesCart
+): void {
   if (typeof window === "undefined") {
     return
   }

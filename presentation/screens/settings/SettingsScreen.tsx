@@ -39,7 +39,7 @@ function LoadingSettingsScreen() {
         <Skeleton className="h-14 rounded-lg" />
         <Skeleton className="h-14 rounded-lg" />
         <Skeleton className="h-14 rounded-lg" />
-        <Skeleton className="h-10 w-32 rounded-lg self-end" />
+        <Skeleton className="h-10 w-32 self-end rounded-lg" />
       </div>
     </div>
   )
@@ -95,11 +95,21 @@ export function SettingsScreen({ settingsUseCase }: SettingsScreenProps) {
 
       <Tabs defaultValue="appearance" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="appearance">{t("settings.tabs.appearance")}</TabsTrigger>
-          <TabsTrigger value="library-info">{t("settings.tabs.libraryInfo")}</TabsTrigger>
-          <TabsTrigger value="borrowing-rules">{t("settings.tabs.borrowingRules")}</TabsTrigger>
-          <TabsTrigger value="notifications">{t("settings.tabs.notifications")}</TabsTrigger>
-          <TabsTrigger value="language">{t("settings.tabs.language")}</TabsTrigger>
+          <TabsTrigger value="appearance">
+            {t("settings.tabs.appearance")}
+          </TabsTrigger>
+          <TabsTrigger value="library-info">
+            {t("settings.tabs.libraryInfo")}
+          </TabsTrigger>
+          <TabsTrigger value="borrowing-rules">
+            {t("settings.tabs.borrowingRules")}
+          </TabsTrigger>
+          <TabsTrigger value="notifications">
+            {t("settings.tabs.notifications")}
+          </TabsTrigger>
+          <TabsTrigger value="language">
+            {t("settings.tabs.language")}
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="appearance">
@@ -125,7 +135,9 @@ export function SettingsScreen({ settingsUseCase }: SettingsScreenProps) {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-2">
-              <p className="text-sm font-medium">{t("settings.language.label")}</p>
+              <p className="text-sm font-medium">
+                {t("settings.language.label")}
+              </p>
               <LocaleSwitcher />
             </CardContent>
           </Card>

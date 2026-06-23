@@ -15,7 +15,10 @@ import type { GetBooksUseCase } from "@/domain/usecases/books/GetBooksUseCase"
 import type { StockUseCase } from "@/domain/usecases/stock/StockUseCase"
 import { resolveUserBranchId } from "@/lib/dashboardBranchScope"
 import { isSingleBranchManagedUser } from "@/lib/salesStockBranchScope"
-import type { CreateStockStatus, CreateStockViewModelState } from "./CreateStockViewModelState"
+import type {
+  CreateStockStatus,
+  CreateStockViewModelState,
+} from "./CreateStockViewModelState"
 import type { StockBookOption } from "@/presentation/components/stock/StockBookSearchCombobox"
 
 type CreateStockViewModel = {
@@ -70,7 +73,9 @@ export function useCreateStockViewModel(
   const [error, setError] = useState<string | null>(null)
 
   const form = useForm<CreateStockFormValues>({
-    resolver: zodResolver(createStockFormSchema) as Resolver<CreateStockFormValues>,
+    resolver: zodResolver(
+      createStockFormSchema
+    ) as Resolver<CreateStockFormValues>,
     defaultValues: {
       bookId: "",
       branchId: "",
@@ -132,7 +137,7 @@ export function useCreateStockViewModel(
   const isSingleBranchManaged = user ? isSingleBranchManagedUser(user) : false
   const showSubBranchField = !isSingleBranchManaged
   const effectiveBranchId = isSubBranchUser
-    ? getMainBranchIdForSubBranch(rows, userBranchId) ?? userBranchId
+    ? (getMainBranchIdForSubBranch(rows, userBranchId) ?? userBranchId)
     : userBranchId
 
   useEffect(() => {
@@ -148,7 +153,7 @@ export function useCreateStockViewModel(
     setError(null)
 
     const branchId = isSubBranchUser
-      ? getMainBranchIdForSubBranch(rows, userBranchId) ?? values.branchId
+      ? (getMainBranchIdForSubBranch(rows, userBranchId) ?? values.branchId)
       : values.branchId
 
     const subBranchId = isSubBranchUser

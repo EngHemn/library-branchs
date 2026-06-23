@@ -24,7 +24,11 @@ export const borrowingRulesFormSchema = z.object({
     .min(1, validationKeys.atLeastOneBooking)
     .max(50),
   finePerDay: z.number().min(0, validationKeys.cannotBeNegative),
-  gracePeriodDays: z.number().int().min(0, validationKeys.cannotBeNegative).max(30),
+  gracePeriodDays: z
+    .number()
+    .int()
+    .min(0, validationKeys.cannotBeNegative)
+    .max(30),
 })
 
 export const notificationsFormSchema = z.object({

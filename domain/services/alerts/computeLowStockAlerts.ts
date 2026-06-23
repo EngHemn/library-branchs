@@ -36,12 +36,12 @@ export function computeLowStockAlertsFromStock(
         resolvedAt: isManuallyResolved ? new Date().toISOString() : null,
       }
     })
-    .filter((alert) => alert.status === "active" || manuallyResolvedIds.has(alert.id))
+    .filter(
+      (alert) => alert.status === "active" || manuallyResolvedIds.has(alert.id)
+    )
 }
 
-export function computeLowStockAlertSummary(
-  alerts: LowStockAlert[]
-): {
+export function computeLowStockAlertSummary(alerts: LowStockAlert[]): {
   lowStockBooks: number
   outOfStockBooks: number
   activeAlerts: number
@@ -50,7 +50,8 @@ export function computeLowStockAlertSummary(
 
   return {
     activeAlerts: activeAlerts.length,
-    lowStockBooks: activeAlerts.filter((alert) => alert.currentStock > 0).length,
+    lowStockBooks: activeAlerts.filter((alert) => alert.currentStock > 0)
+      .length,
     outOfStockBooks: activeAlerts.filter((alert) => alert.currentStock === 0)
       .length,
   }

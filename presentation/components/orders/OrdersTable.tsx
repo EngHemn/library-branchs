@@ -11,10 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import {
-  DataTable,
-  type DataTableColumn,
-} from "@/components/ui/data-table"
+import { DataTable, type DataTableColumn } from "@/components/ui/data-table"
 import type { Order } from "@/domain/entities/order/Order"
 import { OrderActionButton } from "@/presentation/components/orders/OrderActionButton"
 import { OrderStatusBadge } from "@/presentation/components/orders/OrderStatusBadge"
@@ -81,7 +78,10 @@ export function OrdersTable({
         sortable: true,
         sortValue: (order) => order.branchLocation,
         cell: (order) => (
-          <span className="max-w-[200px] truncate text-sm" title={order.branchLocation}>
+          <span
+            className="max-w-[200px] truncate text-sm"
+            title={order.branchLocation}
+          >
             {order.branchLocation}
           </span>
         ),
@@ -93,7 +93,9 @@ export function OrdersTable({
         sortValue: (order) => orderDateSortValue(order.orderDate),
         cell: (order) => (
           <div className="text-sm">
-            <p className="font-medium">{formatOrderDate(order.orderDate, locale)}</p>
+            <p className="font-medium">
+              {formatOrderDate(order.orderDate, locale)}
+            </p>
             <p className="text-xs text-muted-foreground">
               {formatOrderTime(order.orderDate, locale)}
             </p>
@@ -107,7 +109,9 @@ export function OrdersTable({
         sortValue: (order) => orderDateSortValue(order.expectedDeliveryDate),
         cell: (order) => (
           <div className="text-sm">
-            <p className="font-medium">{formatOrderDate(order.expectedDeliveryDate, locale)}</p>
+            <p className="font-medium">
+              {formatOrderDate(order.expectedDeliveryDate, locale)}
+            </p>
             <p className="text-xs text-muted-foreground">
               {formatOrderTime(order.expectedDeliveryDate, locale)}
             </p>
@@ -188,7 +192,9 @@ export function OrdersTable({
       <CardHeader>
         <CardTitle>{t("orders.table.title")}</CardTitle>
         <CardDescription>
-          {t("orders.table.recordCount", { count: orders.length.toLocaleString(locale) })}
+          {t("orders.table.recordCount", {
+            count: orders.length.toLocaleString(locale),
+          })}
         </CardDescription>
       </CardHeader>
       <CardContent>

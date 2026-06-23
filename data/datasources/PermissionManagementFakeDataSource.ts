@@ -93,7 +93,10 @@ export class PermissionManagementFakeDataSource {
     }
 
     const newRole: PermissionRole = {
-      id: createUniqueRoleId(trimmedName, this.roles.map((role) => role.id)),
+      id: createUniqueRoleId(
+        trimmedName,
+        this.roles.map((role) => role.id)
+      ),
       name: trimmedName,
       description: input.description.trim(),
       assignedPermissions: [],
@@ -138,8 +141,7 @@ export class PermissionManagementFakeDataSource {
     const normalizedName = trimmedName.toLowerCase()
     const nameExists = this.roles.some(
       (role) =>
-        role.id !== roleId &&
-        role.name.trim().toLowerCase() === normalizedName
+        role.id !== roleId && role.name.trim().toLowerCase() === normalizedName
     )
 
     if (nameExists) {

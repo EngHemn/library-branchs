@@ -118,7 +118,9 @@ export function GroupFormFields({
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder={t("groups.placeholders.selectStatus")} />
+                      <SelectValue
+                        placeholder={t("groups.placeholders.selectStatus")}
+                      />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -148,7 +150,9 @@ export function GroupFormFields({
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder={t("groups.placeholders.selectBranch")} />
+                        <SelectValue
+                          placeholder={t("groups.placeholders.selectBranch")}
+                        />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>

@@ -60,9 +60,15 @@ export function NeedRejectDialog({
           <Button variant="outline" onClick={onClose} disabled={isRejecting}>
             {t("needs.rejectDialog.cancel")}
           </Button>
-          <Button variant="destructive" onClick={onConfirm} disabled={isRejecting}>
+          <Button
+            variant="destructive"
+            onClick={onConfirm}
+            disabled={isRejecting}
+          >
             {isRejecting ? <Loader2Icon className="animate-spin" /> : null}
-            {isRejecting ? t("needs.rejectDialog.rejecting") : t("needs.rejectDialog.reject")}
+            {isRejecting
+              ? t("needs.rejectDialog.rejecting")
+              : t("needs.rejectDialog.reject")}
           </Button>
         </DialogFooter>
       </DialogContent>

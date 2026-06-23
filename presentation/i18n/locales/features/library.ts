@@ -733,8 +733,7 @@ export const authors = {
     },
     deleteDialog: {
       title: "سڕینەوەی نووسەر",
-      description:
-        'دڵنیایت لە سڕینەوەی "{name}"؟ ئەم کردارە ناگەڕێتەوە.',
+      description: 'دڵنیایت لە سڕینەوەی "{name}"؟ ئەم کردارە ناگەڕێتەوە.',
     },
     view: {
       breadcrumbFallback: "وردەکاری نووسەر",
@@ -947,8 +946,7 @@ export const translators = {
     },
     deleteDialog: {
       title: "سڕینەوەی وەرگێڕ",
-      description:
-        'دڵنیایت لە سڕینەوەی "{name}"؟ ئەم کردارە ناگەڕێتەوە.',
+      description: 'دڵنیایت لە سڕینەوەی "{name}"؟ ئەم کردارە ناگەڕێتەوە.',
     },
     view: {
       breadcrumbFallback: "وردەکاری وەرگێڕ",
@@ -1150,7 +1148,8 @@ export const categories = {
     },
     concat: {
       title: "تێکەڵکردنی پۆلەکان",
-      description: "بەلایەنی کەم دوو پۆل هەڵبژێرە بۆ تێکەڵکردنیان لە یەک پۆلی نویدا.",
+      description:
+        "بەلایەنی کەم دوو پۆل هەڵبژێرە بۆ تێکەڵکردنیان لە یەک پۆلی نویدا.",
       categoriesToMerge: "پۆلەکان بۆ تێکەڵکردن",
       booksCount: "{count} کتێب",
       newName: "ناوی نوێ",
@@ -1164,8 +1163,7 @@ export const categories = {
     },
     deleteDialog: {
       title: "سڕینەوەی پۆل",
-      description:
-        'دڵنیایت لە سڕینەوەی "{name}"؟ ئەم کردارە ناگەڕێتەوە.',
+      description: 'دڵنیایت لە سڕینەوەی "{name}"؟ ئەم کردارە ناگەڕێتەوە.',
     },
   },
 }

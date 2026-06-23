@@ -22,10 +22,7 @@ export function NeedNotesTab({ comments }: NeedNotesTabProps) {
   return (
     <div className="space-y-4">
       {comments.map((comment) => (
-        <div
-          key={comment.id}
-          className="rounded-lg border bg-muted/30 p-4"
-        >
+        <div key={comment.id} className="rounded-lg border bg-muted/30 p-4">
           <div className="mb-2 flex items-center justify-between gap-2">
             <span className="text-sm font-medium">{comment.author}</span>
             <span className="text-xs text-muted-foreground">

@@ -103,8 +103,12 @@ export function MembersScreen({
           <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
             <section className="flex flex-col gap-3 pt-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <h1 className="text-2xl font-bold tracking-normal">{t("members.title")}</h1>
-                <p className="mt-1 text-sm text-muted-foreground">{t("members.subtitle")}</p>
+                <h1 className="text-2xl font-bold tracking-normal">
+                  {t("members.title")}
+                </h1>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {t("members.subtitle")}
+                </p>
               </div>
               <Button onClick={() => router.push("/dashboard/members/create")}>
                 <PlusIcon />
@@ -125,7 +129,9 @@ export function MembersScreen({
               showBranchUsedFilter={state.showBranchUsedFilter}
               onSearchQueryChange={viewModel.setSearchQuery}
               onStatusFilterChange={viewModel.setStatusFilter}
-              onBranchRegisteredFilterChange={viewModel.setBranchRegisteredFilter}
+              onBranchRegisteredFilterChange={
+                viewModel.setBranchRegisteredFilter
+              }
               onBranchUsedFilterChange={viewModel.setBranchUsedFilter}
               onDateFromChange={viewModel.setDateFrom}
               onDateToChange={viewModel.setDateTo}
@@ -136,8 +142,12 @@ export function MembersScreen({
               branchNameToId={branchNameToId}
               showRegisterBranchColumn={state.showRegisterBranchColumn}
               showBranchUsedColumn={state.showBranchUsedColumn}
-              onView={(member) => router.push(`/dashboard/members/${member.id}`)}
-              onEdit={(member) => router.push(`/dashboard/members/${member.id}/edit`)}
+              onView={(member) =>
+                router.push(`/dashboard/members/${member.id}`)
+              }
+              onEdit={(member) =>
+                router.push(`/dashboard/members/${member.id}/edit`)
+              }
               onDelete={(member) => setDeleteMember(member)}
             />
           </div>

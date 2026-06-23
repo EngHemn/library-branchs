@@ -25,10 +25,7 @@ export function NeedAttachmentsTab({ attachments }: NeedAttachmentsTabProps) {
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {attachments.map((attachment) => (
-        <div
-          key={attachment.id}
-          className="rounded-lg border p-4"
-        >
+        <div key={attachment.id} className="rounded-lg border p-4">
           {attachment.type === "image" ? (
             <EntityImage
               src={attachment.url}

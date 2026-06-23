@@ -55,7 +55,10 @@ export function CreateBillScreen({
   const searchParams = useSearchParams()
   const returnTo = searchParams.get("returnTo") ?? "/dashboard/bills"
   const currentPath = `/dashboard/bills/create?returnTo=${encodeURIComponent(returnTo)}`
-  const createBookHref = buildCreateHrefWithReturn(CREATE_BOOK_PATH, currentPath)
+  const createBookHref = buildCreateHrefWithReturn(
+    CREATE_BOOK_PATH,
+    currentPath
+  )
   const viewModel = useCreateBillViewModel(authUseCase, getBillsUseCase)
   const { t } = useTranslation()
   const { state, form } = viewModel
@@ -78,8 +81,12 @@ export function CreateBillScreen({
     <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
       <section className="flex items-center justify-between pt-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-normal">{t("bills.create.title")}</h1>
-          <p className="mt-1 text-sm text-muted-foreground">{t("bills.create.subtitle")}</p>
+          <h1 className="text-2xl font-semibold tracking-normal">
+            {t("bills.create.title")}
+          </h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {t("bills.create.subtitle")}
+          </p>
         </div>
         <Button variant="outline" onClick={goBack}>
           <ArrowLeftIcon />
@@ -100,7 +107,9 @@ export function CreateBillScreen({
       <Card className="rounded-lg">
         <CardHeader>
           <CardTitle>{t("bills.create.detailsTitle")}</CardTitle>
-          <CardDescription>{t("bills.create.detailsDescription")}</CardDescription>
+          <CardDescription>
+            {t("bills.create.detailsDescription")}
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <BillFormFields
@@ -123,8 +132,14 @@ export function CreateBillScreen({
                 {t("common.cancel")}
               </Button>
               <Button type="submit" disabled={state.isSaving || state.isSaved}>
-                {state.isSaving ? <Loader2Icon className="animate-spin" /> : <PlusIcon />}
-                {state.isSaving ? t("common.creating") : t("bills.create.createButton")}
+                {state.isSaving ? (
+                  <Loader2Icon className="animate-spin" />
+                ) : (
+                  <PlusIcon />
+                )}
+                {state.isSaving
+                  ? t("common.creating")
+                  : t("bills.create.createButton")}
               </Button>
             </div>
           </BillFormFields>

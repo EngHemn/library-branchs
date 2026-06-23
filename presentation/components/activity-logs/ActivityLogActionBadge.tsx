@@ -61,7 +61,9 @@ const actionConfig: Record<
   },
 }
 
-export function ActivityLogActionBadge({ action }: ActivityLogActionBadgeProps) {
+export function ActivityLogActionBadge({
+  action,
+}: ActivityLogActionBadgeProps) {
   const { t } = useTranslation()
   const config = actionConfig[action]
 

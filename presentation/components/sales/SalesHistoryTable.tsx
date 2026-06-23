@@ -12,10 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import {
-  DataTable,
-  type DataTableColumn,
-} from "@/components/ui/data-table"
+import { DataTable, type DataTableColumn } from "@/components/ui/data-table"
 import {
   Sheet,
   SheetContent,
@@ -223,7 +220,9 @@ export function SalesHistoryTable({
         <CardHeader>
           <CardTitle>{t("sales.history.title")}</CardTitle>
           <CardDescription>
-            {t("sales.history.recordCount", { count: sales.length.toLocaleString() })}
+            {t("sales.history.recordCount", {
+              count: sales.length.toLocaleString(),
+            })}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -249,7 +248,9 @@ export function SalesHistoryTable({
       >
         <SheetContent className="w-full p-0 sm:min-w-2/5">
           <SheetHeader className="border-b">
-            <SheetTitle>{selectedSale?.id ?? t("sales.history.saleDetails")}</SheetTitle>
+            <SheetTitle>
+              {selectedSale?.id ?? t("sales.history.saleDetails")}
+            </SheetTitle>
             <SheetDescription>
               {selectedSale
                 ? t("sales.history.saleAt", {
@@ -272,7 +273,9 @@ export function SalesHistoryTable({
               <div className="grid grid-cols-2 gap-3 text-sm">
                 <Card className="rounded-lg">
                   <CardContent className="space-y-1 p-3">
-                    <p className="text-muted-foreground">{t("sales.history.table.subtotal")}</p>
+                    <p className="text-muted-foreground">
+                      {t("sales.history.table.subtotal")}
+                    </p>
                     <p className="font-semibold">
                       {formatCurrency(selectedSale.subtotal)}
                     </p>
@@ -280,7 +283,9 @@ export function SalesHistoryTable({
                 </Card>
                 <Card className="rounded-lg">
                   <CardContent className="space-y-1 p-3">
-                    <p className="text-muted-foreground">{t("sales.history.table.discount")}</p>
+                    <p className="text-muted-foreground">
+                      {t("sales.history.table.discount")}
+                    </p>
                     <p className="font-semibold">
                       {formatCurrency(selectedSale.discountAmount)}
                     </p>
@@ -288,7 +293,9 @@ export function SalesHistoryTable({
                 </Card>
                 <Card className="col-span-2 rounded-lg">
                   <CardContent className="space-y-1 p-3">
-                    <p className="text-muted-foreground">{t("sales.history.table.total")}</p>
+                    <p className="text-muted-foreground">
+                      {t("sales.history.table.total")}
+                    </p>
                     <p className="text-base font-semibold">
                       {formatCurrency(selectedSale.total)}
                     </p>
@@ -300,9 +307,15 @@ export function SalesHistoryTable({
                 <TableHeader>
                   <TableRow>
                     <TableHead>{t("sales.history.table.book")}</TableHead>
-                    <TableHead className="text-right">{t("sales.history.table.qty")}</TableHead>
-                    <TableHead className="text-right">{t("sales.history.table.price")}</TableHead>
-                    <TableHead className="text-right">{t("sales.history.table.lineTotal")}</TableHead>
+                    <TableHead className="text-right">
+                      {t("sales.history.table.qty")}
+                    </TableHead>
+                    <TableHead className="text-right">
+                      {t("sales.history.table.price")}
+                    </TableHead>
+                    <TableHead className="text-right">
+                      {t("sales.history.table.lineTotal")}
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -311,7 +324,9 @@ export function SalesHistoryTable({
                       <TableCell className="max-w-[220px] truncate">
                         {item.book.title}
                       </TableCell>
-                      <TableCell className="text-right">{item.quantity}</TableCell>
+                      <TableCell className="text-right">
+                        {item.quantity}
+                      </TableCell>
                       <TableCell className="text-right">
                         {formatCurrency(item.book.price)}
                       </TableCell>

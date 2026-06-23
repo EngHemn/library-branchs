@@ -39,8 +39,8 @@ export function NeedActivityLogTab({ activityLog }: NeedActivityLogTabProps) {
     <div className="space-y-4">
       {[...activityLog]
         .sort(
-        (a, b) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         )
         .map((entry) => {
           const Icon = actionIcons[entry.action] ?? ClockIcon
@@ -62,7 +62,9 @@ export function NeedActivityLogTab({ activityLog }: NeedActivityLogTabProps) {
                   {entry.description}
                 </p>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  {t("needs.activityLogTab.byUser", { user: entry.performedBy })}
+                  {t("needs.activityLogTab.byUser", {
+                    user: entry.performedBy,
+                  })}
                 </p>
               </div>
             </div>

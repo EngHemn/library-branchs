@@ -40,7 +40,9 @@ export class TranslatorManagementFakeDataSource {
     }
   }
 
-  async createTranslator(input: CreateTranslatorInput): Promise<Result<Translator>> {
+  async createTranslator(
+    input: CreateTranslatorInput
+  ): Promise<Result<Translator>> {
     await delay(350)
     const newTranslator: Translator = {
       id: `TR-${String(nextTranslatorId++)}`,
@@ -56,7 +58,9 @@ export class TranslatorManagementFakeDataSource {
     return { success: true, data: { ...newTranslator } }
   }
 
-  async updateTranslator(input: UpdateTranslatorInput): Promise<Result<Translator>> {
+  async updateTranslator(
+    input: UpdateTranslatorInput
+  ): Promise<Result<Translator>> {
     await delay(350)
     const translatorIndex = this.translators.findIndex(
       (item) => item.id === input.id
@@ -80,7 +84,9 @@ export class TranslatorManagementFakeDataSource {
 
   async deleteTranslator(translatorId: string): Promise<Result<null>> {
     await delay(250)
-    const exists = this.translators.some((translator) => translator.id === translatorId)
+    const exists = this.translators.some(
+      (translator) => translator.id === translatorId
+    )
     if (!exists) {
       return { success: false, error: "Translator could not be found." }
     }

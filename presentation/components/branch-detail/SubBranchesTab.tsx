@@ -11,10 +11,7 @@ import {
 
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import {
-  DataTable,
-  type DataTableColumn,
-} from "@/components/ui/data-table"
+import { DataTable, type DataTableColumn } from "@/components/ui/data-table"
 import { Input } from "@/components/ui/input"
 import type { Branch } from "@/domain/entities/branch/Branch"
 import type { BranchPermissions } from "@/domain/entities/permission/BranchPermissions"
@@ -68,9 +65,7 @@ export function SubBranchesTab({
       header: t("branches.requests.branchAdmin"),
       sortable: true,
       sortValue: (b) => b.adminName,
-      cell: (b) => (
-        <BranchAdminLink branchId={b.id} adminName={b.adminName} />
-      ),
+      cell: (b) => <BranchAdminLink branchId={b.id} adminName={b.adminName} />,
     },
     {
       key: "email",
@@ -150,7 +145,7 @@ export function SubBranchesTab({
       <CardHeader className="flex-row items-center justify-between gap-4 space-y-0">
         <CardTitle>{t("branches.view.tabs.subBranches")}</CardTitle>
         <div className="relative w-full max-w-xs">
-          <SearchIcon className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <SearchIcon className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder={t("branches.detail.shared.searchSubBranches")}
             value={searchQuery}

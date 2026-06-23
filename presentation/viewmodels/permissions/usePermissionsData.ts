@@ -2,7 +2,10 @@
 
 import { useQuery } from "@tanstack/react-query"
 
-import type { PermissionConfig, PermissionRole } from "@/domain/entities/permission/Permission"
+import type {
+  PermissionConfig,
+  PermissionRole,
+} from "@/domain/entities/permission/Permission"
 import type { User } from "@/domain/entities/User"
 import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { PermissionManagementUseCase } from "@/domain/usecases/permission/PermissionManagementUseCase"
@@ -32,7 +35,8 @@ export function usePermissionsData(
       queryFn: async () => {
         const currentUserResult = await authUseCase.getCurrentUser()
         if (!currentUserResult.success) throw new Error(currentUserResult.error)
-        if (!currentUserResult.data) return { user: null, roles: [], config: null }
+        if (!currentUserResult.data)
+          return { user: null, roles: [], config: null }
 
         const [rolesResult, configResult] = await Promise.all([
           permissionManagementUseCase.getPermissionRoles(),

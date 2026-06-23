@@ -9,9 +9,7 @@ import type {
 import type { Result } from "@/domain/result/Result"
 
 export class SettingsRepositoryImpl implements SettingsRepository {
-  constructor(
-    private readonly dataSource: SettingsFakeDataSource
-  ) {}
+  constructor(private readonly dataSource: SettingsFakeDataSource) {}
 
   getSettings(): Promise<Result<Settings>> {
     return this.dataSource.getSettings()

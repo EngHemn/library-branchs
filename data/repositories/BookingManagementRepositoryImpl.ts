@@ -5,9 +5,7 @@ import type { UpdateBookingInput } from "@/domain/entities/booking/UpdateBooking
 import type { BookingManagementRepository } from "@/domain/repositories/BookingManagementRepository"
 import type { Result } from "@/domain/result/Result"
 
-export class BookingManagementRepositoryImpl
-  implements BookingManagementRepository
-{
+export class BookingManagementRepositoryImpl implements BookingManagementRepository {
   constructor(
     private readonly bookingManagementFakeDataSource: BookingManagementFakeDataSource
   ) {}

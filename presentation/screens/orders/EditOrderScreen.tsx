@@ -55,10 +55,18 @@ export function EditOrderScreen({
 }: EditOrderScreenProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const returnTo = searchParams.get("returnTo") ?? `/dashboard/orders/${orderId}`
+  const returnTo =
+    searchParams.get("returnTo") ?? `/dashboard/orders/${orderId}`
   const currentPath = `/dashboard/orders/${orderId}/edit?returnTo=${encodeURIComponent(returnTo)}`
-  const createBookHref = buildCreateHrefWithReturn(CREATE_BOOK_PATH, currentPath)
-  const viewModel = useEditOrderViewModel(orderId, authUseCase, getOrdersUseCase)
+  const createBookHref = buildCreateHrefWithReturn(
+    CREATE_BOOK_PATH,
+    currentPath
+  )
+  const viewModel = useEditOrderViewModel(
+    orderId,
+    authUseCase,
+    getOrdersUseCase
+  )
   const { t } = useTranslation()
   const { state, form } = viewModel
 
@@ -81,10 +89,15 @@ export function EditOrderScreen({
           <Card className="w-full max-w-md rounded-lg">
             <CardHeader>
               <CardTitle>{t("orders.notFoundTitle")}</CardTitle>
-              <CardDescription>{t("orders.notFoundDescription")}</CardDescription>
+              <CardDescription>
+                {t("orders.notFoundDescription")}
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button variant="outline" onClick={() => router.push("/dashboard/orders")}>
+              <Button
+                variant="outline"
+                onClick={() => router.push("/dashboard/orders")}
+              >
                 <ArrowLeftIcon />
                 {t("orders.backToOrders")}
               </Button>
@@ -114,8 +127,12 @@ export function EditOrderScreen({
         <div className="flex flex-1 flex-col gap-5 p-4 pt-0 md:p-6 md:pt-0">
           <section className="flex items-center justify-between pt-4">
             <div>
-              <h1 className="text-2xl font-semibold tracking-normal">{t("orders.edit.title")}</h1>
-              <p className="mt-1 text-sm text-muted-foreground">{t("orders.edit.subtitle")}</p>
+              <h1 className="text-2xl font-semibold tracking-normal">
+                {t("orders.edit.title")}
+              </h1>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {t("orders.edit.subtitle")}
+              </p>
             </div>
             <Button variant="outline" onClick={goBack}>
               <ArrowLeftIcon />
@@ -136,7 +153,9 @@ export function EditOrderScreen({
           <Card className="rounded-lg">
             <CardHeader>
               <CardTitle>{t("orders.edit.detailsTitle")}</CardTitle>
-              <CardDescription>{t("orders.edit.detailsDescription")}</CardDescription>
+              <CardDescription>
+                {t("orders.edit.detailsDescription")}
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <OrderFormFields
@@ -158,13 +177,18 @@ export function EditOrderScreen({
                   >
                     {t("common.cancel")}
                   </Button>
-                  <Button type="submit" disabled={state.isSaving || state.isSaved}>
+                  <Button
+                    type="submit"
+                    disabled={state.isSaving || state.isSaved}
+                  >
                     {state.isSaving ? (
                       <Loader2Icon className="animate-spin" />
                     ) : (
                       <SaveIcon />
                     )}
-                    {state.isSaving ? t("common.saving") : t("common.saveChanges")}
+                    {state.isSaving
+                      ? t("common.saving")
+                      : t("common.saveChanges")}
                   </Button>
                 </div>
               </OrderFormFields>

@@ -74,7 +74,9 @@ export function GroupSalesHistoryFilters({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="group-sales-date-to">{t("groups.filters.dateTo")}</Label>
+        <Label htmlFor="group-sales-date-to">
+          {t("groups.filters.dateTo")}
+        </Label>
         <Input
           id="group-sales-date-to"
           type="date"

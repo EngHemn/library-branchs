@@ -11,11 +11,15 @@ export type BookingListData = {
 
 function calculateBookingStats(bookings: Booking[]): BookingStats {
   return {
-    reserved: bookings.filter((booking) => booking.status === "reserved").length,
-    borrowed: bookings.filter((booking) => booking.status === "borrowed").length,
-    returned: bookings.filter((booking) => booking.status === "returned").length,
+    reserved: bookings.filter((booking) => booking.status === "reserved")
+      .length,
+    borrowed: bookings.filter((booking) => booking.status === "borrowed")
+      .length,
+    returned: bookings.filter((booking) => booking.status === "returned")
+      .length,
     overdue: bookings.filter((booking) => booking.status === "overdue").length,
-    cancelled: bookings.filter((booking) => booking.status === "cancelled").length,
+    cancelled: bookings.filter((booking) => booking.status === "cancelled")
+      .length,
     inside: bookings.filter((booking) => booking.type === "inside").length,
     outside: bookings.filter((booking) => booking.type === "outside").length,
   }

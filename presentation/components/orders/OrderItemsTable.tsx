@@ -10,10 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import {
-  DataTable,
-  type DataTableColumn,
-} from "@/components/ui/data-table"
+import { DataTable, type DataTableColumn } from "@/components/ui/data-table"
 import type { OrderItem } from "@/domain/entities/order/OrderDetail"
 import { OrderActionButton } from "@/presentation/components/orders/OrderActionButton"
 import { formatOrderPriceInDinar } from "@/presentation/components/orders/orderDisplay"
@@ -79,7 +76,9 @@ export function OrderItemsTable({ items, onView }: OrderItemsTableProps) {
         sortable: true,
         sortValue: (item) => item.quantity,
         cell: (item) => (
-          <span className="font-semibold">{item.quantity.toLocaleString(locale)}</span>
+          <span className="font-semibold">
+            {item.quantity.toLocaleString(locale)}
+          </span>
         ),
       },
       {

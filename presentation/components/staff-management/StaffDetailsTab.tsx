@@ -134,13 +134,13 @@ export function StaffDetailsTab({
               }
             />
             <div className="min-w-0">
-              <h3 className="text-lg font-semibold">
-                {staffMember.staffName}
-              </h3>
+              <h3 className="text-lg font-semibold">{staffMember.staffName}</h3>
               <div className="mt-1 flex items-center gap-2">
                 <Badge
                   variant={
-                    staffMember.role === "branch_admin" ? "default" : "secondary"
+                    staffMember.role === "branch_admin"
+                      ? "default"
+                      : "secondary"
                   }
                 >
                   {roleLabel}

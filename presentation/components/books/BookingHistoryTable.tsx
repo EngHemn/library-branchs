@@ -1,12 +1,7 @@
 "use client"
 
 import { Badge } from "@/components/ui/badge"
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Table,
   TableBody,
@@ -15,7 +10,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import type { BookingRecord, BookingStatus } from "@/domain/entities/book/BookDetail"
+import type {
+  BookingRecord,
+  BookingStatus,
+} from "@/domain/entities/book/BookDetail"
 import { BranchLink } from "@/presentation/components/branch-management/BranchLink"
 import { MemberLink } from "@/presentation/components/shared/DashboardEntityLink"
 import { useTranslation } from "@/presentation/i18n/useTranslation"
@@ -25,7 +23,10 @@ type BookingHistoryTableProps = {
   showBranchColumn?: boolean
 }
 
-const statusVariants: Record<BookingStatus, "default" | "secondary" | "outline" | "destructive"> = {
+const statusVariants: Record<
+  BookingStatus,
+  "default" | "secondary" | "outline" | "destructive"
+> = {
   active: "default",
   returned: "secondary",
   overdue: "destructive",
@@ -62,7 +63,9 @@ export function BookingHistoryTable({
           </p>
         ) : (
           <div className="overflow-x-auto">
-            <Table className={showBranchColumn ? "min-w-[900px]" : "min-w-[760px]"}>
+            <Table
+              className={showBranchColumn ? "min-w-[900px]" : "min-w-[760px]"}
+            >
               <TableHeader>
                 <TableRow>
                   <TableHead>{t("books.bookingHistory.bookingId")}</TableHead>

@@ -228,18 +228,27 @@ export function useBillsViewModel(
   const userBranchId = user ? resolveUserBranchId(user) : ""
   const isBranchScopedUser = user ? isBranchScopedDashboardUser(user) : false
   const showBranchFilter = !isBranchScopedUser
-  const showBranchColumn = !isBranchScopedUser && filters.branchFilter !== "current"
+  const showBranchColumn =
+    !isBranchScopedUser && filters.branchFilter !== "current"
   const branchFilterOptions = user
     ? getBranchFilterOptions(user, t("bills.filters.currentBranch"))
     : []
   const scopedBranchIds = user ? getScopedBranchIds(user) : []
 
   const allBills = bills ?? []
-  const scopedBills = allBills.filter((bill) => scopedBranchIds.includes(bill.branchId))
+  const scopedBills = allBills.filter((bill) =>
+    scopedBranchIds.includes(bill.branchId)
+  )
   const addedByFilterOptions = getAddedByFilterOptions(scopedBills)
   const filteredBills =
     user && userBranchId
-      ? filterBills(allBills, filters, scopedBranchIds, isBranchScopedUser, userBranchId)
+      ? filterBills(
+          allBills,
+          filters,
+          scopedBranchIds,
+          isBranchScopedUser,
+          userBranchId
+        )
       : []
 
   const status: BillsStatus =

@@ -48,7 +48,9 @@ export function CategoriesFilters({
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">{t("categories.filters.allStatus")}</SelectItem>
+          <SelectItem value="all">
+            {t("categories.filters.allStatus")}
+          </SelectItem>
           <SelectItem value="active">{t("common.active")}</SelectItem>
           <SelectItem value="inactive">{t("common.inactive")}</SelectItem>
         </SelectContent>

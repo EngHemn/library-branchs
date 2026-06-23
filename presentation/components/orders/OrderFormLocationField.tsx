@@ -88,7 +88,9 @@ export function OrderFormLocationField({
 
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="space-y-1.5">
-              <Label htmlFor="order-form-latitude">{t("orders.location.latitude")}</Label>
+              <Label htmlFor="order-form-latitude">
+                {t("orders.location.latitude")}
+              </Label>
               <Input
                 id="order-form-latitude"
                 value={latitude !== null ? String(latitude) : ""}
@@ -98,7 +100,9 @@ export function OrderFormLocationField({
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="order-form-longitude">{t("orders.location.longitude")}</Label>
+              <Label htmlFor="order-form-longitude">
+                {t("orders.location.longitude")}
+              </Label>
               <Input
                 id="order-form-longitude"
                 value={longitude !== null ? String(longitude) : ""}

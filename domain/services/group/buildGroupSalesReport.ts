@@ -35,7 +35,9 @@ function lineRevenue(item: CartItem): number {
   return gross - discountAmount
 }
 
-function toBookRows(map: Map<string, BookAccumulator>): GroupSalesReportBookRow[] {
+function toBookRows(
+  map: Map<string, BookAccumulator>
+): GroupSalesReportBookRow[] {
   return Array.from(map.values())
     .map((row) => ({
       bookId: row.bookId,
@@ -185,15 +187,15 @@ export function buildGroupSalesReport(sales: Sale[]): GroupSalesReport {
     saleCount: row.saleCount,
   }))
 
-  const categoryRows: GroupSalesReportCategoryRow[] = toNamedRows(categories).map(
-    (row) => ({
-      category: row.name,
-      unitsSold: row.unitsSold,
-      totalRevenue: row.totalRevenue,
-      bookCount: row.bookCount,
-      saleCount: row.saleCount,
-    })
-  )
+  const categoryRows: GroupSalesReportCategoryRow[] = toNamedRows(
+    categories
+  ).map((row) => ({
+    category: row.name,
+    unitsSold: row.unitsSold,
+    totalRevenue: row.totalRevenue,
+    bookCount: row.bookCount,
+    saleCount: row.saleCount,
+  }))
 
   return {
     books: toBookRows(books),

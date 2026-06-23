@@ -5,7 +5,10 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQuery } from "@tanstack/react-query"
 
-import type { BillBookOption, BillBranchOption } from "@/domain/repositories/BillManagementRepository"
+import type {
+  BillBookOption,
+  BillBranchOption,
+} from "@/domain/repositories/BillManagementRepository"
 import {
   billFormSchema,
   type BillFormValues,
@@ -16,7 +19,10 @@ import {
   isBranchScopedDashboardUser,
   resolveUserBranchId,
 } from "@/lib/dashboardBranchScope"
-import type { CreateBillStatus, CreateBillViewModelState } from "./CreateBillViewModelState"
+import type {
+  CreateBillStatus,
+  CreateBillViewModelState,
+} from "./CreateBillViewModelState"
 
 type CreateBillViewModel = {
   state: CreateBillViewModelState
@@ -95,7 +101,12 @@ export function useCreateBillViewModel(
   const userBranchId = user ? resolveUserBranchId(user) : ""
 
   useEffect(() => {
-    if (!user || !isBranchScopedDashboardUser(user) || form.getValues("branchId")) return
+    if (
+      !user ||
+      !isBranchScopedDashboardUser(user) ||
+      form.getValues("branchId")
+    )
+      return
     form.setValue("branchId", userBranchId)
   }, [user, userBranchId, form])
 
@@ -113,7 +124,11 @@ export function useCreateBillViewModel(
     branchOptions: optionsQuery.data?.branches ?? [],
     bookOptions: optionsQuery.data?.books ?? [],
     showBranchField,
-    error: mutationError?.message ?? optionsQuery.error?.message ?? userQuery.error?.message ?? null,
+    error:
+      mutationError?.message ??
+      optionsQuery.error?.message ??
+      userQuery.error?.message ??
+      null,
     isLoading: status === "loading",
     isReady: status === "ready",
     isSaving,

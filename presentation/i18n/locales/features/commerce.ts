@@ -382,7 +382,8 @@ export const stock = {
       stockDetailsDescription:
         "بڕ و ڕێکخستنەکانی ئاگاداری بۆ ئەم تۆماری کۆگایە نوێ بکەرەوە.",
       notFoundTitle: "تۆماری کۆگا نەدۆزرایەوە",
-      notFoundDescription: "تۆماری کۆگاکە کە دەتەوێت دەستکاری بکەیت بوونی نییە.",
+      notFoundDescription:
+        "تۆماری کۆگاکە کە دەتەوێت دەستکاری بکەیت بوونی نییە.",
       loadErrorTitle: "بارکردنی کۆگا سەرکەوتوو نەبوو",
       backToStock: "گەڕانەوە بۆ کۆگا",
     },
@@ -520,9 +521,11 @@ export const bills = {
     create: {
       breadcrumb: "Add Bill",
       title: "Add Bill",
-      subtitle: "Upload a bill, select books, and import products into a branch.",
+      subtitle:
+        "Upload a bill, select books, and import products into a branch.",
       detailsTitle: "Bill Details",
-      detailsDescription: "Enter supplier information, price, and books to import.",
+      detailsDescription:
+        "Enter supplier information, price, and books to import.",
       createSuccess: "Bill created successfully. Products imported to branch.",
       createButton: "Create Bill",
     },
@@ -773,15 +776,19 @@ export const bills = {
     addBill: "زیادکردنی پسوڵە",
     backToBills: "گەڕانەوە بۆ پسوڵەکان",
     notFoundTitle: "پسوڵە نەدۆزرایەوە",
-    notFoundDescription: "ڕەنگە ئەم پسوڵەیە سڕابێتەوە یان بەستەرەکە نادروست بێت.",
+    notFoundDescription:
+      "ڕەنگە ئەم پسوڵەیە سڕابێتەوە یان بەستەرەکە نادروست بێت.",
     deleteSuccess: "پسوڵە بە سەرکەوتوویی سڕایەوە.",
     create: {
       breadcrumb: "زیادکردنی پسوڵە",
       title: "زیادکردنی پسوڵە",
-      subtitle: "پسوڵەیەک باربکە، کتێب هەڵبژێرە، و بەرهەمەکان بۆ لقێک هاوردە بکە.",
+      subtitle:
+        "پسوڵەیەک باربکە، کتێب هەڵبژێرە، و بەرهەمەکان بۆ لقێک هاوردە بکە.",
       detailsTitle: "وردەکاری پسوڵە",
-      detailsDescription: "زانیاری دابینکەر، نرخ و کتێبەکان بۆ هاوردەکردن بنووسە.",
-      createSuccess: "پسوڵە بە سەرکەوتوویی دروستکرا. بەرهەمەکان بۆ لق هاوردە کران.",
+      detailsDescription:
+        "زانیاری دابینکەر، نرخ و کتێبەکان بۆ هاوردەکردن بنووسە.",
+      createSuccess:
+        "پسوڵە بە سەرکەوتوویی دروستکرا. بەرهەمەکان بۆ لق هاوردە کران.",
       createButton: "دروستکردنی پسوڵە",
     },
     edit: {
@@ -848,7 +855,8 @@ export const bills = {
       products: "بەرهەمەکان (کتێبەکان)",
     },
     booksSelector: {
-      searchPlaceholder: "گەڕان لە کتێبەکان بەپێی ناونیشان، ISBN یان ناسنامە...",
+      searchPlaceholder:
+        "گەڕان لە کتێبەکان بەپێی ناونیشان، ISBN یان ناسنامە...",
       noMatch: "هیچ کتێبێک لەگەڵ گەڕانەکەت ناگونجێت.",
       noAvailable: "هیچ کتێبێک بۆ هاوردەکردن بەردەست نییە.",
       addBook: "زیادکردنی کتێب",
@@ -931,8 +939,7 @@ export const orders = {
       title: "Edit Order",
       subtitle: "Update order details, status, and book items.",
       detailsTitle: "Order Details",
-      detailsDescription:
-        "Update supplier, dates, status, branch, and books.",
+      detailsDescription: "Update supplier, dates, status, branch, and books.",
       updateSuccess: "Order updated successfully.",
       loadErrorTitle: "Could not load order",
     },
@@ -1081,8 +1088,7 @@ export const orders = {
   },
   ar: {
     title: "إدارة الطلبات",
-    subtitle:
-      "إنشاء وتتبع أوامر الشراء من الموردين لإعادة تخزين مخزون الفرع.",
+    subtitle: "إنشاء وتتبع أوامر الشراء من الموردين لإعادة تخزين مخزون الفرع.",
     unavailable: "الطلبات غير متاحة",
     addOrder: "إضافة طلب",
     backToOrders: "العودة إلى الطلبات",
@@ -1111,8 +1117,7 @@ export const orders = {
       title: "تعديل الطلب",
       subtitle: "تحديث تفاصيل الطلب والحالة وعناصر الكتب.",
       detailsTitle: "تفاصيل الطلب",
-      detailsDescription:
-        "تحديث المورد والتواريخ والحالة والفرع والكتب.",
+      detailsDescription: "تحديث المورد والتواريخ والحالة والفرع والكتب.",
       updateSuccess: "تم تحديث الطلب بنجاح.",
       loadErrorTitle: "تعذر تحميل الطلب",
     },
@@ -1157,8 +1162,7 @@ export const orders = {
     },
     table: {
       title: "كل الطلبات",
-      recordCount:
-        "{count} أمر شراء مع الموقع والكمية وإجماليات الدينار",
+      recordCount: "{count} أمر شراء مع الموقع والكمية وإجماليات الدينار",
       supplier: "المورد",
       branch: "الفرع",
       location: "الموقع",
@@ -1265,7 +1269,8 @@ export const orders = {
     addOrder: "زیادکردنی داواکاری",
     backToOrders: "گەڕانەوە بۆ داواکاریەکان",
     notFoundTitle: "داواکاری نەدۆزرایەوە",
-    notFoundDescription: "ڕەنگە ئەم داواکارییە سڕابێتەوە یان بەستەرەکە نادروست بێت.",
+    notFoundDescription:
+      "ڕەنگە ئەم داواکارییە سڕابێتەوە یان بەستەرەکە نادروست بێت.",
     deleteSuccess: "داواکاری بە سەرکەوتوویی سڕایەوە.",
     status: {
       pending: "چاوەڕوان",
@@ -1289,8 +1294,7 @@ export const orders = {
       title: "دەستکاری داواکاری",
       subtitle: "وردەکاری داواکاری، دۆخ و کتێبەکان نوێ بکەرەوە.",
       detailsTitle: "وردەکاری داواکاری",
-      detailsDescription:
-        "دابینکەر، بەروار، دۆخ، لق و کتێبەکان نوێ بکەرەوە.",
+      detailsDescription: "دابینکەر، بەروار، دۆخ، لق و کتێبەکان نوێ بکەرەوە.",
       updateSuccess: "داواکاری بە سەرکەوتوویی نوێکرایەوە.",
       loadErrorTitle: "نەتوانرا داواکاری باربکرێت",
     },
@@ -1335,8 +1339,7 @@ export const orders = {
     },
     table: {
       title: "هەموو داواکاریەکان",
-      recordCount:
-        "{count} داواکاری کڕین لەگەڵ شوێن، بڕ و کۆی دینار",
+      recordCount: "{count} داواکاری کڕین لەگەڵ شوێن، بڕ و کۆی دینار",
       supplier: "دابینکەر",
       branch: "لق",
       location: "شوێن",
@@ -1417,7 +1420,8 @@ export const orders = {
     },
     location: {
       deliveryTitle: "شوێنی گەیاندن",
-      selectDescription: "لقێک هەڵبژێرە، پاشان خاڵی گەیاندن لەسەر نەخشە دیاری بکە.",
+      selectDescription:
+        "لقێک هەڵبژێرە، پاشان خاڵی گەیاندن لەسەر نەخشە دیاری بکە.",
       selectOnMap: "هەڵبژێرە لەسەر نەخشە",
       useBranchLocation: "شوێنی لق بەکاربهێنە",
       latitude: "پانی",
@@ -1426,12 +1430,14 @@ export const orders = {
       openInMap: "کردنەوەی داواکاری لەسەر نەخشە",
       noCoordinates: "هیچ پێوەری نەخشەیەک بۆ ئەم داواکارییە دانەنراوە.",
       pickerTitle: "هەڵبژاردنی شوێنی گەیاندن",
-      pickerDescription: "ناونیشان بگەڕێ یان لەسەر نەخشە کرتە بکە بۆ دانانی نیشانە.",
+      pickerDescription:
+        "ناونیشان بگەڕێ یان لەسەر نەخشە کرتە بکە بۆ دانانی نیشانە.",
       searchByAddress: "گەڕان بە ناونیشان",
       searchPlaceholder: "ناونیشانێک بنووسە بۆ گەڕان...",
       searchNotFound: "هیچ شوێنێک بۆ ئەم ناونیشانە نەدۆزرایەوە.",
       searchFailed: "گەڕانی شوێن سەرکەوتوو نەبوو. تکایە دووبارە هەوڵ بدەرەوە.",
-      clickToSelect: "لەسەر نەخشە کرتە بکە بۆ هەڵبژاردن یان ڕێکخستنی خاڵی گەیاندن.",
+      clickToSelect:
+        "لەسەر نەخشە کرتە بکە بۆ هەڵبژاردن یان ڕێکخستنی خاڵی گەیاندن.",
       applyLocation: "جێبەجێکردنی شوێن",
     },
   },
@@ -1440,7 +1446,8 @@ export const orders = {
 export const needs = {
   en: {
     title: "Needs Management",
-    subtitle: "Manage equipment, supplies, and resource requests from branches and staff.",
+    subtitle:
+      "Manage equipment, supplies, and resource requests from branches and staff.",
     loadError: "Unable to load need requests",
     refresh: "Refresh",
     newRequest: "New Request",
@@ -1460,7 +1467,8 @@ export const needs = {
       title: "New Need Request",
       subtitle: "Submit a request for equipment, supplies, or other resources.",
       detailsTitle: "Request Details",
-      detailsDescription: "Fill in the item details and submit for approval, or save as a draft.",
+      detailsDescription:
+        "Fill in the item details and submit for approval, or save as a draft.",
     },
     edit: {
       breadcrumb: "Edit Request",
@@ -1472,7 +1480,8 @@ export const needs = {
     view: {
       breadcrumbFallback: "Need Details",
       notFoundTitle: "Need request not found",
-      notFoundDescription: "The requested need could not be found or may have been deleted.",
+      notFoundDescription:
+        "The requested need could not be found or may have been deleted.",
       backToNeeds: "Back to Needs",
     },
     summary: {
@@ -1538,14 +1547,16 @@ export const needs = {
     },
     deleteDialog: {
       title: "Delete need request?",
-      description: "This will permanently remove {needName}. This action cannot be undone.",
+      description:
+        "This will permanently remove {needName}. This action cannot be undone.",
       cancel: "Cancel",
       delete: "Delete",
       deleting: "Deleting...",
     },
     rejectDialog: {
       title: "Reject need request?",
-      description: "Reject {needName} and optionally provide a reason for the requester.",
+      description:
+        "Reject {needName} and optionally provide a reason for the requester.",
       placeholder: "Rejection reason (optional)",
       cancel: "Cancel",
       reject: "Reject",
@@ -1636,7 +1647,8 @@ export const needs = {
   },
   ar: {
     title: "إدارة طلبات الاحتياج",
-    subtitle: "إدارة طلبات الأجهزة والمستلزمات والموارد المقدمة من الفروع والموظفين.",
+    subtitle:
+      "إدارة طلبات الأجهزة والمستلزمات والموارد المقدمة من الفروع والموظفين.",
     loadError: "تعذر تحميل طلبات الاحتياج",
     refresh: "تحديث",
     newRequest: "طلب جديد",
@@ -1656,7 +1668,8 @@ export const needs = {
       title: "طلب احتياج جديد",
       subtitle: "تقديم طلب للحصول على أجهزة أو مستلزمات أو موارد أخرى.",
       detailsTitle: "تفاصيل الطلب",
-      detailsDescription: "املأ تفاصيل العنصر وقدمه للموافقة عليه، أو احفظه كمسودة.",
+      detailsDescription:
+        "املأ تفاصيل العنصر وقدمه للموافقة عليه، أو احفظه كمسودة.",
     },
     edit: {
       breadcrumb: "تعديل الطلب",
@@ -1668,7 +1681,8 @@ export const needs = {
     view: {
       breadcrumbFallback: "تفاصيل الاحتياج",
       notFoundTitle: "طلب الاحتياج غير موجود",
-      notFoundDescription: "تعذر العثور على طلب الاحتياج المطلوب أو ربما تم حذفه.",
+      notFoundDescription:
+        "تعذر العثور على طلب الاحتياج المطلوب أو ربما تم حذفه.",
       backToNeeds: "العودة إلى طلبات الاحتياج",
     },
     summary: {
@@ -1734,7 +1748,8 @@ export const needs = {
     },
     deleteDialog: {
       title: "حذف طلب الاحتياج؟",
-      description: "سيؤدي هذا إلى حذف {needName} نهائيًا. لا يمكن التراجع عن هذا الإجراء.",
+      description:
+        "سيؤدي هذا إلى حذف {needName} نهائيًا. لا يمكن التراجع عن هذا الإجراء.",
       cancel: "إلغاء",
       delete: "حذف",
       deleting: "جاري الحذف...",
@@ -1832,7 +1847,8 @@ export const needs = {
   },
   ku: {
     title: "بەڕێوەبردنی پێداویستیەکان",
-    subtitle: "بەڕێوەبردنی داواکارییەکانی ئامێر، پێداویستی، و سەرچاوەکان لە لقەکان و ستافەوە.",
+    subtitle:
+      "بەڕێوەبردنی داواکارییەکانی ئامێر، پێداویستی، و سەرچاوەکان لە لقەکان و ستافەوە.",
     loadError: "نەتوانرا داواکارییەکانی پێداویستی باربکرێت",
     refresh: "نوێکردنەوە",
     newRequest: "داواکاری نوێ",
@@ -1852,19 +1868,22 @@ export const needs = {
       title: "داواکاری پێداویستی نوێ",
       subtitle: "داواکاری پێشکەش بکە بۆ ئامێر، پێداویستی، یان سەرچاوەی تر.",
       detailsTitle: "وردەکاری داواکاری",
-      detailsDescription: "وردەکاريیەکانی بابەتەکە پڕ بکەرەوە و بینێرە بۆ پەسەندکردن، یان وەک ڕەشنووس پاشەکەوتی بکە.",
+      detailsDescription:
+        "وردەکاريیەکانی بابەتەکە پڕ بکەرەوە و بینێرە بۆ پەسەندکردن، یان وەک ڕەشنووس پاشەکەوتی بکە.",
     },
     edit: {
       breadcrumb: "دەستکاری داواکاری",
       title: "دەستکاری داواکاری پێداویستی",
-      subtitle: "وردەکاريیەکانی داواکاری نوێ بکەرەوە و گۆڕانکارییەکان پاشەکەوت بکە.",
+      subtitle:
+        "وردەکاريیەکانی داواکاری نوێ بکەرەوە و گۆڕانکارییەکان پاشەکەوت بکە.",
       detailsTitle: "وردەکاری داواکاری",
       detailsDescription: "دەستکاری زانیارییەکانی داواکاری پێداویستی بکە.",
     },
     view: {
       breadcrumbFallback: "وردەکاری پێویستی",
       notFoundTitle: "داواکاری پێداویستی نەدۆزرایەوە",
-      notFoundDescription: "داواکاری پێداویستی داواکراو نەدۆزرایەوە یان ڕەنگە سڕابێتەوە.",
+      notFoundDescription:
+        "داواکاری پێداویستی داواکراو نەدۆزرایەوە یان ڕەنگە سڕابێتەوە.",
       backToNeeds: "گەڕانەوە بۆ پێداویستیەکان",
     },
     summary: {
@@ -1930,14 +1949,16 @@ export const needs = {
     },
     deleteDialog: {
       title: "سڕینەوەی داواکاری پێداویستی؟",
-      description: "ئەمە بە هەمیشەیی {needName} دەسڕێتەوە. ئەم کردارە ناگەڕێتەوە.",
+      description:
+        "ئەمە بە هەمیشەیی {needName} دەسڕێتەوە. ئەم کردارە ناگەڕێتەوە.",
       cancel: "پاشگەزبوونەوە",
       delete: "سڕینەوە",
       deleting: "دەسڕێتەوە...",
     },
     rejectDialog: {
       title: "ڕەتکردنەوەی داواکاری پێداویستی؟",
-      description: "ڕەتکردنەوەی {needName} و پێشکەشکردنی هۆکارێکی ئارەزوومەندانە بۆ داواکارەکە.",
+      description:
+        "ڕەتکردنەوەی {needName} و پێشکەشکردنی هۆکارێکی ئارەزوومەندانە بۆ داواکارەکە.",
       placeholder: "هۆکاری ڕەتکردنەوە (ئارەزوومەندانە)",
       cancel: "پاشگەزبوونەوە",
       reject: "ڕەتکردنەوە",

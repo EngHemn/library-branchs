@@ -55,15 +55,21 @@ export function TransferStockDialog({
   const [notes, setNotes] = useState("")
 
   const uniqueMainBranchRows = allRows.filter((r) => r.subBranchId === null)
-  const fromOptions = uniqueMainBranchRows.filter(
-    (r) => r.availableStock > 0
-  )
+  const fromOptions = uniqueMainBranchRows.filter((r) => r.availableStock > 0)
   const fromRow =
-    stockRow ?? uniqueMainBranchRows.find((r) => r.id === selectedFromId) ?? null
+    stockRow ??
+    uniqueMainBranchRows.find((r) => r.id === selectedFromId) ??
+    null
   const selectedFromBranchId = fromRow?.branchId ?? null
-  const toOptionsMap = new Map<string, { branchId: string; branchName: string }>()
+  const toOptionsMap = new Map<
+    string,
+    { branchId: string; branchName: string }
+  >()
   for (const row of uniqueMainBranchRows) {
-    if (row.branchId !== selectedFromBranchId && !toOptionsMap.has(row.branchId)) {
+    if (
+      row.branchId !== selectedFromBranchId &&
+      !toOptionsMap.has(row.branchId)
+    ) {
       toOptionsMap.set(row.branchId, {
         branchId: row.branchId,
         branchName: row.branchName,
@@ -113,7 +119,9 @@ export function TransferStockDialog({
           {stockRow ? (
             <div className="rounded-xl border border-slate-100 bg-slate-50 p-3">
               <p className="text-xs text-slate-500">Book</p>
-              <p className="font-semibold text-slate-900">{stockRow.bookTitle}</p>
+              <p className="font-semibold text-slate-900">
+                {stockRow.bookTitle}
+              </p>
               <p className="text-xs text-slate-400">{stockRow.isbn}</p>
             </div>
           ) : (
@@ -132,11 +140,12 @@ export function TransferStockDialog({
                 />
                 <ComboboxContent>
                   <ComboboxList>
-                  {fromOptions.map((r) => (
-                    <ComboboxItem key={r.id} value={r.id}>
-                      {r.bookTitle} — {r.branchName} ({r.availableStock} avail.)
-                    </ComboboxItem>
-                  ))}
+                    {fromOptions.map((r) => (
+                      <ComboboxItem key={r.id} value={r.id}>
+                        {r.bookTitle} — {r.branchName} ({r.availableStock}{" "}
+                        avail.)
+                      </ComboboxItem>
+                    ))}
                   </ComboboxList>
                 </ComboboxContent>
               </Combobox>
@@ -148,11 +157,7 @@ export function TransferStockDialog({
               <Label>From Branch</Label>
               <Input
                 readOnly
-                value={
-                  stockRow?.branchName ??
-                  fromRow?.branchName ??
-                  "—"
-                }
+                value={stockRow?.branchName ?? fromRow?.branchName ?? "—"}
                 className="bg-slate-50"
               />
             </div>
@@ -171,11 +176,14 @@ export function TransferStockDialog({
                 />
                 <ComboboxContent>
                   <ComboboxList>
-                  {toOptions.map((branch) => (
-                    <ComboboxItem key={branch.branchId} value={branch.branchId}>
-                      {branch.branchName}
-                    </ComboboxItem>
-                  ))}
+                    {toOptions.map((branch) => (
+                      <ComboboxItem
+                        key={branch.branchId}
+                        value={branch.branchId}
+                      >
+                        {branch.branchName}
+                      </ComboboxItem>
+                    ))}
                   </ComboboxList>
                 </ComboboxContent>
               </Combobox>
@@ -241,9 +249,7 @@ export function TransferStockDialog({
                 variant="outline"
                 size="sm"
                 className="h-9 w-9 p-0"
-                onClick={() =>
-                  setQuantity((q) => Math.min(maxQuantity, q + 1))
-                }
+                onClick={() => setQuantity((q) => Math.min(maxQuantity, q + 1))}
                 disabled={quantity >= maxQuantity}
               >
                 <Plus className="h-3.5 w-3.5" />
@@ -271,7 +277,11 @@ export function TransferStockDialog({
         </div>
 
         <DialogFooter className="gap-2">
-          <Button variant="outline" onClick={handleClose} disabled={isSubmitting}>
+          <Button
+            variant="outline"
+            onClick={handleClose}
+            disabled={isSubmitting}
+          >
             Cancel
           </Button>
           <Button

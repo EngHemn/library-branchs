@@ -30,7 +30,9 @@ export function resolveUserBranchId(
   user: Pick<User, "branchType"> & { branchId?: string }
 ): string {
   if (user.branchId) return user.branchId
-  return user.branchType === "sub" ? DEFAULT_SUB_BRANCH_ID : DEFAULT_MAIN_BRANCH_ID
+  return user.branchType === "sub"
+    ? DEFAULT_SUB_BRANCH_ID
+    : DEFAULT_MAIN_BRANCH_ID
 }
 
 export function getDashboardBranchScope(
@@ -74,7 +76,10 @@ export function getDashboardBranchScope(
   const scopedIds = new Set<string>([mainBranch.id])
 
   for (const branch of fakeBranches) {
-    if (branch.type === "sub" && branch.parentBranch === mainBranch.branchName) {
+    if (
+      branch.type === "sub" &&
+      branch.parentBranch === mainBranch.branchName
+    ) {
       scopedIds.add(branch.id)
     }
   }

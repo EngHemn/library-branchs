@@ -46,7 +46,9 @@ export function GroupStaffTab({ staff }: GroupStaffTabProps) {
   return (
     <Card className="rounded-lg">
       <CardHeader className="pb-3">
-        <CardTitle className="text-base">{t("groups.staff.assignedTitle")}</CardTitle>
+        <CardTitle className="text-base">
+          {t("groups.staff.assignedTitle")}
+        </CardTitle>
         <CardDescription>
           {t("groups.staff.memberCount", { count: staff.length })}
         </CardDescription>

@@ -117,7 +117,8 @@ export const fakeNeeds: NeedRequest[] = [
     id: "ND-004",
     name: "Document Scanner",
     category: "scanner",
-    description: "High-speed scanner for member registration and archival documents.",
+    description:
+      "High-speed scanner for member registration and archival documents.",
     quantity: 1,
     priority: "low",
     branchId: "BR-007",
@@ -144,7 +145,8 @@ export const fakeNeeds: NeedRequest[] = [
     id: "ND-005",
     name: "Projector for Events Room",
     category: "projector",
-    description: "Replacement projector for author talks and community workshops.",
+    description:
+      "Replacement projector for author talks and community workshops.",
     quantity: 1,
     priority: "high",
     branchId: "BR-001",
@@ -193,7 +195,8 @@ export const fakeNeeds: NeedRequest[] = [
     id: "ND-006",
     name: "Office Supplies Restock",
     category: "office_supplies",
-    description: "Paper, toner cartridges, labels, and pens for front desk operations.",
+    description:
+      "Paper, toner cartridges, labels, and pens for front desk operations.",
     quantity: 1,
     priority: "medium",
     branchId: "BR-008",
@@ -275,7 +278,8 @@ export const fakeNeeds: NeedRequest[] = [
     id: "ND-008",
     name: "Bookshelves for New Section",
     category: "bookshelf",
-    description: "Adjustable shelving units for the new young-adult fiction section.",
+    description:
+      "Adjustable shelving units for the new young-adult fiction section.",
     quantity: 6,
     priority: "high",
     branchId: "BR-004",

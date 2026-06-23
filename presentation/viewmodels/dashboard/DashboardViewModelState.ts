@@ -17,7 +17,12 @@ export type DashboardFilterState = {
   dateTo: string | null
 }
 
-export type DashboardStatus = "idle" | "loading" | "success" | "unauthenticated" | "error"
+export type DashboardStatus =
+  | "idle"
+  | "loading"
+  | "success"
+  | "unauthenticated"
+  | "error"
 
 export type DashboardViewModelState = {
   status: DashboardStatus

@@ -51,8 +51,11 @@ function getBooksTranslated(authorName: string): AuthorBookItem[] {
 
 export function toAuthorDetail(author: Author): AuthorDetail {
   const branch = fakeBranches.find((item) => item.id === author.branchId)
-  const branchStaff = fakeStaff.filter((staff) => staff.branchId === author.branchId)
-  const staffIndex = author.id.charCodeAt(author.id.length - 1) % branchStaff.length
+  const branchStaff = fakeStaff.filter(
+    (staff) => staff.branchId === author.branchId
+  )
+  const staffIndex =
+    author.id.charCodeAt(author.id.length - 1) % branchStaff.length
   const addedByStaff = branchStaff[staffIndex] ?? fakeStaff[0]
 
   const authoredBooks = getBooksAuthored(author.name)

@@ -58,7 +58,10 @@ function LoadingState() {
   )
 }
 
-export function ViewAuthorScreen({ authorId, getAuthorsUseCase }: ViewAuthorScreenProps) {
+export function ViewAuthorScreen({
+  authorId,
+  getAuthorsUseCase,
+}: ViewAuthorScreenProps) {
   const router = useRouter()
   const { t } = useTranslation()
   const viewModel = useAuthorDetailViewModel(authorId, getAuthorsUseCase)

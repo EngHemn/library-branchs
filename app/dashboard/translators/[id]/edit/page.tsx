@@ -13,13 +13,18 @@ type EditTranslatorPageProps = {
   }>
 }
 
-const translatorManagementFakeDataSource = new TranslatorManagementFakeDataSource()
+const translatorManagementFakeDataSource =
+  new TranslatorManagementFakeDataSource()
 const translatorManagementRepository = new TranslatorManagementRepositoryImpl(
   translatorManagementFakeDataSource
 )
-const getTranslatorsUseCase = new GetTranslatorsUseCase(translatorManagementRepository)
+const getTranslatorsUseCase = new GetTranslatorsUseCase(
+  translatorManagementRepository
+)
 
-export default function EditTranslatorPage({ params }: EditTranslatorPageProps) {
+export default function EditTranslatorPage({
+  params,
+}: EditTranslatorPageProps) {
   const { id } = use(params)
 
   return (

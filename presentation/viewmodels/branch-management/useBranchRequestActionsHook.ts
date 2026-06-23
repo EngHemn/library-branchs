@@ -17,11 +17,23 @@ type BranchRequestActionsParams = {
 }
 
 type BranchRequestActions = {
-  approveMainBranchRequest: (requestId: string, password: string) => Promise<void>
-  rejectMainBranchRequest: (requestId: string, message?: string) => Promise<void>
-  approveSubBranchRequest: (requestId: string, password: string) => Promise<void>
+  approveMainBranchRequest: (
+    requestId: string,
+    password: string
+  ) => Promise<void>
+  rejectMainBranchRequest: (
+    requestId: string,
+    message?: string
+  ) => Promise<void>
+  approveSubBranchRequest: (
+    requestId: string,
+    password: string
+  ) => Promise<void>
   rejectSubBranchRequest: (requestId: string, message?: string) => Promise<void>
-  replyToMainBranchRequest: (requestId: string, message: string) => Promise<void>
+  replyToMainBranchRequest: (
+    requestId: string,
+    message: string
+  ) => Promise<void>
   replyToSubBranchRequest: (requestId: string, message: string) => Promise<void>
 }
 
@@ -48,9 +60,13 @@ export function useBranchRequestActionsHook({
       void queryClient.invalidateQueries({ queryKey: ["branchManagement"] })
       setDialog({
         title: translate(locale, "branches.actions.mainApprovedTitle"),
-        description: translate(locale, "branches.actions.mainApprovedDescription", {
-          name: branch.branchName,
-        }),
+        description: translate(
+          locale,
+          "branches.actions.mainApprovedDescription",
+          {
+            name: branch.branchName,
+          }
+        ),
       })
     },
     onError: (err: Error) =>
@@ -100,9 +116,13 @@ export function useBranchRequestActionsHook({
       void queryClient.invalidateQueries({ queryKey: ["branchManagement"] })
       setDialog({
         title: translate(locale, "branches.actions.subApprovedTitle"),
-        description: translate(locale, "branches.actions.mainApprovedDescription", {
-          name: branch.branchName,
-        }),
+        description: translate(
+          locale,
+          "branches.actions.mainApprovedDescription",
+          {
+            name: branch.branchName,
+          }
+        ),
       })
     },
     onError: (err: Error) =>
@@ -191,27 +211,45 @@ export function useBranchRequestActionsHook({
       }),
   })
 
-  async function approveMainBranchRequest(requestId: string, password: string): Promise<void> {
+  async function approveMainBranchRequest(
+    requestId: string,
+    password: string
+  ): Promise<void> {
     approveMainMutation.mutate({ requestId, password })
   }
 
-  async function rejectMainBranchRequest(requestId: string, message?: string): Promise<void> {
+  async function rejectMainBranchRequest(
+    requestId: string,
+    message?: string
+  ): Promise<void> {
     rejectMainMutation.mutate({ requestId, message })
   }
 
-  async function approveSubBranchRequest(requestId: string, password: string): Promise<void> {
+  async function approveSubBranchRequest(
+    requestId: string,
+    password: string
+  ): Promise<void> {
     approveSubMutation.mutate({ requestId, password })
   }
 
-  async function rejectSubBranchRequest(requestId: string, message?: string): Promise<void> {
+  async function rejectSubBranchRequest(
+    requestId: string,
+    message?: string
+  ): Promise<void> {
     rejectSubMutation.mutate({ requestId, message })
   }
 
-  async function replyToMainBranchRequest(requestId: string, message: string): Promise<void> {
+  async function replyToMainBranchRequest(
+    requestId: string,
+    message: string
+  ): Promise<void> {
     replyToMainMutation.mutate({ requestId, message })
   }
 
-  async function replyToSubBranchRequest(requestId: string, message: string): Promise<void> {
+  async function replyToSubBranchRequest(
+    requestId: string,
+    message: string
+  ): Promise<void> {
     replyToSubMutation.mutate({ requestId, message })
   }
 

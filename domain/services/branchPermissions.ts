@@ -1,7 +1,9 @@
 import type { BranchType } from "@/domain/entities/branch/Branch"
 import type { BranchPermissions } from "@/domain/entities/permission/BranchPermissions"
 
-export function getBranchPermissions(branchType: BranchType): BranchPermissions {
+export function getBranchPermissions(
+  branchType: BranchType
+): BranchPermissions {
   if (branchType === "main") {
     return {
       canEdit: true,

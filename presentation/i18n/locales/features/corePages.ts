@@ -99,31 +99,40 @@ export const dashboard = {
     charts: {
       bookingsByStatus: "Bookings by Status",
       bookingsByStatusOverview: "Distribution of all active booking statuses.",
-      bookingsByStatusDetail: "Breakdown of all booking records by current status.",
+      bookingsByStatusDetail:
+        "Breakdown of all booking records by current status.",
       salesTrend: "Sales Trend",
       salesTrendDescription: "Total sales revenue over the last 7 days.",
       bookingsByType: "Bookings by Type",
-      bookingsByTypeDescription: "Inside vs outside borrowing split — {total} total.",
+      bookingsByTypeDescription:
+        "Inside vs outside borrowing split — {total} total.",
       booksByStatus: "Books by Status",
-      booksByStatusDescription: "Total catalog copies grouped by current availability status.",
+      booksByStatusDescription:
+        "Total catalog copies grouped by current availability status.",
       booksByCategory: "Books by Category",
-      booksByCategoryDescription: "Top categories by total number of titles in the catalog.",
+      booksByCategoryDescription:
+        "Top categories by total number of titles in the catalog.",
       staffByRole: "Staff by Role",
-      staffByRoleDescription: "Headcount distribution across all staff role types.",
+      staffByRoleDescription:
+        "Headcount distribution across all staff role types.",
       staffByBranch: "Staff by Branch",
-      staffByBranchDescription: "Headcount distribution across library branches.",
+      staffByBranchDescription:
+        "Headcount distribution across library branches.",
     },
     sections: {
       recentBookings: "Recent Bookings",
-      recentBookingsDescription: "All borrowing and reservation records matching the current filters.",
+      recentBookingsDescription:
+        "All borrowing and reservation records matching the current filters.",
       recentBooks: "Recent Books",
       recentBooksDescription: "Catalog entries matching the current filters.",
       members: "Members",
       membersDescription: "Member registrations matching the current filters.",
       sales: "Sales",
-      salesDescription: "Book purchase transactions matching the current filters.",
+      salesDescription:
+        "Book purchase transactions matching the current filters.",
       staffMembers: "Staff Members",
-      staffMembersDescription: "All staff records matching the selected branch filter.",
+      staffMembersDescription:
+        "All staff records matching the selected branch filter.",
     },
     tables: {
       bookingId: "Booking ID",
@@ -207,12 +216,12 @@ export const dashboard = {
       },
       "act-003": {
         title: "Book returned",
-        description: "\"Refactoring\" was returned by Fatima Al-Zahra.",
+        description: '"Refactoring" was returned by Fatima Al-Zahra.',
         time: "34 min ago",
       },
       "act-004": {
         title: "Stock alert triggered",
-        description: "\"The Phoenix Project\" dropped to 0 available copies.",
+        description: '"The Phoenix Project" dropped to 0 available copies.',
         time: "52 min ago",
       },
       "act-005": {
@@ -331,7 +340,8 @@ export const dashboard = {
       salesTrend: "اتجاه المبيعات",
       salesTrendDescription: "إجمالي إيرادات المبيعات خلال آخر 7 أيام.",
       bookingsByType: "الحجوزات حسب النوع",
-      bookingsByTypeDescription: "تقسيم الإعارة داخلية وخارجية — {total} إجمالي.",
+      bookingsByTypeDescription:
+        "تقسيم الإعارة داخلية وخارجية — {total} إجمالي.",
       booksByStatus: "الكتب حسب الحالة",
       booksByStatusDescription: "إجمالي نسخ الكتالوج حسب حالة التوفر الحالية.",
       booksByCategory: "الكتب حسب التصنيف",
@@ -343,15 +353,18 @@ export const dashboard = {
     },
     sections: {
       recentBookings: "الحجوزات الأخيرة",
-      recentBookingsDescription: "جميع سجلات الإعارة والحجز المطابقة لعوامل التصفية الحالية.",
+      recentBookingsDescription:
+        "جميع سجلات الإعارة والحجز المطابقة لعوامل التصفية الحالية.",
       recentBooks: "الكتب الأخيرة",
-      recentBooksDescription: "إدخالات الكتالوج المطابقة لعوامل التصفية الحالية.",
+      recentBooksDescription:
+        "إدخالات الكتالوج المطابقة لعوامل التصفية الحالية.",
       members: "الأعضاء",
       membersDescription: "تسجيلات الأعضاء المطابقة لعوامل التصفية الحالية.",
       sales: "المبيعات",
       salesDescription: "معاملات شراء الكتب المطابقة لعوامل التصفية الحالية.",
       staffMembers: "الموظفون",
-      staffMembersDescription: "جميع سجلات الموظفين المطابقة لعامل تصفية الفرع المحدد.",
+      staffMembersDescription:
+        "جميع سجلات الموظفين المطابقة لعامل تصفية الفرع المحدد.",
     },
     tables: {
       bookingId: "معرّف الحجز",
@@ -435,12 +448,12 @@ export const dashboard = {
       },
       "act-003": {
         title: "تم إرجاع كتاب",
-        description: "أُرجع \"Refactoring\" بواسطة فاطمة الزهراء.",
+        description: 'أُرجع "Refactoring" بواسطة فاطمة الزهراء.',
         time: "منذ 34 دقيقة",
       },
       "act-004": {
         title: "تم تفعيل تنبيه مخزون",
-        description: "انخفض مخزون \"The Phoenix Project\" إلى 0 نسخة متاحة.",
+        description: 'انخفض مخزون "The Phoenix Project" إلى 0 نسخة متاحة.',
         time: "منذ 52 دقيقة",
       },
       "act-005": {
@@ -450,7 +463,8 @@ export const dashboard = {
       },
       "act-006": {
         title: "تمت عملية بيع",
-        description: "تمت معالجة عملية بيع بـ 4 عناصر بقيمة 87.50$ في المكتبة المركزية.",
+        description:
+          "تمت معالجة عملية بيع بـ 4 عناصر بقيمة 87.50$ في المكتبة المركزية.",
         time: "منذ ساعتين",
       },
     },
@@ -511,13 +525,16 @@ export const dashboard = {
     },
     overview: {
       recentActivity: "چالاکی دوایی",
-      recentActivityDescription: "ڕووداوەکانی کارگێڕی لە چەند کاتژمێری ڕابردوودا.",
+      recentActivityDescription:
+        "ڕووداوەکانی کارگێڕی لە چەند کاتژمێری ڕابردوودا.",
       stockAlerts: "ئاگاداری کۆگا",
       stockAlertsDescription: "ناونیشانەکان لە خوار سنووری کەمترین",
-      stockAlertsHelper: "ناونیشان پێویستیان بە پڕکردنەوەی کۆگا هەیە لە لقەکاندا",
+      stockAlertsHelper:
+        "ناونیشان پێویستیان بە پڕکردنەوەی کۆگا هەیە لە لقەکاندا",
       overdueReturns: "گەڕاندنەوەی دواکەوتوو",
       overdueReturnsDescription: "شوێنکەوتنی ئەندامانی هەڵواسراو",
-      overdueReturnsHelper: "ئەندامان کتێبەکانیان لە کاتی دیاریکراو نەگەڕاندۆتەوە",
+      overdueReturnsHelper:
+        "ئەندامان کتێبەکانیان لە کاتی دیاریکراو نەگەڕاندۆتەوە",
     },
     needs: {
       totalRequests: "کۆی داواکاری پێداویستی",
@@ -559,11 +576,13 @@ export const dashboard = {
       salesTrend: "ڕەوتی فرۆشتن",
       salesTrendDescription: "کۆی داهاتی فرۆشتن لە ٧ ڕۆژی ڕابردوودا.",
       bookingsByType: "حیجزکردن بەپێی جۆر",
-      bookingsByTypeDescription: "دابەشبوونی خوازینی ناوخۆیی و دەرەکی — {total} کۆی گشتی.",
+      bookingsByTypeDescription:
+        "دابەشبوونی خوازینی ناوخۆیی و دەرەکی — {total} کۆی گشتی.",
       booksByStatus: "کتێب بەپێی دۆخ",
       booksByStatusDescription: "کۆی کۆپی کتێبەکان بەپێی دۆخی بەردەستی ئێستا.",
       booksByCategory: "کتێب بەپێی پۆل",
-      booksByCategoryDescription: "باشترین پۆلەکان بەپێی ژمارەی ناونیشان لە کتێبەکاندا.",
+      booksByCategoryDescription:
+        "باشترین پۆلەکان بەپێی ژمارەی ناونیشان لە کتێبەکاندا.",
       staffByRole: "ستاف بەپێی ڕۆڵ",
       staffByRoleDescription: "دابەشبوونی ژمارەی ستاف بەپێی جۆری ڕۆڵ.",
       staffByBranch: "ستاف بەپێی لق",
@@ -571,15 +590,20 @@ export const dashboard = {
     },
     sections: {
       recentBookings: "حیجزکردنی دوایی",
-      recentBookingsDescription: "هەموو تۆمارەکانی خوازین و حیجزکردن کە لەگەڵ فلتەرەکانی ئێستا دەگونجێن.",
+      recentBookingsDescription:
+        "هەموو تۆمارەکانی خوازین و حیجزکردن کە لەگەڵ فلتەرەکانی ئێستا دەگونجێن.",
       recentBooks: "کتێبی دوایی",
-      recentBooksDescription: "تۆمارەکانی کتێبەکان کە لەگەڵ فلتەرەکانی ئێستا دەگونجێن.",
+      recentBooksDescription:
+        "تۆمارەکانی کتێبەکان کە لەگەڵ فلتەرەکانی ئێستا دەگونجێن.",
       members: "ئەندامەکان",
-      membersDescription: "تۆمارکردنی ئەندامان کە لەگەڵ فلتەرەکانی ئێستا دەگونجێن.",
+      membersDescription:
+        "تۆمارکردنی ئەندامان کە لەگەڵ فلتەرەکانی ئێستا دەگونجێن.",
       sales: "فرۆشتن",
-      salesDescription: "مامەڵەکانی کڕینی کتێب کە لەگەڵ فلتەرەکانی ئێستا دەگونجێن.",
+      salesDescription:
+        "مامەڵەکانی کڕینی کتێب کە لەگەڵ فلتەرەکانی ئێستا دەگونجێن.",
       staffMembers: "ستاف",
-      staffMembersDescription: "هەموو تۆمارەکانی ستاف کە لەگەڵ فلتەری لقی هەڵبژێردراو دەگونجێن.",
+      staffMembersDescription:
+        "هەموو تۆمارەکانی ستاف کە لەگەڵ فلتەری لقی هەڵبژێردراو دەگونجێن.",
     },
     tables: {
       bookingId: "ناسنامەی حیجز",
@@ -663,12 +687,12 @@ export const dashboard = {
       },
       "act-003": {
         title: "کتێب گەڕێندرایەوە",
-        description: "\"Refactoring\" لەلایەن فاتیما زەهراوە گەڕێندرایەوە.",
+        description: '"Refactoring" لەلایەن فاتیما زەهراوە گەڕێندرایەوە.',
         time: "٣٤ خولەک لەمەوبەر",
       },
       "act-004": {
         title: "ئاگاداری کۆگا چالاککرا",
-        description: "کۆگای \"The Phoenix Project\" بۆ ٠ کۆپی بەردەست کەمبووەوە.",
+        description: 'کۆگای "The Phoenix Project" بۆ ٠ کۆپی بەردەست کەمبووەوە.',
         time: "٥٢ خولەک لەمەوبەر",
       },
       "act-005": {
@@ -678,7 +702,8 @@ export const dashboard = {
       },
       "act-006": {
         title: "فرۆشتن تەواو بوو",
-        description: "فرۆشتنێکی ٤ بڕگەیی بە ٨٧.٥٠$ لە کتێبخانەی سەرەکی جێبەجێ کرا.",
+        description:
+          "فرۆشتنێکی ٤ بڕگەیی بە ٨٧.٥٠$ لە کتێبخانەی سەرەکی جێبەجێ کرا.",
         time: "٢ کاتژمێر لەمەوبەر",
       },
     },
@@ -693,7 +718,8 @@ export const notifications = {
     empty: "No notifications yet",
     viewAll: "View all notifications",
     title: "Notifications",
-    subtitle: "Stay up to date with library alerts, member activity, and system events.",
+    subtitle:
+      "Stay up to date with library alerts, member activity, and system events.",
     markAllAsRead: "Mark all as read",
     markRead: "Mark read",
     unreadTab: "Unread",
@@ -746,7 +772,8 @@ export const notifications = {
     empty: "لا توجد إشعارات بعد",
     viewAll: "عرض جميع الإشعارات",
     title: "الإشعارات",
-    subtitle: "ابقَ على اطلاع دائم بتنبيهات المكتبة، ونشاط الأعضاء، وأحداث النظام.",
+    subtitle:
+      "ابقَ على اطلاع دائم بتنبيهات المكتبة، ونشاط الأعضاء، وأحداث النظام.",
     markAllAsRead: "تحديد الكل كمقروء",
     markRead: "تحديد كمقروء",
     unreadTab: "غير مقروء",
@@ -775,7 +802,8 @@ export const notifications = {
       outOfStock: "الكتاب غير متوفر في المخزون",
     },
     messages: {
-      overdueReminder: "العضو {memberId} لديه {count} كتب متأخرة عن تاريخ الاستحقاق.",
+      overdueReminder:
+        "العضو {memberId} لديه {count} كتب متأخرة عن تاريخ الاستحقاق.",
       newMember: "انضم {name} إلى المكتبة المركزية ومكتبة الكتب.",
       lowStock: 'متبقي {count} نسخ فقط من "{title}" في {branch}.',
       newNeed: "تم طلب {name} في {branch} (أولوية {priority}).",
@@ -799,7 +827,8 @@ export const notifications = {
     empty: "هێشتا هیچ ئاگادارکردنەوەیەک نییە",
     viewAll: "بینینی هەموو ئاگادارکردنەوەکان",
     title: "ئاگادارکردنەوەکان",
-    subtitle: "هاودەم بە لەگەڵ ئاگادارییەکانی کتێبخانە، چالاکی ئەندامان، و ڕووداوەکانی سیستەم.",
+    subtitle:
+      "هاودەم بە لەگەڵ ئاگادارییەکانی کتێبخانە، چالاکی ئەندامان، و ڕووداوەکانی سیستەم.",
     markAllAsRead: "نیشانەکردنی هەموو وەک خوێندراوە",
     markRead: "نیشانەکردنی وەک خوێندراوە",
     unreadTab: "نەخوێندراوە",
@@ -808,14 +837,17 @@ export const notifications = {
     unreadDescriptionPlural: "{count} ئاگادارکردنەوەی نەخوێندراوە",
     readDescription: "{count} ئاگادارکردنەوەی خوێندراوە",
     readDescriptionPlural: "{count} ئاگادارکردنەوەی خوێندراوە",
-    emptyUnread: "تۆ هەموو ئاگادارییەکانت خوێندۆتەوە. هیچ ئاگادارکردنەوەیەکی نەخوێندراوە نییە.",
+    emptyUnread:
+      "تۆ هەموو ئاگادارییەکانت خوێندۆتەوە. هیچ ئاگادارکردنەوەیەکی نەخوێندراوە نییە.",
     emptyRead: "هێشتا هیچ ئاگادارکردنەوەیەکی خوێندراوە نییە.",
     loadError: "بارکردنی ئاگادارکردنەوەکان سەرکەوتوو نەبوو.",
     unavailable: "ئاگادارکردنەوەکان بەردەست نین",
     markAsReadSuccess: "ئاگادارکردنەوەکە وەک خوێندراوە نیشانەکرا.",
-    markAsReadError: "نیشانەکردنی ئاگادارکردنەوەکە وەک خوێندراوە سەرکەوتوو نەبوو.",
+    markAsReadError:
+      "نیشانەکردنی ئاگادارکردنەوەکە وەک خوێندراوە سەرکەوتوو نەبوو.",
     markAllAsReadSuccess: "هەموو ئاگادارکردنەوەکان وەک خوێندراوە نیشانەکران.",
-    markAllAsReadError: "نیشانەکردنی هەموو ئاگادارکردنەوەکان وەک خوێندراوە سەرکەوتوو نەبوو.",
+    markAllAsReadError:
+      "نیشانەکردنی هەموو ئاگادارکردنەوەکان وەک خوێندراوە سەرکەوتوو نەبوو.",
     titles: {
       overdueReminder: "یادخەرەوەی کتێبی دواکەوتوو",
       newMember: "ئەندامێکی نوێ تۆمارکرا",
@@ -828,7 +860,8 @@ export const notifications = {
       outOfStock: "کتێب بێ کۆگایە",
     },
     messages: {
-      overdueReminder: "ئەندام {memberId} {count} کتێبی لە بەرواری دیاریکراو تێپەڕیوە.",
+      overdueReminder:
+        "ئەندام {memberId} {count} کتێبی لە بەرواری دیاریکراو تێپەڕیوە.",
       newMember: "{name} بەشداری کرد لە کتێبخانەی سەرەکی و کتێبفرۆشی.",
       lowStock: '"{title}" تەنها {count} کۆپی ماوە لە {branch}.',
       newNeed: "{name} داواکرا لە {branch} (پێشەنگی {priority}).",

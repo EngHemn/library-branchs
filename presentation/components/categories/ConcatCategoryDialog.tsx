@@ -72,7 +72,9 @@ export function ConcatCategoryDialog({
               name="sourceCategoryIds"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t("categories.concat.categoriesToMerge")}</FormLabel>
+                  <FormLabel>
+                    {t("categories.concat.categoriesToMerge")}
+                  </FormLabel>
                   <FormControl>
                     <div className="max-h-48 space-y-2 overflow-y-auto rounded-lg border p-3">
                       {categories.map((category) => {
@@ -148,7 +150,9 @@ export function ConcatCategoryDialog({
                   <FormLabel>{t("categories.concat.newDescription")}</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder={t("categories.concat.newDescriptionPlaceholder")}
+                      placeholder={t(
+                        "categories.concat.newDescriptionPlaceholder"
+                      )}
                       disabled={isSaving}
                       rows={3}
                       {...field}
@@ -178,7 +182,9 @@ export function ConcatCategoryDialog({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="active">{t("common.active")}</SelectItem>
+                      <SelectItem value="active">
+                        {t("common.active")}
+                      </SelectItem>
                       <SelectItem value="inactive">
                         {t("common.inactive")}
                       </SelectItem>
@@ -189,9 +195,7 @@ export function ConcatCategoryDialog({
               )}
             />
 
-            {error ? (
-              <p className="text-sm text-destructive">{error}</p>
-            ) : null}
+            {error ? <p className="text-sm text-destructive">{error}</p> : null}
 
             <DialogFooter>
               <Button

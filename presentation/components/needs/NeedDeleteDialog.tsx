@@ -48,9 +48,15 @@ export function NeedDeleteDialog({
           <Button variant="outline" onClick={onClose} disabled={isDeleting}>
             {t("needs.deleteDialog.cancel")}
           </Button>
-          <Button variant="destructive" onClick={onConfirm} disabled={isDeleting}>
+          <Button
+            variant="destructive"
+            onClick={onConfirm}
+            disabled={isDeleting}
+          >
             {isDeleting ? <Loader2Icon className="animate-spin" /> : null}
-            {isDeleting ? t("needs.deleteDialog.deleting") : t("needs.deleteDialog.delete")}
+            {isDeleting
+              ? t("needs.deleteDialog.deleting")
+              : t("needs.deleteDialog.delete")}
           </Button>
         </DialogFooter>
       </DialogContent>

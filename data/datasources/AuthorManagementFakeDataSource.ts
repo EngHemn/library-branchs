@@ -21,7 +21,10 @@ export class AuthorManagementFakeDataSource {
 
   async getAuthors(): Promise<Result<Author[]>> {
     await delay(300)
-    return { success: true, data: this.authors.map((author) => ({ ...author })) }
+    return {
+      success: true,
+      data: this.authors.map((author) => ({ ...author })),
+    }
   }
 
   async getAuthorById(authorId: string): Promise<Result<AuthorDetail | null>> {

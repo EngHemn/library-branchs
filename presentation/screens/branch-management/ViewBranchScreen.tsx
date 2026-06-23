@@ -155,7 +155,10 @@ function LoadingState() {
   )
 }
 
-export function ViewBranchScreen({ branchId, branchDetailUseCase }: ViewBranchScreenProps) {
+export function ViewBranchScreen({
+  branchId,
+  branchDetailUseCase,
+}: ViewBranchScreenProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { t } = useTranslation()
@@ -258,13 +261,17 @@ export function ViewBranchScreen({ branchId, branchDetailUseCase }: ViewBranchSc
             <section className="flex flex-col gap-4 pt-4 sm:flex-row sm:items-start sm:justify-between">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
                 <EntityImage
-                  src={state.branchDetail.imageUrl ?? state.branchDetail.logoUrl}
+                  src={
+                    state.branchDetail.imageUrl ?? state.branchDetail.logoUrl
+                  }
                   alt={state.branchDetail.branchName}
                   fill
                   sizes="80px"
                   className="size-20 rounded-lg"
                   imageClassName="rounded-lg"
-                  fallback={<Building2Icon className="size-10 text-muted-foreground" />}
+                  fallback={
+                    <Building2Icon className="size-10 text-muted-foreground" />
+                  }
                 />
                 <div>
                   <h1 className="text-2xl font-semibold tracking-normal">
@@ -284,43 +291,61 @@ export function ViewBranchScreen({ branchId, branchDetailUseCase }: ViewBranchSc
             <Tabs
               defaultValue="details"
               value={state.activeTab}
-              onValueChange={(value) => viewModel.setActiveTab(value as typeof state.activeTab)}
+              onValueChange={(value) =>
+                viewModel.setActiveTab(value as typeof state.activeTab)
+              }
               className="gap-4"
             >
               <TabsList className="flex h-auto w-full flex-wrap justify-start gap-1 sm:w-fit">
                 <TabsTrigger value="details" className="gap-1.5">
                   <Building2Icon className="size-3.5" />
-                  <span className="hidden sm:inline">{t("branches.view.tabs.details")}</span>
+                  <span className="hidden sm:inline">
+                    {t("branches.view.tabs.details")}
+                  </span>
                 </TabsTrigger>
                 <TabsTrigger value="location" className="gap-1.5">
                   <MapPinIcon className="size-3.5" />
-                  <span className="hidden sm:inline">{t("branches.view.tabs.location")}</span>
+                  <span className="hidden sm:inline">
+                    {t("branches.view.tabs.location")}
+                  </span>
                 </TabsTrigger>
                 {state.branchDetail.type === "main" ? (
                   <TabsTrigger value="sub-branches" className="gap-1.5">
                     <GitBranchIcon className="size-3.5" />
-                    <span className="hidden sm:inline">{t("branches.view.tabs.subBranches")}</span>
+                    <span className="hidden sm:inline">
+                      {t("branches.view.tabs.subBranches")}
+                    </span>
                   </TabsTrigger>
                 ) : null}
                 <TabsTrigger value="books" className="gap-1.5">
                   <BookOpenIcon className="size-3.5" />
-                  <span className="hidden sm:inline">{t("branches.view.tabs.books")}</span>
+                  <span className="hidden sm:inline">
+                    {t("branches.view.tabs.books")}
+                  </span>
                 </TabsTrigger>
                 <TabsTrigger value="authors" className="gap-1.5">
                   <PenLineIcon className="size-3.5" />
-                  <span className="hidden sm:inline">{t("branches.view.tabs.authors")}</span>
+                  <span className="hidden sm:inline">
+                    {t("branches.view.tabs.authors")}
+                  </span>
                 </TabsTrigger>
                 <TabsTrigger value="translators" className="gap-1.5">
                   <LanguagesIcon className="size-3.5" />
-                  <span className="hidden sm:inline">{t("branches.view.tabs.translators")}</span>
+                  <span className="hidden sm:inline">
+                    {t("branches.view.tabs.translators")}
+                  </span>
                 </TabsTrigger>
                 <TabsTrigger value="staff" className="gap-1.5">
                   <UsersRoundIcon className="size-3.5" />
-                  <span className="hidden sm:inline">{t("branches.view.tabs.staff")}</span>
+                  <span className="hidden sm:inline">
+                    {t("branches.view.tabs.staff")}
+                  </span>
                 </TabsTrigger>
                 <TabsTrigger value="members" className="gap-1.5">
                   <UserRoundIcon className="size-3.5" />
-                  <span className="hidden sm:inline">{t("branches.view.tabs.members")}</span>
+                  <span className="hidden sm:inline">
+                    {t("branches.view.tabs.members")}
+                  </span>
                 </TabsTrigger>
               </TabsList>
 
@@ -339,10 +364,18 @@ export function ViewBranchScreen({ branchId, branchDetailUseCase }: ViewBranchSc
                     permissions={state.permissions}
                     searchQuery={state.searchQuery}
                     onSearchQueryChange={viewModel.setSearchQuery}
-                    onView={(branch) => router.push(`/dashboard/branches/${branch.id}`)}
-                    onEdit={(branch) => router.push(`/dashboard/branches/${branch.id}/edit`)}
-                    onDelete={(branch) => setPendingDelete({ kind: "subBranch", item: branch })}
-                    onToggleStatus={(branch) => void viewModel.toggleSubBranchStatus(branch.id)}
+                    onView={(branch) =>
+                      router.push(`/dashboard/branches/${branch.id}`)
+                    }
+                    onEdit={(branch) =>
+                      router.push(`/dashboard/branches/${branch.id}/edit`)
+                    }
+                    onDelete={(branch) =>
+                      setPendingDelete({ kind: "subBranch", item: branch })
+                    }
+                    onToggleStatus={(branch) =>
+                      void viewModel.toggleSubBranchStatus(branch.id)
+                    }
                   />
                 </TabsContent>
               ) : null}
@@ -356,9 +389,15 @@ export function ViewBranchScreen({ branchId, branchDetailUseCase }: ViewBranchSc
                   searchQuery={state.searchQuery}
                   onSearchQueryChange={viewModel.setSearchQuery}
                   onView={(book) => router.push(`/dashboard/books/${book.id}`)}
-                  onEdit={(book) => router.push(`/dashboard/books/${book.id}/edit`)}
-                  onDelete={(book) => setPendingDelete({ kind: "book", item: book })}
-                  onToggleStatus={(book) => void viewModel.toggleBookStatus(book.id)}
+                  onEdit={(book) =>
+                    router.push(`/dashboard/books/${book.id}/edit`)
+                  }
+                  onDelete={(book) =>
+                    setPendingDelete({ kind: "book", item: book })
+                  }
+                  onToggleStatus={(book) =>
+                    void viewModel.toggleBookStatus(book.id)
+                  }
                 />
               </TabsContent>
 
@@ -368,10 +407,18 @@ export function ViewBranchScreen({ branchId, branchDetailUseCase }: ViewBranchSc
                   permissions={state.permissions}
                   searchQuery={state.searchQuery}
                   onSearchQueryChange={viewModel.setSearchQuery}
-                  onView={(author) => router.push(`/dashboard/authors/${author.id}`)}
-                  onEdit={(author) => router.push(`/dashboard/authors/${author.id}/edit`)}
-                  onDelete={(author) => setPendingDelete({ kind: "author", item: author })}
-                  onToggleStatus={(author) => void viewModel.toggleAuthorStatus(author.id)}
+                  onView={(author) =>
+                    router.push(`/dashboard/authors/${author.id}`)
+                  }
+                  onEdit={(author) =>
+                    router.push(`/dashboard/authors/${author.id}/edit`)
+                  }
+                  onDelete={(author) =>
+                    setPendingDelete({ kind: "author", item: author })
+                  }
+                  onToggleStatus={(author) =>
+                    void viewModel.toggleAuthorStatus(author.id)
+                  }
                 />
               </TabsContent>
 
@@ -381,14 +428,18 @@ export function ViewBranchScreen({ branchId, branchDetailUseCase }: ViewBranchSc
                   permissions={state.permissions}
                   searchQuery={state.searchQuery}
                   onSearchQueryChange={viewModel.setSearchQuery}
-                  onView={(translator) => router.push(`/dashboard/translators/${translator.id}`)}
+                  onView={(translator) =>
+                    router.push(`/dashboard/translators/${translator.id}`)
+                  }
                   onEdit={(translator) =>
                     router.push(`/dashboard/translators/${translator.id}/edit`)
                   }
                   onDelete={(translator) =>
                     setPendingDelete({ kind: "translator", item: translator })
                   }
-                  onToggleStatus={(translator) => void viewModel.toggleTranslatorStatus(translator.id)}
+                  onToggleStatus={(translator) =>
+                    void viewModel.toggleTranslatorStatus(translator.id)
+                  }
                 />
               </TabsContent>
 
@@ -398,14 +449,18 @@ export function ViewBranchScreen({ branchId, branchDetailUseCase }: ViewBranchSc
                   permissions={state.permissions}
                   searchQuery={state.searchQuery}
                   onSearchQueryChange={viewModel.setSearchQuery}
-                  onView={(staffMember) => router.push(`/dashboard/staff/${staffMember.id}`)}
+                  onView={(staffMember) =>
+                    router.push(`/dashboard/staff/${staffMember.id}`)
+                  }
                   onEdit={(staffMember) =>
                     router.push(`/dashboard/staff/${staffMember.id}/edit`)
                   }
                   onDelete={(staffMember) =>
                     setPendingDelete({ kind: "staff", item: staffMember })
                   }
-                  onToggleStatus={(staffMember) => void viewModel.toggleStaffStatus(staffMember.id)}
+                  onToggleStatus={(staffMember) =>
+                    void viewModel.toggleStaffStatus(staffMember.id)
+                  }
                 />
               </TabsContent>
 
@@ -415,10 +470,18 @@ export function ViewBranchScreen({ branchId, branchDetailUseCase }: ViewBranchSc
                   permissions={state.permissions}
                   searchQuery={state.searchQuery}
                   onSearchQueryChange={viewModel.setSearchQuery}
-                  onView={(member) => router.push(`/dashboard/members/${member.id}`)}
-                  onEdit={(member) => router.push(`/dashboard/members/${member.id}/edit`)}
-                  onDelete={(member) => setPendingDelete({ kind: "member", item: member })}
-                  onToggleStatus={(member) => void viewModel.toggleMemberStatus(member.id)}
+                  onView={(member) =>
+                    router.push(`/dashboard/members/${member.id}`)
+                  }
+                  onEdit={(member) =>
+                    router.push(`/dashboard/members/${member.id}/edit`)
+                  }
+                  onDelete={(member) =>
+                    setPendingDelete({ kind: "member", item: member })
+                  }
+                  onToggleStatus={(member) =>
+                    void viewModel.toggleMemberStatus(member.id)
+                  }
                 />
               </TabsContent>
             </Tabs>
@@ -435,7 +498,9 @@ export function ViewBranchScreen({ branchId, branchDetailUseCase }: ViewBranchSc
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{deleteDialog?.title ?? ""}</DialogTitle>
-            <DialogDescription>{deleteDialog?.description ?? ""}</DialogDescription>
+            <DialogDescription>
+              {deleteDialog?.description ?? ""}
+            </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setPendingDelete(null)}>

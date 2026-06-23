@@ -4,7 +4,10 @@ import { useQuery } from "@tanstack/react-query"
 
 import type { BillDetail } from "@/domain/entities/bill/BillDetail"
 import type { GetBillsUseCase } from "@/domain/usecases/bills/GetBillsUseCase"
-import type { BillDetailStatus, BillDetailViewModelState } from "./BillDetailViewModelState"
+import type {
+  BillDetailStatus,
+  BillDetailViewModelState,
+} from "./BillDetailViewModelState"
 
 type BillDetailViewModel = {
   state: BillDetailViewModelState
@@ -15,7 +18,12 @@ export function useBillDetailViewModel(
   billId: string,
   getBillsUseCase: GetBillsUseCase
 ): BillDetailViewModel {
-  const { data, status: queryStatus, error: queryError, refetch } = useQuery({
+  const {
+    data,
+    status: queryStatus,
+    error: queryError,
+    refetch,
+  } = useQuery({
     queryKey: ["bills", billId],
     queryFn: async () => {
       const result = await getBillsUseCase.getBillById(billId)
@@ -29,10 +37,13 @@ export function useBillDetailViewModel(
   }
 
   const status: BillDetailStatus =
-    queryStatus === "error" ? "error" :
-    queryStatus === "pending" ? "loading" :
-    data === null ? "not-found" :
-    "loaded"
+    queryStatus === "error"
+      ? "error"
+      : queryStatus === "pending"
+        ? "loading"
+        : data === null
+          ? "not-found"
+          : "loaded"
 
   const state: BillDetailViewModelState = {
     status,

@@ -16,7 +16,8 @@ export const fakeAuthors: Author[] = [
     name: "Martin Fowler",
     nationality: "British",
     dateOfBirth: "1963-12-18",
-    biography: "Author and speaker focused on software architecture and refactoring.",
+    biography:
+      "Author and speaker focused on software architecture and refactoring.",
     totalBooks: 8,
     status: "active",
     branchId: "BR-001",
@@ -26,7 +27,8 @@ export const fakeAuthors: Author[] = [
     name: "James Clear",
     nationality: "American",
     dateOfBirth: "1986-01-01",
-    biography: "Writer and speaker known for books about habits and productivity.",
+    biography:
+      "Writer and speaker known for books about habits and productivity.",
     totalBooks: 3,
     status: "active",
     branchId: "BR-001",
@@ -36,7 +38,8 @@ export const fakeAuthors: Author[] = [
     name: "Yuval Noah Harari",
     nationality: "Israeli",
     dateOfBirth: "1976-02-24",
-    biography: "Historian and bestselling author exploring human history and society.",
+    biography:
+      "Historian and bestselling author exploring human history and society.",
     totalBooks: 5,
     status: "active",
     branchId: "BR-001",
@@ -56,7 +59,8 @@ export const fakeAuthors: Author[] = [
     name: "Eric Evans",
     nationality: "American",
     dateOfBirth: "1962-09-01",
-    biography: "Author of Domain-Driven Design and practitioner of strategic design.",
+    biography:
+      "Author of Domain-Driven Design and practitioner of strategic design.",
     totalBooks: 4,
     status: "active",
     branchId: "BR-002",
@@ -66,7 +70,8 @@ export const fakeAuthors: Author[] = [
     name: "Gabriel Garcia Marquez",
     nationality: "Colombian",
     dateOfBirth: "1927-03-06",
-    biography: "Nobel Prize-winning novelist and author of magical realism classics.",
+    biography:
+      "Nobel Prize-winning novelist and author of magical realism classics.",
     totalBooks: 15,
     status: "inactive",
     branchId: "BR-002",
@@ -76,7 +81,8 @@ export const fakeAuthors: Author[] = [
     name: "Daniel Kahneman",
     nationality: "Israeli-American",
     dateOfBirth: "1934-03-05",
-    biography: "Psychologist and Nobel laureate known for behavioral economics work.",
+    biography:
+      "Psychologist and Nobel laureate known for behavioral economics work.",
     totalBooks: 3,
     status: "active",
     branchId: "BR-004",
@@ -86,7 +92,8 @@ export const fakeAuthors: Author[] = [
     name: "Paulo Coelho",
     nationality: "Brazilian",
     dateOfBirth: "1947-08-24",
-    biography: "Brazilian lyricist and novelist widely known for The Alchemist.",
+    biography:
+      "Brazilian lyricist and novelist widely known for The Alchemist.",
     totalBooks: 22,
     status: "active",
     branchId: "BR-004",
@@ -96,7 +103,8 @@ export const fakeAuthors: Author[] = [
     name: "Tara Westover",
     nationality: "American",
     dateOfBirth: "1986-09-27",
-    biography: "Memoir writer best known for her bestselling autobiography Educated.",
+    biography:
+      "Memoir writer best known for her bestselling autobiography Educated.",
     totalBooks: 1,
     status: "active",
     branchId: "BR-004",
@@ -126,7 +134,8 @@ export const fakeAuthors: Author[] = [
     name: "Fyodor Dostoevsky",
     nationality: "Russian",
     dateOfBirth: "1821-11-11",
-    biography: "Classic Russian novelist known for psychological and philosophical works.",
+    biography:
+      "Classic Russian novelist known for psychological and philosophical works.",
     totalBooks: 11,
     status: "inactive",
     branchId: "BR-009",

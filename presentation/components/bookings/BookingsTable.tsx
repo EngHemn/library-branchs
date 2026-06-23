@@ -65,8 +65,7 @@ const statusClassNames: Record<BookingStatus, string> = {
     "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900 dark:bg-emerald-950 dark:text-emerald-300",
   overdue:
     "border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-900 dark:bg-rose-950 dark:text-rose-300",
-  cancelled:
-    "border-muted bg-muted text-muted-foreground",
+  cancelled: "border-muted bg-muted text-muted-foreground",
 }
 
 const typeClassNames: Record<BookingType, string> = {
@@ -114,9 +113,7 @@ function canReturnOrExtend(status: BookingStatus): boolean {
 }
 
 function canCancel(status: BookingStatus): boolean {
-  return (
-    status === "reserved" || status === "borrowed" || status === "overdue"
-  )
+  return status === "reserved" || status === "borrowed" || status === "overdue"
 }
 
 type BookingActionsMenuProps = {
@@ -218,7 +215,9 @@ export function BookingsTable({
           </p>
         ) : (
           <div className="overflow-x-auto">
-            <Table className={showBranchColumn ? "min-w-[980px]" : "min-w-[820px]"}>
+            <Table
+              className={showBranchColumn ? "min-w-[980px]" : "min-w-[820px]"}
+            >
               <TableHeader>
                 <TableRow>
                   <TableHead>{t("bookings.table.book")}</TableHead>

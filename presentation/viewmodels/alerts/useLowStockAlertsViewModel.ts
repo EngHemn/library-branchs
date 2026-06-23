@@ -21,7 +21,9 @@ type AsyncStatus = "idle" | "loading" | "success" | "error"
 type LowStockAlertsViewModelState = {
   alertsStatus: AsyncStatus
   alertsError: string | null
-  summary: import("@/domain/entities/alert/LowStockAlert").LowStockAlertSummary | null
+  summary:
+    | import("@/domain/entities/alert/LowStockAlert").LowStockAlertSummary
+    | null
   summaryStatus: AsyncStatus
   searchQuery: string
   branchFilter: LowStockAlertBranchFilter
@@ -237,10 +239,7 @@ export function useLowStockAlertsViewModel(
       }
     },
     reload: async () => {
-      await Promise.all([
-        alertsQuery.refetch(),
-        summaryQuery.refetch(),
-      ])
+      await Promise.all([alertsQuery.refetch(), summaryQuery.refetch()])
     },
   }
 }

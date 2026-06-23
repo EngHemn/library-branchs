@@ -11,7 +11,9 @@ export function resolveBranchAdminStaffId(
     return byName.id
   }
 
-  const branchAdmin = branchStaff.find((member) => member.role === "branch_admin")
+  const branchAdmin = branchStaff.find(
+    (member) => member.role === "branch_admin"
+  )
   if (branchAdmin) {
     return branchAdmin.id
   }

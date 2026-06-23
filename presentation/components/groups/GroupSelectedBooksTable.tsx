@@ -61,11 +61,15 @@ export function GroupSelectedBooksTable({
             <TableHead>{t("groups.books.title")}</TableHead>
             <TableHead>{t("groups.books.author")}</TableHead>
             <TableHead>{t("groups.books.isbn")}</TableHead>
-            <TableHead className="text-center">{t("groups.books.stock")}</TableHead>
+            <TableHead className="text-center">
+              {t("groups.books.stock")}
+            </TableHead>
             <TableHead className="text-center">
               {t("groups.books.available")}
             </TableHead>
-            <TableHead className="text-center">{t("groups.books.price")}</TableHead>
+            <TableHead className="text-center">
+              {t("groups.books.price")}
+            </TableHead>
             <TableHead>{t("groups.books.availability")}</TableHead>
             <TableHead className="w-16 text-right">
               {t("groups.selectedBooks.remove")}

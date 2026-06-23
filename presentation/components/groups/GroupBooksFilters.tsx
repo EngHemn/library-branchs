@@ -69,7 +69,9 @@ export function GroupBooksFilters({
           </Label>
           <Select value={categoryFilter} onValueChange={onCategoryFilterChange}>
             <SelectTrigger id="group-books-category-filter" className="w-full">
-              <SelectValue placeholder={t("groups.booksFilters.allCategories")} />
+              <SelectValue
+                placeholder={t("groups.booksFilters.allCategories")}
+              />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">

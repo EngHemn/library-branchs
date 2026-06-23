@@ -9,9 +9,7 @@ import type { User } from "@/domain/entities/User"
 import type { AuthUseCase } from "@/domain/usecases/auth/AuthUseCase"
 import type { GetBooksUseCase } from "@/domain/usecases/books/GetBooksUseCase"
 import type { ShelfManagementUseCase } from "@/domain/usecases/shelves/ShelfManagementUseCase"
-import {
-  matchesBookShelfLocationFilter,
-} from "@/lib/bookLocationForm"
+import { matchesBookShelfLocationFilter } from "@/lib/bookLocationForm"
 import {
   getDashboardBranchScope,
   resolveUserBranchId,
@@ -118,12 +116,19 @@ function matchesBookBranchFilter(
 function matchesBookSearch(book: Book, searchQuery: string): boolean {
   const normalizedQuery = searchQuery.trim().toLowerCase()
   if (!normalizedQuery) return true
-  return [book.title, book.isbn, book.author, book.category, book.shelfHint].some(
-    (value) => value.toLowerCase().includes(normalizedQuery)
-  )
+  return [
+    book.title,
+    book.isbn,
+    book.author,
+    book.category,
+    book.shelfHint,
+  ].some((value) => value.toLowerCase().includes(normalizedQuery))
 }
 
-function getUniqueValues(books: Book[], accessor: (book: Book) => string | null): string[] {
+function getUniqueValues(
+  books: Book[],
+  accessor: (book: Book) => string | null
+): string[] {
   const valueSet = new Set<string>()
   for (const book of books) {
     const value = accessor(book)
@@ -188,7 +193,8 @@ export function useBooksViewModel(
       if (!result.success) throw new Error(result.error)
       return result.data
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["currentUser"] }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] }),
     onError: (err: Error) =>
       setDialog({ title: "Logout failed", description: err.message }),
   })
@@ -237,7 +243,10 @@ export function useBooksViewModel(
     setFilters((current) => ({ ...current, locationValues }))
   }
 
-  async function addLocationValue(stepId: string, value: string): Promise<void> {
+  async function addLocationValue(
+    stepId: string,
+    value: string
+  ): Promise<void> {
     locationMutations.clearError()
     await locationMutations.addLocationValue(stepId, value)
   }
@@ -314,7 +323,9 @@ export function useBooksViewModel(
         book.author === filters.authorFilter) &&
       (filters.translatorFilter === "all" ||
         book.translator === filters.translatorFilter) &&
-      (user ? matchesBookBranchFilter(book, filters.branchFilter, user) : true) &&
+      (user
+        ? matchesBookBranchFilter(book, filters.branchFilter, user)
+        : true) &&
       (locationOptions
         ? matchesBookShelfLocationFilter(
             book.shelfHint,
