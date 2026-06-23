@@ -9,6 +9,11 @@ export type FakeOrderRecord = Omit<
   supplierEmail?: string | null
   latitude?: number | null
   longitude?: number | null
+  items?: {
+    bookId: string
+    quantity: number
+    unitPrice: number
+  }[]
 }
 
 export const fakeOrders: FakeOrderRecord[] = [

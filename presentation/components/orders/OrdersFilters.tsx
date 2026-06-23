@@ -473,7 +473,7 @@ export function OrdersFilters({
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
-              {showSubBranchFilter ? (
+              {showSubBranchFilter && (
                 <div className="space-y-2">
                   <Label htmlFor="orders-dialog-sub-branch-filter">
                     {t("orders.filters.branch")}
@@ -499,7 +499,9 @@ export function OrdersFilters({
                     </SelectContent>
                   </Select>
                 </div>
-              ) : showTranslatorFilter ? (
+              )}
+
+              {showTranslatorFilter && (
                 <FilterCombobox
                   id="orders-dialog-translator-filter"
                   label={t("orders.filters.translator")}
@@ -509,8 +511,10 @@ export function OrdersFilters({
                   allLabel={t("orders.filters.allTranslators")}
                   options={translators}
                 />
-              ) : null}
+              )}
+            </div>
 
+            <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="orders-dialog-date-from">
                   {t("orders.filters.dateFrom")}
@@ -525,9 +529,7 @@ export function OrdersFilters({
                   }
                 />
               </div>
-            </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="orders-dialog-date-to">
                   {t("orders.filters.dateTo")}

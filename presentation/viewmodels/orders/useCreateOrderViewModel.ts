@@ -43,6 +43,7 @@ export function useCreateOrderViewModel(
       totalAmount: 0,
       notes: "",
       bookIds: [],
+      items: [],
       latitude: null,
       longitude: null,
     },

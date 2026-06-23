@@ -78,18 +78,20 @@ function getScopedBranchIds(user: User): string[] {
   return getDashboardBranchScope(user, allDashboardBranches).branchIds
 }
 
-function getSubBranchFilterOptions(
+function getBranchFilterOptions(
   user: User,
   allBranchesLabel: string,
   currentBranchLabel: string
 ): OrderBranchFilterOption[] {
-  const userBranchId = resolveUserBranchId(user)
-  const networkIds = getSubBranchNetworkBranchIds(userBranchId)
+  if (isBranchScopedDashboardUser(user)) {
+    return []
+  }
 
-  const otherBranches = allDashboardBranches
-    .filter(
-      (branch) => networkIds.includes(branch.id) && branch.id !== userBranchId
-    )
+  const userBranchId = resolveUserBranchId(user)
+  const branchScope = getDashboardBranchScope(user, allDashboardBranches)
+
+  const otherBranches = branchScope.branches
+    .filter((branch) => branch.id !== userBranchId)
     .map((branch) => ({ value: branch.id, label: branch.name }))
     .sort((left, right) => left.label.localeCompare(right.label))
 
@@ -98,18 +100,6 @@ function getSubBranchFilterOptions(
     { value: "current", label: currentBranchLabel },
     ...otherBranches,
   ]
-}
-
-function getBranchFilterOptions(
-  user: User,
-  allBranchesLabel: string,
-  currentBranchLabel: string
-): OrderBranchFilterOption[] {
-  if (!isBranchScopedDashboardUser(user)) {
-    return []
-  }
-
-  return getSubBranchFilterOptions(user, allBranchesLabel, currentBranchLabel)
 }
 
 function matchesBranchFilter(
@@ -217,8 +207,7 @@ function filterOrders(
   orders: Order[],
   filters: OrdersFilterState,
   scopedBranchIds: string[],
-  userBranchId: string,
-  isSubBranch: boolean
+  userBranchId: string
 ): Order[] {
   const normalizedSearch = filters.searchQuery.trim().toLowerCase()
 
@@ -228,7 +217,6 @@ function filterOrders(
     }
 
     if (
-      isSubBranch &&
       !matchesBranchFilter(order.branchId, filters.branchFilter, userBranchId)
     ) {
       return false
@@ -328,11 +316,9 @@ export function useOrdersViewModel(
   const user = userQuery.data ?? null
   const userBranchId = user ? resolveUserBranchId(user) : ""
   const isBranchScopedUser = user ? isBranchScopedDashboardUser(user) : false
-  const showSubBranchFilter = isBranchScopedUser
+  const showSubBranchFilter = !isBranchScopedUser
   const showTranslatorFilter = !isBranchScopedUser
-  const showBranchColumn = isBranchScopedUser
-    ? filters.branchFilter !== "current"
-    : true
+  const showBranchColumn = !isBranchScopedUser && filters.branchFilter !== "current"
   const branchFilterOptions = user
     ? getBranchFilterOptions(
         user,
@@ -350,8 +336,7 @@ export function useOrdersViewModel(
           allOrders,
           filters,
           scopedBranchIds,
-          userBranchId,
-          isBranchScopedUser
+          userBranchId
         )
       : []
 

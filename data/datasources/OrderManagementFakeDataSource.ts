@@ -34,6 +34,10 @@ function toOrderListItem(record: FakeOrderRecord): Order {
     record.longitude
   )
 
+  const totalQuantity = record.items
+    ? record.items.reduce((sum, item) => sum + item.quantity, 0)
+    : record.bookIds.length
+
   return {
     id: record.id,
     branchId: record.branchId,
@@ -44,7 +48,7 @@ function toOrderListItem(record: FakeOrderRecord): Order {
     expectedDeliveryDate: record.expectedDeliveryDate,
     status: record.status,
     totalAmount: record.totalAmount,
-    itemCount: record.itemCount,
+    itemCount: totalQuantity,
     phoneNumber: record.phoneNumber,
     notes: record.notes ?? null,
     bookIds: [...record.bookIds],
@@ -130,6 +134,10 @@ export class OrderManagementFakeDataSource {
       input.longitude
     )
 
+    const totalQuantity = input.items
+      ? input.items.reduce((sum, item) => sum + item.quantity, 0)
+      : uniqueBookIds.length
+
     const newOrder: FakeOrderRecord = {
       id: `ORD-${String(nextOrderId++)}`,
       branchId: branch.id,
@@ -139,11 +147,16 @@ export class OrderManagementFakeDataSource {
       expectedDeliveryDate: toOrderDateTime(input.expectedDeliveryDate),
       status: input.status,
       totalAmount: input.totalAmount,
-      itemCount: uniqueBookIds.length,
+      itemCount: totalQuantity,
       phoneNumber: input.phoneNumber.trim(),
       supplierEmail: input.supplierEmail?.trim() || null,
       notes: input.notes?.trim() || null,
       bookIds: uniqueBookIds,
+      items: input.items?.map((item) => ({
+        bookId: item.bookId,
+        quantity: item.quantity,
+        unitPrice: item.unitPrice,
+      })),
       latitude: coordinates.latitude,
       longitude: coordinates.longitude,
     }
@@ -182,6 +195,10 @@ export class OrderManagementFakeDataSource {
       input.longitude
     )
 
+    const totalQuantity = input.items
+      ? input.items.reduce((sum, item) => sum + item.quantity, 0)
+      : uniqueBookIds.length
+
     const currentOrder = this.orders[orderIndex]
     const updatedOrder: FakeOrderRecord = {
       ...currentOrder,
@@ -195,11 +212,16 @@ export class OrderManagementFakeDataSource {
       ),
       status: input.status,
       totalAmount: input.totalAmount,
-      itemCount: uniqueBookIds.length,
+      itemCount: totalQuantity,
       phoneNumber: input.phoneNumber.trim(),
       supplierEmail: input.supplierEmail?.trim() || null,
       notes: input.notes?.trim() || null,
       bookIds: uniqueBookIds,
+      items: input.items?.map((item) => ({
+        bookId: item.bookId,
+        quantity: item.quantity,
+        unitPrice: item.unitPrice,
+      })),
       latitude: coordinates.latitude,
       longitude: coordinates.longitude,
     }

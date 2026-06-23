@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect } from "react"
 import type { UseFormReturn } from "react-hook-form"
 
 import {
@@ -51,6 +52,19 @@ export function OrderFormFields({
   children,
 }: OrderFormFieldsProps) {
   const { t } = useTranslation()
+
+  const items = form.watch("items")
+  const totalAmount = form.watch("totalAmount")
+
+  useEffect(() => {
+    const sum = (items || []).reduce(
+      (acc, item) => acc + item.unitPrice * item.quantity,
+      0
+    )
+    if (sum !== totalAmount) {
+      form.setValue("totalAmount", sum)
+    }
+  }, [items, totalAmount, form])
 
   return (
     <Form {...form}>
@@ -261,15 +275,21 @@ export function OrderFormFields({
 
         <FormField
           control={form.control}
-          name="bookIds"
+          name="items"
           render={({ field }) => (
             <FormItem>
               <FormLabel>{t("orders.form.orderItems")}</FormLabel>
               <FormControl>
                 <OrderBooksSelector
                   bookOptions={bookOptions}
-                  selectedBookIds={field.value}
-                  onSelectedBookIdsChange={field.onChange}
+                  items={field.value || []}
+                  onItemsChange={(newItems) => {
+                    field.onChange(newItems)
+                    form.setValue(
+                      "bookIds",
+                      newItems.map((item) => item.bookId)
+                    )
+                  }}
                   disabled={disabled}
                   createBookHref={createBookHref}
                 />
